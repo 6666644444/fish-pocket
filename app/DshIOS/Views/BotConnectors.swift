@@ -111,7 +111,8 @@ struct ConnectorIcon: View {
 // MARK: - The list
 
 /// Services the Bots can use through MCP: signed in once, shared by the team. The ones in use
-/// come first; the rest are found by kind or by name.
+/// come first; the rest are found by kind or by name. This phone's own device capabilities are a
+/// category here too (`device`): they need no plugin, so that part shows whatever the Bot plugin does.
 struct BotConnectorsPage: View {
     @Environment(AppModel.self) private var app
     @State private var adding = false
@@ -119,6 +120,8 @@ struct BotConnectorsPage: View {
     /// nil: every kind.
     @State private var category: String?
 
+    /// The category of this phone's device capabilities, which are not MCP services.
+    private static let device = "device"
     private static let order = ["dev", "docs", "work", "design", "data", "commerce", "search", "custom"]
     /// Left out of the list because they cannot connect: Figma only lets clients it has approved
     /// sign in, and turns this one down.
@@ -136,10 +139,15 @@ struct BotConnectorsPage: View {
         let mine = rows.filter { $0["state"].string != "off" }.sorted { Self.rank($0) < Self.rank($1) }
         let kinds = Self.order.filter { kind in all.contains { Self.kind($0) == kind } }
         List {
-            if needle.isEmpty, kinds.count > 1 {
-                Section { pills(kinds) }
+            if needle.isEmpty {
+                Section { pills([Self.device] + kinds) }
                     .listRowInsets(EdgeInsets())
                     .listRowBackground(Color.clear)
+            }
+            // This phone's own capabilities, listed right here: switched on in place, no page to open.
+            // Picked on their own, they get the whole page (privacy note, activity, system settings).
+            if needle.isEmpty, category == nil || category == Self.device {
+                NativeCapabilitySections(compact: category == nil)
             }
             if category == nil, !mine.isEmpty {
                 Section(needle.isEmpty ? String(localized: "已连接") : String(localized: "已连接里找到的")) { ForEach(mine, id: \.["id"]) { link($0) } }
@@ -157,7 +165,13 @@ struct BotConnectorsPage: View {
                 Section { Text("没有找到「\(query)」").font(.footnote).foregroundStyle(Palette.secondary) }
                     .groupedRow()
             }
-            if needle.isEmpty, category == nil || category == "custom" {
+            if needle.isEmpty, category == nil, team.status != .ready {
+                Section {
+                    Text("连接外部服务要等内置的 Bot 插件启动之后。").font(.footnote).foregroundStyle(Palette.secondary)
+                }
+                .groupedRow()
+            }
+            if needle.isEmpty, team.status == .ready, category == nil || category == "custom" {
                 Section {
                     Button { adding = true } label: { Label("添加自定义连接器", systemImage: "plus") }
                 } footer: {
@@ -221,6 +235,7 @@ struct BotConnectorsPage: View {
 
     static func title(_ category: String) -> String {
         switch category {
+        case device: String(localized: "本机能力")
         case "dev": String(localized: "开发")
         case "docs": String(localized: "文档与资料")
         case "work": String(localized: "协作办公")

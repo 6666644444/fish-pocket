@@ -221,6 +221,8 @@ targets:
         # Shared/WidgetSnapshot.swift reads the group from here.
         DshAppGroup: $(DSH_APP_GROUP)
         DshURLScheme: $(DSH_URL_SCHEME)
+        # 本机能力 → 操控其他 App asks whether iCTRL is installed (Views/PhoneControlView.swift).
+        LSApplicationQueriesSchemes: [ictrl]
         # The messages it reports sending to Bots and groups (DshIOS/ShareSuggestions.swift).
         NSUserActivityTypes: [INSendMessageIntent]
     entitlements:

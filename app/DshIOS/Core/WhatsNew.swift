@@ -36,6 +36,11 @@ enum WhatsNew {
     /// Newest first. Until the app reaches an entry's version (and build, when it names one),
     /// the entry is not shown. Entries of one version are shown together, newest first.
     static let releases: [Release] = [
+        Release(version: "1.2.1", build: 105, features: [
+            Feature(symbol: "hand.tap",
+                    title: "让智能体操作其他 App",
+                    detail: "装好开源的 iCTRL 后，智能体可以替你点按、输入、读取其他 App 的屏幕。侧边栏新增「操控手机」，在那里查看状态、一键启动，还有设置教程。"),
+        ]),
         Release(version: "1.2.1", build: 103, features: [
             Feature(symbol: "character.bubble",
                     title: "界面支持繁体中文",
