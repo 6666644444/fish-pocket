@@ -105,6 +105,8 @@ final class AppModel {
     let client: EngineClient
     let mux: StreamMux
     let account: AccountModel
+    /// The Fish Pocket account and credits (the `fish-pocket` model route).
+    let fishPocket: FishPocketAccount
     let cordis = CordisModel()
     /// Agent sessions on the user's computers, through Agents Anywhere; idle until signed in.
     let remote = RemoteStore.shared
@@ -197,6 +199,7 @@ final class AppModel {
         client = EngineClient(launchURL: launchURL)
         mux = StreamMux(client: client)
         account = AccountModel(client: client, mux: mux)
+        fishPocket = FishPocketAccount(engine: client)
         cordis.attach(self)
         DeepSeekSpeech.client = client
         ReadAloud.shared.onError = { [weak self] message in self?.showToast(message, tone: .warning) }
@@ -213,6 +216,7 @@ final class AppModel {
             followRemoteEvents()
             followScheduleCatalog()
             account.follow()
+            Task { await fishPocket.start() }
             botTeam.start()
             DeepSeekSpeech.followAgent()
             BackgroundKeeper.shared.attach { [weak self] in await self?.refreshSessions() }

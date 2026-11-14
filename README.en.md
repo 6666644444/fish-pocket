@@ -83,7 +83,7 @@
 - **Made for iPad too.** A persistent sidebar, a side workbench, multiple windows, file drag and drop, and keyboard shortcuts.
 - **More private.** Sessions and workspaces stay on your device.
 
-Model calls still need a network connection. Use a DeepSeek account or an API key.
+Model calls still need a network connection. Use a DeepSeek account or an API key, or, without either, sign in to a Fish Pocket account and use credits bought in the app (App Store and TestFlight builds only).
 
 ## Device capabilities
 

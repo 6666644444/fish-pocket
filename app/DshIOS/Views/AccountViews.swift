@@ -18,6 +18,56 @@ struct SignInPrivacyNote: View {
     }
 }
 
+/// One way in on the 开始使用 sheet: a card, the whole of it a button. The ways are drawn alike.
+struct SignInChoice: View {
+    let icon: String
+    let title: LocalizedStringKey
+    let detail: LocalizedStringKey
+    var busy = false
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(alignment: .top, spacing: 14) {
+                Image(systemName: icon)
+                    .font(.system(size: 18, weight: .semibold))
+                    .frame(width: 40, height: 40)
+                    .foregroundStyle(Palette.onInk)
+                    .background(Palette.ink, in: Circle())
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title).font(.headline)
+                    Text(detail)
+                        .font(.subheadline)
+                        .foregroundStyle(Palette.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                Group {
+                    if busy { ProgressView().tint(Palette.ink) }
+                    else { Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).opacity(0.5) }
+                }
+                .frame(height: 40)
+            }
+            .foregroundStyle(Palette.ink)
+            .multilineTextAlignment(.leading)
+            .padding(16)
+            .background(Palette.control, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        }
+        .buttonStyle(PressableCardStyle())
+        .disabled(busy)
+    }
+}
+
+/// A card that sinks a little under the finger.
+struct PressableCardStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.98 : 1)
+            .animation(.snappy(duration: 0.2), value: configuration.isPressed)
+    }
+}
+
 /// The official SignInDialog: its title and actions follow `account/watch`'s
 /// attempt. Platform's authorize page opens in an in-app Safari; the engine
 /// receives the callback on 127.0.0.1, and the sheets close on their own
@@ -27,6 +77,8 @@ struct SignInSheet: View {
     var autoStart = false
     /// The API Key alternative; nil hides it.
     var addAPIKey: (() -> Void)?
+    /// The Fish Pocket credits alternative; nil hides it.
+    var useFishPocket: (() -> Void)?
 
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
@@ -36,6 +88,9 @@ struct SignInSheet: View {
     @State private var busy = false
     @State private var localFailed = false
     @State private var copied: Bool?
+    /// Opens just tall enough for the three ways in; larger text scrolls them.
+    @State private var detent = Self.choicesDetent
+    private static let choicesDetent = PresentationDetent.height(520)
 
     private var account: AccountModel { app.account }
     private var phase: String? { account.phase }
@@ -47,16 +102,24 @@ struct SignInSheet: View {
                 if account.attemptActive { ProgressView().controlSize(.small) }
             }
             description
-            SignInPrivacyNote()
-            Spacer(minLength: 0)
-            actions
+            if account.attemptActive {
+                SignInPrivacyNote()
+                Spacer(minLength: 0)
+                actions
+            } else {
+                ScrollView { choices }
+                    .scrollBounceBehavior(.basedOnSize)
+                Spacer(minLength: 0)
+            }
         }
         .padding(.horizontal, 20)
         .padding(.top, 28)
         .padding(.bottom, 12)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background(Palette.background)
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.medium, Self.choicesDetent, .large], selection: $detent)
+        // Waiting on the browser needs little room; back to the choices, tall again.
+        .onChange(of: account.attemptActive) { _, active in detent = active ? .medium : Self.choicesDetent }
         .presentationDragIndicator(.visible)
         .interactiveDismissDisabled(phase == "committing")
         .task {
@@ -94,7 +157,7 @@ struct SignInSheet: View {
                         .disabled(account.authorizeURL(colorScheme) == nil)
                 }
             } else {
-                Text("登录 DeepSeek 账号，或添加 API Key，即可开始使用。你的项目和文件保存在本地。")
+                Text("选一种方式连接模型，就能开始对话。你的项目和文件都保存在本机。")
             }
         }
         .font(.subheadline)
@@ -110,25 +173,42 @@ struct SignInSheet: View {
         }
     }
 
+    /// The ways in, side by side: the Fish Pocket account (when this build has the service),
+    /// the DeepSeek account, an API key. Choosing one is the whole decision.
     @ViewBuilder
+    private var choices: some View {
+        VStack(spacing: 10) {
+            if let useFishPocket {
+                SignInChoice(
+                    icon: "sparkles",
+                    title: "Fish Pocket 账号",
+                    detail: "Apple 或手机号登录，在 App 内购买额度，按用量扣费。"
+                ) { dismiss(); useFishPocket() }
+            }
+            SignInChoice(
+                icon: "person.crop.circle",
+                title: phase == "expired" || phase == "failed" || localFailed ? "重新登录 DeepSeek 账号" : "DeepSeek 账号",
+                detail: "用 DeepSeek 开放平台账号登录，对话使用账号余额。",
+                busy: busy
+            ) { Task { await start() } }
+            if let addAPIKey {
+                SignInChoice(
+                    icon: "key",
+                    title: "API Key",
+                    detail: "已有 DeepSeek 或其他服务商的 API Key，填进来直接用。"
+                ) { dismiss(); addAPIKey() }
+            }
+        }
+    }
+
     private var actions: some View {
         HStack(spacing: 12) {
-            if account.attemptActive {
-                Button("取消") { Task { await account.cancelSignIn() } }
-                    .buttonStyle(.capsule(.outline))
-                    .disabled(phase == "committing")
-                Button("打开浏览器") { account.authorizeURL(colorScheme).map(openBrowser) }
-                    .buttonStyle(.capsule())
-                    .disabled(phase == "committing" || account.authorizeURL(colorScheme) == nil)
-            } else {
-                if let addAPIKey {
-                    Button("添加 API Key") { dismiss(); addAPIKey() }
-                        .buttonStyle(.capsule(.outline))
-                }
-                Button(phase == "expired" || phase == "failed" || localFailed ? "重新登录" : "登录") { Task { await start() } }
-                    .buttonStyle(.capsule())
-                    .disabled(busy)
-            }
+            Button("取消") { Task { await account.cancelSignIn() } }
+                .buttonStyle(.capsule(.outline))
+                .disabled(phase == "committing")
+            Button("打开浏览器") { account.authorizeURL(colorScheme).map(openBrowser) }
+                .buttonStyle(.capsule())
+                .disabled(phase == "committing" || account.authorizeURL(colorScheme) == nil)
         }
     }
 
@@ -193,6 +273,49 @@ struct SignInSheet: View {
 
 /// 设置 → 账号与余额 (`settings.section#account`): identity, wallet balances,
 /// usage and top-up, with the API Key alternative and sign-out below.
+/// The DeepSeek API key as a way in of its own (设置 › 连接方式): set, replaced or cleared in an alert.
+struct DeepSeekKeyRow: View {
+    @Environment(AppModel.self) private var app
+    @State private var keySet = false
+    @State private var editing = false
+    @State private var draft = ""
+
+    var body: some View {
+        Button {
+            draft = ""
+            editing = true
+        } label: {
+            LabeledContent {
+                Text(keySet ? "已设置" : "未设置").lineLimit(1)
+            } label: {
+                Label("API Key", systemImage: "key")
+            }
+        }
+        .task(id: app.revision("credentials/reference-updated")) { await load() }
+        .alert("DeepSeek API Key", isPresented: $editing) {
+            SecureField("sk-…", text: $draft)
+            Button("取消", role: .cancel) {}
+            if keySet { Button("清除", role: .destructive) { Task { _ = try? await app.client.call("credentials/unset", ["ref": "DEEPSEEK_API_KEY"]); await load() } } }
+            Button("保存") {
+                Task {
+                    await app.perform { try await app.client.call("credentials/set", ["ref": "DEEPSEEK_API_KEY", "value": .string(draft.trimmingCharacters(in: .whitespacesAndNewlines))]) }
+                    await load()
+                }
+            }
+            // Saving nothing would wipe the key; 清除 is the way to remove it.
+            .disabled(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        } message: {
+            Text("只保存在本机引擎里，任何读取接口都不会返回它。")
+        }
+    }
+
+    private func load() async {
+        if let value = try? await app.client.call("credentials/describe", ["refs": ["DEEPSEEK_API_KEY"]]) {
+            keySet = value.array.first?["configured"].bool ?? value["DEEPSEEK_API_KEY"]["configured"].bool ?? false
+        }
+    }
+}
+
 struct AccountPage: View {
     @Environment(AppModel.self) private var app
     @State private var signingIn = false
@@ -200,9 +323,6 @@ struct AccountPage: View {
     @State private var signOutCheck: SignOutCheck?
     @State private var checkingTasks = false
     @State private var signOutFailed = false
-    @State private var keySet = false
-    @State private var editingKey = false
-    @State private var keyDraft = ""
 
     enum SignOutCheck: Identifiable { case idle, running, unknown; var id: Self { self } }
 
@@ -216,18 +336,6 @@ struct AccountPage: View {
                 identity
                 if account.signedIn { balances }
             }
-            Section {
-                Button(action: editKey) {
-                    HStack {
-                        Text("API Key").foregroundStyle(Palette.ink)
-                        Spacer()
-                        Text(keySet ? "已设置" : "未设置").foregroundStyle(Palette.secondary)
-                    }
-                }
-            } footer: {
-                Text("登录账号或填写 API Key，二选一即可使用 DeepSeek 模型。")
-            }
-            .groupedRow()
             if account.signedIn {
                 Section {
                     Button("退出登录", role: .destructive) { Task { await checkSignOut() } }
@@ -242,27 +350,9 @@ struct AccountPage: View {
         .navigationTitle("账号与余额")
         .navigationBarTitleDisplayMode(.inline)
         .task { await account.refresh() }
-        .task(id: app.revision("credentials/reference-updated")) { await loadKey() }
         .refreshable { await account.refresh() }
         .sheet(isPresented: $signingIn) {
-            SignInSheet(autoStart: autoStart, addAPIKey: { Task { try? await Task.sleep(for: .milliseconds(400)); editKey() } })
-                .environment(app)
-        }
-        // Here, not on 设置: presenting from a covered view waits until it is back on screen.
-        .alert("DeepSeek API Key", isPresented: $editingKey) {
-            SecureField("sk-…", text: $keyDraft)
-            Button("取消", role: .cancel) {}
-            if keySet { Button("清除", role: .destructive) { Task { _ = try? await app.client.call("credentials/unset", ["ref": "DEEPSEEK_API_KEY"]); await loadKey() } } }
-            Button("保存") {
-                Task {
-                    await app.perform { try await app.client.call("credentials/set", ["ref": "DEEPSEEK_API_KEY", "value": .string(keyDraft.trimmingCharacters(in: .whitespacesAndNewlines))]) }
-                    await loadKey()
-                }
-            }
-            // Saving nothing would wipe the key; 清除 is the way to remove it.
-            .disabled(keyDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-        } message: {
-            Text("只保存在本机引擎里，任何读取接口都不会返回它。")
+            SignInSheet(autoStart: autoStart).environment(app)
         }
         .alert("退出登录", isPresented: Binding(get: { signOutCheck != nil }, set: { if !$0 { signOutCheck = nil } }), presenting: signOutCheck) { _ in
             Button("取消", role: .cancel) {}
@@ -274,17 +364,6 @@ struct AccountPage: View {
             case .unknown: Text("暂时无法确认任务状态。退出登录可能会中断使用此账号的任务，是否继续？")
             }
         }
-    }
-
-    private func loadKey() async {
-        if let value = try? await app.client.call("credentials/describe", ["refs": ["DEEPSEEK_API_KEY"]]) {
-            keySet = value.array.first?["configured"].bool ?? value["DEEPSEEK_API_KEY"]["configured"].bool ?? false
-        }
-    }
-
-    private func editKey() {
-        keyDraft = ""
-        editingKey = true
     }
 
     private var signedOut: some View {
@@ -473,7 +552,8 @@ struct AccountNotices: View {
                     .transition(.move(edge: .top).combined(with: .opacity))
                     .task(id: toast) {
                         Haptics.warning()
-                        try? await Task.sleep(for: .seconds(3))
+                        // Cancelled by a newer toast: leave that one up.
+                        do { try await Task.sleep(for: .seconds(3)) } catch { return }
                         withAnimation { app.account.toast = nil }
                     }
             }

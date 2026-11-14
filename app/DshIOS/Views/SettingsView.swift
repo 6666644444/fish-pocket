@@ -50,10 +50,27 @@ struct SettingsView: View {
                     }
                 }
 
+                // The ways to reach a model, each on its own: Fish Pocket credits (when this build
+                // has the service), the DeepSeek account, an API key.
                 Section {
-                    NavigationLink { AccountPage() } label: {
-                        row("账号", "person.crop.circle", app.account.signedIn ? (app.account.displayName ?? String(localized: "已登录")) : String(localized: "未登录"))
+                    if app.fishPocket.available {
+                        NavigationLink { FishPocketPage() } label: {
+                            row("Fish Pocket 账号", "sparkles", app.fishPocket.signedIn
+                                ? (app.fishPocket.balance.map { String(localized: "\($0) 积分") } ?? String(localized: "已登录"))
+                                : String(localized: "未登录"))
+                        }
                     }
+                    NavigationLink { AccountPage() } label: {
+                        row("DeepSeek 账号", "person.crop.circle", app.account.signedIn ? (app.account.displayName ?? String(localized: "已登录")) : String(localized: "未登录"))
+                    }
+                    DeepSeekKeyRow()
+                } header: {
+                    Text("连接方式")
+                } footer: {
+                    Text("几种方式相互独立，配置任意一种就能开始对话。")
+                }
+
+                Section {
                     NavigationLink { ModelProvidersPage() } label: { row("模型", "cpu", defaultModel ?? "") }
                     NavigationLink { VoiceSettingsPage() } label: {
                         row("语音", "mic", VoicePreferences.shared.source == .volcengine && !VolcSpeech.shared.configured ? String(localized: "未设置") : VoicePreferences.shared.source.title)
