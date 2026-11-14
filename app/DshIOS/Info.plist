@@ -52,6 +52,10 @@
 	<string>$(DSH_URL_SCHEME)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>ictrl</string>
+	</array>
 	<key>NSAlarmKitUsageDescription</key>
 	<string>让智能体按你的要求设真正的闹钟。闹钟会穿透静音和专注模式，响到你关掉为止。</string>
 	<key>NSAppTransportSecurity</key>

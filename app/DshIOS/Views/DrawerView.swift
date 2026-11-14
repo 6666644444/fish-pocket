@@ -58,6 +58,8 @@ struct DrawerView: View {
     @State private var remoteHits: [String: String] = [:]
     @State private var remoteMore = false
     @State private var searching = false
+    @State private var phoneControl = PhoneControlService()
+    @Environment(\.scenePhase) private var scenePhase
     @State private var removingWorkspace: Workspace?
     @State private var showNewWorkspace = false
 
@@ -73,8 +75,8 @@ struct DrawerView: View {
                     .padding(.top, 4)
                     .plainRow()
                 pluginsRow
+                phoneControlRow
                 connectorsRow
-                capabilitiesRow
                 webRow
                 remoteControlRow
                 sessionsHeader
@@ -90,6 +92,11 @@ struct DrawerView: View {
             // Both bars float: the list scrolls under them, up to the screen's edges.
             .floatingBars(top: topBar, bottom: bottomBar)
             .background(Palette.background)
+            // 操控手机's row says whether iCTRL runs; it changes while the user is in iCTRL.
+            .task { await phoneControl.refresh() }
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .active { Task { await phoneControl.refresh() } }
+            }
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: Route.self) { _ in archivedPage }
         }
@@ -290,43 +297,48 @@ struct DrawerView: View {
         .plainRow()
     }
 
-    /// The services an agent can reach over MCP (GitHub, Notion…). They come with the Bot
-    /// plugin but every conversation gets their tools, so the way in is here, not only in the
-    /// Bot team's settings; the row shows once that plugin answers.
-    @ViewBuilder
+    /// What the agent can reach: services over MCP (GitHub, Notion…) and, as a category of their
+    /// own, this phone's device capabilities. The MCP services come with the Bot plugin but every
+    /// conversation gets their tools, so the way in is here, not only in the Bot team's settings.
+    /// The row is always there: the device capabilities need no plugin, and if this row is hard to
+    /// find they are simply never switched on (docs/native-services.md §5.5).
     private var connectorsRow: some View {
         let team = app.botTeam
-        if team.status == .ready {
-            let connected = team.connectors.filter { $0["state"].string == "ready" }.count
-            Button { Haptics.tap(); app.connectorsRequest = UUID() } label: {
-                HStack(spacing: 12) {
-                    Image(systemName: "point.3.connected.trianglepath.dotted").font(.callout).foregroundStyle(Palette.ink).frame(width: 22)
-                    Text("连接器").font(.subheadline).foregroundStyle(Palette.ink)
-                    Spacer()
-                    Text(connected > 0 ? String(localized: "\(connected) 个已连接") : String(localized: "连接服务")).font(.footnote).foregroundStyle(Palette.secondary)
-                }
-                .padding(.horizontal, 12)
-                .frame(minHeight: 46)
-                .contentShape(Rectangle())
+        let connected = team.status == .ready ? team.connectors.filter { $0["state"].string == "ready" }.count : 0
+        return Button { Haptics.tap(); app.connectorsRequest = UUID() } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "point.3.connected.trianglepath.dotted").font(.callout).foregroundStyle(Palette.ink).frame(width: 22)
+                Text("连接器").font(.subheadline).foregroundStyle(Palette.ink)
+                Spacer()
+                Text(connected > 0 ? String(localized: "\(connected) 个已连接") : String(localized: "服务和本机能力")).font(.footnote).foregroundStyle(Palette.secondary)
             }
-            .buttonStyle(.plain)
-            .padding(.bottom, 2)
-            .plainRow()
+            .padding(.horizontal, 12)
+            .frame(minHeight: 46)
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .padding(.bottom, 2)
+        .plainRow()
     }
 
-    /// What the agent may reach on this phone, and the switch for each one.
-    ///
-    /// A row of its own rather than a line in settings: nothing asks for these
-    /// permissions on its own any more (docs/native-services.md §5.5), so if this
-    /// is hard to find, the capabilities are simply never turned on.
-    private var capabilitiesRow: some View {
-        Button { Haptics.tap(); app.nativeCapabilitiesRequest = UUID() } label: {
+    /// 操控手机: the agent taps and reads other apps through iCTRL, which the user installs
+    /// themselves. One of the app's main features, so a row of its own; it says whether the
+    /// service is up.
+    private var phoneControlRow: some View {
+        Button { Haptics.tap(); app.phoneControlRequest = UUID() } label: {
             HStack(spacing: 12) {
-                Image(systemName: "iphone").font(.callout).foregroundStyle(Palette.ink).frame(width: 22)
-                Text("本机能力").font(.subheadline).foregroundStyle(Palette.ink)
+                Image(systemName: "hand.tap").font(.callout).foregroundStyle(Palette.ink).frame(width: 22)
+                Text("操控手机").font(.subheadline).foregroundStyle(Palette.ink)
                 Spacer()
-                Text("授权").font(.footnote).foregroundStyle(Palette.secondary)
+                if phoneControl.state == .running {
+                    HStack(spacing: 5) {
+                        Circle().fill(.green).frame(width: 7, height: 7)
+                        Text("运行中")
+                    }
+                    .font(.footnote).foregroundStyle(Palette.secondary)
+                } else {
+                    Text("让智能体点按其他 App").font(.footnote).foregroundStyle(Palette.secondary)
+                }
             }
             .padding(.horizontal, 12)
             .frame(minHeight: 46)

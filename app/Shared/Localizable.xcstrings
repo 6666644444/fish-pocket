@@ -5085,6 +5085,74 @@
         }
       }
     },
+    "iCTRL 服务" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCTRL service"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Servicio iCTRL"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCTRL サービス"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCTRL 서비스"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCTRL 服務"
+          }
+        }
+      }
+    },
+    "iCTRL 自带远程访问和近场发现，打开后同一网络里的设备也能请求控制这台手机。用本 App 时不需要它们，建议一直关着。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCTRL has its own remote access and nearby discovery. With them on, devices on the same network can ask to control this phone. This app does not need them, so keep them off."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCTRL tiene acceso remoto y detección cercana propios. Si los activas, los dispositivos de la misma red pueden pedir controlar este teléfono. Esta app no los necesita, así que es mejor dejarlos desactivados."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCTRL には独自のリモートアクセスと近距離検出があり、オンにすると同じネットワーク上のデバイスがこの iPhone の操作を要求できるようになります。このアプリでは使わないので、オフのままにしておいてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCTRL에는 자체 원격 접근과 근거리 검색이 있어요. 켜면 같은 네트워크의 기기가 이 iPhone의 제어를 요청할 수 있어요. 이 앱에서는 필요 없으니 계속 꺼 두세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCTRL 內建遠端存取和近距離探索，開啟後同一網路上的裝置也能要求控制這支手機。使用本 App 時不需要它們，建議一直保持關閉。"
+          }
+        }
+      }
+    },
     "一支常驻的 Bot 团队：可以私聊，可以拉群一起商量，也能到点自己开工。入口在侧边栏。" : {
       "localizations" : {
         "en" : {
@@ -5289,6 +5357,108 @@
         }
       }
     },
+    "使用须知" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Before you use it"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antes de usarlo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ご利用の前に"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용 전 안내"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用須知"
+          }
+        }
+      }
+    },
+    "保持「仅本机」" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep it on this phone only"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantenlo solo en este teléfono"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「この端末のみ」のままに"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‘이 기기만’으로 유지"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保持「僅限本機」"
+          }
+        }
+      }
+    },
+    "停止服务" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop Service"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detener servicio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サービスを停止"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "서비스 중지"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止服務"
+          }
+        }
+      }
+    },
     "先在 iPhone 的 Watch App 里配对手表，再按下面的步骤安装。" : {
       "localizations" : {
         "en" : {
@@ -5323,6 +5493,40 @@
         }
       }
     },
+    "先用本机能力" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Device capabilities come first"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primero, las funciones del dispositivo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デバイス機能が優先"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기기 기능이 먼저"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "優先使用本機能力"
+          }
+        }
+      }
+    },
     "先确认 TestFlight 里的 Fish Pocket 已经装好，详情页里「Apple Watch」一项写着「是」，手表系统是 watchOS 10 或更高版本。仍然没有的话，打开 iPhone 上的 Watch App，在「可用 App」里也能装。" : {
       "localizations" : {
         "en" : {
@@ -5353,6 +5557,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "先確認 TestFlight 裡的 Fish Pocket 已經裝好，詳情頁裡「Apple Watch」一項寫著「是」，手錶系統是 watchOS 10 或更新版本。仍然沒有的話，打開 iPhone 上的 Watch App，在「可用的 App」裡也能安裝。"
+          }
+        }
+      }
+    },
+    "启动后智能体才能操作其他 App。如果点了没反应、或 iCTRL 打不开，多半是签名过期了：免费 Apple ID 签的 App 每 7 天要在 SideStore 里刷新一次。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The agent can operate other apps only while it runs. If nothing happens or iCTRL will not open, its signature has most likely expired: apps signed with a free Apple ID must be refreshed in SideStore every 7 days."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El agente solo puede usar otras apps mientras está en ejecución. Si no pasa nada o iCTRL no se abre, lo más probable es que haya caducado su firma: las apps firmadas con un Apple ID gratuito se tienen que actualizar en SideStore cada 7 días."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "起動している間だけ、エージェントはほかのアプリを操作できます。タップしても反応がない、または iCTRL が開かない場合は、署名の期限切れがほとんどです。無料の Apple ID で署名したアプリは 7 日ごとに SideStore で更新が必要です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "실행 중일 때만 에이전트가 다른 앱을 조작할 수 있어요. 눌러도 반응이 없거나 iCTRL이 열리지 않으면 대개 서명이 만료된 거예요. 무료 Apple ID로 서명한 앱은 7일마다 SideStore에서 새로 고쳐야 해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "啟動後 AI 代理才能操作其他 App。如果點了沒反應、或 iCTRL 打不開，多半是簽署過期了：用免費 Apple ID 簽署的 App 每 7 天要在 SideStore 裡重新整理一次。"
+          }
+        }
+      }
+    },
+    "启动服务" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start Service"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciar servicio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サービスを開始"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "서비스 시작"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "啟動服務"
           }
         }
       }
@@ -5693,6 +5965,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "微信交流群"
+          }
+        }
+      }
+    },
+    "怎么装" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How to set it up"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cómo instalarlo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定方法"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설치 방법"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "怎麼安裝"
+          }
+        }
+      }
+    },
+    "截图会发给模型服务商" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Screenshots go to the model provider"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las capturas se envían al proveedor del modelo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スクリーンショットはモデルの提供元に送られます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스크린샷은 모델 제공업체로 전송돼요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "截圖會傳給模型服務商"
           }
         }
       }
@@ -6241,6 +6581,142 @@
         }
       }
     },
+    "操控手机" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phone Control"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Control del teléfono"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone を操作"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone 조작"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操控手機"
+          }
+        }
+      }
+    },
+    "日历、提醒、通讯录、照片这类事，智能体会直接用本机能力去做，又快又准。只有必须点开别的 App 才能完成时，它才会用 iCTRL。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For calendars, reminders, contacts and photos, the agent uses device capabilities directly, which is faster and more accurate. It uses iCTRL only when a task can be done only by opening another app."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para calendarios, recordatorios, contactos y fotos, el agente usa directamente las funciones del dispositivo, que son más rápidas y precisas. Solo usa iCTRL cuando la tarea requiere abrir otra app."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カレンダー、リマインダー、連絡先、写真などは、エージェントがデバイス機能で直接処理するので、速くて正確です。ほかのアプリを開かないとできないときだけ iCTRL を使います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "캘린더, 미리 알림, 연락처, 사진 같은 일은 에이전트가 기기 기능으로 바로 처리해서 빠르고 정확해요. 다른 앱을 열어야만 할 수 있을 때만 iCTRL을 사용해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行事曆、提醒事項、聯絡人、照片這類事，AI 代理會直接用本機能力處理，又快又準。只有必須打開別的 App 才能完成時，它才會用 iCTRL。"
+          }
+        }
+      }
+    },
+    "智能体现在可以替你点按、输入、读取其他 App 的屏幕。它操作时屏幕会被占用，顶部会显示 iOS 的「Automation Running」提示；同时按住两个音量键也能停止。点「停止服务」后 iCTRL 会发一条通知，长按它并点「停止」才会真的停下。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The agent can now tap, type and read the screen in other apps for you. While it works, it has the screen, and iOS shows “Automation Running” at the top; holding both volume buttons also stops it. After you tap Stop Service, iCTRL sends a notification: touch and hold it, then tap Stop, to actually stop it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El agente ya puede tocar, escribir y leer la pantalla de otras apps por ti. Mientras trabaja, ocupa la pantalla e iOS muestra «Automation Running» arriba; también puedes detenerlo manteniendo pulsados los dos botones de volumen. Después de tocar Detener servicio, iCTRL envía una notificación: mantenla pulsada y toca Detener para que se detenga de verdad."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントがほかのアプリをタップ、入力し、画面を読み取れるようになりました。操作中は画面が使えず、上部に iOS の「Automation Running」が表示されます。両方の音量ボタンを長押ししても停止できます。「サービスを停止」をタップすると iCTRL から通知が届くので、それを長押しして「停止」をタップすると実際に停止します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이제 에이전트가 다른 앱을 대신 탭하고, 입력하고, 화면을 읽을 수 있어요. 조작하는 동안에는 화면을 쓸 수 없고 상단에 iOS의 ‘Automation Running’이 표시돼요. 음량 버튼 두 개를 함께 길게 눌러도 멈출 수 있어요. ‘서비스 중지’를 누르면 iCTRL이 알림을 보내요. 그 알림을 길게 누른 뒤 ‘중지’를 눌러야 실제로 멈춰요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 代理現在可以幫你點按、輸入、讀取其他 App 的螢幕。它操作時會佔用螢幕，頂端會顯示 iOS 的「Automation Running」提示；同時按住兩個音量鍵也能停止。點「停止服務」後 iCTRL 會傳一則通知，長按它並點「停止」才會真的停下來。"
+          }
+        }
+      }
+    },
+    "智能体看到的其他 App 画面，会随对话发给你选的模型服务商。付款、删除、替你发消息前，它会先问你；密码和验证码由你自己输入。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What the agent sees of other apps is sent with the conversation to the model provider you chose. It asks you before paying, deleting or sending messages for you; you enter passwords and verification codes yourself."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que el agente ve de otras apps se envía con la conversación al proveedor del modelo que elegiste. Te pregunta antes de pagar, eliminar o enviar mensajes por ti; las contraseñas y los códigos de verificación los introduces tú."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントが見たほかのアプリの画面は、会話と一緒に選択したモデルの提供元に送られます。支払い、削除、代わりにメッセージを送る前には必ず確認します。パスワードや確認コードはご自身で入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트가 본 다른 앱 화면은 대화와 함께 선택한 모델 제공업체로 전송돼요. 결제, 삭제, 대신 메시지 보내기 전에는 먼저 물어봐요. 비밀번호와 인증 코드는 직접 입력하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 代理看到的其他 App 畫面，會隨對話傳給你選的模型服務商。付款、刪除、幫你傳訊息前，它會先問你；密碼和驗證碼由你自己輸入。"
+          }
+        }
+      }
+    },
     "有事找你时震动" : {
       "localizations" : {
         "en" : {
@@ -6271,6 +6747,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "有事找你時震動"
+          }
+        }
+      }
+    },
+    "服务和本机能力" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Services and device"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Servicios y dispositivo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サービスとデバイス機能"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "서비스와 기기 기능"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服務和本機能力"
           }
         }
       }
@@ -6850,6 +7360,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "放開取消"
+          }
+        }
+      }
+    },
+    "检查中…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprobando…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確認中…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확인 중…"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檢查中…"
           }
         }
       }
@@ -7648,6 +8192,40 @@
         }
       }
     },
+    "装好开源的 iCTRL 后，智能体可以替你点按、输入、读取其他 App 的屏幕。侧边栏新增「操控手机」，在那里查看状态、一键启动，还有设置教程。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "With the open-source iCTRL installed, the agent can tap, type and read the screen in other apps for you. The new Phone Control item in the sidebar shows its status, starts it with one tap and links to the setup guide."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con iCTRL, de código abierto, instalado, el agente puede tocar, escribir y leer la pantalla de otras apps por ti. El nuevo apartado Control del teléfono de la barra lateral muestra su estado, lo inicia con un toque y enlaza a la guía de configuración."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オープンソースの iCTRL をインストールすると、エージェントがほかのアプリをタップ、入力し、画面を読み取れます。サイドバーに新しく加わった「iPhone を操作」で、状態の確認、ワンタップでの起動、設定ガイドの表示ができます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오픈 소스 앱 iCTRL을 설치하면 에이전트가 다른 앱을 대신 탭하고, 입력하고, 화면을 읽을 수 있어요. 사이드바에 새로 생긴 ‘iPhone 조작’에서 상태 확인, 한 번에 시작하기, 설정 가이드를 볼 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "安裝好開源的 iCTRL 後，AI 代理可以幫你點按、輸入、讀取其他 App 的螢幕。側邊欄新增「操控手機」，在那裡查看狀態、一鍵啟動，還有設定教學。"
+          }
+        }
+      }
+    },
     "要和装 Fish Pocket 的是同一台 iPhone。" : {
       "localizations" : {
         "en" : {
@@ -8056,6 +8634,108 @@
         }
       }
     },
+    "让智能体操作其他 App" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let the agent operate other apps"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deja que el agente use otras apps"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントがほかのアプリを操作"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트가 다른 앱을 조작"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "讓 AI 代理操作其他 App"
+          }
+        }
+      }
+    },
+    "让智能体点按其他 App" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let the agent tap other apps"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El agente toca otras apps"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントがほかのアプリを操作"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트가 다른 앱을 탭"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "讓 AI 代理點按其他 App"
+          }
+        }
+      }
+    },
+    "设置教程" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Setup Guide"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guía de configuración"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定ガイド"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정 가이드"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定教學"
+          }
+        }
+      }
+    },
     "读取页面" : {
       "localizations" : {
         "en" : {
@@ -8192,6 +8872,40 @@
         }
       }
     },
+    "这个功能要先在手机上装好 iCTRL（第三方开源 App，需要开发者模式），本 App 不会替你安装。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This feature needs iCTRL installed on the phone first (a third-party open-source app that requires Developer Mode). This app does not install it for you."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta función requiere tener iCTRL instalado en el teléfono (una app de código abierto de terceros que necesita el modo de desarrollador). Esta app no la instala por ti."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この機能を使うには、先に iCTRL（デベロッパモードが必要なサードパーティのオープンソースアプリ）を iPhone にインストールしておく必要があります。このアプリが代わりにインストールすることはありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 기능을 쓰려면 먼저 iPhone에 iCTRL(개발자 모드가 필요한 서드파티 오픈 소스 앱)을 설치해야 해요. 이 앱이 대신 설치해 주지는 않아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這個功能要先在手機上安裝好 iCTRL（第三方開源 App，需要開發者模式），本 App 不會幫你安裝。"
+          }
+        }
+      }
+    },
     "进入这个 App 的详情页。" : {
       "localizations" : {
         "en" : {
@@ -8222,6 +8936,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "進入這個 App 的詳細資訊頁面。"
+          }
+        }
+      }
+    },
+    "连接外部服务要等内置的 Bot 插件启动之后。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "External services can be connected once the built-in Bot plugin has started."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los servicios externos se pueden conectar cuando se haya iniciado el plugin Bot integrado."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外部サービスは、内蔵の Bot プラグインが起動してから接続できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "외부 서비스는 내장 Bot 플러그인이 시작된 뒤에 연결할 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連接外部服務要等內建的 Bot 外掛啟動之後。"
           }
         }
       }
@@ -85789,6 +86537,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "需要 DeepSeek API Key：請在「設定 → 模型」中填寫，只登入 DeepSeek 帳號無法使用語音"
+          }
+        }
+      }
+    },
+    "需要 iOS 17.4 或更高版本，第一次设置要用一次电脑。教程里有常见问题。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Requires iOS 17.4 or later, and a computer once for the first setup. The guide also covers common problems."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Requiere iOS 17.4 o posterior y un ordenador una sola vez para la configuración inicial. La guía también incluye problemas frecuentes."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS 17.4 以降が必要で、最初の設定時に一度だけコンピュータを使います。よくある問題もガイドにまとめています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS 17.4 이상이 필요하고, 처음 설정할 때 한 번은 컴퓨터가 있어야 해요. 자주 묻는 문제도 가이드에 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要 iOS 17.4 或以上版本，第一次設定要用一次電腦。教學裡有常見問題。"
           }
         }
       }
