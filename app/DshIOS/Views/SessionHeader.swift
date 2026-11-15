@@ -15,6 +15,7 @@ struct SessionTitleMenu: View {
     let catalog: AgentPresetCatalog
     /// More icons share the bar: on a phone the title narrows so it stays between them.
     var crowded = false
+    let shareImage: () -> Void
     let exportLog: () -> Void
     @Environment(AppModel.self) private var app
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -39,6 +40,7 @@ struct SessionTitleMenu: View {
                 if let preset = app.presetId(of: sessionId) { Text(catalog.name(of: preset)) }
             }
             Section {
+                Button(action: shareImage) { Label("分享为图片", systemImage: "photo.on.rectangle") }
                 Button(action: exportLog) { Label("导出日志", systemImage: "square.and.arrow.up") }
                 Button { app.copySessionId(sessionId) } label: { Label("复制会话 ID", systemImage: "doc.on.doc") }
             }
