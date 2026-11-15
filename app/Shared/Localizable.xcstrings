@@ -5153,6 +5153,47 @@
         }
       }
     },
+    "tab.sessions" : {
+      "comment" : "Tab and page title: the list of all sessions",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sessions"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesiones"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セッション"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "세션"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会话"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "對話"
+          }
+        }
+      }
+    },
     "一支常驻的 Bot 团队：可以私聊，可以拉群一起商量，也能到点自己开工。入口在侧边栏。" : {
       "localizations" : {
         "en" : {
@@ -25971,6 +26012,40 @@
         }
       }
     },
+    "发现、安装和管理插件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discover, install and manage plugins"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descubre, instala y gestiona complementos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プラグインを見つけて、インストール・管理"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "플러그인 둘러보기, 설치, 관리"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "探索、安裝和管理外掛"
+          }
+        }
+      }
+    },
     "发现插件" : {
       "localizations" : {
         "en" : {
@@ -35457,6 +35532,40 @@
         }
       }
     },
+    "工具" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tools"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herramientas"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ツール"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도구"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工具"
+          }
+        }
+      }
+    },
     "工具 %@ 请求越权执行" : {
       "localizations" : {
         "en" : {
@@ -43291,6 +43400,40 @@
         }
       }
     },
+    "扩展智能体" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extend the agent"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amplía el agente"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントを拡張"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트 확장"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "擴充 AI 代理"
+          }
+        }
+      }
+    },
     "扫码了解和下载" : {
       "localizations" : {
         "en" : {
@@ -44708,36 +44851,36 @@
         }
       }
     },
-    "换了文件夹后，下一轮会在新文件夹里开始新的一段对话。要用别的文件夹，先在侧边栏新建或打开一个工作区。" : {
+    "换了文件夹后，下一轮会在新文件夹里开始新的一段对话。要用别的文件夹，先在会话列表的菜单里添加一个工作区。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "After you switch folders, the next turn starts a new conversation in the new folder. To use another folder, create or open a workspace in the sidebar first."
+            "value" : "After you switch folders, the next turn starts a new conversation in the new folder. To use another folder, first add a workspace from the menu of the session list."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al cambiar de carpeta, el siguiente turno empieza una conversación nueva en esa carpeta. Para usar otra carpeta, primero crea o abre un espacio de trabajo en la barra lateral."
+            "value" : "Al cambiar de carpeta, el siguiente turno empieza una conversación nueva en esa carpeta. Para usar otra carpeta, primero agrega un espacio de trabajo desde el menú de la lista de sesiones."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "フォルダを切り替えると、次のターンから新しいフォルダで新しい会話が始まります。ほかのフォルダを使うには、まずサイドバーでワークスペースを作成するか開いてください。"
+            "value" : "フォルダを切り替えると、次のターンから新しいフォルダで新しい会話が始まります。ほかのフォルダを使うには、まずセッション一覧のメニューからワークスペースを追加してください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "폴더를 바꾸면 다음 턴부터 새 폴더에서 새 대화가 시작돼요. 다른 폴더를 쓰려면 먼저 사이드바에서 워크스페이스를 만들거나 여세요."
+            "value" : "폴더를 바꾸면 다음 턴부터 새 폴더에서 새 대화가 시작돼요. 다른 폴더를 쓰려면 먼저 세션 목록의 메뉴에서 워크스페이스를 추가하세요."
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "換了資料夾後，下一輪會在新資料夾裡開始新的一段對話。要用別的資料夾，先在側邊欄新增或開啟一個工作區。"
+            "value" : "換了資料夾後，下一輪會在新資料夾裡開始新的一段對話。要用別的資料夾，先在對話列表的選單裡新增一個工作區。"
           }
         }
       }
@@ -44980,6 +45123,40 @@
         }
       }
     },
+    "接入外部服务和本机能力" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect outside services and device capabilities"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conecta servicios externos y funciones del dispositivo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外部サービスとデバイス機能をつなぐ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "외부 서비스와 기기 기능 연결"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串接外部服務和本機能力"
+          }
+        }
+      }
+    },
     "接着上一段对话继续" : {
       "localizations" : {
         "en" : {
@@ -45112,6 +45289,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "控制中心、Siri 和捷徑"
+          }
+        }
+      }
+    },
+    "控制设备" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Control devices"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Controla dispositivos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デバイスを操作"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기기 제어"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "控制裝置"
           }
         }
       }
@@ -46241,6 +46452,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "外掛自帶的介面不會在 App 裡顯示，可在網頁版中查看。"
+          }
+        }
+      }
+    },
+    "插件自带的界面在这里打开" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plugins' own interfaces open here"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las interfaces propias de los complementos se abren aquí"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プラグイン独自の画面はここで開きます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "플러그인 자체 화면은 여기서 열려요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外掛自帶的介面在這裡開啟"
           }
         }
       }

@@ -29,7 +29,7 @@ struct BotFolderPage: View {
             } footer: {
                 Text(folders["picker"].string == "browse"
                      ? "换了文件夹后，下一轮会在新文件夹里开始新的一段对话。"
-                     : "换了文件夹后，下一轮会在新文件夹里开始新的一段对话。要用别的文件夹，先在侧边栏新建或打开一个工作区。")
+                     : "换了文件夹后，下一轮会在新文件夹里开始新的一段对话。要用别的文件夹，先在会话列表的菜单里添加一个工作区。")
             }
             .groupedRow()
             if case .bot(let id) = target, let bot = team.bot(id) {
