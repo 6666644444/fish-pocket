@@ -162,6 +162,8 @@ final class AppModel {
     var connectorsRequest: UUID?
     /// Open 操控手机, the iCTRL switch (the root view consumes it).
     var phoneControlRequest: UUID?
+    /// The drawer's 我的应用 row: the shell opens the page.
+    var miniAppsRequest: UUID?
     /// A credential step to open (set through `requestCredentials`; the root view consumes it).
     var credentialRequest: (step: CredentialStep, token: UUID)?
     /// The session in the main view, kept by the root view (unread completions skip it).

@@ -40,6 +40,9 @@ enum WhatsNew {
             Feature(symbol: "hand.tap",
                     title: "让智能体操作其他 App",
                     detail: "装好开源的 iCTRL 后，智能体可以替你点按、输入、读取其他 App 的屏幕。侧边栏新增「操控手机」，在那里查看状态、一键启动，还有设置教程。"),
+            Feature(symbol: "square.grid.2x2",
+                    title: "做自己的小应用",
+                    detail: "在对话里让 Agent 做个小工具或小游戏，做好就放进侧边栏的「我的应用」，点开就能用，也能放到主屏幕上。"),
         ]),
         Release(version: "1.2.1", build: 103, features: [
             Feature(symbol: "character.bubble",

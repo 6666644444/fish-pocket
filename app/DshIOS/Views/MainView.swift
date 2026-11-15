@@ -1,16 +1,16 @@
 import StoreKit
 import SwiftUI
 
-/// The root. On iPhone (from iOS 18) a tab bar: 会话, Bot, 工具 and 设置; a conversation
+/// The root. On iPhone (from iOS 18) a tab bar: 会话, Bot, 应用, 工具 and 设置; a conversation
 /// is pushed on the 会话 tab's list and has the screen to itself. In regular width the session
 /// list is the split view's sidebar beside a conversation, always: with nothing selected — at
 /// launch, after archiving — a blank session in the current workspace opens. Before iOS 18 the
 /// phone has that layout too, the list a drawer that slides in from the left.
 struct MainView: View {
     /// The phone's tabs.
-    enum HomeTab: Hashable { case sessions, bot, tools, settings }
+    enum HomeTab: Hashable { case sessions, bot, apps, tools, settings }
 
-    enum Sheet: String, Identifiable { case settings, plugins, store, schedules, signIn, cordis, share, watch, capabilities, connectors, phoneControl, remote, fishPocket; var id: String { rawValue } }
+    enum Sheet: String, Identifiable { case settings, plugins, store, schedules, signIn, cordis, share, watch, capabilities, connectors, phoneControl, remote, fishPocket, miniApps; var id: String { rawValue } }
 
     @Environment(AppModel.self) private var app
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -282,6 +282,12 @@ struct MainView: View {
         }
         // Which store this copy came from: only an App Store install is asked for a rating.
         .task { await AppDistribution.refresh() }
+        // The sidebar's 我的应用 row; on the tab bar the page is a tab.
+        .onChange(of: app.miniAppsRequest) { _, token in
+            guard token != nil, scenePhase != .background else { return }
+            app.miniAppsRequest = nil
+            if usesTabs { tab = .apps } else { sheet = .miniApps }
+        }
         .task(id: canAnnounce) {
             guard canAnnounce else { return }
             if let names = NodeEngine.shared.takeSafeModeReport() {
@@ -409,7 +415,7 @@ struct MainView: View {
     }
 
     #if DEBUG
-    /// Screenshots and UI checks: `simctl launch … -dshOpen drawer|workbench|approval|question|timeline|settings|plugins|store|schedules|signin|support|share|watch|connectors|whatsnew|capabilities|phonecontrol|remote|start|fishpocket|topup`.
+    /// Screenshots and UI checks: `simctl launch … -dshOpen drawer|workbench|approval|question|timeline|settings|plugins|store|schedules|signin|support|share|watch|connectors|whatsnew|capabilities|phonecontrol|remote|start|fishpocket|topup|miniapps`.
     private func openForChecks() {
         switch UserDefaults.standard.string(forKey: "dshOpen") {
         case "drawer": drawerOpen = true
@@ -429,6 +435,7 @@ struct MainView: View {
         case "start": Task { await openCredentials(.start) }
         case "fishpocket": sheet = .fishPocket
         case "topup": app.fishPocket.quotaPrompt = true
+        case "miniapps": if usesTabs { tab = .apps } else { sheet = .miniApps }
         default: break
         }
     }
@@ -453,6 +460,7 @@ struct MainView: View {
         case .phoneControl: SheetStack { PhoneControlView() }.environment(\.systemLists, true)
         case .remote: SheetStack { RemoteControlPage() }.environment(\.systemLists, true)
         case .fishPocket: SheetStack { FishPocketPage() }
+        case .miniApps: SheetStack { MiniAppsPage() }
         }
     }
 
@@ -772,6 +780,10 @@ struct MainView: View {
                 botStack(openDrawer: nil)
             }
             .badge(botPendingCount)
+            // 我的应用: the user's own tools and games, opened as often as a home screen's.
+            Tab(MiniAppsPage.tabTitle, systemImage: "apps.iphone", value: HomeTab.apps) {
+                NavigationStack { MiniAppsPage(asTab: true) }
+            }
             Tab("工具", systemImage: "square.grid.2x2", value: HomeTab.tools) {
                 ToolsTabView(path: $toolsPath)
             }
@@ -893,6 +905,8 @@ struct MainView: View {
             newConversation(in: target, agentPreset: preset, draft: draft, focus: true)
         case .share:
             if let shared { await receive(shared) }
+        case .app(let id):
+            MiniAppPresenter.open(id)
         }
     }
 

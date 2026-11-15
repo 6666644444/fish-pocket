@@ -6,10 +6,12 @@ import Foundation
 /// - `dsh://new`: a new conversation, focused; `workspace`, `preset` and `draft` are
 ///   optional query items. A draft is placed in the composer, never sent.
 /// - `dsh://share/<id>`: what the share extension left in `ShareInbox`, into the composer it chose.
+/// - `dsh://app/<id>`: an app of 我的应用, opened full screen; it needs no engine.
 enum DshLink: Hashable {
     case session(String)
     case new(workspace: String? = nil, preset: String? = nil, draft: String? = nil)
     case share(String)
+    case app(String)
 
     /// `DshURLScheme` in Info.plist (`DSH_URL_SCHEME` in project.yml): `dsh`, or a test build's own.
     static let scheme = Bundle.main.object(forInfoDictionaryKey: "DshURLScheme") as? String ?? "dsh"
@@ -29,6 +31,9 @@ enum DshLink: Hashable {
         case "share":
             guard let id = url.pathComponents.dropFirst().first, !id.isEmpty else { return nil }
             self = .share(id)
+        case "app":
+            guard let id = url.pathComponents.dropFirst().first, !id.isEmpty else { return nil }
+            self = .app(id)
         default:
             return nil
         }
@@ -48,6 +53,9 @@ enum DshLink: Hashable {
             if !items.isEmpty { components.queryItems = items }
         case .share(let id):
             components.host = "share"
+            components.path = "/" + id
+        case .app(let id):
+            components.host = "app"
             components.path = "/" + id
         }
         return components.url!

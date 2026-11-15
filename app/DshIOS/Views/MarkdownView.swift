@@ -36,7 +36,11 @@ struct MarkdownView: View {
                 .font(level == 1 ? .title2.bold() : level == 2 ? .title3.bold() : .headline)
                 .padding(.top, 4)
         case .paragraph(let text):
-            inline(text)
+            if let linked = MiniAppCard.linkedApp(text) {
+                MiniAppCard(id: linked.id, title: linked.title)
+            } else {
+                inline(text)
+            }
         case .list(let items, let ordered):
             VStack(alignment: .leading, spacing: 4) {
                 ForEach(Array(items.enumerated()), id: \.offset) { index, item in
@@ -261,7 +265,11 @@ struct LinkOpening: ViewModifier {
         content
             .environment(\.openURL, OpenURLAction { url in
                 guard let target = LinkTarget(url, scope: scope) else { return .systemAction }
-                if case .web(let url) = target { open(url) } else { self.target = target }
+                switch target {
+                case .web(let url): open(url)
+                case .app(let id): MiniAppPresenter.open(id)
+                case .file: self.target = target
+                }
                 return .handled
             })
             // From here, not from the conversation: a link can be tapped in a sheet over it. A sheet,
@@ -274,7 +282,7 @@ struct LinkOpening: ViewModifier {
             }
             .sheet(item: $target) { target in
                 switch target {
-                case .web:
+                case .web, .app:
                     EmptyView()
                 case .file(let path, let lines, let scope):
                     FilePreviewSheet(sessionId: scope.sessionId, path: path, root: scope.root, lines: lines)
@@ -301,11 +309,14 @@ struct LinkOpening: ViewModifier {
 enum LinkTarget: Identifiable {
     case web(URL)
     case file(path: String, lines: ClosedRange<Int>?, scope: FileLinkScope)
+    /// `fishapp://<id>`: an app of 我的应用.
+    case app(String)
 
     var id: String {
         switch self {
         case .web(let url): url.absoluteString
         case .file(let path, let lines, _): "\(path)#\(lines.map { "\($0)" } ?? "")"
+        case .app(let id): "app:\(id)"
         }
     }
 
@@ -315,6 +326,9 @@ enum LinkTarget: Identifiable {
         switch url.scheme?.lowercased() {
         case "http", "https":
             self = .web(url)
+        case MiniAppServer.scheme:
+            guard let id = url.host(), !id.isEmpty else { return nil }
+            self = .app(id)
         case nil, "file":
             let path = url.path(percentEncoded: false)
             guard let scope, !path.isEmpty else { return nil }
