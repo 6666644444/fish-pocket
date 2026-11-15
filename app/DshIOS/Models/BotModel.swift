@@ -107,6 +107,8 @@ final class BotModel {
     /// The running rounds of the open group chat (`room-progress`): `{callId, replies, speaking}`.
     /// A round's call settles only once every member has spoken; these carry the replies so far.
     private(set) var rounds: [JSON] = []
+    /// The group whose rounds `rounds` follows.
+    private(set) var roundsRoom: String?
     /// Open the scheduled tasks of the Bot or group whose chat asked (its ＋ tray).
     var scheduleRequest: BotComposer?
     /// Open a side question on the Bot whose chat asked (its ＋ tray).
@@ -503,7 +505,11 @@ final class BotModel {
 
     /// Follow a group chat's rounds while it is open: every second while one runs.
     func followRounds(of roomId: String) async {
-        defer { if !rounds.isEmpty { rounds = [] } }
+        roundsRoom = roomId
+        defer {
+            if !rounds.isEmpty { rounds = [] }
+            if roundsRoom == roomId { roundsRoom = nil }
+        }
         while !Task.isCancelled {
             if let value = try? await call("room-progress", ["roomId": .string(roomId)]), value.array != rounds { rounds = value.array }
             try? await Task.sleep(for: .seconds(rounds.isEmpty ? 3 : 1))
@@ -523,6 +529,16 @@ final class BotModel {
 
     func round(_ callId: String) -> JSON? { rounds.first { $0["callId"].string == callId } }
     var speaking: [String] { rounds.flatMap { $0["speaking"].array.compactMap(\.string) } }
+
+    /// The tool a member runs in the open group's round, and what it works on. Not the words
+    /// it said: the group already shows them. Nothing when its work is elsewhere (ds-bot
+    /// reports one turn per Bot, and its own chat wins over a group).
+    func roundTool(_ botId: String) -> (name: String, target: String?)? {
+        let entry = work["bots"][botId]
+        guard let roundsRoom, entry["roomId"].string == roundsRoom, let name = entry["tool"].string else { return nil }
+        let target = entry["target"].string?.trimmingCharacters(in: .whitespacesAndNewlines)
+        return (name, target?.isEmpty == false ? target : nil)
+    }
 
     /// A tool call waits for the user where they are not looking: say so once.
     private func announceApprovals() {
