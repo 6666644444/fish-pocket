@@ -4745,6 +4745,40 @@
         }
       }
     },
+    "App 图标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Icon"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Icono de la app"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App アイコン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 아이콘"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App 圖示"
+          }
+        }
+      }
+    },
     "App 版本" : {
       "localizations" : {
         "en" : {
@@ -5500,6 +5534,74 @@
         }
       }
     },
+    "像素字标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pixel Wordmark"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logotipo pixelado"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ドット絵ロゴタイプ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "픽셀 워드마크"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "像素字標"
+          }
+        }
+      }
+    },
+    "像素鲸鱼" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pixel Whale"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ballena pixelada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ドット絵クジラ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "픽셀 고래"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "像素鯨魚"
+          }
+        }
+      }
+    },
     "先在 iPhone 的 Watch App 里配对手表，再按下面的步骤安装。" : {
       "localizations" : {
         "en" : {
@@ -5598,6 +5700,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "先確認 TestFlight 裡的 Fish Pocket 已經裝好，詳情頁裡「Apple Watch」一項寫著「是」，手錶系統是 watchOS 10 或更新版本。仍然沒有的話，打開 iPhone 上的 Watch App，在「可用的 App」裡也能安裝。"
+          }
+        }
+      }
+    },
+    "几何鲸鱼" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geometric Whale"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ballena geométrica"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幾何学クジラ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기하학 고래"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幾何鯨魚"
           }
         }
       }
@@ -5870,6 +6006,108 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在詳細資訊頁下方，和「自動更新」在同一組。打開後手錶就開始安裝，裝好後在手錶上打開一次就連上了。"
+          }
+        }
+      }
+    },
+    "大肥鱼" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大肥鱼"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大肥鱼"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大肥鱼"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大肥鱼"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大肥魚"
+          }
+        }
+      }
+    },
+    "字标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wordmark"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logotipo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ロゴタイプ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "워드마크"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "字標"
+          }
+        }
+      }
+    },
+    "小鲸鱼" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little Whale"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ballenita"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "子クジラ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아기 고래"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "小鯨魚"
           }
         }
       }
@@ -6622,6 +6860,74 @@
         }
       }
     },
+    "换个 App 图标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change the App Icon"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambia el icono de la app"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App アイコンを変更"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 아이콘 바꾸기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "換個 App 圖示"
+          }
+        }
+      }
+    },
+    "插画" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Illustrated"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ilustrados"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "イラスト"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "일러스트"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插畫"
+          }
+        }
+      }
+    },
     "操控手机" : {
       "localizations" : {
         "en" : {
@@ -6788,6 +7094,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "AI 代理看到的其他 App 畫面，會隨對話傳給你選的模型服務商。付款、刪除、幫你傳訊息前，它會先問你；密碼和驗證碼由你自己輸入。"
+          }
+        }
+      }
+    },
+    "更换后，iOS 会弹出一次提示。Apple Watch 上的图标不会变。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS shows a notice once when you change it. The icon on Apple Watch stays the same."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al cambiarlo, iOS muestra un aviso una vez. El icono del Apple Watch no cambia."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変更すると、iOS が一度だけお知らせを表示します。Apple Watch のアイコンは変わりません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "변경하면 iOS가 알림을 한 번 표시합니다. Apple Watch의 아이콘은 바뀌지 않습니다."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更換後，iOS 會跳出一次提示。Apple Watch 上的圖示不會變。"
           }
         }
       }
@@ -7473,6 +7813,40 @@
         }
       }
     },
+    "樱花粉" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sakura Pink"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rosa sakura"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "さくらピンク"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "벚꽃 핑크"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "櫻花粉"
+          }
+        }
+      }
+    },
     "正在从相册读取…" : {
       "localizations" : {
         "en" : {
@@ -7949,6 +8323,74 @@
         }
       }
     },
+    "没能更换图标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't Change the Icon"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo cambiar el icono"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アイコンを変更できませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아이콘을 변경하지 못했습니다"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無法更換圖示"
+          }
+        }
+      }
+    },
+    "海报字标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poster Wordmark"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logotipo de cartel"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ポスター風ロゴタイプ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "포스터 워드마크"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "海報字標"
+          }
+        }
+      }
+    },
     "清除网站数据" : {
       "localizations" : {
         "en" : {
@@ -8159,6 +8601,40 @@
         }
       }
     },
+    "简洁" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simple"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sencillos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "シンプル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "심플"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "簡潔"
+          }
+        }
+      }
+    },
     "系统语言是繁体中文时自动切换，用词按台湾的习惯；也可以在设置 → 语言里选繁體中文。" : {
       "localizations" : {
         "en" : {
@@ -8195,6 +8671,108 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "系統語言是繁體中文時自動切換，用詞依照台灣的習慣；也可以在設定 → 語言裡選繁體中文。"
+          }
+        }
+      }
+    },
+    "终端字标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminal Wordmark"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logotipo de terminal"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ターミナル風ロゴタイプ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "터미널 워드마크"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終端機字標"
+          }
+        }
+      }
+    },
+    "葡萄紫" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grape Purple"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Morado uva"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "グレープパープル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "포도 보라"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "葡萄紫"
+          }
+        }
+      }
+    },
+    "薄荷绿" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mint Green"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verde menta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ミントグリーン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "민트 그린"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "薄荷綠"
           }
         }
       }
@@ -8811,6 +9389,40 @@
         }
       }
     },
+    "设置 → App 图标里可以把主屏幕上的图标换成别的颜色或贴纸版的大肥鱼，也可以换成不带人物的鲸鱼图标，或者只写着 Fish Pocket 的字标。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Settings → App Icon, switch your Home Screen icon to 大肥鱼 in another color or as a sticker, to a whale without the character, or to a wordmark that simply reads Fish Pocket."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En Ajustes → Icono de la app, cambia el icono de la pantalla de inicio por 大肥鱼 en otro color o en versión pegatina, por una ballena sin el personaje o por un logotipo que solo dice Fish Pocket."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定 → App アイコンで、ホーム画面のアイコンを別の色やステッカー版の大肥鱼、キャラクターなしのクジラ、または Fish Pocket と書かれただけのロゴタイプに変えられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정 → 앱 아이콘에서 홈 화면 아이콘을 다른 색이나 스티커 버전의 大肥鱼, 캐릭터 없는 고래, 또는 Fish Pocket이라고만 적힌 워드마크로 바꿀 수 있습니다."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定 → App 圖示裡可以把主畫面上的圖示換成別的顏色或貼紙版的大肥魚，也可以換成不帶人物的鯨魚圖示，或是只寫著 Fish Pocket 的字標。"
+          }
+        }
+      }
+    },
     "设置教程" : {
       "localizations" : {
         "en" : {
@@ -8875,6 +9487,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "讀取頁面"
+          }
+        }
+      }
+    },
+    "贴纸" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sticker"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pegatina"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ステッカー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스티커"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "貼紙"
           }
         }
       }
