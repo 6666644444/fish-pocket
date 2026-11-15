@@ -150,6 +150,10 @@ final class SessionModel {
             composer.observe(event)
             events.append(event)
             if timeline.apply(event) { publishTimeline() } else { publishTimelineState() }
+            // Live only: recording what the agent does in other apps starts and stops with its turn.
+            if subagentAddress == nil {
+                PhoneRecorder.shared.observe(event, session: sessionId, request: items.lastUserText)
+            }
             // Only a live turn end prompts for quota or support; history replays never do.
             if event["type"].string == "turn/end" {
                 if let failure = TurnFailure(reason: event["data"]["reason"]) {
@@ -657,4 +661,12 @@ extension SessionModel: KeptSession {
     func park() { stop() }
     func suspend() { stop() }
     func close() { stop() }
+}
+
+private extension [TimelineItem] {
+    /// The user's latest message: what the running turn answers.
+    var lastUserText: String? {
+        for item in reversed() { if case .user(_, let text, _, _) = item { return text } }
+        return nil
+    }
 }

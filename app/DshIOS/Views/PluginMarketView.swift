@@ -19,7 +19,13 @@ final class PluginMarketModel {
     var selected: String?
     var query = Query()
     private(set) var result: JSON?
-    private(set) var entries: [JSON] = []
+    /// Every entry read so far, in index order; pages are counted in these.
+    private(set) var fetched: [JSON] = []
+    /// What the market lists: a plugin the Fish Pocket service took down (`PluginReports`) is left out.
+    var entries: [JSON] {
+        let reports = PluginReports.shared
+        return reports.takedowns.isEmpty ? fetched : fetched.filter { !reports.removed($0["name"].string ?? "") }
+    }
     private(set) var loading = false
     private(set) var loadingMore = false
     private(set) var failure: String?
@@ -48,7 +54,7 @@ final class PluginMarketModel {
               indexes == nil, result == nil else { return }
         indexes = cached
         result = listing
-        entries = listing["entries"].array
+        fetched = listing["entries"].array
         fromCache = true
     }
 
@@ -117,7 +123,7 @@ final class PluginMarketModel {
     func reload(_ app: AppModel, refresh: Bool = false, limit: Int? = nil) async {
         guard let url else {
             result = nil
-            entries = []
+            fetched = []
             fromCache = false
             return
         }
@@ -126,11 +132,12 @@ final class PluginMarketModel {
         let plain = query == Query()
         loading = true
         failure = nil
+        PluginReports.shared.loadTakedowns()
         do {
             let value = try await app.client.call("pluginMarket/search", searchArgs(url: url, offset: 0, limit: limit ?? pageSize, fetchedAt: nil, refresh: refresh))
             guard current == generation else { return }
             result = value
-            entries = value["entries"].array
+            fetched = value["entries"].array
             fromCache = false
             dropUndeclared(value["metadata"])
             if plain { remember(value, url: url) }
@@ -149,14 +156,14 @@ final class PluginMarketModel {
         defer { loadingMore = false }
         let current = generation
         do {
-            let value = try await app.client.call("pluginMarket/search", searchArgs(url: url, offset: entries.count, limit: pageSize, fetchedAt: result["fetchedAt"], refresh: false))
+            let value = try await app.client.call("pluginMarket/search", searchArgs(url: url, offset: fetched.count, limit: pageSize, fetchedAt: result["fetchedAt"], refresh: false))
             guard current == generation else { return }
             if value["fetchedAt"] != result["fetchedAt"] {
                 if retried { failure = String(localized: "此索引在加载过程中发生了变化"); return }
-                await reload(app, limit: entries.count + pageSize)
+                await reload(app, limit: fetched.count + pageSize)
                 return
             }
-            entries += value["entries"].array
+            fetched += value["entries"].array
             self.result = value
         } catch {
             failure = failureText(error)

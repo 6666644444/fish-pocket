@@ -247,6 +247,8 @@ targets:
         FISH_POCKET_API_URL: ""
         # Design tokens (docs/design/README.md §3) live in Assets.xcassets; the accent is the ink colour.
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        # The icons people can switch to in Settings (DshIOS/Views/AppIconPage.swift); drawn by docs/design/brand (make-icons.py and the make-*-icons.swift scripts).
+        ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES: AppIcon-Pink AppIcon-Mint AppIcon-Violet AppIcon-Sticker AppIcon-Geometric AppIcon-Pixel AppIcon-Whale AppIcon-WordPixel AppIcon-WordPoster AppIcon-WordMono
         ENABLE_USER_SCRIPT_SANDBOXING: NO
         HEADER_SEARCH_PATHS: ["$(SRCROOT)/../vendor/nodejs-mobile/ios/include/node", "$(SRCROOT)/../vendor/libgit2/ios-arm64/include", "$(SRCROOT)/../native/ios-native", "$(SRCROOT)/../native/root"]
         # Lets SwiftUI read the addon's capability table (DshNativeCapabilities.h).

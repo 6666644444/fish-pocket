@@ -51,6 +51,12 @@ The only exception: the user asked to be left in the other app when you finish. 
 
 If returning fails (the service stopped, the call errors), say so in your reply anyway.
 
+## Recording
+
+While you operate other apps, this app records the screen from iCTRL's own live stream, unless the user switched it off (操控手机 › 录下操作过程 / Record What It Does). It starts with your first call through `ictrl_rpc` in a turn and stops when the turn ends or the app has been back in front for a few seconds. The recording shows up under that turn as 操作录像 (Screen Recording): it plays at 2× by default, and its share button makes a framed video. It has no sound (iCTRL captures the picture only), stays on this phone, and is not sent to you or the model provider.
+
+You do nothing for it: do not start your own recording or stream. If the user asks where it is or why there is none: it needs the switch on, iCTRL running and this app's key from your pairing; a turn that never called `ictrl_rpc` has none.
+
 ## Rules
 
 - **Payments, transfers, purchases, deleting things, sending messages or posts on the user's behalf, changing account or security settings: stop and ask first.** Say exactly what you are about to do.

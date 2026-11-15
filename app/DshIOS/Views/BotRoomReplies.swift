@@ -47,7 +47,7 @@ struct RoomRelayView: View {
                 case "user":
                     // What the user added while the round ran.
                     VStack(alignment: .trailing, spacing: 4) {
-                        Text(reply["text"].string ?? "").font(.callout)
+                        QuotedText(text: reply["text"].string ?? "").font(.callout)
                             .padding(.horizontal, 16).padding(.vertical, 10)
                             .userBubble()
                         if let via = reply["via"].string {
@@ -199,7 +199,9 @@ struct RoomMessage: View {
             if let reactionKey { BotReactionMenu(key: reactionKey) }
             Button { copyToPasteboard(text) } label: { Label("复制", systemImage: "doc.on.doc") }
             Button { actions.present(.text(text)) } label: { Label("选择文本", systemImage: "selection.pin.in.out") }
-            Button { actions.quote(text) } label: { Label("引用回复", systemImage: "arrowshape.turn.up.left") }
+            if let quote = actions.quote {
+                Button { quote(text) } label: { Label("引用", systemImage: "quote.opening") }
+            }
             ShareLink(item: text) { Label("分享", systemImage: "square.and.arrow.up") }
             ShareLink(item: MarkdownFile(name: name, text: text), preview: SharePreview(name)) { Label("存为 Markdown 文件", systemImage: "arrow.down.doc") }
             Button { ReadAloud.shared.toggle(text) } label: {

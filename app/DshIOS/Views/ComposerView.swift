@@ -406,6 +406,10 @@ struct ComposerView: View {
                 AttachmentRail(composer: composer)
                     .padding(.horizontal, 13)
                     .padding(.top, composer.attachments.isEmpty ? 0 : 6)
+                // A queued message being edited is text only: the draft's quotes wait with the draft.
+                QuoteRail(quotes: composer.quotes) { composer.removeQuote(at: $0) }
+                    .padding(.horizontal, 13)
+                    .padding(.top, composer.quotes.isEmpty ? 0 : 6)
             }
             if let hint = commandHint {
                 Text(hint).font(.footnote).foregroundStyle(Palette.secondary)
@@ -437,9 +441,9 @@ struct ComposerView: View {
     /// three the expand button leads to a page with the room.
     private var input: some View {
         // Between three lines and four, whatever the text size.
-        let threeLines = UIFont.preferredFont(forTextStyle: .callout).lineHeight * 3.5
+        let threeLines = UIFont.preferredFont(forTextStyle: .body).lineHeight * 3.5
         return TextField(placeholder, text: Bindable(composer).text, axis: .vertical)
-            .font(.callout)
+            .font(.body)
             .lineLimit(1...5)
             .focused($focused)
             .tint(Palette.ink)
@@ -920,12 +924,19 @@ private struct DraftEditor: View {
     var body: some View {
         let editingQueue = composer.editingQueue != nil
         NavigationStack {
-            TextEditor(text: $composer.text)
-                .font(.body)
-                .tint(Palette.ink)
-                .focused($focused)
-                .padding(.horizontal, 12)
-                .scrollContentBackground(.hidden)
+            VStack(alignment: .leading, spacing: 8) {
+                if !editingQueue {
+                    QuoteRail(quotes: composer.quotes) { composer.removeQuote(at: $0) }
+                        .padding(.horizontal, 17)
+                        .padding(.top, composer.quotes.isEmpty ? 0 : 8)
+                }
+                TextEditor(text: $composer.text)
+                    .font(.body)
+                    .tint(Palette.ink)
+                    .focused($focused)
+                    .padding(.horizontal, 12)
+                    .scrollContentBackground(.hidden)
+            }
                 .background(Palette.background)
                 .navigationTitle(editingQueue ? "编辑排队消息" : "编辑消息")
                 .navigationBarTitleDisplayMode(.inline)

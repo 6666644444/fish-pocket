@@ -3,7 +3,7 @@ import SwiftUI
 import WatchConnectivity
 
 /// Settings: only what people come here for (账号, 模型, 访问模式, 插件, 自动化, 后台运行: 静音音频,
-/// 任务续跑, 小组件), then the rarely touched 外观 and 语言. Developer pages sit behind 高级, versions and
+/// 任务续跑, 小组件), then the rarely touched 外观, App 图标 and 语言. Developer pages sit behind 高级, versions and
 /// engine status behind 关于. 本机能力 and 远程控制 have their rows in the sidebar, not here.
 /// 分享 Fish Pocket and Apple Watch open the list; the star, rating, website, source, feedback and author links,
 /// then the WeChat group's QR code, close it.
@@ -138,6 +138,9 @@ struct SettingsView: View {
                             Label("外观", systemImage: "circle.lefthalf.filled")
                         }
                         .pickerValueTint()
+                    }
+                    if AppIconChoice.available {
+                        NavigationLink { AppIconPage() } label: { AppIconRow() }
                     }
                     // iOS shows the per-app language in its Settings only to readers with several system
                     // languages; this picker writes the same preference, applied at the next launch.

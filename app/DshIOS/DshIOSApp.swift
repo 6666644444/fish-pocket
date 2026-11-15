@@ -30,6 +30,7 @@ struct DshIOSApp: App {
             BackgroundKeeper.shared.scenePhaseChanged(to: phase)
             LiveActivityController.shared.scenePhaseChanged(to: phase)
             WatchLink.shared.scenePhaseChanged(to: phase)
+            PhoneRecorder.shared.scenePhaseChanged(to: phase)
         }
     }
 }

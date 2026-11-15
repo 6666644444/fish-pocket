@@ -33,9 +33,36 @@ enum WhatsNew {
         }
     }
 
+    /// Said only by a build that has the account: one made without the service's address
+    /// (a fork, a local build) shows it nowhere, so has nothing to announce.
+    private static var fishPocketAccount: [Release] {
+        guard FishPocketAPI.available else { return [] }
+        return [Release(version: "1.2.1", build: 108, features: [
+            Feature(symbol: "sparkles",
+                    title: "Fish Pocket 账号",
+                    detail: "不需要 DeepSeek 账号，也不需要 API Key：用 Apple 或手机号登录 Fish Pocket 账号，就能用账号里的额度对话，按用量扣积分。额度在 App Store 版本里购买，买了不会过期。入口在设置 → 连接方式。"),
+        ])]
+    }
+
     /// Newest first. Until the app reaches an entry's version (and build, when it names one),
     /// the entry is not shown. Entries of one version are shown together, newest first.
     static let releases: [Release] = [
+        Release(version: "1.2.1", build: 109, features: [
+            Feature(symbol: "record.circle",
+                    title: "回看智能体的操作",
+                    detail: "智能体操作其他 App 时会把屏幕录下来，放在对话里，默认两倍速回看。分享时会生成一段带 Fish Pocket 外框的视频。"),
+        ]),
+    ] + fishPocketAccount + [
+        Release(version: "1.2.1", build: 107, features: [
+            Feature(symbol: "app.badge",
+                    title: "换个 App 图标",
+                    detail: "设置 → App 图标里可以把主屏幕上的图标换成别的颜色或贴纸版的大肥鱼，也可以换成不带人物的鲸鱼图标，或者只写着 Fish Pocket 的字标。"),
+        ]),
+        Release(version: "1.2.1", build: 106, features: [
+            Feature(symbol: "quote.opening",
+                    title: "引用消息再提问",
+                    detail: "长按一条消息选「引用」，也可以在「选择文本」里选中一段再引用。引用显示在输入框上方，和你的问题一起发给智能体。"),
+        ]),
         Release(version: "1.2.1", build: 105, features: [
             Feature(symbol: "hand.tap",
                     title: "让智能体操作其他 App",

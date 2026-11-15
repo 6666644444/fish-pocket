@@ -415,7 +415,7 @@ private struct QueueSection: View {
                 ForEach(rows) { row in queueRow(row) }
                 ForEach(sending) { echo in
                     HStack(spacing: 8) {
-                        Text(echo.text.isEmpty ? echo.attachments.joined(separator: "、") : echo.text).lineLimit(2)
+                        Text(echo.text.isEmpty ? echo.attachments.joined(separator: "、") : MessageQuotes.preview(echo.text)).lineLimit(2)
                         Spacer(minLength: 8)
                         Text(echo.placement == .steering ? "插话发送中…" : "发送中…").font(.caption)
                     }

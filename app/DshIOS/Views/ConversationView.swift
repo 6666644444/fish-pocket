@@ -377,12 +377,7 @@ struct ConversationView: View {
             fork: { turn in
                 Task { await app.fork(session: sessionId, atSeq: model.forkBoundary(turn: turn), from: .turn) }
             },
-            quote: { text in
-                let quoted = text.split(separator: "\n", omittingEmptySubsequences: false).prefix(12).map { "> \($0)" }.joined(separator: "\n")
-                let draft = model.composer.text.trimmingCharacters(in: .whitespacesAndNewlines)
-                model.composer.text = quoted + "\n\n" + draft
-                Haptics.tap()
-            },
+            quote: quoteAction(model),
             revealQuestion: { deferred.remove("q-\($0)") },
             present: { item in
                 // The timeline stays usable behind an approval: what is waiting steps aside, one tap away.
@@ -488,6 +483,15 @@ struct ConversationView: View {
 
     private func workbenchPage(_ model: SessionModel) -> some View {
         WorkbenchView(model: model, tab: $workbenchTab) { workbenchOpen = false }
+    }
+
+    /// Quoting puts text in the draft (`MessageQuotes`): not offered where there is no input.
+    private func quoteAction(_ model: SessionModel) -> ((String) -> Void)? {
+        guard model.subagentReadOnly(parentAvailable: parentAvailable(model)) == nil else { return nil }
+        return { text in
+            model.composer.addQuote(text)
+            Haptics.tap()
+        }
     }
 
     /// A continuable child takes messages only through a live parent Agent.
@@ -649,7 +653,7 @@ struct ConversationView: View {
         case .detail(.usage(let usage)):
             TurnUsageSheet(usage: usage)
         case .detail(.text(let text)):
-            SelectTextSheet(text: text)
+            SelectTextSheet(text: text, quote: quoteAction(model))
         }
     }
 
@@ -761,8 +765,8 @@ struct ConversationActions {
     var openBrowser: () -> Void = {}
     var regenerate: (String) -> Void = { _ in }
     var fork: (Int) -> Void = { _ in }
-    /// Quote a reply into the composer, to answer that part of it.
-    var quote: (String) -> Void = { _ in }
+    /// Quote text into the composer (`MessageQuotes`); nil where nothing can be sent (a read-only child).
+    var quote: ((String) -> Void)?
     /// Bring a question swiped away back up, from its tool row.
     var revealQuestion: (String) -> Void = { _ in }
     /// Open what a row holds in the conversation's sheet.
@@ -1046,7 +1050,8 @@ private struct TurnJumpSheet: View {
 
     var body: some View {
         NavigationStack {
-            List(outline) { entry in
+            // Newest first: the button shows while reading back, so the way home is on top.
+            List(outline.sorted { $0.turn > $1.turn }) { entry in
                 Button { jump(entry) } label: {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("第 \(entry.turn) 轮").font(.caption).foregroundStyle(Palette.secondary)
@@ -1148,20 +1153,19 @@ private struct UserBubble: View {
             if !text.isEmpty {
                 Group {
                     if let masked, !revealed {
-                        Text(masked).monospaced()
+                        Text(masked).monospaced().lineLimit(open ? nil : Self.foldedLines)
                     } else {
-                        Text(text)
+                        QuotedText(text: text, lineLimit: open ? nil : Self.foldedLines)
                     }
                 }
-                .lineLimit(open ? nil : Self.foldedLines)
                 .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { if !open { foldedHeight = $0 } }
                 .background(alignment: .topLeading) {
-                    Text(text)
+                    QuotedText(text: text)
                         .fixedSize(horizontal: false, vertical: true)
                         .hidden()
                         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { fullHeight = $0 }
                 }
-                .font(.callout)
+                .font(.body)
                 .lineSpacing(3)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
@@ -1171,6 +1175,9 @@ private struct UserBubble: View {
                     // Masked text stays masked until the reader asks: this would show it whole.
                     if masked == nil || revealed {
                         Button { actions.present(.text(text)) } label: { Label("选择文本", systemImage: "selection.pin.in.out") }
+                        if let quote = actions.quote {
+                            Button { quote(text) } label: { Label("引用", systemImage: "quote.opening") }
+                        }
                     }
                 }
                 if open || more {
@@ -1229,6 +1236,7 @@ struct AssistantTurnView: View {
     @Environment(\.botTimeline) private var bot
     /// A Bot's own chat: the Bot's mark at the tail is the one loading indicator.
     @Environment(\.botComposer) private var botChat
+    @Environment(\.fileLinkScope) private var linkScope
 
     private var stayOpen: Bool {
         inProgress || info?.steered == true || ["aborted", "interrupted", "error"].contains(info?.closedKind ?? "")
@@ -1309,6 +1317,9 @@ struct AssistantTurnView: View {
                 if let files = info?.deliverables, !files.isEmpty { DeliverableCards(files: files) }
                 let changes = FileChange.collect(blocks)
                 if !changes.isEmpty { ChangeCapsule(changes: changes, open: actions.openChanges) }
+                if let turn, let session = bot?.sessionId ?? linkScope?.sessionId {
+                    PhoneRecordingCards(session: session, turn: turn)
+                }
                 if let bot, let turn { BotReactionChip(key: BotReactions.key(session: bot.sessionId, turn: turn)) }
             }
         }
@@ -1460,6 +1471,10 @@ private struct ReasoningView: View {
         .contentShape(.contextMenuPreview, RoundedRectangle(cornerRadius: 12, style: .continuous))
         .contextMenu {
             Button { copyToPasteboard(text) } label: { Label("复制", systemImage: "doc.on.doc") }
+            // Finished reasoning only: text still streaming is not settled enough to quote.
+            if !live, let quote = actions.quote {
+                Button { quote(text) } label: { Label("引用", systemImage: "quote.opening") }
+            }
         }
         .accessibilityLabel(Text("思考：\(summary)"))
     }
