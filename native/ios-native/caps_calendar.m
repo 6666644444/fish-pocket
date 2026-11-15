@@ -235,7 +235,7 @@ static void create_event(NSDictionary *args, DshNativeReply reply) {
       DshWritePolicy policy = DshNativeWritePolicyFor(@"calendar");
       if (policy == DshWritePolicyBlocked) {
         reply(nil, @"the user has set 'calendar' to read-only under Device capabilities (under Connectors) on "
-                    "the app's Tools tab (in the sidebar on iPad). Nothing was added. Only they can change that setting.");
+                    "the app's Tools tab (in the sidebar before iOS 18). Nothing was added. Only they can change that setting.");
         return;
       }
       if (policy == DshWritePolicyDirect) {

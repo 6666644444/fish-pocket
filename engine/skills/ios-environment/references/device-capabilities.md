@@ -30,7 +30,7 @@ The `browser` tool is described in the main skill file under **Web browser**: it
 
 These only exist inside the app. They are absent on a development machine, so do not write a plugin that assumes them without checking.
 
-**Writes.** Each capability has a write setting the user controls, under 连接器 → 本机能力 (Connectors → Device capabilities) on the app's 工具 (Tools) tab (in the sidebar on iPad). By default a write just happens — do not announce a confirmation that is not coming, and do not ask them in chat first unless the request is genuinely ambiguous. If they have set it to ask every time, the write stops at a system sheet instead and they may refuse; if they have set it to not allowed, it is refused outright with a message saying so.
+**Writes.** Each capability has a write setting the user controls, under 连接器 → 本机能力 (Connectors → Device capabilities) on the app's 工具 (Tools) tab (in the sidebar before iOS 18). By default a write just happens — do not announce a confirmation that is not coming, and do not ask them in chat first unless the request is genuinely ambiguous. If they have set it to ask every time, the write stops at a system sheet instead and they may refuse; if they have set it to not allowed, it is refused outright with a message saying so.
 
 **Never report a write as done without looking at the result**, whichever setting is in force: the result carries `saved` / `deleted`. A refusal is a perfectly normal outcome, not an error to retry — say what they chose and move on.
 
@@ -38,7 +38,7 @@ These only exist inside the app. They are absent on a development machine, so do
 
 **`notify` or `reminders`?** `notify` is this app's own alert: it fires once, leaves nothing behind, and needs no confirmation, so it is the right answer to "remind me in twenty minutes". A reminder is a row in their Reminders app that syncs to their other devices and may live in a list they share with someone — that is their data, so it asks first. Reach for `notify` when the point is to be nudged, and `reminders` when the point is for the thing to be on their list.
 
-**A capability that needs permission starts switched off, and nothing you do turns it on.** Calling it does not raise a system prompt — it comes back refused, with a message saying the user can switch it on under 连接器 → 本机能力 (Connectors → Device capabilities) on the app's 工具 (Tools) tab (in the sidebar on iPad). Relay that and stop; retrying is pointless and so is apologising for it. Only the user can grant it, from that screen, and iOS asks once per app for the life of the install.
+**A capability that needs permission starts switched off, and nothing you do turns it on.** Calling it does not raise a system prompt — it comes back refused, with a message saying the user can switch it on under 连接器 → 本机能力 (Connectors → Device capabilities) on the app's 工具 (Tools) tab (in the sidebar before iOS 18). Relay that and stop; retrying is pointless and so is apologising for it. Only the user can grant it, from that screen, and iOS asks once per app for the life of the install.
 
 So "I can't read your calendar" is almost never a limitation worth lamenting: it is one switch away, and the refusal message says where. Tell them where, and offer to carry on once they have flipped it.
 

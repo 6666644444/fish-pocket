@@ -23,8 +23,8 @@ struct DrawerView: View {
         }
     }
 
-    /// What it is drawn as: the sidebar (iPad, and the phone's drawer before iOS 18), or on the
-    /// phone's tab bar the 会话 tab's list (search included) and the archive pushed on it.
+    /// What it is drawn as: the sidebar before iOS 18 (iPad, and the phone's drawer), or on the tab
+    /// bar the 会话 tab's list (search included) and the archive pushed on it.
     enum Style { case sidebar, sessions, archived }
 
     /// The pages of the 会话 tab's stack (`MainView`); the sidebar's own stack pushes only the archive.
@@ -183,6 +183,8 @@ struct DrawerView: View {
         .background(Palette.background)
         .navigationTitle(Self.sessionsTitle)
         .navigationBarTitleDisplayMode(.large)
+        // Always in view, by choice: from iOS 27 the large title then starts folded into the bar
+        // (pulling down unfolds it). The other placement keeps the large title but hides the field.
         .searchable(text: $search, isPresented: $searchActive, placement: .navigationBarDrawer(displayMode: .always), prompt: "搜索会话")
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled()

@@ -1,8 +1,8 @@
 import SwiftUI
 
 /// The phone's 工具 tab: what gives the agent more to reach, beyond a conversation of its own —
-/// plugins, connectors, the computers of remote control, phone control, the web version. On
-/// iPad these are rows of the sidebar.
+/// plugins, connectors, the computers of remote control, phone control, the web version. Before
+/// iOS 18 these are rows of the sidebar.
 struct ToolsTabView: View {
     enum Route: Hashable { case plugins, connectors, remote, phoneControl }
 

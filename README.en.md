@@ -82,7 +82,7 @@
 - **A workbench.** Terminal, file preview, built-in browser and change review in one panel. The built-in browser has tabs, and the agent can work web pages directly: tap, type, take screenshots, make requests with the page's sign-in, and upload and download files.
 - **Voice input and read-aloud.** Hold to talk and let go to send the transcribed text, recognized by DeepSeek or Volcano Engine; replies can be read aloud with DeepSeek's voices, female or male. Both use your own API key.
 - **Made for iOS.** Dynamic Island and Lock Screen Live Activities, Home Screen and Lock Screen widgets, a Control Center button, Siri and Shortcuts, sharing from WeChat and other apps into a new conversation, a Bot or a group chat, and tasks that continue in the background.
-- **Made for iPad too.** A persistent sidebar, a side workbench, multiple windows, file drag and drop, and keyboard shortcuts.
+- **Made for iPad too.** The system's adaptive tabs (a top tab bar or a sidebar), the session list beside the chat, a side workbench, multiple windows, file drag and drop, and keyboard shortcuts.
 - **More private.** Sessions and workspaces stay on your device.
 
 Model calls still need a network connection. Use a DeepSeek account or an API key, or, without either, sign in to a Fish Pocket account and use credits bought in the app (App Store and TestFlight builds only).
@@ -93,7 +93,7 @@ The engine runs on the phone, so the agent can use what your iPhone already has.
 
 **Calendar · Reminders · Alarms · Contacts · Health · Photos · Files · Music · Location · Maps · Smart Home · Mail & Messages**, plus on-device recognition such as image reading and transcription.
 
-You turn on each one yourself under Tools → Connectors → Device capabilities (in the sidebar on iPad), and the agent cannot use what is off. Once on, plugins you install can use it too, and there is a record of what was used.
+You turn on each one yourself under Tools → Connectors → Device capabilities (in the sidebar before iOS 18), and the agent cannot use what is off. Once on, plugins you install can use it too, and there is a record of what was used.
 
 ## Phone control
 
@@ -103,7 +103,7 @@ With the open-source app [iCTRL](https://github.com/OpenMinis/iCTRL) installed, 
 - **Stop it anytime.** While it works, iOS shows "Automation Running" at the top of the screen; press both volume buttons together to stop it.
 - **Only on this phone.** iCTRL's service listens on the device only; keep its built-in remote access off. What the agent sees in other apps goes with the conversation to the model provider you chose.
 
-It is an optional advanced feature. iCTRL is a third-party open-source app, not provided by Fish Pocket, and needs iOS 17.4 or later, Developer Mode and sideloading; a free Apple ID is enough, and the first setup takes a computer once. When Phone Control under Tools (in the sidebar on iPad) shows Running, it is ready. For every step, see the [setup guide](https://fish.deepseek1024.com/en/phone-control/) on the website.
+It is an optional advanced feature. iCTRL is a third-party open-source app, not provided by Fish Pocket, and needs iOS 17.4 or later, Developer Mode and sideloading; a free Apple ID is enough, and the first setup takes a computer once. When Phone Control under Tools (in the sidebar before iOS 18) shows Running, it is ready. For every step, see the [setup guide](https://fish.deepseek1024.com/en/phone-control/) on the website.
 
 ## Bot mode
 

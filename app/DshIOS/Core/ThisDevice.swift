@@ -16,6 +16,11 @@ enum ThisDevice {
         }
     }
 
+    /// iPhone Duo: its open display keeps a column at the trailing edge for the system's controls.
+    @MainActor static var isDuo: Bool {
+        UIDevice.current.userInterfaceIdiom == .phone && duoModels.contains(model)
+    }
+
     @MainActor static var symbol: String { name == "iPad" ? "ipad" : "iphone" }
 
     /// `iPhone18,1` and the like. A simulator's `machine` is the Mac's architecture: the
