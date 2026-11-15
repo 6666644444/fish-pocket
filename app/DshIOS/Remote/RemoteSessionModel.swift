@@ -67,6 +67,10 @@ final class RemoteSessionModel: Identifiable {
     /// Something to mention in passing (a toast), not a failure to stop for.
     var notice: String?
     var draft = ""
+    /// Text quoted from the conversation, sent as blockquotes ahead of the draft (`MessageQuotes`).
+    private(set) var quotes: [String] = []
+    /// Bumped by a new quote: the input takes the keyboard, to write what the quote is for.
+    private(set) var quoteRequest = 0
     var attachments: [RemoteUpload] = []
 
     @ObservationIgnored private weak var store: RemoteStore?
@@ -560,15 +564,30 @@ final class RemoteSessionModel: Identifiable {
         do { try await work(client); return true } catch { report(error); return false }
     }
 
+    /// Quote text from the conversation into the draft; the same text twice stays one quote.
+    func addQuote(_ text: String) {
+        let quote = text.replacingOccurrences(of: "\r\n", with: "\n").replacingOccurrences(of: "\r", with: "\n")
+        guard !quote.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, !quotes.contains(quote) else { return }
+        quotes.append(quote)
+        quoteRequest += 1
+    }
+
+    func removeQuote(at index: Int) {
+        if quotes.indices.contains(index) { quotes.remove(at: index) }
+    }
+
     /// Send the draft: a slash command the agent offers runs as one, anything else is a message.
+    /// A command leaves the quotes where they are, for the message after it.
     func send() async {
-        let text = draft.trimmingCharacters(in: .whitespacesAndNewlines)
+        let typed = draft.trimmingCharacters(in: .whitespacesAndNewlines)
+        let sentQuotes = quotes
+        let text = MessageQuotes.compose(quotes: sentQuotes, text: typed)
         let files = attachments
         guard !text.isEmpty || !files.isEmpty, let client else { return }
-        if files.isEmpty, let slash = RemoteSlash(text), slash.commandLike, !slash.command.isEmpty, canCommand {
+        if files.isEmpty, let slash = RemoteSlash(typed), slash.commandLike, !slash.command.isEmpty, canCommand {
             if commands.isEmpty { await loadCommands() }
             if let command = commands.first(where: { ([$0.id] + $0.aliases).contains { $0.lowercased() == slash.command } }) {
-                await run(command, slash: slash, raw: text)
+                await run(command, slash: slash, raw: typed)
                 return
             }
         }
@@ -577,6 +596,7 @@ final class RemoteSessionModel: Identifiable {
         let message = RemotePendingMessage(id: UUID().uuidString, text: text, attachments: files)
         pending.append(message)
         draft = ""
+        quotes = []
         attachments = []
         rebuild()
         if waits {
@@ -584,7 +604,7 @@ final class RemoteSessionModel: Identifiable {
             while sendWaits, !Task.isCancelled { try? await Task.sleep(for: .milliseconds(100)) }
             guard canSend else {
                 pending.removeAll { $0.id == message.id }
-                if draft.isEmpty, attachments.isEmpty { draft = text; attachments = files }
+                restore(typed, quotes: sentQuotes, files: files)
                 // The words are back in the input and the title says the rest: a mention is enough.
                 notice = sendBlock ?? String(localized: "连接还没恢复，消息没有发出去")
                 rebuild()
@@ -614,13 +634,21 @@ final class RemoteSessionModel: Identifiable {
             if !submitted || failure.definite {
                 // It did not go: the words come back to the input, unless something new is being typed.
                 pending.removeAll { $0.id == message.id }
-                if draft.isEmpty, attachments.isEmpty { draft = text; attachments = files }
+                restore(typed, quotes: sentQuotes, files: files)
                 self.error = failure.message
                 rebuild()
             } else {
                 settle(.uncertain(failure.message))
             }
         }
+    }
+
+    /// A message that did not go comes back to the input, unless something new is being written there.
+    private func restore(_ typed: String, quotes sentQuotes: [String], files: [RemoteUpload]) {
+        guard draft.isEmpty, attachments.isEmpty, quotes.isEmpty else { return }
+        draft = typed
+        quotes = sentQuotes
+        attachments = files
     }
 
     /// Drop a message whose delivery could not be confirmed.

@@ -17,6 +17,11 @@ struct DshActivityAttributes: ActivityAttributes {
         var others: Int
         /// The approval reason or the open question.
         var detail: String?
+        /// While running: the kind of step the session is on (「正在运行命令」), never its arguments,
+        /// since the lock screen shows it to anyone holding the phone. Nil for a computer's session.
+        var step: String?
+        /// The SF Symbol for that kind of step.
+        var stepSymbol: String?
         /// The approval the buttons answer.
         var approval: Approval?
         var startedAt: Date

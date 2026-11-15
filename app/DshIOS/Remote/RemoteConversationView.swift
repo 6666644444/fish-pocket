@@ -131,6 +131,7 @@ struct RemoteConversationView: View {
         }
         .environment(\.conversationActions, ConversationActions(
             openChanges: { panel = .changes },
+            quote: quoteAction(model),
             present: { item in
                 deferred.formUnion(interactions(model).map(\.id))
                 detail = item
@@ -234,6 +235,15 @@ struct RemoteConversationView: View {
         }
     }
 
+    /// Quoting puts text in the draft: offered while the input is there to take it.
+    private func quoteAction(_ model: RemoteSessionModel) -> ((String) -> Void)? {
+        guard model.loaded, model.sendBlock == nil else { return nil }
+        return { text in
+            model.addQuote(text)
+            Haptics.tap()
+        }
+    }
+
     private func moreMenu(_ model: RemoteSessionModel) -> some View {
         Menu {
             Section {
@@ -318,7 +328,7 @@ struct RemoteConversationView: View {
         case .detail(.usage(let usage)):
             TurnUsageSheet(usage: usage)
         case .detail(.text(let text)):
-            SelectTextSheet(text: text)
+            SelectTextSheet(text: text, quote: quoteAction(model))
         }
     }
 }
@@ -475,7 +485,7 @@ private struct RemoteUserBubble: View {
                 Label(attachment.name, systemImage: "paperclip").font(.caption)
             }
             if !text.isEmpty {
-                Text(text)
+                QuotedText(text: text)
                     .font(.callout)
                     .lineSpacing(3)
                     .padding(.horizontal, 16)
@@ -484,6 +494,9 @@ private struct RemoteUserBubble: View {
                     .contextMenu {
                         Button { copyToPasteboard(text) } label: { Label("复制", systemImage: "doc.on.doc") }
                         Button { actions.present(.text(text)) } label: { Label("选择文本", systemImage: "selection.pin.in.out") }
+                        if let quote = actions.quote {
+                            Button { quote(text) } label: { Label("引用", systemImage: "quote.opening") }
+                        }
                     }
             }
             // On its way: said in words, not by dimming the message (which read as a failure).
