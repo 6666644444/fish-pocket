@@ -42,14 +42,20 @@ While you drive another app, the user is looking at that app, not at this conver
 - you stop early because of an error or because the service went away.
 
 ```bash
-python3 ~/.ictrl/bin/ictrl_rpc.py --host 127.0.0.1:8200 call open_url "{\"url\":\"${DSH_IOS_URL_SCHEME:-dsh}://\"}"
+python3 ~/.ictrl/bin/ictrl_rpc.py --host 127.0.0.1:8200 call open_url "{\"url\":\"${FISH_POCKET_URL_SCHEME:-dsh}://\"}"
 ```
 
-Use the service's `open_url`, not your own `open_url` tool: yours only lets a few schemes through. `DSH_IOS_URL_SCHEME` is this app's own link scheme. Return first, then ask or report, in the same turn; do not end a turn while another app is still in front.
+Use the service's `open_url`, not your own `open_url` tool: yours only lets a few schemes through. `FISH_POCKET_URL_SCHEME` is this app's own link scheme. Return first, then ask or report, in the same turn; do not end a turn while another app is still in front.
 
 The only exception: the user asked to be left in the other app when you finish. That covers the end of the task only; if you need to ask them something on the way, come back first all the same.
 
 If returning fails (the service stopped, the call errors), say so in your reply anyway.
+
+## Recording
+
+While you operate other apps, this app records the screen from iCTRL's own live stream, unless the user switched it off (操控手机 › 录下操作过程 / Record What It Does). It starts with your first call through `ictrl_rpc` in a turn and stops when the turn ends or the app has been back in front for a few seconds. The recording shows up under that turn as 操作录像 (Screen Recording): it plays at 2× by default, and its share button makes a framed video. It has no sound (iCTRL captures the picture only), stays on this phone, and is not sent to you or the model provider.
+
+You do nothing for it: do not start your own recording or stream. If the user asks where it is or why there is none: it needs the switch on, iCTRL running and this app's key from your pairing; a turn that never called `ictrl_rpc` has none.
 
 ## Rules
 

@@ -1236,6 +1236,7 @@ struct AssistantTurnView: View {
     @Environment(\.botTimeline) private var bot
     /// A Bot's own chat: the Bot's mark at the tail is the one loading indicator.
     @Environment(\.botComposer) private var botChat
+    @Environment(\.fileLinkScope) private var linkScope
 
     private var stayOpen: Bool {
         inProgress || info?.steered == true || ["aborted", "interrupted", "error"].contains(info?.closedKind ?? "")
@@ -1316,6 +1317,9 @@ struct AssistantTurnView: View {
                 if let files = info?.deliverables, !files.isEmpty { DeliverableCards(files: files) }
                 let changes = FileChange.collect(blocks)
                 if !changes.isEmpty { ChangeCapsule(changes: changes, open: actions.openChanges) }
+                if let turn, let session = bot?.sessionId ?? linkScope?.sessionId {
+                    PhoneRecordingCards(session: session, turn: turn)
+                }
                 if let bot, let turn { BotReactionChip(key: BotReactions.key(session: bot.sessionId, turn: turn)) }
             }
         }

@@ -44,6 +44,12 @@ targets:
     scheme: {}
     sources:
       - path: DshIOS
+        excludes:
+          - "MiniApps/MiniAppExamples/**"
+      # 我的应用's examples, each a folder as the agent would write one (MiniAppExamples.swift).
+      - path: DshIOS/MiniApps/MiniAppExamples
+        type: folder
+        buildPhase: resources
       - path: Shared
       # What the phone sends the watch and what the watch sends back.
       - path: WatchShared

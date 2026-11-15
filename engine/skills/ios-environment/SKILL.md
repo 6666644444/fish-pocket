@@ -22,6 +22,7 @@ Anything not listed here should be assumed missing.
 - **Network:** `curl`
 - **Development:** `git node pnpm pnpx`
 - **Video and audio:** `ffmpeg ffprobe` (see the Video and audio section below)
+- **Links:** `open xdg-open` hand a URL to the phone, so code that opens the system browser (a plugin's sign-in, a CLI's docs link) works. URLs only, the same schemes as the open_url tool; a file path fails. To take the user somewhere yourself, use that tool
 - **Shell:** `bash sh env printenv which type command date sleep timeout time xargs yes true false expr whoami hostname pwd history alias unalias clear help`
 
 Python and pip also exist: see the Python section below.
@@ -63,6 +64,7 @@ Pipes, redirects, `&&`, `||`, variables, arrays, functions, loops, here-document
 
 - `$HOME` is `/home/dsh` and `$TMPDIR` is `/tmp`. Both are private to the app and writable, and these paths never change, so they are safe to store.
 - The first-use workspace is under `~/Documents`. Workspaces are not visible in the Files app.
+- `~/apps` holds the user's mini apps (我的应用), one folder each, which the app opens full screen. Load the `mini-apps` skill before creating or changing anything there.
 - `/` is the app's own tree: `home`, `tmp`, `opt`, plus anything you create. Writing to `/abc` or `/usr/local` works and stays inside the app.
 - `/etc`, `/usr/share` and `/System` are the real system and read-only. `/opt/dsh` is the app itself and read-only.
 - `/bin` and `/usr/bin` exist only in the shell, for its commands. A Node script does not see them.
@@ -154,12 +156,12 @@ Three rules hold even before you read it:
 
 ## Other apps
 
-You cannot tap through other apps by yourself. If the user has set up **iCTRL** (a separate automation app they install), you can: it taps, types and reads any app's screen through a service on `127.0.0.1:8200`. **Before operating another app, read `references/phone-control.md`**: how to check that it runs, connect and pair, and what to tell the user when it does not.
+You cannot tap through other apps by yourself. If the user has set up **iCTRL** (a separate automation app they install), you can: it taps, types and reads any app's screen through a service on `127.0.0.1:8200`. **Before operating another app, read `references/phone-control.md`**: how to check that it runs, connect and pair, what to tell the user when it does not, and how this app records what you do there.
 
 Rules that hold even before you read it:
 
 - Use it last: device capabilities, `open_url` and the `browser` tool come first, because they are faster and do not take over the screen.
-- Whenever you stop to talk to the user (done, a question, a go-ahead, something only they can do, an error), first return to this app (`${DSH_IOS_URL_SCHEME:-dsh}://`, through the service's own `open_url`), then write. They are looking at the other app and cannot see this conversation.
+- Whenever you stop to talk to the user (done, a question, a go-ahead, something only they can do, an error), first return to this app (`${FISH_POCKET_URL_SCHEME:-dsh}://`, through the service's own `open_url`), then write. They are looking at the other app and cannot see this conversation.
 - Payments, deletions, sending messages and account changes need the user's go-ahead first. Passwords, codes and captchas are theirs.
 - Never switch on its remote access or nearby discovery.
 
