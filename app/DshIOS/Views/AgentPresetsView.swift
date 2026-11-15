@@ -17,8 +17,8 @@ struct AgentPresetsPage: View {
     private var visible: [JSON] {
         (presets ?? []).filter {
             let id = $0["id"].string ?? ""
-            // 创造模式 is held back on iOS (`CreatorMode`): it is not offered as a default either.
-            return (codingTools || !["ptc", "minimal"].contains(id)) && !CreatorMode.isHidden(id)
+            // 创造模式 and PTC are held back on iOS (`CreatorMode`, `PtcMode`): not offered as a default either.
+            return (codingTools || !["ptc", "minimal"].contains(id)) && !presetHeldBack(id)
         }
     }
 
@@ -119,8 +119,12 @@ struct AgentPresetsPage: View {
     private func load() async {
         failed = false
         do {
-            let value = try await app.client.call("agentPresets/list")
-            presets = value["presets"].array.sorted { ($0["order"].double ?? .infinity) < ($1["order"].double ?? .infinity) }
+            var all = try await app.client.call("agentPresets/list")["presets"].array
+            if let held = all.first(where: { $0["isDefault"].bool == true })?["id"].string,
+               await PtcMode.leaveIfDefault(app, current: held) {
+                all = try await app.client.call("agentPresets/list")["presets"].array
+            }
+            presets = all.sorted { ($0["order"].double ?? .infinity) < ($1["order"].double ?? .infinity) }
         } catch {
             failed = presets == nil
         }
