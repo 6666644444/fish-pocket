@@ -4,8 +4,8 @@ import WatchConnectivity
 
 /// Settings: only what people come here for (账号, 模型, 访问模式, 插件, 自动化, 后台运行: 静音音频,
 /// 任务续跑, 小组件), then the rarely touched 外观, App 图标 and 语言. Developer pages sit behind 高级, versions and
-/// engine status behind 关于. 本机能力 and 远程控制 are on the 工具 tab (in the sidebar before iOS 18), not here.
-/// 分享 Fish Pocket and Apple Watch open the list; the star, rating, website, source, feedback and author links,
+/// engine status behind 关于. 本机能力 and 远程控制 are on the 探索 tab (in the sidebar before iOS 18), not here.
+/// 分享 Fish Pocket and Apple Watch open the list (on the tab bar they are on 探索 instead); the star, rating, website, source, feedback and author links,
 /// then the WeChat group's QR code, close it.
 /// The engine card shows here only while the engine is not running. Every page reads the shared
 /// settings mirror, so a write anywhere shows everywhere.
@@ -44,11 +44,14 @@ struct SettingsView: View {
                     Section { EngineCard() }
                 }
 
-                Section {
-                    NavigationLink { ShareAppPage() } label: { ShareAppRow() }
-                    // iPad pairs with no watch.
-                    if WCSession.isSupported() {
-                        NavigationLink { WatchSetupPage() } label: { WatchSetupRow() }
+                // On the tab bar these two are on the 探索 tab.
+                if !asTab {
+                    Section {
+                        NavigationLink { ShareAppPage() } label: { ShareAppRow() }
+                        // iPad pairs with no watch.
+                        if WCSession.isSupported() {
+                            NavigationLink { WatchSetupPage() } label: { WatchSetupRow() }
+                        }
                     }
                 }
 

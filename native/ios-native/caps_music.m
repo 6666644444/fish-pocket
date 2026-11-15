@@ -59,7 +59,7 @@ static NSString *const kRestrictedMessage =
 /// and the screen is, so a quoted title would drift from the one on display.
 static NSString *const kNotEnabledMessage =
     @"the user has not switched music access on for this app yet. Nothing was read or played. Tell "
-     "them they can turn it on themselves under Device capabilities (under Connectors) on the app's Tools "
+     "them they can turn it on themselves under Device capabilities on the app's Explore "
      "tab (in the sidebar before iOS 18) — only they can grant it, and iOS asks once per app, so the app will not ask on its own.";
 
 static NSString *const kPrepareTimeoutMessage =

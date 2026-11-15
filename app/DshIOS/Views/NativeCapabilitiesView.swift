@@ -29,11 +29,8 @@ struct NativeCapabilitiesView: View {
     }
 }
 
-/// 本机能力的各个分区，放进任何一个 List 里用：自己的一页（上面那个），以及连接器页里
-/// 「本机能力」这一类——能力就直接列在那里，不用再点进一页。`compact` 时只列能力本身，
-/// 隐私说明、使用记录和系统设置留给完整的那一页和连接器里单独选中这一类时。
+/// 本机能力那一页的各个分区：隐私说明、各项能力、使用记录和系统设置。
 struct NativeCapabilitySections: View {
-    var compact = false
     @State private var capabilities: [NativeCapability] = []
     /// 按 `systemPermission` 存，所以新增一项要授权的能力时这里不用再加分支。
     @State private var permissions: [String: CapabilityPermission] = [:]
@@ -51,7 +48,6 @@ struct NativeCapabilitySections: View {
     }
 
     var body: some View {
-        if !compact {
             // 先回答「我的数据去哪了」：这页开的都是私人数据，用户最先要知道的是
             // 它们只在本机和模型服务商之间走，开发者这边一个字节也收不到。
             Section {
@@ -66,7 +62,6 @@ struct NativeCapabilitySections: View {
                 .padding(.vertical, 4)
             }
             .groupedRow()
-        }
 
             Section {
                 ForEach(capabilities) { capability in
@@ -89,17 +84,12 @@ struct NativeCapabilitySections: View {
                     )
                 }
             } header: {
-                if compact {
-                    // 在连接器里和各类服务并排，标题跟其他类一样就是类名。
-                    Text("本机能力")
-                } else {
-                    // 这一段是整页的要点：没开的用不了，而且只有你能开。
-                    Text("没开的能力，智能体和你装的插件都用不了，也没法替你打开。系统的授权框只会在你点「开启」时出现。")
-                        .font(.footnote)
-                        .foregroundStyle(Palette.secondary)
-                        .textCase(nil)
-                        .padding(.bottom, 6)
-                }
+                // 这一段是整页的要点：没开的用不了，而且只有你能开。
+                Text("没开的能力，智能体和你装的插件都用不了，也没法替你打开。系统的授权框只会在你点「开启」时出现。")
+                    .font(.footnote)
+                    .foregroundStyle(Palette.secondary)
+                    .textCase(nil)
+                    .padding(.bottom, 6)
             } footer: {
                 // 不含糊其辞：插件用的就是这些能力，而且 App 不区分谁在调用——
                 // 说清楚了，用户才知道该在装插件那一步把关。
@@ -117,7 +107,7 @@ struct NativeCapabilitySections: View {
                 Text(failure ?? "")
             }
 
-            if needsPermission, !compact {
+            if needsPermission {
                 Section {
                     NavigationLink { NativeAuditView() } label: {
                         Label("使用记录", systemImage: "list.bullet.rectangle")

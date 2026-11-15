@@ -116,6 +116,7 @@ struct DrawerView: View {
                 miniAppsRow
                 phoneControlRow
                 connectorsRow
+                capabilitiesRow
                 webRow
                 remoteControlRow
                 sessionsHeader
@@ -389,11 +390,8 @@ struct DrawerView: View {
         .plainRow()
     }
 
-    /// What the agent can reach: services over MCP (GitHub, Notion…) and, as a category of their
-    /// own, this phone's device capabilities. The MCP services come with the Bot plugin but every
-    /// conversation gets their tools, so the way in is here, not only in the Bot team's settings.
-    /// The row is always there: the device capabilities need no plugin, and if this row is hard to
-    /// find they are simply never switched on (docs/native-services.md §5.5).
+    /// What the agent can reach over MCP (GitHub, Notion…). The services come with the Bot plugin
+    /// but every conversation gets their tools, so the way in is here, not only in the Bot team's settings.
     private var connectorsRow: some View {
         let team = app.botTeam
         let connected = team.status == .ready ? team.connectors.filter { $0["state"].string == "ready" }.count : 0
@@ -402,7 +400,26 @@ struct DrawerView: View {
                 Image(systemName: "point.3.connected.trianglepath.dotted").font(.callout).foregroundStyle(Palette.ink).frame(width: 22)
                 Text("连接器").font(.subheadline).foregroundStyle(Palette.ink)
                 Spacer()
-                Text(connected > 0 ? String(localized: "\(connected) 个已连接") : String(localized: "服务和本机能力")).font(.footnote).foregroundStyle(Palette.secondary)
+                Text(connected > 0 ? String(localized: "\(connected) 个已连接") : String(localized: "外部服务")).font(.footnote).foregroundStyle(Palette.secondary)
+            }
+            .padding(.horizontal, 12)
+            .frame(minHeight: 46)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .padding(.bottom, 2)
+        .plainRow()
+    }
+
+    /// This phone's own capabilities. A row of their own: they need no plugin, and if the way in is
+    /// hard to find they are simply never switched on (docs/native-services.md §5.5).
+    private var capabilitiesRow: some View {
+        Button { Haptics.tap(); app.nativeCapabilitiesRequest = UUID() } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "iphone").font(.callout).foregroundStyle(Palette.ink).frame(width: 22)
+                Text("本机能力").font(.subheadline).foregroundStyle(Palette.ink)
+                Spacer()
+                Text("日历、健康、照片等").font(.footnote).foregroundStyle(Palette.secondary)
             }
             .padding(.horizontal, 12)
             .frame(minHeight: 46)

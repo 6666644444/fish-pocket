@@ -82,10 +82,10 @@ export default function App() {
 
   return (
     <main className="page">
-      {hero ? <Ticket event={hero} onOpen={() => setEditing(hero)} /> : <p className="empty">{t.empty}</p>}
+      {hero ? <Hero event={hero} onOpen={() => setEditing(hero)} /> : <p className="empty">{t.empty}</p>}
 
       {rest.length > 0 && (
-        <ul className="list">
+        <ul className="list" style={{ marginTop: 20 }}>
           {rest.map((event) => (
             <li key={event.id}>
               <Row event={event} onOpen={() => setEditing(event)} />
@@ -95,7 +95,8 @@ export default function App() {
       )}
 
       <button className="add" onClick={() => setEditing({})}>
-        <span aria-hidden="true">＋</span> {t.add}
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" fill="none" /></svg>
+        {t.add}
       </button>
 
       {editing && <Editor event={editing} onSave={save} onRemove={remove} onClose={() => setEditing(null)} />}
@@ -103,30 +104,30 @@ export default function App() {
   );
 }
 
-/// The date in front: a ticket, its count above the perforation and the day itself on the stub.
-function Ticket({ event, onOpen }) {
+/// The date in front: its count, large, on a card of its own colour.
+function Hero({ event, onOpen }) {
   const days = offset(event);
   return (
-    <button className="ticket" style={{ '--tone': event.color }} onClick={onOpen}>
-      <div className="ticket-top">
-        <span className="ticket-title">
-          <span className="ticket-icon" aria-hidden="true">{event.icon}</span>
-          {event.title}
-        </span>
+    <button className="hero" style={{ '--tone': event.color }} onClick={onOpen}>
+      <span className="hero-head">
+        <span className="hero-icon" aria-hidden="true">{event.icon}</span>
+        <span className="hero-title">{event.title}</span>
+        {event.yearly && <span className="pill">{t.yearly}</span>}
+      </span>
+      <span className="hero-count">
         {days === 0 ? (
-          <span className="ticket-today">{t.today}</span>
+          <span className="hero-today">{t.today}</span>
         ) : (
-          <span className="ticket-count">
-            <span className="ticket-lead">{days > 0 ? t.future : t.past}</span>
-            <span className="ticket-number">{Math.abs(days)}</span>
-            <span className="ticket-unit">{unit(Math.abs(days))}</span>
-          </span>
+          <>
+            <span className="hero-lead">{days > 0 ? t.future : t.past}</span>
+            <span className="hero-number">
+              <b>{Math.abs(days)}</b>
+              <span>{unit(Math.abs(days))}</span>
+            </span>
+          </>
         )}
-      </div>
-      <div className="ticket-stub">
-        <span>{longDate.format(target(event))}</span>
-        {event.yearly && <span className="ticket-yearly">{t.yearly}</span>}
-      </div>
+        <span className="hero-date" style={{ display: 'block' }}>{longDate.format(target(event))}</span>
+      </span>
     </button>
   );
 }
@@ -135,22 +136,26 @@ function Row({ event, onOpen }) {
   const days = offset(event);
   return (
     <button className="row" onClick={onOpen}>
-      <span className="row-icon" style={{ background: `${event.color}1f` }} aria-hidden="true">{event.icon}</span>
+      <span className="row-icon" style={{ background: `color-mix(in srgb, ${event.color} 14%, transparent)` }} aria-hidden="true">{event.icon}</span>
       <span className="row-text">
         <span className="row-title">{event.title}</span>
         <span className="row-date">
           {shortDate.format(target(event))}
-          {event.yearly && <span className="row-yearly" style={{ color: event.color }}>{t.yearly}</span>}
+          {event.yearly && (
+            <span className="row-yearly" style={{ color: event.color, background: `color-mix(in srgb, ${event.color} 12%, transparent)` }}>{t.yearly}</span>
+          )}
         </span>
       </span>
-      {days === 0 ? (
-        <span className="row-today" style={{ color: event.color }}>{t.todayShort}</span>
-      ) : (
-        <span className="row-count">
-          <span className="row-number" style={{ color: event.color }}>{Math.abs(days)}</span>
-          <span className="row-rel">{t.rel(Math.abs(days), days > 0)}</span>
-        </span>
-      )}
+      <span className="row-count">
+        {days === 0 ? (
+          <span className="row-today" style={{ color: event.color }}>{t.todayShort}</span>
+        ) : (
+          <>
+            <span className="row-number" style={{ color: event.color }}>{Math.abs(days)}</span>
+            <span className="row-rel">{t.rel(Math.abs(days), days > 0)}</span>
+          </>
+        )}
+      </span>
     </button>
   );
 }

@@ -111,8 +111,8 @@ struct ConnectorIcon: View {
 // MARK: - The list
 
 /// Services the Bots can use through MCP: signed in once, shared by the team. The ones in use
-/// come first; the rest are found by kind or by name. This phone's own device capabilities are a
-/// category here too (`device`): they need no plugin, so that part shows whatever the Bot plugin does.
+/// come first; the rest are found by kind or by name. This phone's own device capabilities have
+/// a page of their own beside this one (`NativeCapabilitiesView`): they are not MCP services.
 struct BotConnectorsPage: View {
     @Environment(AppModel.self) private var app
     @State private var adding = false
@@ -120,8 +120,6 @@ struct BotConnectorsPage: View {
     /// nil: every kind.
     @State private var category: String?
 
-    /// The category of this phone's device capabilities, which are not MCP services.
-    private static let device = "device"
     private static let order = ["dev", "docs", "work", "design", "data", "commerce", "search", "custom"]
     /// Left out of the list because they cannot connect: Figma only lets clients it has approved
     /// sign in, and turns this one down.
@@ -139,15 +137,10 @@ struct BotConnectorsPage: View {
         let mine = rows.filter { $0["state"].string != "off" }.sorted { Self.rank($0) < Self.rank($1) }
         let kinds = Self.order.filter { kind in all.contains { Self.kind($0) == kind } }
         List {
-            if needle.isEmpty {
-                Section { pills([Self.device] + kinds) }
+            if needle.isEmpty, !kinds.isEmpty {
+                Section { pills(kinds) }
                     .listRowInsets(EdgeInsets())
                     .listRowBackground(Color.clear)
-            }
-            // This phone's own capabilities, listed right here: switched on in place, no page to open.
-            // Picked on their own, they get the whole page (privacy note, activity, system settings).
-            if needle.isEmpty, category == nil || category == Self.device {
-                NativeCapabilitySections(compact: category == nil)
             }
             if category == nil, !mine.isEmpty {
                 Section(needle.isEmpty ? String(localized: "已连接") : String(localized: "已连接里找到的")) { ForEach(mine, id: \.["id"]) { link($0) } }
@@ -235,7 +228,6 @@ struct BotConnectorsPage: View {
 
     static func title(_ category: String) -> String {
         switch category {
-        case device: String(localized: "本机能力")
         case "dev": String(localized: "开发")
         case "docs": String(localized: "文档与资料")
         case "work": String(localized: "协作办公")
