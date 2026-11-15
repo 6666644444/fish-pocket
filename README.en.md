@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <b>Two more big features: <a href="#bot-mode">Bot mode</a>, a standing team of Bots with a native interface, and <a href="#remote-control">Remote control</a>, for the Codex, Claude Code and DSH sessions on your computers and servers.</b>
+  <b>Three more big features: <a href="#phone-control">Phone control</a>, where the agent taps through other apps for you; <a href="#bot-mode">Bot mode</a>, a standing team of Bots with a native interface; and <a href="#remote-control">Remote control</a>, for the Codex, Claude Code and DSH sessions on your computers and servers.</b>
 </p>
 
 <p align="center">Want an agent in your pocket too? <a href="https://testflight.apple.com/join/2SCftb2M"><b>Join the TestFlight beta</b></a> (recommended, available worldwide) or <a href="https://apps.apple.com/app/id6830703602">get it on the App Store</a> (outside mainland China), and a ⭐ helps.</p>
@@ -69,6 +69,7 @@
 ## What it does
 
 - **Uses what your iPhone already has.** The agent checks your calendar, adds reminders, reads health data, looks up contacts and searches maps, each one turned on by you. See [Device capabilities](#device-capabilities).
+- **Phone control.** With the open-source [iCTRL](https://github.com/OpenMinis/iCTRL) installed, the agent can open other apps and tap, type and read the screen for you, then come back to the conversation with the result. See [Phone control](#phone-control).
 - **Bot mode.** A standing team of Bots. Each Bot has its own look, memory and working folder; chat with one, put several in a group, or let them start work on a schedule. The backend is the open-source [DS Bot](https://github.com/Fei2411/DS-Bot), and the interface is rebuilt natively. See [Bot mode](#bot-mode).
 - **Remote control.** Manage the Codex, Claude Code and DeepSeek Harness sessions on your computers and servers from the phone, in the same sidebar as the sessions on the device: follow their progress, keep the conversation going, answer approvals, stop a run. See [Remote control](#remote-control).
 - **Everything the official Web UI does.** Chat, tool calls, file editing, search, plan mode, approvals, subagents, scheduled tasks and plugins: what the official DSH Web UI can do, this can do.
@@ -78,7 +79,8 @@
 - **Built-in Git.** Statically linked libgit2, no child processes. `clone`, `commit`, `branch`, `merge`, `stash`, `pull`, `push` and the rest of everyday git work, with output that matches real git so the agent reads it as usual. Private repositories authenticate over HTTPS with a token.
 - **Built-in FFmpeg.** `ffmpeg` and `ffprobe` are compiled into the app. They read nearly every audio and video format (iPhone HEVC video, MKV and WebM included), extract frames and audio, cut and convert, and every built-in FFmpeg filter works. H.264 and HEVC encoding uses the phone's hardware encoder. There is no x264, VP9 or MP3 encoding.
 - **A built-in DSH plugin store.** A DSH ecosystem plugin market comes preset: browse and search on the phone, install with one tap, and the plugin is ready to use, no computer involved. Add store sources you trust under Index Sources, or install pure JavaScript plugins straight from npm.
-- **A workbench.** Terminal, file preview, built-in browser and change review in one panel.
+- **A workbench.** Terminal, file preview, built-in browser and change review in one panel. The built-in browser has tabs, and the agent can work web pages directly: tap, type, take screenshots, make requests with the page's sign-in, and upload and download files.
+- **Voice input and read-aloud.** Hold to talk and let go to send the transcribed text, recognized by DeepSeek or Volcano Engine; replies can be read aloud with DeepSeek's voices, female or male. Both use your own API key.
 - **Made for iOS.** Dynamic Island and Lock Screen Live Activities, Home Screen and Lock Screen widgets, a Control Center button, Siri and Shortcuts, sharing from WeChat and other apps into a new conversation, a Bot or a group chat, and tasks that continue in the background.
 - **Made for iPad too.** A persistent sidebar, a side workbench, multiple windows, file drag and drop, and keyboard shortcuts.
 - **More private.** Sessions and workspaces stay on your device.
@@ -92,6 +94,16 @@ The engine runs on the phone, so the agent can use what your iPhone already has.
 **Calendar · Reminders · Alarms · Contacts · Health · Photos · Files · Music · Location · Maps · Smart Home · Mail & Messages**, plus on-device recognition such as image reading and transcription.
 
 You turn on each one yourself under Device capabilities in the sidebar, and the agent cannot use what is off. Once on, plugins you install can use it too, and there is a record of what was used.
+
+## Phone control
+
+With the open-source app [iCTRL](https://github.com/OpenMinis/iCTRL) installed, the agent can work other apps for you: add up a bill in Calculator, find a switch in Settings, put a dish in the cart of a food delivery app. It reads the screen before it acts and checks that the screen changed after every tap; anything [device capabilities](#device-capabilities) can do, it does without touching the interface.
+
+- **It asks before what matters.** It always asks before paying, deleting or sending a message for you, and leaves passwords, verification codes and human checks to you. When it is done or needs you, it switches back to Fish Pocket first.
+- **Stop it anytime.** While it works, iOS shows "Automation Running" at the top of the screen; press both volume buttons together to stop it.
+- **Only on this phone.** iCTRL's service listens on the device only; keep its built-in remote access off. What the agent sees in other apps goes with the conversation to the model provider you chose.
+
+It is an optional advanced feature. iCTRL is a third-party open-source app, not provided by Fish Pocket, and needs iOS 17.4 or later, Developer Mode and sideloading; a free Apple ID is enough, and the first setup takes a computer once. When Phone Control in the sidebar shows Running, it is ready. For every step, see the [setup guide](https://fish.deepseek1024.com/en/phone-control/) on the website.
 
 ## Bot mode
 
@@ -109,7 +121,7 @@ On a personal computer, install the Agents Anywhere desktop app and sign in from
 
 ## Compared with the official DSH Web UI
 
-The features match the official DSH Web UI: what it can do, this can do, with the interface rebuilt from scratch in SwiftUI and adapted separately for iPhone and iPad. On top of that come things the official client does not have: device capabilities, the Dynamic Island and Lock Screen Live Activities, widgets, Siri and Shortcuts, tasks that continue in the background, multiple windows on iPad, Bot mode with a native interface, and remote control.
+The features match the official DSH Web UI: what it can do, this can do, with the interface rebuilt from scratch in SwiftUI and adapted separately for iPhone and iPad. On top of that come things the official client does not have: device capabilities, the Dynamic Island and Lock Screen Live Activities, widgets, Siri and Shortcuts, tasks that continue in the background, multiple windows on iPad, phone control, Bot mode with a native interface, and remote control.
 
 ## Quick start
 
@@ -228,6 +240,8 @@ More answers on the [website](https://fish.deepseek1024.com/en/#faq).
 - [x] Remote control: manage the Codex, Claude Code and DSH sessions on your computers and servers from the phone, with the same Lock Screen, Dynamic Island and widgets as sessions on the device (through Agents Anywhere)
 - [ ] Move the bash interpreter off the engine thread
 - [x] Bot mode: hand tasks to the agent in your pocket from a chat
+- [x] Phone control: the agent taps through other apps for you, through iCTRL
+- [x] Voice: hold to talk, and have replies read aloud
 - [x] Share sheet: tap Share in WeChat, Photos or Safari to send text, links, photos and files to a new conversation, a Bot or a group chat ([#57](https://github.com/imsai-sh/fish-pocket/issues/57))
 
 ## Contributing
@@ -255,6 +269,7 @@ Fish Pocket also stands on the shoulders of these projects.
 **Ideas we learned from:**
 
 - [a-Shell](https://github.com/holzschu/a-shell): proof that iOS can have a genuinely useful local terminal
+- [iCTRL](https://github.com/OpenMinis/iCTRL): the open-source app phone control talks to, which taps, types and reads the screen for the agent
 - [OpenMinis](https://github.com/OpenMinis/OpenMinis): an AI agent that runs on the phone; our device capability categories and permission levels follow its design
 
 Thanks also to the DSH community, whose fan works gave us the "big fat fish" nickname. The whale girl mascot comes from the original character by [上善无形](https://space.bilibili.com/4456176) and the maid redesign by [ZipZipPipe](https://www.pixiv.net/artworks/148186519). Third-party licenses are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
