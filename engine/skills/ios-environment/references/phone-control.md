@@ -32,15 +32,24 @@ curl -s -m 3 http://127.0.0.1:8200/whoami
 3. Keys are kept in `~/.ictrl/token.json`. Pair only when a call says there is no key or returns `401`. Pairing waits for the user: tell them a notification will appear and that they long-press it and tap 允许 (Allow).
 4. Before acting, read the screen (`page_source`, or a screenshot when the text is not enough). After each action, check that the screen changed the way you expected.
 
-## When you are done: come back
+## Before you talk to the user: come back
 
-**Unless the user asked to stay in the other app, end every task by returning to this app**, then report the result here. The user is waiting in the conversation, not in the other app.
+While you drive another app, the user is looking at that app, not at this conversation. They cannot see your questions or your reply, and they do not know you have stopped. So **every time you stop to talk to the user, first return to this app**, then write to them here:
+
+- the task is done;
+- you need an answer, a choice or a go-ahead (before a payment, a deletion, sending something), whether you ask with a tool or in plain text;
+- the user has to do something themselves: a password, a code, a captcha, Face ID, unlocking the phone;
+- you stop early because of an error or because the service went away.
 
 ```bash
 python3 ~/.ictrl/bin/ictrl_rpc.py --host 127.0.0.1:8200 call open_url "{\"url\":\"${DSH_IOS_URL_SCHEME:-dsh}://\"}"
 ```
 
-Use the service's `open_url`, not your own `open_url` tool: yours only lets a few schemes through. `DSH_IOS_URL_SCHEME` is this app's own link scheme. Do the same when you stop early because of an error or something the user must do.
+Use the service's `open_url`, not your own `open_url` tool: yours only lets a few schemes through. `DSH_IOS_URL_SCHEME` is this app's own link scheme. Return first, then ask or report, in the same turn; do not end a turn while another app is still in front.
+
+The only exception: the user asked to be left in the other app when you finish. That covers the end of the task only; if you need to ask them something on the way, come back first all the same.
+
+If returning fails (the service stopped, the call errors), say so in your reply anyway.
 
 ## Rules
 
