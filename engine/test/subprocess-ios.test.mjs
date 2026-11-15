@@ -223,3 +223,17 @@ test('a spawn adds to the parent environment: the bash tool passes only its over
     delete process.env.IOS_TEST_INHERITED;
   }
 });
+
+test('what the app passes the agent reaches its commands; dsh\'s own DSH_ variables do not', async () => {
+  const sp = await runtime();
+  process.env.FISH_POCKET_URL_SCHEME = 'dsh-test';
+  process.env.DSH_IOS_TEST_PRIVATE = 'hidden';
+  try {
+    const h = sp.spawn(spec(['bash', '-c', 'echo "${FISH_POCKET_URL_SCHEME:-none} ${DSH_IOS_TEST_PRIVATE:-none}"'], os.tmpdir()));
+    assert.equal((await h.done).exitCode, 0);
+    assert.equal(h.collected.stdout.readFrom(0).text, 'dsh-test none\n');
+  } finally {
+    delete process.env.FISH_POCKET_URL_SCHEME;
+    delete process.env.DSH_IOS_TEST_PRIVATE;
+  }
+});

@@ -42,10 +42,10 @@ While you drive another app, the user is looking at that app, not at this conver
 - you stop early because of an error or because the service went away.
 
 ```bash
-python3 ~/.ictrl/bin/ictrl_rpc.py --host 127.0.0.1:8200 call open_url "{\"url\":\"${DSH_IOS_URL_SCHEME:-dsh}://\"}"
+python3 ~/.ictrl/bin/ictrl_rpc.py --host 127.0.0.1:8200 call open_url "{\"url\":\"${FISH_POCKET_URL_SCHEME:-dsh}://\"}"
 ```
 
-Use the service's `open_url`, not your own `open_url` tool: yours only lets a few schemes through. `DSH_IOS_URL_SCHEME` is this app's own link scheme. Return first, then ask or report, in the same turn; do not end a turn while another app is still in front.
+Use the service's `open_url`, not your own `open_url` tool: yours only lets a few schemes through. `FISH_POCKET_URL_SCHEME` is this app's own link scheme. Return first, then ask or report, in the same turn; do not end a turn while another app is still in front.
 
 The only exception: the user asked to be left in the other app when you finish. That covers the end of the task only; if you need to ask them something on the way, come back first all the same.
 
