@@ -19,6 +19,10 @@ One folder per app: `~/apps/<id>/`. The id is the folder's name and the app's ad
 
 The app ships two examples, `~/apps/days` (a tool) and `~/apps/fruit-flip` (a game), unless the user deleted them. Read one before writing your first app: they show the format, text in the phone's language, and a layout made for a phone.
 
+## Working copy and published copy
+
+Your files are the working copy. The user opens the published copy, which the app makes from them, compiled, when your turn ends (or the first time the app is opened). So the user never sees an app you are halfway through, and your changes reach them once you finish. `.build` and `.build-previous` in the app's folder are those copies: leave them alone, and do not read them for the app's code. The `browser` tool at `fishapp://<id>/` shows your working copy as it is now.
+
 ## How code runs
 
 - **No build step and no `npm install`.** Do not create `package.json`, Vite or webpack configs. JSX and TypeScript are compiled when the file is loaded. Write ES modules.

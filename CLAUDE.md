@@ -122,10 +122,11 @@ Agent 用的 `browser` 工具有哪些动作、各要什么参数、给模型看
 
 用户在对话里让 Agent 做的小工具、小游戏。每个应用是 `~/apps/<id>/` 下的一个文件夹（引擎路径，磁盘上在 `EnginePaths.real("/home/dsh/apps")`），`app.json` 写名字、emoji 图标和颜色，入口是 `App.jsx`（React 组件）或 `index.html`。打开应用不需要引擎。
 
-- **加载**：`app/DshIOS/MiniApps/MiniAppServer.swift` 用自定义协议 `fishapp://<id>/` 提供文件，只给本应用文件夹里的东西；JSX、TypeScript 在返回时用 Sucrase（JavaScriptCore 里跑）编译；页面开头注入 import map（`react` 等指向内置的 React）和错误上报脚本。
+- **开发版和发布版**：Agent 写的文件是开发版；用户打开的是发布版，即应用文件夹里的 `.build`：所有文件的完整快照，JSX、TS 已经编译好，打开时不编译、不依赖系统会清理的缓存。发布在 Agent 一轮结束（会话列表里不再有运行中的会话）、读应用列表、第一次打开时进行（`MiniAppPublisher.swift`），按文件的路径、大小、修改时间判断是否过期；有 Agent 在跑时，打开的是上一次发布的版本，不会打开改到一半的应用。上一版留在 `.build-previous`。
+- **加载**：`app/DshIOS/MiniApps/MiniAppServer.swift` 用自定义协议 `fishapp://<id>/` 提供文件，只给本应用文件夹里的东西；用户那边提供发布版，Agent 浏览器那边提供开发版、返回时用 Sucrase（JavaScriptCore 里跑，没有 JIT，所以只在创作时编译）编译；页面开头注入 import map（`react` 等指向内置的 React）和错误上报脚本。
 - **隔离**：每个应用一个独立的 `WKWebsiteDataStore`（按 id 派生），删应用时一起删；能联网，但用内容规则拦掉 localhost、127.x 等本机地址；不开放相机、麦克风等本机能力。
 - **入口**：iPhone 底部的「应用」Tab（iPad 和 iOS 17 的侧边栏是「我的应用」一行）、聊天里单独一行的 `[名字](fishapp://<id>)` 链接会显示成应用卡片、`dsh://app/<id>` 链接、「我的应用」小组件（`app/LiveActivity/MiniAppsWidget.swift`）、快捷指令里的「打开小应用」。小组件和快捷指令读 App Group 里的 `mini-apps.json`，主 App 每次读应用列表时写它。
-- **Agent 的浏览器**也能打开 `fishapp://<id>/`，Agent 用它截图自查；那里的存储是浏览器的，不是用户那份。
+- **Agent 的浏览器**也能打开 `fishapp://<id>/`，看到的是开发版（现编译、结果放缓存），Agent 用它截图自查；那里的存储是浏览器的，不是用户那份。
 - **运行时**：`app/DshIOS/MiniApps/Runtime` 是 `scripts/build-mini-app-runtime.sh` 打出来的 React 18 和 Sucrase，提交进仓库，平时不用跑。升级版本时改脚本里的版本号重跑，并更新 `THIRD_PARTY_NOTICES.md`。
 - **skill**：`engine/skills/mini-apps/SKILL.md` 告诉 Agent 格式和限制，`scripts/check.mjs` 是给 Agent 自查用的检查脚本（`engine/test/mini-apps.test.mjs` 测它）。改了内置的库、能用的能力、文件格式或入口，同一个提交里更新这份 skill。
 

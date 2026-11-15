@@ -104,7 +104,14 @@ final class MiniAppStore {
         }
         apps = folders.compactMap(MiniApp.load).sorted { recency($0) > recency($1) }
         loaded = true
-        MiniAppCompiler.shared.prepare(apps.map(\.folder))
+        // What the agent wrote while no one looked: published now, not when it is opened. Not while an
+        // agent works, which may be halfway through an app; its turn's end comes back here.
+        if !MiniAppPublisher.agentBusy {
+            let apps = apps
+            Task.detached(priority: .utility) {
+                for app in apps { await MiniAppPublisher.shared.publish(app) }
+            }
+        }
         if MiniAppCatalog.write(apps.map(\.catalogEntry)) {
             WidgetCenter.shared.reloadTimelines(ofKind: MiniAppCatalog.widgetKind)
         }

@@ -388,6 +388,12 @@ final class AppModel {
     /// a computer that the phone answers for while they work or wait (to hear how they end).
     private func reportRunning() {
         let running = sessions.values.filter(\.running)
+        // 我的应用: an app the agent changed is published once its turn is over.
+        let busy = !running.isEmpty
+        if MiniAppPublisher.agentBusy != busy {
+            MiniAppPublisher.agentBusy = busy
+            if !busy { MiniAppStore.shared.refresh() }
+        }
         BackgroundKeeper.shared.update(running: running.map { $0.isSubagent ? String(localized: "子智能体") : title(of: $0.id) }
             + remote.attention.map(\.displayTitle))
     }

@@ -64,10 +64,18 @@ struct MiniAppScreen: View {
     let close: () -> Void
     @State private var page = MiniAppPage()
     @State private var guide = false
+    /// The published copy is in place (made now the first time, or after the agent changed it).
+    @State private var ready = false
 
     var body: some View {
         NavigationStack {
-            MiniAppWebView(page: page, app: app)
+            Group {
+                if ready { MiniAppWebView(page: page, app: app) } else { Color(uiColor: .systemBackground) }
+            }
+                .task {
+                    await MiniAppPublisher.shared.prepare(app, agentBusy: MiniAppPublisher.agentBusy)
+                    ready = true
+                }
                 // Down to the screen's edge: the page's own background fills the home indicator's strip.
                 .ignoresSafeArea(.container, edges: .bottom)
                 .background(Color(uiColor: .systemBackground))

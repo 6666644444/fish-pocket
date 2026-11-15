@@ -5,8 +5,9 @@ import UniformTypeIdentifiers
 import WebKit
 
 /// Serves one app at `fishapp://<id>/`: its own files, nothing above its folder, and no other app.
-/// The agent's browser has one that serves every app (`preview`), so the agent can look at what it
-/// made; there the page keeps the browser's storage, not the user's.
+/// The user's opening serves its published copy (`MiniAppPublisher`), compiled already. The agent's
+/// browser has one that serves every app's working copy (`preview`), compiled as it is asked for,
+/// so the agent sees what it just wrote; there the page keeps the browser's storage, not the user's.
 /// JSX and TypeScript are compiled on the way out (Sucrase, in JavaScriptCore), so the agent writes
 /// no build step. `react`, `react-dom` and `react/jsx-runtime` come from the app bundle
 /// (MiniApps/Runtime, built by scripts/build-mini-app-runtime.sh) through an import map put at the
@@ -69,7 +70,10 @@ final class MiniAppServer: NSObject, WKURLSchemeHandler {
 
     private func respond(to url: URL) -> Response {
         guard let host = url.host(), MiniApp.validId(host), appId == nil || host == appId else { return .notFound }
-        let folder = MiniAppStore.root.appending(path: host, directoryHint: .isDirectory).resolvingSymlinksInPath().standardizedFileURL
+        let source = MiniAppStore.root.appending(path: host, directoryHint: .isDirectory).resolvingSymlinksInPath().standardizedFileURL
+        // The user's: the published copy. Without one (it is made before opening), the working copy.
+        let published = appId == nil ? nil : MiniAppPublisher.served(source)?.resolvingSymlinksInPath().standardizedFileURL
+        let folder = published ?? source
         let path = url.path(percentEncoded: false)
         let asModule = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.contains { $0.name == "module" } == true
 
@@ -100,13 +104,8 @@ final class MiniAppServer: NSObject, WKURLSchemeHandler {
         case "html", "htm":
             return .text(Self.inject(text()), type: "text/html")
         case "jsx", "tsx", "ts", "js":
-            if file.lastPathComponent.hasSuffix(".min.js") { return .text(text(), type: "text/javascript") }
-            switch MiniAppCompiler.shared.compile(text(), file: file.lastPathComponent) {
-            case .success(let code): return .text(code, type: "text/javascript")
-            case .failure(let error):
-                let message = Self.jsString("\(file.lastPathComponent): \(error.message)")
-                return .text("throw new SyntaxError(\(message));", type: "text/javascript")
-            }
+            if published != nil || file.lastPathComponent.hasSuffix(".min.js") { return .text(text(), type: "text/javascript") }
+            return .text(MiniAppCompiler.shared.module(text(), file: file.lastPathComponent), type: "text/javascript")
         default:
             let type = UTType(filenameExtension: ext)?.preferredMIMEType ?? "application/octet-stream"
             return Response(type: type, body: data)
@@ -214,19 +213,13 @@ final class MiniAppCompiler: @unchecked Sendable {
         }
     }
 
-    /// Compiles every module of `folders` in the background, so an app opens from the cache.
-    /// JavaScriptCore runs without a JIT here: compiling while the user waits shows as a blank page.
-    func prepare(_ folders: [URL]) {
-        DispatchQueue.global(qos: .utility).async { [self] in
-            for folder in folders {
-                let files = FileManager.default.enumerator(at: folder, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-                while let file = files?.nextObject() as? URL {
-                    let ext = file.pathExtension.lowercased()
-                    guard ["jsx", "tsx", "ts", "js"].contains(ext), !file.lastPathComponent.hasSuffix(".min.js"),
-                          let source = try? String(contentsOf: file, encoding: .utf8), source.utf8.count < 512_000 else { continue }
-                    _ = compile(source, file: file.lastPathComponent)
-                }
-            }
+    /// The module WebKit runs for `source`: compiled, or one that throws the compiler's error, so
+    /// the page reports it as any other.
+    func module(_ source: String, file: String) -> String {
+        switch compile(source, file: file) {
+        case .success(let code): return code
+        case .failure(let error):
+            return "throw new SyntaxError(\(MiniAppServer.jsString("\(file): \(error.message)")));"
         }
     }
 
@@ -267,8 +260,9 @@ final class MiniAppCompiler: @unchecked Sendable {
         return .success(marked)
     }
 
-    /// Part of each cache entry's name: a change to how files are compiled starts the cache over.
-    private static let version = "sucrase-3.35.1-1\u{0}"
+    /// Part of each cache entry's name and of a published copy's fingerprint: a change to how files
+    /// are compiled starts the cache over and publishes every app again.
+    static let version = "sucrase-3.35.1-1\u{0}"
 
     private func load() -> JSContext? {
         guard let url = Bundle.main.url(forResource: "miniapp-sucrase", withExtension: "js"),
