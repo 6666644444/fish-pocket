@@ -1,12 +1,16 @@
 import StoreKit
 import SwiftUI
 
-/// The root: a conversation, always. On iPhone the session list is a drawer
-/// that slides in from the left (edge swipe or the top-left button); in
-/// regular width it is the split view's sidebar. With nothing selected — at
-/// launch, after archiving — a blank session in the current workspace opens.
+/// The root. From iOS 18 the system's adaptable tab bar in every width: 会话, Bot, 应用, 探索 and 设置,
+/// at the bottom on a phone, at the top or as a sidebar where there is room (iPad, iPhone Duo open).
+/// The 会话 tab pushes a conversation over its list where it is narrow and keeps one beside it where it
+/// is wide. Before iOS 18 the session list is the split view's sidebar beside a conversation, always
+/// (with nothing selected a blank session opens), and on a phone a drawer that slides in from the left.
 struct MainView: View {
-    enum Sheet: String, Identifiable { case settings, plugins, store, schedules, signIn, cordis, share, watch, capabilities, connectors, remote; var id: String { rawValue } }
+    /// The phone's tabs.
+    enum HomeTab: Hashable { case sessions, bot, apps, explore, settings }
+
+    enum Sheet: String, Identifiable { case settings, plugins, store, schedules, signIn, cordis, share, watch, capabilities, connectors, phoneControl, remote, fishPocket, miniApps; var id: String { rawValue } }
 
     @Environment(AppModel.self) private var app
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -29,6 +33,13 @@ struct MainView: View {
     @State private var windowWidth: CGFloat = 0
     @State private var searchRequest = 0
     @State private var drawerOpen = false
+    @State private var tab = HomeTab.sessions
+    /// The 会话 tab's stack: the archive, and the conversation on screen (`selection`) on top.
+    @State private var sessionsPath: [DrawerView.Route]
+    /// The 探索 tab's stack: the plugin store is pushed on it when something asks for it.
+    @State private var explorePath: [ExploreTabView.Route] = []
+    /// The 会话 tab's own split view, where it is wide: the list can make way for the workbench.
+    @State private var sessionsColumns = NavigationSplitViewVisibility.all
     @State private var drag: CGFloat = 0
     /// The way a drag on the shell set off, fixed by its first move; nil between drags.
     /// A plain reference filled by the drawer's rows.
@@ -37,6 +48,8 @@ struct MainView: View {
     @State private var onboarding: Onboarding?
     /// 「添加 API Key」 was chosen in the sign-in sheet: its key editor follows once that sheet is gone.
     @State private var keyEditorRef: String?
+    /// 「Fish Pocket 账号」 was chosen in the sign-in sheet: its page follows once that sheet is gone.
+    @State private var fishPocketAfterOnboarding = false
     /// The ask for a Star or a share (`SupportPrompt`'s `.support`).
     @State private var supportDialog = false
     /// 「新功能」 after an update (`WhatsNew`).
@@ -59,6 +72,7 @@ struct MainView: View {
     /// `session`: the one this window opened on, when it opened on one.
     init(session: String? = nil, link: Binding<LinkRequest?> = .constant(nil)) {
         _selection = State(initialValue: session)
+        _sessionsPath = State(initialValue: session.map { [.session($0)] } ?? [])
         _placeRestored = State(initialValue: session != nil)
         _link = link
     }
@@ -68,7 +82,11 @@ struct MainView: View {
     /// The page in front, as it is kept for the next launch: a conversation, the Bot list, a
     /// Bot's chat or a group.
     private var place: String? {
-        guard botOpen else { return selection.map { "session:\($0)" } }
+        // On the tab bar only 会话 and Bot are kept: from the other tabs the next launch goes back
+        // to whichever of the two was last in front.
+        if usesTabs, tab != .sessions, tab != .bot { return nil }
+        // On the tab bar the list with nothing pushed is a place too: the next launch stays there.
+        guard botOpen else { return selection.map { "session:\($0)" } ?? (usesTabs ? "sessions" : nil) }
         switch botPath.last {
         case .bot(let id)?: return "bot:\(id)"
         case .room(let id)?: return "room:\(id)"
@@ -85,7 +103,8 @@ struct MainView: View {
         switch parts[0] {
         case "session":
             // A session on a computer is taken on trust while signed in: its page says so if it has gone.
-            if RemoteStore.sessionId(of: id) != nil ? app.remote.signedIn : app.workspace(of: id) != nil && !app.isArchived(id) { selection = id }
+            // A Bot's own session is its chat's, not a conversation to put back.
+            if RemoteStore.sessionId(of: id) != nil ? app.remote.signedIn : app.workspace(of: id).map({ !isTeamWorkspace($0) }) == true && !app.isArchived(id) { selection = id }
         case "bot": openBots([.bot(id)])
         case "room": openBots([.room(id)])
         case "bots": openBots([])
@@ -96,6 +115,7 @@ struct MainView: View {
     private func openBots(_ path: [BotRoute]) {
         launchedUnderBot = true
         botOpen = true
+        if usesTabs { tab = .bot }
         botPath = path
     }
 
@@ -113,8 +133,22 @@ struct MainView: View {
         }
     }
 
+    /// Where a new conversation goes: the current workspace, else the first-use one, never the Bot
+    /// team's, which holds the Bots' sessions alone (a blank one there would be reused: a Bot's chat).
     private var workspace: Workspace? {
-        app.workspaces.first { $0.id == workspaceId } ?? app.workspaces.first
+        let usable = app.workspaces.filter { !isTeamWorkspace($0) }
+        return usable.first { $0.id == workspaceId } ?? usable.first { $0.title == "default-workspace" } ?? usable.first ?? app.workspaces.first
+    }
+
+    /// The Bot team's workspace: by the team's word once it answers, before that (the launch races the
+    /// Bot plugin) by ds-bot's default folder. The engine lists it before the first-use workspace.
+    private func isTeamWorkspace(_ workspace: Workspace) -> Bool {
+        workspace.id == app.botTeam.teamWorkspaceId || workspace.path.hasSuffix("/.dsh/bot/workspace")
+    }
+
+    /// The workspace a session shown here belongs to becomes the current one; the Bot team's never does.
+    private func remember(workspaceOf id: String) {
+        if let owner = app.workspace(of: id), !isTeamWorkspace(owner) { workspaceId = owner.id }
     }
 
     /// A button of the support dialog: the ask is answered for good.
@@ -133,7 +167,13 @@ struct MainView: View {
     /// The width's own layout, with the way into the plugin store.
     private var layout: some View {
         Group {
-            if sizeClass == .regular { split } else { drawerLayout }
+            if #available(iOS 18.0, *) {
+                tabLayout
+            } else if sizeClass == .regular {
+                split
+            } else {
+                drawerLayout
+            }
         }
         // The drawer and the new conversation page, which have no way to the store themselves.
         .onChange(of: app.pluginStoreRequest) { _, token in
@@ -152,6 +192,7 @@ struct MainView: View {
             sheet = nil
             storeOpen = false
             botOpen = true
+            if usesTabs { tab = .bot }
             botPath = request.route.map { route in request.push && botPath.last != route ? botPath + [route] : [route] } ?? []
             setDrawer(false)
         }
@@ -193,6 +234,11 @@ struct MainView: View {
             app.connectorsRequest = nil
             sheet = .connectors
         }
+        .onChange(of: app.phoneControlRequest) { _, token in
+            guard token != nil, scenePhase != .background else { return }
+            app.phoneControlRequest = nil
+            sheet = .phoneControl
+        }
         .fullScreenCover(isPresented: $webOpen) { WebFallbackView() }
         // The Live Activity and the widgets; a cold launch keeps the link until this view is up.
         .onChange(of: link?.token, initial: true) {
@@ -201,12 +247,30 @@ struct MainView: View {
             Task { await follow(request.link) }
         }
         .onChange(of: workspaceId) { WidgetSnapshotWriter.shared.refresh() }
-        // A window narrowed past the sidebar has no place beside it for the store.
+        // Before iOS 18, a window narrowed past the sidebar has no place beside it for the store.
+        // The tab bar keeps its tabs in every width.
         .onChange(of: sizeClass) { _, size in
-            if size != .regular, storeOpen {
+            if !usesTabs, size != .regular, storeOpen {
                 storeOpen = false
                 sheet = .store
             }
+            // Wide again (an iPad window, iPhone Duo opened): the system put the 会话 tab's list away
+            // on the way down, before the conversation was pushed over it. It comes back.
+            if usesTabs, size == .regular { sessionsColumns = .all }
+        }
+        // On the tab bar the Bot pages are its Bot tab. A conversation left pushed under another
+        // tab is not on screen: what finishes there meanwhile is marked unread, and the watch told.
+        .onChange(of: tab) { _, tab in
+            guard usesTabs else { return }
+            botOpen = tab == .bot
+            app.currentSession = shownSession
+        }
+        .onChange(of: botOpen) { _, open in if usesTabs, open { tab = .bot } }
+        // Back to the list (or the archive) on the 会话 tab: no conversation on screen any more.
+        .onChange(of: sessionsPath) { _, path in
+            guard usesTabs else { return }
+            let top = path.last?.session
+            if top != selection { selection = top }
         }
     }
 
@@ -224,6 +288,12 @@ struct MainView: View {
         }
         // Which store this copy came from: only an App Store install is asked for a rating.
         .task { await AppDistribution.refresh() }
+        // The sidebar's 我的应用 row; on the tab bar the page is a tab.
+        .onChange(of: app.miniAppsRequest) { _, token in
+            guard token != nil, scenePhase != .background else { return }
+            app.miniAppsRequest = nil
+            if usesTabs { tab = .apps } else { sheet = .miniApps }
+        }
         .task(id: canAnnounce) {
             guard canAnnounce else { return }
             if let names = NodeEngine.shared.takeSafeModeReport() {
@@ -254,17 +324,21 @@ struct MainView: View {
         // Windows take turns: what is read is the one in front.
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
-                app.currentSession = selection
+                app.currentSession = shownSession
                 ReadAloud.shared.scope = onScreen
             }
         }
         // Reading aloud belongs to the conversation on screen: moving to another one stops it.
         .onChange(of: onScreen, initial: true) { _, session in ReadAloud.shared.scope = session }
         .onChange(of: selection) { _, id in
-            app.currentSession = id
+            app.currentSession = shownSession
+            if usesTabs {
+                showInTabs(id)
+                return
+            }
             if launchedUnderBot { launchedUnderBot = false } else { botOpen = false }
             if let id {
-                if let owner = app.workspace(of: id) { workspaceId = owner.id }
+                remember(workspaceOf: id)
             } else {
                 newConversation(in: workspace)
             }
@@ -281,6 +355,7 @@ struct MainView: View {
             sheet = nil
             botOpen = false
             selection = id
+            if usesTabs { showInTabs(id) }
             setDrawer(false)
         }
         .onChange(of: app.newSessionRequest?.token) { _, token in
@@ -314,12 +389,52 @@ struct MainView: View {
         if !placeRestored {
             placeRestored = true
             restorePlace()
+            // On the tab bar someone with no conversation yet has nothing to see in the list: the
+            // new conversation page is where they start. Back from it is the (empty) list.
+            if usesTabs, selection == nil, tab == .sessions, !hasConversations { newConversation(in: workspace) }
         }
-        if selection == nil { newConversation(in: workspace) }
+        if selection == nil, !usesTabs { newConversation(in: workspace) }
+    }
+
+    /// Any conversation of the user's, archived ones and those on a computer included; the Bots' are not.
+    private var hasConversations: Bool {
+        if app.remote.signedIn { return true }
+        let team = app.botTeam.teamWorkspaceId
+        return app.workspaces.contains { $0.id != team && !app.sessions(in: $0, includeArchived: true).isEmpty }
+            || !app.sessions(in: nil, includeArchived: true).isEmpty
+    }
+
+    /// The conversation the user is looking at (`AppModel.currentSession`): on the tab bar, only
+    /// while the 会话 tab is in front.
+    private var shownSession: String? {
+        usesTabs && tab != .sessions ? nil : selection
+    }
+
+    /// The tab bar is the layout (`layout`), in every width.
+    private var usesTabs: Bool {
+        if #available(iOS 18.0, *) { true } else { false }
+    }
+
+    /// Where there is room for the session list beside the conversation, on the tab bar's 会话 tab.
+    private var sessionsSideBySide: Bool { usesTabs && sizeClass == .regular }
+
+    /// `selection` on the tab bar: a session is pushed on the 会话 tab, in front; none, it is popped.
+    private func showInTabs(_ id: String?) {
+        guard let id else {
+            sessionsPath.removeAll { $0.session != nil }
+            return
+        }
+        remember(workspaceOf: id)
+        launchedUnderBot = false
+        tab = .sessions
+        // Over the archive when it was open, so back returns there.
+        if sessionsPath.last != .session(id) {
+            sessionsPath = sessionsPath.filter { $0.session == nil } + [.session(id)]
+        }
     }
 
     #if DEBUG
-    /// Screenshots and UI checks: `simctl launch … -dshOpen drawer|workbench|approval|question|timeline|settings|plugins|store|schedules|signin|support|share|watch|connectors|whatsnew|capabilities|remote`.
+    /// Screenshots and UI checks: `simctl launch … -dshOpen drawer|workbench|approval|question|timeline|settings|plugins|store|schedules|signin|support|share|watch|connectors|whatsnew|capabilities|phonecontrol|remote|start|fishpocket|topup|miniapps`.
     private func openForChecks() {
         switch UserDefaults.standard.string(forKey: "dshOpen") {
         case "drawer": drawerOpen = true
@@ -334,7 +449,12 @@ struct MainView: View {
         case "connectors": sheet = .connectors
         case "whatsnew": whatsNew = WhatsNew.current
         case "capabilities": sheet = .capabilities
+        case "phonecontrol": sheet = .phoneControl
         case "remote": sheet = .remote
+        case "start": Task { await openCredentials(.start) }
+        case "fishpocket": sheet = .fishPocket
+        case "topup": app.fishPocket.quotaPrompt = true
+        case "miniapps": if usesTabs { tab = .apps } else { sheet = .miniApps }
         default: break
         }
     }
@@ -356,7 +476,10 @@ struct MainView: View {
         case .capabilities: SheetStack { NativeCapabilitiesView() }.environment(\.systemLists, true)
         // The services ordinary conversations and Bots both reach; the Bot team's settings hold the same page.
         case .connectors: SheetStack { BotConnectorsPage() }.settingsStyle()
+        case .phoneControl: SheetStack { PhoneControlView() }.environment(\.systemLists, true)
         case .remote: SheetStack { RemoteControlPage() }.environment(\.systemLists, true)
+        case .fishPocket: SheetStack { FishPocketPage() }
+        case .miniApps: SheetStack { MiniAppsPage() }
         }
     }
 
@@ -366,7 +489,11 @@ struct MainView: View {
         .sheet(item: $onboarding, onDismiss: onboardingDismissed) { step in
             switch step {
             case .signIn(let ref, let autoStart):
-                SignInSheet(autoStart: autoStart, addAPIKey: { keyEditorRef = ref })
+                SignInSheet(
+                    autoStart: autoStart,
+                    addAPIKey: { keyEditorRef = ref },
+                    useFishPocket: fishPocketOption
+                )
             case .key(let ref):
                 OnboardingKeySheet(ref: ref) { onboarding = nil }
             }
@@ -395,6 +522,10 @@ struct MainView: View {
         } message: {
             Text("充值后才能开始新会话，也可稍后在「设置 → 账号与余额」充值。")
         }
+        // A live turn ran out of Fish Pocket credits: the packs, bought in the app.
+        .sheet(isPresented: Binding(get: { app.fishPocket.quotaPrompt }, set: { app.fishPocket.quotaPrompt = $0 })) {
+            FishPocketTopUpSheet().sheetNotices()
+        }
         .alert("已停用 \(safeModeDisabled?.count ?? 0) 个第三方插件", isPresented: Binding(get: { safeModeDisabled != nil }, set: { if !$0 { safeModeDisabled = nil } })) {
             Button("去插件页") { sheet = .plugins }
             Button("好", role: .cancel) {}
@@ -416,6 +547,7 @@ struct MainView: View {
     private func openCredentials(_ step: AppModel.CredentialStep) async {
         sheet = nil
         if case .settings = step { sheet = .settings; return }
+        if case .fishPocket = step { sheet = .fishPocket; return }
         guard let ref = await app.officialKeyRef() else {
             if case .officialKey = step { sheet = .settings } else { sheet = .signIn }
             return
@@ -425,13 +557,24 @@ struct MainView: View {
             if case .signIn = step { onboarding = .signIn(ref: ref, autoStart: true) } else { onboarding = .signIn(ref: ref) }
         case .officialKey:
             onboarding = .key(ref: ref)
-        case .settings:
+        case .settings, .fishPocket:
             break
         }
     }
 
+    /// The sign-in sheet's Fish Pocket way in, when this build has the service.
+    private var fishPocketOption: (() -> Void)? {
+        guard app.fishPocket.available else { return nil }
+        return { fishPocketAfterOnboarding = true }
+    }
+
     /// 「添加 API Key」 in the sign-in sheet hands over to the key editor once that sheet is gone.
     private func onboardingDismissed() {
+        if fishPocketAfterOnboarding {
+            fishPocketAfterOnboarding = false
+            sheet = .fishPocket
+            return
+        }
         guard let ref = keyEditorRef else { return }
         keyEditorRef = nil
         onboarding = .key(ref: ref)
@@ -492,6 +635,18 @@ struct MainView: View {
             newWindow: supportsMultipleWindows ? { openWindow(id: DshIOSApp.window) } : nil,
             search: {
                 sheet = nil
+                if usesTabs {
+                    // Search is the 会话 tab's own field: over the list where the list is under the
+                    // conversation, beside it where it is wide (the conversation stays).
+                    tab = .sessions
+                    if sessionsSideBySide {
+                        withAnimation { sessionsColumns = .all }
+                    } else {
+                        sessionsPath.removeAll()
+                    }
+                    searchRequest += 1
+                    return
+                }
                 if sizeClass == .regular { withAnimation { sidebar = .all } } else { setDrawer(true) }
                 searchRequest += 1
             },
@@ -501,6 +656,11 @@ struct MainView: View {
     }
 
     private func toggleSidebar() {
+        // On the tab bar the 会话 tab's list, where it is beside the conversation.
+        if usesTabs {
+            if sessionsSideBySide, tab == .sessions { toggleSessionsList() }
+            return
+        }
         if sizeClass == .regular {
             withAnimation { sidebar = sidebar == .detailOnly ? .all : .detailOnly }
         } else {
@@ -585,13 +745,18 @@ struct MainView: View {
         sheet = nil
         botOpen = false
         selection = id
+        if usesTabs { showInTabs(id) }
         setDrawer(false)
     }
 
     /// 插件, from the sidebar or the new conversation page.
     private func openPlugins() {
         setDrawer(false)
-        if sizeClass == .regular { storeOpen = true } else { sheet = .store }
+        if usesTabs {
+            sheet = nil
+            tab = .explore
+            if explorePath.last != .plugins { explorePath = [.plugins] }
+        } else if sizeClass == .regular { storeOpen = true } else { sheet = .store }
     }
 
     private func setDrawer(_ open: Bool) {
@@ -599,21 +764,171 @@ struct MainView: View {
         withAnimation(.snappy(duration: 0.25)) { drawerOpen = open }
     }
 
-    private var drawer: some View {
+    private var drawer: some View { drawer(.sidebar) }
+
+    private func drawer(_ style: DrawerView.Style) -> some View {
         DrawerView(
             selection: selection,
             workspace: workspace,
             rowFrames: rowFrames,
             pluginsSelected: storeOpen,
-            select: { id in storeOpen = false; botOpen = false; selection = id; setDrawer(false) },
+            select: { id in storeOpen = false; botOpen = false; selection = id; if usesTabs { showInTabs(id) }; setDrawer(false) },
             newConversation: { workspace in storeOpen = false; botOpen = false; workspaceId = workspace.id; newConversation(in: workspace); setDrawer(false) },
             openSettings: { sheet = .settings },
             openSchedules: { sheet = .schedules },
             openCordis: { sheet = .cordis },
             openSignIn: { sheet = .signIn },
             searchRequest: searchRequest,
-            openInWindow: supportsMultipleWindows ? { openWindow(id: DshIOSApp.window, value: SessionWindow(session: $0)) } : nil
+            openInWindow: supportsMultipleWindows ? { openWindow(id: DshIOSApp.window, value: SessionWindow(session: $0)) } : nil,
+            style: style
         )
+    }
+
+    // MARK: Tab bar
+
+    /// The layout from iOS 18. Where the bar is at the bottom, a conversation, a Bot's chat or a
+    /// group, pushed, hides it: their input sits where it would be.
+    @available(iOS 18.0, *)
+    private var tabLayout: some View {
+        TabView(selection: $tab) {
+            Tab(value: HomeTab.sessions) {
+                if sessionsSideBySide { sessionsSplit } else { sessionsStack }
+            } label: {
+                tabLabel(Text(DrawerView.sessionsTitle), "bubble.left.and.bubble.right", .sessions)
+            }
+            .badge(waitingCount)
+            Tab(value: HomeTab.bot) {
+                botStack(openDrawer: nil)
+            } label: {
+                tabLabel(Text(verbatim: "Bot"), "face.smiling", .bot, filled: "face.smiling.inverse")
+            }
+            .badge(botPendingCount)
+            // 我的应用: the user's own tools and games, opened as often as a home screen's.
+            Tab(value: HomeTab.apps) {
+                NavigationStack { MiniAppsPage(asTab: true) }
+            } label: {
+                tabLabel(Text(MiniAppsPage.tabTitle), "square.grid.2x2", .apps)
+            }
+            Tab(value: HomeTab.explore) {
+                ExploreTabView(path: $explorePath)
+            } label: {
+                tabLabel(Text("探索"), "safari", .explore)
+            }
+            Tab(value: HomeTab.settings) {
+                SettingsView(asTab: true)
+            } label: {
+                tabLabel(Text("设置"), "gearshape", .settings)
+            }
+        }
+        .tabViewStyle(.sidebarAdaptable)
+        // iPhone Duo open keeps a column at its trailing edge for the bar buttons and the tab bar. The
+        // system settles what goes there when the tab view is made: made folded, then opened, the
+        // buttons of the conversation beside the list never show. Made again at each fold, it holds
+        // everything that counts outside it (the tab, each tab's path, the conversation).
+        .id(ThisDevice.isDuo ? sizeClass : nil)
+    }
+
+    /// The 会话 tab where it is narrow: the list, with the conversation pushed over it.
+    @available(iOS 18.0, *)
+    private var sessionsStack: some View {
+        NavigationStack(path: $sessionsPath) {
+            drawer(.sessions)
+                .navigationDestination(for: DrawerView.Route.self) { route in
+                    switch route {
+                    case .archived: drawer(.archived)
+                    case .session(let id): pushedConversation(id).toolbar(.hidden, for: .tabBar)
+                    }
+                }
+        }
+    }
+
+    /// The 会话 tab where it is wide: the list beside the conversation, which is always there, as the
+    /// split view's: with none selected (at launch, after archiving) a blank one opens.
+    @available(iOS 18.0, *)
+    private var sessionsSplit: some View {
+        NavigationSplitView(columnVisibility: $sessionsColumns) {
+            drawer(.sessions)
+                .navigationDestination(for: DrawerView.Route.self) { route in
+                    switch route {
+                    case .archived: drawer(.archived)
+                    case .session(let id): pushedConversation(id)
+                    }
+                }
+                // Widths as the split view's (`split`): a width that follows the fold hangs it.
+                .navigationSplitViewColumnWidth(min: 280, ideal: 320, max: 360)
+                .modifier(SidebarToggle(system: systemSidebarButton))
+        } detail: {
+            NavigationStack {
+                if let selection { pushedConversation(selection) } else { conversation(openDrawer: nil) }
+            }
+            .modifier(PastTheFold())
+            // The list's button where the system's cannot be counted on (`systemSidebarButton`), and
+            // room for the workbench.
+            .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomInSessions, toggle: sessionsListToggle))
+        }
+        .navigationSplitViewStyle(.balanced)
+        // Only while this tab is in front: a conversation archived from another one does not pull it here.
+        .task(id: selection == nil && !app.workspaces.isEmpty && tab == .sessions) {
+            if selection == nil, !app.workspaces.isEmpty, tab == .sessions { newConversation(in: workspace) }
+        }
+    }
+
+    /// The 会话 tab's list button in the conversation's bar, where the system's is removed
+    /// (`systemSidebarButton`). From iOS 27.1 the system's is there, beside the list's own buttons
+    /// and in the conversation's bar once the list is away: a second one would say the same.
+    private var sessionsListToggle: (() -> Void)? {
+        systemSidebarButton ? nil : toggleSessionsList
+    }
+
+    private func toggleSessionsList() {
+        withAnimation { sessionsColumns = sessionsColumns == .detailOnly ? .all : .detailOnly }
+    }
+
+    /// The workbench takes about 420 pt: under this much, the list makes way for it, as the sidebar does.
+    private func makeRoomInSessions() {
+        if windowWidth < 1100 { withAnimation { sessionsColumns = .detailOnly } }
+    }
+
+    /// A tab's name and icon: outlined, and filled while it is the one in front. Left alone the
+    /// system fills every icon that has a filled form, so it is told not to.
+    private func tabLabel(_ title: Text, _ symbol: String, _ value: HomeTab, filled: String? = nil) -> some View {
+        Label { title } icon: { Image(systemName: tab == value ? filled ?? "\(symbol).fill" : symbol) }
+            .environment(\.symbolVariants, .none)
+    }
+
+    /// What the 会话 tab's list shows waiting on the user: this phone's conversations and those on
+    /// the computers. The Bots' and the groups' sessions are left out, as the list leaves them out:
+    /// they count on the Bot tab.
+    private var waitingCount: Int {
+        let team = app.botTeam
+        let teamSessions = team.teamSessionIds
+        let local = app.sessions.keys.filter { id in
+            app.isWaiting(id) && !app.isArchived(id) && !teamSessions.contains(id)
+                && (team.teamWorkspaceId == nil || app.workspace(of: id)?.id != team.teamWorkspaceId)
+        }
+        let remote = app.remote.signedIn ? app.remote.listed().filter { $0.deviceOnline && $0.waiting }.count : 0
+        return local.count + remote
+    }
+
+    /// What the Bots wait on the user for, on the Bot tab.
+    private var botPendingCount: Int {
+        let team = app.botTeam
+        return team.bots.reduce(0) { $0 + team.pendingCount(of: $1) }
+    }
+
+    /// A conversation on the 会话 tab's stack. Back is the system's; there is no drawer to open.
+    @ViewBuilder
+    private func pushedConversation(_ id: String) -> some View {
+        if let remote = RemoteStore.sessionId(of: id) {
+            RemoteConversationView(sessionId: remote, selection: $selection, openDrawer: nil)
+                .id(id)
+        } else {
+            ConversationView(sessionId: id, selection: $selection, openDrawer: nil, switchWorkspace: { workspace in
+                workspaceId = workspace.id
+                newConversation(in: workspace)
+            })
+            .id(id)
+        }
     }
 
     /// The session on screen: a Bot's chat or a group when the Bot pages are open, else the conversation.
@@ -641,6 +956,8 @@ struct MainView: View {
                     // chat has a back button where the conversation has its sidebar button, so the
                     // sidebar's goes beside it.
                     .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomForWorkbench, toggle: sizeClass == .regular ? hideSidebar : nil))
+                    // Its input takes the bar's place where the bar is at the bottom.
+                    .toolbar(usesTabs && sizeClass != .regular ? .hidden : .automatic, for: .tabBar)
                 }
         }
     }
@@ -681,6 +998,7 @@ struct MainView: View {
             // A computer's session from the lock screen or a widget, after signing out: nothing to open.
             if RemoteStore.sessionId(of: id) != nil, !app.remote.signedIn { return }
             selection = id
+            if usesTabs { showInTabs(id) }
         case .new(let workspaceId, let preset, let draft):
             let deadline = ContinuousClock.now + .seconds(10)
             while app.workspaces.isEmpty || creating, ContinuousClock.now < deadline {
@@ -691,6 +1009,8 @@ struct MainView: View {
             newConversation(in: target, agentPreset: preset, draft: draft, focus: true)
         case .share:
             if let shared { await receive(shared) }
+        case .app(let id):
+            MiniAppPresenter.open(id)
         }
     }
 
@@ -753,6 +1073,8 @@ struct MainView: View {
                 if let prompt { app.pendingPrompts[id] = prompt }
                 if focus { app.pendingFocus.insert(id) }
                 selection = id
+                // The engine may hand back the blank conversation already selected: shown all the same.
+                if usesTabs { showInTabs(id) }
             }
             catch {
                 if let files { try? FileManager.default.removeItem(at: files.folder) }

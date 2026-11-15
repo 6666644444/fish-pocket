@@ -13,6 +13,8 @@ struct TurnMenu: ViewModifier {
     @Environment(\.botComposer) private var bot
     @Environment(\.botTimeline) private var botTimeline
 
+    private static let cutShort: Set<String> = ["aborted", "interrupted", "error"]
+
     private var closing: String { info?.closingText.isEmpty == false ? info?.closingText ?? "" : fallbackText }
     private var usage: TurnUsage? { info?.usageBroken == true ? nil : info?.usage }
 
@@ -30,9 +32,12 @@ struct TurnMenu: ViewModifier {
             Button { copyToPasteboard(closing) } label: { Label("复制", systemImage: "doc.on.doc") }
             Button { actions.present(.text(closing)) } label: { Label("选择文本", systemImage: "selection.pin.in.out") }
         }
+        // A reply cut short (stopped, interrupted, failed) is not one to quote, as on the web.
+        if !closing.isEmpty, let quote = actions.quote, !Self.cutShort.contains(info?.closedKind ?? "") {
+            Button { quote(closing) } label: { Label("引用", systemImage: "quote.opening") }
+        }
         if bot != nil, !closing.isEmpty {
             if let botTimeline, let turn { BotReactionMenu(key: BotReactions.key(session: botTimeline.sessionId, turn: turn)) }
-            Button { actions.quote(closing) } label: { Label("引用回复", systemImage: "arrowshape.turn.up.left") }
             ShareLink(item: closing) { Label("分享", systemImage: "square.and.arrow.up") }
             ShareLink(item: MarkdownFile(name: String(closing.prefix(24)), text: closing), preview: SharePreview(String(closing.prefix(40)))) {
                 Label("存为 Markdown 文件", systemImage: "arrow.down.doc")
@@ -45,6 +50,9 @@ struct TurnMenu: ViewModifier {
         }
         if let regeneratePrompt, bot == nil {
             Button { actions.regenerate(regeneratePrompt) } label: { Label("重新生成", systemImage: "arrow.clockwise") }
+        }
+        if let turn, bot == nil, let share = actions.shareImage {
+            Button { share(turn) } label: { Label("分享为图片", systemImage: "photo.on.rectangle") }
         }
         if let turn, bot == nil {
             Button { actions.fork(turn) } label: { Label("从这里分叉", systemImage: "arrow.triangle.branch") }
@@ -77,11 +85,13 @@ struct TurnMenu: ViewModifier {
 /// Text to pick from: a real text view, as SwiftUI's selection only takes a `Text` whole.
 struct SelectTextSheet: View {
     let text: String
+    /// Offered on the selection's menu (the web's 「引用文本」); nil where nothing can be sent.
+    var quote: ((String) -> Void)?
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
-            SelectableTextView(text: text)
+            SelectableTextView(text: text, quote: quote.map { quote in { quote($0); dismiss() } })
                 .background(Palette.background)
                 .navigationTitle("选择文本")
                 .navigationBarTitleDisplayMode(.inline)
@@ -93,9 +103,13 @@ struct SelectTextSheet: View {
 
 private struct SelectableTextView: UIViewRepresentable {
     let text: String
+    var quote: ((String) -> Void)?
+
+    func makeCoordinator() -> Coordinator { Coordinator() }
 
     func makeUIView(context: Context) -> UITextView {
         let view = UITextView()
+        view.delegate = context.coordinator
         view.isEditable = false
         view.backgroundColor = .clear
         view.font = .preferredFont(forTextStyle: .body)
@@ -106,7 +120,20 @@ private struct SelectableTextView: UIViewRepresentable {
     }
 
     func updateUIView(_ view: UITextView, context: Context) {
+        context.coordinator.quote = quote
         if view.text != text { view.text = text }
+    }
+
+    final class Coordinator: NSObject, UITextViewDelegate {
+        var quote: ((String) -> Void)?
+
+        func textView(_ textView: UITextView, editMenuForTextIn range: NSRange, suggestedActions: [UIMenuElement]) -> UIMenu? {
+            guard let quote, range.length > 0 else { return nil }
+            let selected = (textView.text as NSString).substring(with: range)
+            guard !selected.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return nil }
+            let action = UIAction(title: String(localized: "引用"), image: UIImage(systemName: "quote.opening")) { _ in quote(selected) }
+            return UIMenu(children: [action] + suggestedActions)
+        }
     }
 }
 

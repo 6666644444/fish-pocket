@@ -20,10 +20,14 @@
 | [DS Bot](https://github.com/Fei2411/DS-Bot)（`ds-bot`） | 0.3.1 | Apache-2.0 | Copyright 2026 Fei2411 and the DS Bot contributors | Bot 功能的后台，内置在引擎里 |
 | [Simple Icons](https://github.com/simple-icons/simple-icons) | 16.37.0 | CC0-1.0 | Simple Icons 贡献者 | Bot 连接器页面的品牌图标 |
 | [page-agent](https://github.com/alibaba/page-agent)（`@page-agent/page-controller`） | 1.12.4 | MIT | Copyright (c) 2026 SimonLuvRamen, Copyright (c) 2026 Alibaba Group Holding Limited | 智能体操作浏览器时读网页、点击和输入 |
+| [React](https://github.com/facebook/react)（`react`、`react-dom`、`scheduler`） | 18.3.1 | MIT | Copyright (c) Meta Platforms, Inc. and affiliates | 「我的应用」里的小应用用的 React |
+| [Sucrase](https://github.com/alangpierce/sucrase) | 3.35.1 | MIT（打包进来的依赖 `ts-interface-checker` 为 Apache-2.0，其余为 MIT） | Copyright (c) 2012-2018 various contributors | 在手机上把小应用的 JSX、TypeScript 编译成 JavaScript |
 
 Simple Icons 是上面这句话的例外：用到的 28 个图标以 SVG 文件直接放在仓库里（`app/DshIOS/Assets.xcassets/Connectors`）。CC0 只覆盖图标文件本身，各图标仍是其品牌方的商标，App 里只用来标明连接的是哪家服务。
 
 page-agent 也是例外：`scripts/build-page-controller.sh` 把它的 page controller 和本仓库的一小段包装打成一个脚本，提交在 `app/DshIOS/Browser/PageController.js`，文件开头保留了它的 MIT 许可证全文。没有改动它的源码，只是没打包它的遮罩层（自动操作时挡住页面的那层）。它的页面结构提取移植自 [browser-use](https://github.com/browser-use/browser-use)（MIT）。
+
+React 和 Sucrase 同样不走 npm 包：`scripts/build-mini-app-runtime.sh` 把它们打成几个脚本，提交在 `app/DshIOS/MiniApps/Runtime`，每个文件开头保留了所含各包的许可证全文。没有改动它们的源码。
 
 CPython 的完整许可证及其捆绑组件（OpenSSL、SQLite、libffi、zlib、bzip2、xz、zstd、expat、mpdecimal 等）的许可证见 [Python 文档的许可证页](https://docs.python.org/3.15/license.html)；标准库里的 `LICENSE.txt` 随 App 一起分发。
 
@@ -72,12 +76,13 @@ libgit2 的完整许可证见其仓库的 [COPYING](https://github.com/libgit2/l
 这个协议覆盖下面的文件：
 
 - `docs/design/brand/mascot-icon.png`
-- `app/DshIOS/Assets.xcassets/AppIcon.appiconset/`、`LaunchMark.imageset/` 和 `ShareMascot.imageset/` 里的 PNG
+- `app/DshIOS/Assets.xcassets/AppIcon.appiconset/`、`AppIcon-Pink.appiconset/`、`AppIcon-Mint.appiconset/`、`AppIcon-Violet.appiconset/`、`AppIcon-Sticker.appiconset/`、`LaunchMark.imageset/` 和 `ShareMascot.imageset/` 里的 PNG，以及 `AppIconPreview/` 里的 `Default`、`Pink`、`Mint`、`Violet`、`Sticker` 五张
+- `docs/design/brand/generated/sticker.png`
 - `docs/assets/icon.png`、`docs/assets/mascot.png`
 - `docs/assets/demo-widget.gif`、`docs/assets/demo-ipad.gif`（画面含 App 图标）
 - `docs/promo/` 里的宣传片（画面含吉祥物）
 
-本项目的修改：`mascot-icon.png` 以原始鲸鱼娘形象为基础，用 AI 重新生成了表情。其余文件由 `docs/design/brand/make-icons.py` 从它生成，只做了缩放、圆角和灰度处理；`ShareMascot.imageset/` 里的分享海报用图另外去掉了背景。这些修改同样按 CC BY-NC-SA 4.0 发布。
+本项目的修改：`mascot-icon.png` 以原始鲸鱼娘形象为基础，用 AI 重新生成了表情。其余文件由 `docs/design/brand/make-icons.py` 从它生成，只做了缩放、圆角、灰度和换色处理（樱花粉、薄荷绿、葡萄紫三个备选图标把蓝色换成了别的色相）；备选图标「贴纸」是用 AI 图片生成把吉祥物重画成的扁平贴纸，原图在 `docs/design/brand/generated/sticker.png`；`ShareMascot.imageset/` 里的分享海报用图另外去掉了背景。这些修改同样按 CC BY-NC-SA 4.0 发布。「简洁」一组的备选图标里，小鲸鱼（`AppIcon-Whale` 和 `AppIconPreview/Whale.imageset`）由 `docs/design/brand/make-drawn-icons.swift` 用代码画成；「字标」一组（`AppIcon-Word*` 和 `AppIconPreview/` 里同名的三张）由 `docs/design/brand/make-wordmark-icons.swift` 用代码画成，字体是 Geist Pixel、Noto Sans 和 JetBrains Mono（均为 SIL Open Font License 1.1），仓库里只有渲染出的图片，不含字体文件；「几何鲸鱼」「像素鲸鱼」（`AppIcon-Geometric`、`AppIcon-Pixel`、`AppIconPreview/` 里同名的两张，原图 `docs/design/brand/generated/geometric.png`、`pixel.png`）用 AI 图片生成。这些都不含吉祥物，按 MIT 授权。
 
 **如果你要商用这份代码：** 先按 [LICENSE](LICENSE) 的附加条款取得作者的授权。授权只覆盖代码，不覆盖这些图片，请换掉上面的文件，或者自行取得原作者的许可。
 

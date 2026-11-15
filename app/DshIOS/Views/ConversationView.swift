@@ -31,6 +31,8 @@ struct ConversationView: View {
     @State private var showNewWorkspace = false
     @State private var jobs = JobsModel()
     @State private var headerSheet: SessionHeaderSheet?
+    /// 「分享为图片」, from the title's menu (every round) or a reply's (its round).
+    @State private var sharing: ShareFocus?
     @State private var presets = AgentPresetCatalog()
     /// The reader is at the end of the timeline, so it follows new output (C-12).
     @State private var atBottom = true
@@ -297,6 +299,10 @@ struct ConversationView: View {
                 }
             }
             .readableWidth()
+            // The starter prompts scroll past the dock's padding to the screen's edge, not into the
+            // safe area beside it: the status bar's column on iPhone Duo unfolded, the notch's side
+            // in landscape. Cut at the sides only: under the input sits the AI label.
+            .mask { Rectangle().padding(.vertical, -200) }
             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { app.composerHeight = $0 }
         }
         .modifier(ComposerDrop(composer: model.composer, enabled: model.subagentReadOnly(parentAvailable: parentAvailable(model)) == nil))
@@ -349,7 +355,8 @@ struct ConversationView: View {
                         SessionTitleMenu(
                             // 新会话 sits beside the drawer button on every started conversation,
                             // so on a phone the title always makes room for it.
-                            sessionId: sessionId, streamTitle: model.title, catalog: presets, crowded: true
+                            sessionId: sessionId, streamTitle: model.title, catalog: presets, crowded: true,
+                            shareImage: { sharing = ShareFocus(turn: nil) }
                         ) { headerSheet = .logExport }
                     }
                 }
@@ -374,15 +381,11 @@ struct ConversationView: View {
             openChanges: { openWorkbench(.changes) },
             openBrowser: openBrowser,
             regenerate: { text in Task { await model.send(text: text) } },
+            shareImage: { turn in sharing = ShareFocus(turn: turn) },
             fork: { turn in
                 Task { await app.fork(session: sessionId, atSeq: model.forkBoundary(turn: turn), from: .turn) }
             },
-            quote: { text in
-                let quoted = text.split(separator: "\n", omittingEmptySubsequences: false).prefix(12).map { "> \($0)" }.joined(separator: "\n")
-                let draft = model.composer.text.trimmingCharacters(in: .whitespacesAndNewlines)
-                model.composer.text = quoted + "\n\n" + draft
-                Haptics.tap()
-            },
+            quote: quoteAction(model),
             revealQuestion: { deferred.remove("q-\($0)") },
             present: { item in
                 // The timeline stays usable behind an approval: what is waiting steps aside, one tap away.
@@ -431,6 +434,17 @@ struct ConversationView: View {
                     .environment(\.systemLists, true)
                 case .logExport: SessionLogExportSheet(sessionId: sessionId)
                 }
+            }
+            .sheetNotices()
+        }
+        .sheet(item: $sharing) { focus in
+            let rounds = ShareRound.rounds(of: model)
+            SheetStack {
+                ConversationShareSheet(
+                    title: app.durableTitle(of: sessionId) ?? model.title ?? String(localized: "新会话"),
+                    rounds: rounds,
+                    focus: focus.turn.flatMap { turn in rounds.first { $0.turns.contains(turn) }?.id }
+                )
             }
             .sheetNotices()
         }
@@ -488,6 +502,15 @@ struct ConversationView: View {
 
     private func workbenchPage(_ model: SessionModel) -> some View {
         WorkbenchView(model: model, tab: $workbenchTab) { workbenchOpen = false }
+    }
+
+    /// Quoting puts text in the draft (`MessageQuotes`): not offered where there is no input.
+    private func quoteAction(_ model: SessionModel) -> ((String) -> Void)? {
+        guard model.subagentReadOnly(parentAvailable: parentAvailable(model)) == nil else { return nil }
+        return { text in
+            model.composer.addQuote(text)
+            Haptics.tap()
+        }
     }
 
     /// A continuable child takes messages only through a live parent Agent.
@@ -649,7 +672,7 @@ struct ConversationView: View {
         case .detail(.usage(let usage)):
             TurnUsageSheet(usage: usage)
         case .detail(.text(let text)):
-            SelectTextSheet(text: text)
+            SelectTextSheet(text: text, quote: quoteAction(model))
         }
     }
 
@@ -760,13 +783,21 @@ struct ConversationActions {
     /// The workbench's browser, which the agent's browser tool drives.
     var openBrowser: () -> Void = {}
     var regenerate: (String) -> Void = { _ in }
+    /// 「分享为图片」, starting from a reply's round; nil where the conversation offers none (a Bot's chat).
+    var shareImage: ((Int?) -> Void)?
     var fork: (Int) -> Void = { _ in }
-    /// Quote a reply into the composer, to answer that part of it.
-    var quote: (String) -> Void = { _ in }
+    /// Quote text into the composer (`MessageQuotes`); nil where nothing can be sent (a read-only child).
+    var quote: ((String) -> Void)?
     /// Bring a question swiped away back up, from its tool row.
     var revealQuestion: (String) -> Void = { _ in }
     /// Open what a row holds in the conversation's sheet.
     var present: (TimelineDetail) -> Void = { _ in }
+}
+
+/// Which round the share sheet starts with: a reply's, or (nil) all of them.
+struct ShareFocus: Identifiable {
+    let turn: Int?
+    let id = UUID()
 }
 
 /// What a row of the timeline opens.
@@ -1046,7 +1077,8 @@ private struct TurnJumpSheet: View {
 
     var body: some View {
         NavigationStack {
-            List(outline) { entry in
+            // Newest first: the button shows while reading back, so the way home is on top.
+            List(outline.sorted { $0.turn > $1.turn }) { entry in
                 Button { jump(entry) } label: {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("第 \(entry.turn) 轮").font(.caption).foregroundStyle(Palette.secondary)
@@ -1148,20 +1180,19 @@ private struct UserBubble: View {
             if !text.isEmpty {
                 Group {
                     if let masked, !revealed {
-                        Text(masked).monospaced()
+                        Text(masked).monospaced().lineLimit(open ? nil : Self.foldedLines)
                     } else {
-                        Text(text)
+                        QuotedText(text: text, lineLimit: open ? nil : Self.foldedLines)
                     }
                 }
-                .lineLimit(open ? nil : Self.foldedLines)
                 .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { if !open { foldedHeight = $0 } }
                 .background(alignment: .topLeading) {
-                    Text(text)
+                    QuotedText(text: text)
                         .fixedSize(horizontal: false, vertical: true)
                         .hidden()
                         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { fullHeight = $0 }
                 }
-                .font(.callout)
+                .font(.body)
                 .lineSpacing(3)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
@@ -1171,6 +1202,9 @@ private struct UserBubble: View {
                     // Masked text stays masked until the reader asks: this would show it whole.
                     if masked == nil || revealed {
                         Button { actions.present(.text(text)) } label: { Label("选择文本", systemImage: "selection.pin.in.out") }
+                        if let quote = actions.quote {
+                            Button { quote(text) } label: { Label("引用", systemImage: "quote.opening") }
+                        }
                     }
                 }
                 if open || more {
@@ -1229,6 +1263,7 @@ struct AssistantTurnView: View {
     @Environment(\.botTimeline) private var bot
     /// A Bot's own chat: the Bot's mark at the tail is the one loading indicator.
     @Environment(\.botComposer) private var botChat
+    @Environment(\.fileLinkScope) private var linkScope
 
     private var stayOpen: Bool {
         inProgress || info?.steered == true || ["aborted", "interrupted", "error"].contains(info?.closedKind ?? "")
@@ -1309,6 +1344,9 @@ struct AssistantTurnView: View {
                 if let files = info?.deliverables, !files.isEmpty { DeliverableCards(files: files) }
                 let changes = FileChange.collect(blocks)
                 if !changes.isEmpty { ChangeCapsule(changes: changes, open: actions.openChanges) }
+                if let turn, let session = bot?.sessionId ?? linkScope?.sessionId {
+                    PhoneRecordingCards(session: session, turn: turn)
+                }
                 if let bot, let turn { BotReactionChip(key: BotReactions.key(session: bot.sessionId, turn: turn)) }
             }
         }
@@ -1460,6 +1498,10 @@ private struct ReasoningView: View {
         .contentShape(.contextMenuPreview, RoundedRectangle(cornerRadius: 12, style: .continuous))
         .contextMenu {
             Button { copyToPasteboard(text) } label: { Label("复制", systemImage: "doc.on.doc") }
+            // Finished reasoning only: text still streaming is not settled enough to quote.
+            if !live, let quote = actions.quote {
+                Button { quote(text) } label: { Label("引用", systemImage: "quote.opening") }
+            }
         }
         .accessibilityLabel(Text("思考：\(summary)"))
     }

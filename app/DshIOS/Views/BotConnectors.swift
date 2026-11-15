@@ -111,7 +111,8 @@ struct ConnectorIcon: View {
 // MARK: - The list
 
 /// Services the Bots can use through MCP: signed in once, shared by the team. The ones in use
-/// come first; the rest are found by kind or by name.
+/// come first; the rest are found by kind or by name. This phone's own device capabilities have
+/// a page of their own beside this one (`NativeCapabilitiesView`): they are not MCP services.
 struct BotConnectorsPage: View {
     @Environment(AppModel.self) private var app
     @State private var adding = false
@@ -136,7 +137,7 @@ struct BotConnectorsPage: View {
         let mine = rows.filter { $0["state"].string != "off" }.sorted { Self.rank($0) < Self.rank($1) }
         let kinds = Self.order.filter { kind in all.contains { Self.kind($0) == kind } }
         List {
-            if needle.isEmpty, kinds.count > 1 {
+            if needle.isEmpty, !kinds.isEmpty {
                 Section { pills(kinds) }
                     .listRowInsets(EdgeInsets())
                     .listRowBackground(Color.clear)
@@ -157,7 +158,13 @@ struct BotConnectorsPage: View {
                 Section { Text("没有找到「\(query)」").font(.footnote).foregroundStyle(Palette.secondary) }
                     .groupedRow()
             }
-            if needle.isEmpty, category == nil || category == "custom" {
+            if needle.isEmpty, category == nil, team.status != .ready {
+                Section {
+                    Text("连接外部服务要等内置的 Bot 插件启动之后。").font(.footnote).foregroundStyle(Palette.secondary)
+                }
+                .groupedRow()
+            }
+            if needle.isEmpty, team.status == .ready, category == nil || category == "custom" {
                 Section {
                     Button { adding = true } label: { Label("添加自定义连接器", systemImage: "plus") }
                 } footer: {

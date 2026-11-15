@@ -149,7 +149,7 @@ private struct FeatureCard: View {
 }
 
 /// The app's own icon, as the home screen shows it.
-private struct AppIconMark: View {
+struct AppIconMark: View {
     var size: CGFloat = 84
 
     var body: some View {

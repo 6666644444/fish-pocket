@@ -16,7 +16,15 @@ enum AppDistribution {
 
     /// The last answer StoreKit gave, so it is there at once on the next launch; `other`
     /// until one comes. An install can move from TestFlight to the App Store, so each launch asks again.
-    private(set) static var channel = Channel(rawValue: UserDefaults.standard.string(forKey: channelKey) ?? "") ?? .other
+    private static var stored = Channel(rawValue: UserDefaults.standard.string(forKey: channelKey) ?? "") ?? .other
+
+    // UI checks in DEBUG builds: `simctl launch … -dshChannel testFlight` acts as that install.
+    static var channel: Channel {
+        #if DEBUG
+        if let channel = UserDefaults.standard.string(forKey: "dshChannel").flatMap(Channel.init) { return channel }
+        #endif
+        return stored
+    }
 
     /// App Store and TestFlight installs carry no provisioning profile; anything
     /// signed by hand does. Simulator builds have none either, and are not Apple's.
@@ -41,7 +49,7 @@ enum AppDistribution {
     }
 
     private static func remember(_ value: Channel) {
-        channel = value
+        stored = value
         UserDefaults.standard.set(value.rawValue, forKey: channelKey)
     }
 }

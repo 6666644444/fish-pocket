@@ -115,13 +115,18 @@ struct BotActivityLine: View {
             return String(localized: "正在琢磨")
         case .held: return team.doingText(botId) ?? String(localized: "正在处理")
         case .tool(let name):
-            if Stage.teamTools.contains(name) { return String(localized: "正在联系其他 Bot") }
-            let kind = StepKind(tool: name)
-            let doing = kind == .tools ? String(localized: "正在处理") : kind.running
+            let doing = Self.toolPhrase(name)
             // What it works on: the search, the page, the file.
             guard case .tool(let call)? = workingBlocks.last else { return doing }
             return [doing, call.summary].filter { !$0.isEmpty }.joined(separator: " · ")
         }
+    }
+
+    /// What a running tool does, by its name.
+    static func toolPhrase(_ name: String) -> String {
+        if Stage.teamTools.contains(name.components(separatedBy: "__").last ?? name) { return String(localized: "正在联系其他 Bot") }
+        let kind = StepKind(tool: name)
+        return kind == .tools ? String(localized: "正在处理") : kind.running
     }
 }
 
@@ -135,7 +140,10 @@ struct BotSpeakingLine: View {
         let mood = team.mood(bot.id)
         HStack(spacing: 8) {
             BotAvatar(bot: bot, size: 24, mood: mood == .idle ? .working : mood)
-            BotShimmer(text: team.workPhrase(bot.id).map { "\(bot.name) · \($0)…" } ?? String(localized: "\(bot.name)正在输入…"))
+            // The tool it runs, not what it said: its words are already in the group.
+            BotShimmer(text: team.roundTool(bot.id).map { tool in
+                "\(bot.name) · " + ([BotActivityLine.toolPhrase(tool.name)] + [tool.target].compactMap { $0 }).joined(separator: " · ") + "…"
+            } ?? String(localized: "\(bot.name)正在输入…"))
         }
         .frame(minHeight: 28)
         .accessibilityElement(children: .combine)

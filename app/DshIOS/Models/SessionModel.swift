@@ -150,12 +150,25 @@ final class SessionModel {
             composer.observe(event)
             events.append(event)
             if timeline.apply(event) { publishTimeline() } else { publishTimelineState() }
+            // Live only: recording what the agent does in other apps starts and stops with its turn.
+            if subagentAddress == nil {
+                PhoneRecorder.shared.observe(event, session: sessionId, request: items.lastUserText)
+            }
             // Only a live turn end prompts for quota or support; history replays never do.
             if event["type"].string == "turn/end" {
                 if let failure = TurnFailure(reason: event["data"]["reason"]) {
-                    if failure.isQuota { app.account.reportQuota(code: failure.code ?? "QUOTA") }
+                    if failure.isQuota {
+                        // Fish Pocket credits are topped up in the app; DeepSeek balances on Platform.
+                        if modelCatalog?.selection(self)?.provider == FishPocketAPI.provider {
+                            app.fishPocket.reportQuota()
+                        } else {
+                            app.account.reportQuota(code: failure.code ?? "QUOTA")
+                        }
+                    }
                     // A key that stopped working is the conversation's card to explain; none at all is the first step.
-                    if failure.credentialProblem == .missing { app.requestCredentials(.start) }
+                    if failure.credentialProblem == .missing {
+                        app.requestCredentials(modelCatalog?.selection(self)?.provider == FishPocketAPI.provider ? .fishPocket : .start)
+                    }
                 } else if event["data"]["reason"]["kind"].string == "completed", subagentAddress == nil, hasReply,
                           queued.isEmpty, composer.text.isEmpty {
                     app.noteCompletedTurn()
@@ -648,4 +661,12 @@ extension SessionModel: KeptSession {
     func park() { stop() }
     func suspend() { stop() }
     func close() { stop() }
+}
+
+private extension [TimelineItem] {
+    /// The user's latest message: what the running turn answers.
+    var lastUserText: String? {
+        for item in reversed() { if case .user(_, let text, _, _) = item { return text } }
+        return nil
+    }
 }

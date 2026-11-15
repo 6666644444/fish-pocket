@@ -77,6 +77,25 @@ enum AppLinks {
     /// The WeChat group's QR code at the bottom of 设置. It expires every 7 days; the website swaps
     /// the picture at this same path, so the app always shows the current one without an update.
     static let wechatGroupCode = site.appending(path: "wechat-group.png")
+    /// 本机能力 → 操控其他 App: installing iCTRL (SideStore, iLoader, Developer Mode) and its FAQ.
+    /// The page lives on the website so it can follow those tools' releases without an app update.
+    /// Chinese at /phone-control/, the site's other languages under their prefix; English for the rest.
+    static var phoneControlGuide: URL {
+        let language = Bundle.main.preferredLocalizations.first ?? "en"
+        let prefix = language.hasPrefix("zh") ? "" : ["ja", "ko"].first { language.hasPrefix($0) } ?? "en"
+        return site.appending(path: prefix.isEmpty ? "phone-control/" : "\(prefix)/phone-control/")
+    }
+    /// 我的应用 › 添加到主屏幕: the page Safari puts an app on the home screen from (`MiniAppHomeScreen`).
+    /// Installed apps all open this path, so it stays where it is on the website.
+    static var addToHomeScreen: URL {
+        #if DEBUG
+        // UI checks against a local copy of the website: `-dshSiteURL http://localhost:8099`.
+        if let local = UserDefaults.standard.string(forKey: "dshSiteURL").flatMap(URL.init(string:)) {
+            return local.appending(path: "add-to-home/")
+        }
+        #endif
+        return site.appending(path: "add-to-home/")
+    }
     /// The App Store's 「撰写评论」 page for the app.
     static let writeReview = URL(string: "https://apps.apple.com/app/id6830703602?action=write-review")!
 

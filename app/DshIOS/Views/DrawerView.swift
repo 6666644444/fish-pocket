@@ -23,7 +23,19 @@ struct DrawerView: View {
         }
     }
 
-    private enum Route: Hashable { case archived }
+    /// What it is drawn as: the sidebar before iOS 18 (iPad, and the phone's drawer), or on the tab
+    /// bar the 会话 tab's list (search included) and the archive pushed on it.
+    enum Style { case sidebar, sessions, archived }
+
+    /// The pages of the 会话 tab's stack (`MainView`); the sidebar's own stack pushes only the archive.
+    enum Route: Hashable {
+        case archived
+        case session(String)
+
+        var session: String? {
+            if case .session(let id) = self { id } else { nil }
+        }
+    }
 
     @Environment(AppModel.self) private var app
     @EnvironmentObject private var engine: NodeEngine
@@ -44,6 +56,7 @@ struct DrawerView: View {
     var searchRequest = 0
     /// Open a session in a window of its own, where the system has windows.
     var openInWindow: ((String) -> Void)?
+    var style = Style.sidebar
 
     @AppStorage("dsh.drawer.groupBy") private var groupBy = GroupBy.workspace
     /// Groups the user opened or closed, as JSON `{workspaceId: Bool}`.
@@ -58,6 +71,9 @@ struct DrawerView: View {
     @State private var remoteHits: [String: String] = [:]
     @State private var remoteMore = false
     @State private var searching = false
+    @State private var phoneControl = PhoneControlService()
+    @State private var miniApps = MiniAppStore.shared
+    @Environment(\.scenePhase) private var scenePhase
     @State private var removingWorkspace: Workspace?
     @State private var showNewWorkspace = false
 
@@ -67,12 +83,38 @@ struct DrawerView: View {
     private static let searchLimit = 20
 
     var body: some View {
+        Group {
+            switch style {
+            case .sidebar: sidebar
+            case .sessions: sessionsTab
+            case .archived: archivedPage
+            }
+        }
+        .task(id: search) { await searchRemote() }
+        .onChange(of: groupBy) { Haptics.select() }
+        .onChange(of: selection) { revealSelection() }
+        .onChange(of: selectionRowGroupId) { revealSelection() }
+        .confirmationDialog("删除「\(removingWorkspace?.displayTitle ?? "")」？", isPresented: Binding(get: { removingWorkspace != nil }, set: { if !$0 { removingWorkspace = nil } }), titleVisibility: .visible) {
+            Button("删除工作区", role: .destructive) {
+                if let workspace = removingWorkspace {
+                    Task { await app.perform { try await app.client.call("workspace/delete", ["request": ["workspaceId": .string(workspace.id)]]) } }
+                }
+            }
+        } message: {
+            Text("文件夹和会话都会保留，会话移到「未分组」。")
+        }
+        .sheet(isPresented: $showNewWorkspace) { NewWorkspaceView() }
+    }
+
+    private var sidebar: some View {
         NavigationStack {
             List {
                 BotDrawerEntry()
                     .padding(.top, 4)
                     .plainRow()
                 pluginsRow
+                miniAppsRow
+                phoneControlRow
                 connectorsRow
                 capabilitiesRow
                 webRow
@@ -90,25 +132,79 @@ struct DrawerView: View {
             // Both bars float: the list scrolls under them, up to the screen's edges.
             .floatingBars(top: topBar, bottom: bottomBar)
             .background(Palette.background)
+            // 操控手机's row says whether iCTRL runs; it changes while the user is in iCTRL.
+            .task { await phoneControl.refresh() }
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .active {
+                    Task { await phoneControl.refresh() }
+                    miniApps.refresh()
+                }
+            }
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: Route.self) { _ in archivedPage }
         }
-        .task(id: search) { await searchRemote() }
         .onChange(of: searchRequest) { openSearch() }
         .fullScreenCover(isPresented: $searchOpen) { searchPage }
-        .onChange(of: groupBy) { Haptics.select() }
-        .onChange(of: selection) { revealSelection() }
-        .onChange(of: selectionRowGroupId) { revealSelection() }
-        .confirmationDialog("删除「\(removingWorkspace?.displayTitle ?? "")」？", isPresented: Binding(get: { removingWorkspace != nil }, set: { if !$0 { removingWorkspace = nil } }), titleVisibility: .visible) {
-            Button("删除工作区", role: .destructive) {
-                if let workspace = removingWorkspace {
-                    Task { await app.perform { try await app.client.call("workspace/delete", ["request": ["workspaceId": .string(workspace.id)]]) } }
+    }
+
+    // MARK: On the tab bar
+
+    /// The 会话 tab: the sessions alone, under the system's large title and search field. What the
+    /// sidebar also holds has tabs of its own (Bot, 工具); a new conversation and the view menu are
+    /// in the bar. While searching, the matches take the list's place. The stack around it is the
+    /// shell's, which pushes the conversation.
+    private var sessionsTab: some View {
+        let query = search.trimmingCharacters(in: .whitespaces)
+        return List {
+            if searchActive || !query.isEmpty {
+                if !query.isEmpty { searchResults }
+            } else {
+                if let engineStatus {
+                    Text(engineStatus).font(.footnote).foregroundStyle(Palette.secondary).padding(.horizontal, 12).plainRow()
                 }
+                if app.remote.expired { remoteExpiredRow }
+                if grouping == .time { timeList } else { groupList }
+                archivedEntry
             }
-        } message: {
-            Text("文件夹和会话都会保留，会话移到「未分组」。")
         }
-        .sheet(isPresented: $showNewWorkspace) { NewWorkspaceView() }
+        .sessionList()
+        .overlay(alignment: .top) {
+            if searchActive, query.isEmpty {
+                Text("搜索会话标题和消息内容")
+                    .font(.subheadline)
+                    .foregroundStyle(Palette.secondary)
+                    .padding(.top, 48)
+                    .allowsHitTesting(false)
+            }
+        }
+        .refreshable {
+            await app.refreshSessions()
+            await app.remote.refresh()
+        }
+        .background(Palette.background)
+        .navigationTitle(Self.sessionsTitle)
+        .navigationBarTitleDisplayMode(.large)
+        // Always in view, by choice: from iOS 27 the large title then starts folded into the bar
+        // (pulling down unfolds it). The other placement keeps the large title but hides the field.
+        .searchable(text: $search, isPresented: $searchActive, placement: .navigationBarDrawer(displayMode: .always), prompt: "搜索会话")
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled()
+        // ⌘F and the like: the field of this tab.
+        .onChange(of: searchRequest) { searchActive = true }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) { viewMenu(compact: true) }
+            ToolbarItem(placement: .topBarTrailing) {
+                newConversationControl {
+                    Image(systemName: "square.and.pencil")
+                }
+                .accessibilityLabel("新会话")
+            }
+        }
+    }
+
+    /// The 会话 tab's name and title: the whole list, so plural where a language says so.
+    static var sessionsTitle: String {
+        String(localized: "tab.sessions", defaultValue: "会话", comment: "Tab and page title: the list of all sessions")
     }
 
     // MARK: Header and footer
@@ -226,9 +322,13 @@ struct DrawerView: View {
         .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
     }
 
+    private var newConversationButton: some View {
+        newConversationControl { newConversationLabel }
+    }
+
     /// With computers connected it first asks where: this phone, or one of them.
     @ViewBuilder
-    private var newConversationButton: some View {
+    private func newConversationControl(@ViewBuilder label: () -> some View) -> some View {
         if remote.signedIn, !remote.devices.isEmpty {
             Menu {
                 Button { startLocalConversation() } label: { Label("在本机", systemImage: "iphone") }
@@ -242,11 +342,11 @@ struct DrawerView: View {
                     }
                 }
             } label: {
-                newConversationLabel
+                label()
             }
             .accessibilityLabel("新会话，选择在本机还是电脑上")
         } else {
-            Button(action: startLocalConversation) { newConversationLabel }
+            Button(action: startLocalConversation) { label() }
                 .buttonStyle(.plain)
                 .disabled(app.workspaces.isEmpty)
                 .opacity(app.workspaces.isEmpty ? 0.4 : 1)
@@ -290,43 +390,83 @@ struct DrawerView: View {
         .plainRow()
     }
 
-    /// The services an agent can reach over MCP (GitHub, Notion…). They come with the Bot
-    /// plugin but every conversation gets their tools, so the way in is here, not only in the
-    /// Bot team's settings; the row shows once that plugin answers.
-    @ViewBuilder
+    /// What the agent can reach over MCP (GitHub, Notion…). The services come with the Bot plugin
+    /// but every conversation gets their tools, so the way in is here, not only in the Bot team's settings.
     private var connectorsRow: some View {
         let team = app.botTeam
-        if team.status == .ready {
-            let connected = team.connectors.filter { $0["state"].string == "ready" }.count
-            Button { Haptics.tap(); app.connectorsRequest = UUID() } label: {
-                HStack(spacing: 12) {
-                    Image(systemName: "point.3.connected.trianglepath.dotted").font(.callout).foregroundStyle(Palette.ink).frame(width: 22)
-                    Text("连接器").font(.subheadline).foregroundStyle(Palette.ink)
-                    Spacer()
-                    Text(connected > 0 ? String(localized: "\(connected) 个已连接") : String(localized: "连接服务")).font(.footnote).foregroundStyle(Palette.secondary)
-                }
-                .padding(.horizontal, 12)
-                .frame(minHeight: 46)
-                .contentShape(Rectangle())
+        let connected = team.status == .ready ? team.connectors.filter { $0["state"].string == "ready" }.count : 0
+        return Button { Haptics.tap(); app.connectorsRequest = UUID() } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "point.3.connected.trianglepath.dotted").font(.callout).foregroundStyle(Palette.ink).frame(width: 22)
+                Text("连接器").font(.subheadline).foregroundStyle(Palette.ink)
+                Spacer()
+                Text(connected > 0 ? String(localized: "\(connected) 个已连接") : String(localized: "外部服务")).font(.footnote).foregroundStyle(Palette.secondary)
             }
-            .buttonStyle(.plain)
-            .padding(.bottom, 2)
-            .plainRow()
+            .padding(.horizontal, 12)
+            .frame(minHeight: 46)
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .padding(.bottom, 2)
+        .plainRow()
     }
 
-    /// What the agent may reach on this phone, and the switch for each one.
-    ///
-    /// A row of its own rather than a line in settings: nothing asks for these
-    /// permissions on its own any more (docs/native-services.md §5.5), so if this
-    /// is hard to find, the capabilities are simply never turned on.
+    /// This phone's own capabilities. A row of their own: they need no plugin, and if the way in is
+    /// hard to find they are simply never switched on (docs/native-services.md §5.5).
     private var capabilitiesRow: some View {
         Button { Haptics.tap(); app.nativeCapabilitiesRequest = UUID() } label: {
             HStack(spacing: 12) {
                 Image(systemName: "iphone").font(.callout).foregroundStyle(Palette.ink).frame(width: 22)
                 Text("本机能力").font(.subheadline).foregroundStyle(Palette.ink)
                 Spacer()
-                Text("授权").font(.footnote).foregroundStyle(Palette.secondary)
+                Text("日历、健康、照片等").font(.footnote).foregroundStyle(Palette.secondary)
+            }
+            .padding(.horizontal, 12)
+            .frame(minHeight: 46)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .padding(.bottom, 2)
+        .plainRow()
+    }
+
+    /// 我的应用: the small tools and games the agent made, which open without the engine.
+    private var miniAppsRow: some View {
+        Button { Haptics.tap(); app.miniAppsRequest = UUID() } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "apps.iphone").font(.callout).foregroundStyle(Palette.ink).frame(width: 22)
+                Text("我的应用").font(.subheadline).foregroundStyle(Palette.ink)
+                Spacer()
+                Text(miniApps.apps.isEmpty ? String(localized: "小工具和小游戏") : String(localized: "\(miniApps.apps.count) 个应用")).font(.footnote).foregroundStyle(Palette.secondary)
+            }
+            .padding(.horizontal, 12)
+            .frame(minHeight: 46)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .padding(.bottom, 2)
+        .plainRow()
+        .task { miniApps.refresh() }
+    }
+
+    /// 操控手机: the agent taps and reads other apps through iCTRL, which the user installs
+    /// themselves. One of the app's main features, so a row of its own; it says whether the
+    /// service is up.
+    private var phoneControlRow: some View {
+        Button { Haptics.tap(); app.phoneControlRequest = UUID() } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "hand.tap").font(.callout).foregroundStyle(Palette.ink).frame(width: 22)
+                Text("操控手机").font(.subheadline).foregroundStyle(Palette.ink)
+                Spacer()
+                if phoneControl.state == .running {
+                    HStack(spacing: 5) {
+                        Circle().fill(.green).frame(width: 7, height: 7)
+                        Text("运行中")
+                    }
+                    .font(.footnote).foregroundStyle(Palette.secondary)
+                } else {
+                    Text("让智能体点按其他 App").font(.footnote).foregroundStyle(Palette.secondary)
+                }
             }
             .padding(.horizontal, 12)
             .frame(minHeight: 46)
@@ -374,7 +514,10 @@ struct DrawerView: View {
         .plainRow()
     }
 
-    private var remoteControlNote: String {
+    private var remoteControlNote: String { Self.remoteControlNote(remote) }
+
+    /// What the 远程控制 row says beside its name, here and on the 工具 tab.
+    static func remoteControlNote(_ remote: RemoteStore) -> String {
         if remote.expired { return String(localized: "重新登录") }
         // Signed in with no computer on the account yet (or the last one removed): the same invitation.
         guard remote.signedIn, !remote.devices.isEmpty else { return String(localized: "连接电脑") }
@@ -387,7 +530,7 @@ struct DrawerView: View {
         HStack(spacing: 8) {
             Text("会话").font(.footnote).foregroundStyle(Palette.secondary).accessibilityAddTraits(.isHeader)
             Spacer(minLength: 8)
-            viewMenu
+            viewMenu()
         }
         .padding(.leading, 14)
         .padding(.trailing, 4)
@@ -395,7 +538,8 @@ struct DrawerView: View {
         .plainRow()
     }
 
-    private var viewMenu: some View {
+    /// `compact`: an icon alone, for the 会话 tab's bar.
+    private func viewMenu(compact: Bool = false) -> some View {
         Menu {
             Picker("分组方式", selection: Binding(get: { grouping }, set: { groupBy = $0 })) {
                 Label("按时间", systemImage: "clock").tag(GroupBy.time)
@@ -408,14 +552,18 @@ struct DrawerView: View {
                 Button { app.remoteSessionRequest = RemoteSessionTarget() } label: { Label("在电脑上新建会话", systemImage: "laptopcomputer") }
             }
         } label: {
-            HStack(spacing: 5) {
+            if compact {
                 Image(systemName: "line.3.horizontal.decrease")
-                Text(groupingTitle)
+            } else {
+                HStack(spacing: 5) {
+                    Image(systemName: "line.3.horizontal.decrease")
+                    Text(groupingTitle)
+                }
+                .font(.footnote)
+                .foregroundStyle(Palette.secondary)
+                .padding(.horizontal, 8)
+                .hitTarget()
             }
-            .font(.footnote)
-            .foregroundStyle(Palette.secondary)
-            .padding(.horizontal, 8)
-            .hitTarget()
         }
         .accessibilityLabel("视图选项")
         .accessibilityValue(groupingTitle)

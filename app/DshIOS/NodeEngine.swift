@@ -87,6 +87,12 @@ final class NodeEngine: ObservableObject {
         setenv("DSH_IOS_HOME", EnginePaths.home, 1)
         setenv("DSH_IOS_DATA", EnginePaths.shared, 1)
         setenv("DSH_IOS_DOCUMENTS", EnginePaths.documents, 1)
+        // The gateway of the `fish-pocket` model route (engine/ios.patch.yml); unset hides the route.
+        if let url = FishPocketAPI.baseURL { setenv("FISH_POCKET_API_URL", url.absoluteString, 1) }
+        // The agent ends an iCTRL task by opening this app's own link (references/phone-control.md).
+        // Not DSH_-prefixed: dsh keeps those to itself and strips them from every command's
+        // environment (dsh-subprocess `scrubbedParentEnv`), so the agent would never see it.
+        setenv("FISH_POCKET_URL_SCHEME", DshLink.scheme, 1)
         #if DEBUG
         // Lets <data>/debug/*.mjs run inside the engine (engine/runtime/debug-inbox.mjs).
         setenv("DSH_IOS_DEBUG", "1", 1)

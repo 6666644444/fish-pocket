@@ -99,12 +99,23 @@ final class ComposerContext {
     }
 
     static func providerName(_ id: String, _ name: String?) -> String {
-        id == "deepseek-account" ? String(localized: "DeepSeek 账号") : (name ?? id)
+        switch id {
+        case "deepseek-account": String(localized: "DeepSeek 账号")
+        case FishPocketAPI.provider: String(localized: "Fish Pocket 账号")
+        default: name ?? id
+        }
     }
 
-    /// The account and official providers first; the others keep their catalog order.
+    /// The account, Fish Pocket and official providers first; the others keep their catalog order.
     static func ordered(_ groups: [ModelGroup]) -> [ModelGroup] {
-        func rank(_ id: String) -> Int { id == "deepseek-account" ? 0 : id == "deepseek-official" ? 1 : 2 }
+        func rank(_ id: String) -> Int {
+            switch id {
+            case "deepseek-account": 0
+            case FishPocketAPI.provider: 1
+            case "deepseek-official": 2
+            default: 3
+            }
+        }
         return groups.enumerated().sorted { (rank($0.element.id), $0.offset) < (rank($1.element.id), $1.offset) }.map(\.element)
     }
 
@@ -119,21 +130,23 @@ final class ComposerContext {
         catalog.flatMap(\.models).first { $0.provider == provider && $0.model == model }
     }
 
-    /// Move a conversation whose recorded model no longer routes to one that does,
-    /// before its next message. The case this is for: the first message went out with
-    /// no key and no account, so its turn ran (and failed) on DeepSeek official and the
-    /// session recorded that model; signing in moves the default to the account, but
-    /// the session keeps the model its last request used and every later turn fails the
-    /// same way, while a new session starts on the new default and works.
+    /// Move a conversation whose model no longer routes to one that does, before its
+    /// next message. Two cases this is for. The first message went out with no key and
+    /// no account, so its turn ran (and failed) on DeepSeek official and the session
+    /// recorded that model; signing in moves the default to the account, but the session
+    /// keeps the model its last request used and every later turn fails the same way,
+    /// while a new session starts on the new default and works. And a conversation that
+    /// has sent nothing runs on the default: signing in to Fish Pocket offers its models
+    /// but leaves the default on DeepSeek official, where the first message would fail.
     /// The target is the catalog default, else the first offered model (the account's
     /// first, as `session/initializeDefaultModel` picks it, when that call has not landed yet).
     func adoptRoutableModel(_ model: SessionModel) async {
-        guard model.subagentAddress == nil, let recorded = model.modelSelection,
-              choice(recorded.provider, recorded.model) == nil else { return }
+        guard model.subagentAddress == nil, let chosen = selection(model),
+              choice(chosen.provider, chosen.model) == nil else { return }
         // The catalog in hand may predate the sign-in or the key: read it again before deciding.
         await loadCatalog(model)
         // A provider whose list failed to load this time is not known to be gone: leave it be.
-        guard catalogLoaded, let current = model.modelSelection, choice(current.provider, current.model) == nil,
+        guard catalogLoaded, let current = selection(model), choice(current.provider, current.model) == nil,
               !catalogFailures.contains(where: { $0.id == current.provider }) else { return }
         let next: ModelChoice
         var effort: String?

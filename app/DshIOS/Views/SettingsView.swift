@@ -3,9 +3,9 @@ import SwiftUI
 import WatchConnectivity
 
 /// Settings: only what people come here for (账号, 模型, 访问模式, 插件, 自动化, 后台运行: 静音音频,
-/// 任务续跑, 小组件), then the rarely touched 外观 and 语言. Developer pages sit behind 高级, versions and
-/// engine status behind 关于. 本机能力 and 远程控制 have their rows in the sidebar, not here.
-/// 分享 Fish Pocket and Apple Watch open the list; the star, rating, website, source, feedback and author links,
+/// 任务续跑, 小组件), then the rarely touched 外观, App 图标 and 语言. Developer pages sit behind 高级, versions and
+/// engine status behind 关于. 本机能力 and 远程控制 are on the 探索 tab (in the sidebar before iOS 18), not here.
+/// 分享 Fish Pocket and Apple Watch open the list (on the tab bar they are on 探索 instead); the star, rating, website, source, feedback and author links,
 /// then the WeChat group's QR code, close it.
 /// The engine card shows here only while the engine is not running. Every page reads the shared
 /// settings mirror, so a write anywhere shows everywhere.
@@ -27,6 +27,8 @@ struct SettingsView: View {
     @State private var languageChanged = false
     @AppStorage(BackgroundKeeper.continuedKey) private var continuedProcessing = false
     @AppStorage(WidgetSnapshotWriter.showTitlesKey) private var widgetTitles = true
+    /// The phone's 设置 tab rather than a sheet: no ✕.
+    var asTab = false
 
     private var mirror: SettingsMirror { app.settings }
 
@@ -42,18 +44,38 @@ struct SettingsView: View {
                     Section { EngineCard() }
                 }
 
-                Section {
-                    NavigationLink { ShareAppPage() } label: { ShareAppRow() }
-                    // iPad pairs with no watch.
-                    if WCSession.isSupported() {
-                        NavigationLink { WatchSetupPage() } label: { WatchSetupRow() }
+                // On the tab bar these two are on the 探索 tab.
+                if !asTab {
+                    Section {
+                        NavigationLink { ShareAppPage() } label: { ShareAppRow() }
+                        // iPad pairs with no watch.
+                        if WCSession.isSupported() {
+                            NavigationLink { WatchSetupPage() } label: { WatchSetupRow() }
+                        }
                     }
                 }
 
+                // The ways to reach a model, each on its own: Fish Pocket credits (when this build
+                // has the service), the DeepSeek account, an API key.
                 Section {
-                    NavigationLink { AccountPage() } label: {
-                        row("账号", "person.crop.circle", app.account.signedIn ? (app.account.displayName ?? String(localized: "已登录")) : String(localized: "未登录"))
+                    if app.fishPocket.available {
+                        NavigationLink { FishPocketPage() } label: {
+                            row("Fish Pocket 账号", "sparkles", app.fishPocket.signedIn
+                                ? (app.fishPocket.balance.map { String(localized: "\($0) 积分") } ?? String(localized: "已登录"))
+                                : String(localized: "未登录"))
+                        }
                     }
+                    NavigationLink { AccountPage() } label: {
+                        row("DeepSeek 账号", "person.crop.circle", app.account.signedIn ? (app.account.displayName ?? String(localized: "已登录")) : String(localized: "未登录"))
+                    }
+                    DeepSeekKeyRow()
+                } header: {
+                    Text("连接方式")
+                } footer: {
+                    Text("几种方式相互独立，配置任意一种就能开始对话。")
+                }
+
+                Section {
                     NavigationLink { ModelProvidersPage() } label: { row("模型", "cpu", defaultModel ?? "") }
                     NavigationLink { VoiceSettingsPage() } label: {
                         row("语音", "mic", VoicePreferences.shared.source == .volcengine && !VolcSpeech.shared.configured ? String(localized: "未设置") : VoicePreferences.shared.source.title)
@@ -120,6 +142,9 @@ struct SettingsView: View {
                         }
                         .pickerValueTint()
                     }
+                    if AppIconChoice.available {
+                        NavigationLink { AppIconPage() } label: { AppIconRow() }
+                    }
                     // iOS shows the per-app language in its Settings only to readers with several system
                     // languages; this picker writes the same preference, applied at the next launch.
                     Picker(selection: $languageChoice) {
@@ -160,7 +185,7 @@ struct SettingsView: View {
             }
             .navigationTitle("设置")
             .navigationBarTitleDisplayMode(.large)
-            .closeButton(dismiss)
+            .modifier(SettingsClose(shown: !asTab, dismiss: dismiss))
             .alert("重启 App 后生效", isPresented: $languageChanged) {
                 Button("好", role: .cancel) {}
             } message: {
@@ -647,5 +672,15 @@ private struct ShareAppRow: View {
             Spacer(minLength: 0)
         }
         .padding(.vertical, 4)
+    }
+}
+
+/// The settings sheet's ✕; the 设置 tab has none.
+private struct SettingsClose: ViewModifier {
+    let shown: Bool
+    let dismiss: DismissAction
+
+    func body(content: Content) -> some View {
+        if shown { content.closeButton(dismiss) } else { content }
     }
 }

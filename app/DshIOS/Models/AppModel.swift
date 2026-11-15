@@ -105,6 +105,8 @@ final class AppModel {
     let client: EngineClient
     let mux: StreamMux
     let account: AccountModel
+    /// The Fish Pocket account and credits (the `fish-pocket` model route).
+    let fishPocket: FishPocketAccount
     let cordis = CordisModel()
     /// Agent sessions on the user's computers, through Agents Anywhere; idle until signed in.
     let remote = RemoteStore.shared
@@ -158,6 +160,10 @@ final class AppModel {
     var nativeCapabilitiesRequest: UUID?
     /// Open the connectors (the root view consumes it).
     var connectorsRequest: UUID?
+    /// Open 操控手机, the iCTRL switch (the root view consumes it).
+    var phoneControlRequest: UUID?
+    /// The drawer's 我的应用 row: the shell opens the page.
+    var miniAppsRequest: UUID?
     /// A credential step to open (set through `requestCredentials`; the root view consumes it).
     var credentialRequest: (step: CredentialStep, token: UUID)?
     /// The session in the main view, kept by the root view (unread completions skip it).
@@ -195,6 +201,7 @@ final class AppModel {
         client = EngineClient(launchURL: launchURL)
         mux = StreamMux(client: client)
         account = AccountModel(client: client, mux: mux)
+        fishPocket = FishPocketAccount(engine: client)
         cordis.attach(self)
         DeepSeekSpeech.client = client
         ReadAloud.shared.onError = { [weak self] message in self?.showToast(message, tone: .warning) }
@@ -211,6 +218,7 @@ final class AppModel {
             followRemoteEvents()
             followScheduleCatalog()
             account.follow()
+            Task { await fishPocket.start() }
             botTeam.start()
             DeepSeekSpeech.followAgent()
             BackgroundKeeper.shared.attach { [weak self] in await self?.refreshSessions() }
@@ -380,6 +388,12 @@ final class AppModel {
     /// a computer that the phone answers for while they work or wait (to hear how they end).
     private func reportRunning() {
         let running = sessions.values.filter(\.running)
+        // 我的应用: an app the agent changed is published once its turn is over.
+        let busy = !running.isEmpty
+        if MiniAppPublisher.agentBusy != busy {
+            MiniAppPublisher.agentBusy = busy
+            if !busy { MiniAppStore.shared.refresh() }
+        }
         BackgroundKeeper.shared.update(running: running.map { $0.isSubagent ? String(localized: "子智能体") : title(of: $0.id) }
             + remote.attention.map(\.displayTitle))
     }
