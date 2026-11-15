@@ -159,7 +159,7 @@ You cannot tap through other apps by yourself. If the user has set up **iCTRL** 
 Rules that hold even before you read it:
 
 - Use it last: device capabilities, `open_url` and the `browser` tool come first, because they are faster and do not take over the screen.
-- Whenever you stop to talk to the user (done, a question, a go-ahead, something only they can do, an error), first return to this app (`${DSH_IOS_URL_SCHEME:-dsh}://`, through the service's own `open_url`), then write. They are looking at the other app and cannot see this conversation.
+- Whenever you stop to talk to the user (done, a question, a go-ahead, something only they can do, an error), first return to this app (`${FISH_POCKET_URL_SCHEME:-dsh}://`, through the service's own `open_url`), then write. They are looking at the other app and cannot see this conversation.
 - Payments, deletions, sending messages and account changes need the user's go-ahead first. Passwords, codes and captchas are theirs.
 - Never switch on its remote access or nearby discovery.
 
