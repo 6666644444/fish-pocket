@@ -352,7 +352,7 @@ final class BotModel {
         request.httpBody = try JSONEncoder().encode(["endpoint": .string(endpoint), "payload": payload] as JSON)
         let (data, response) = try await client.session.data(for: request)
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
-        guard let reply = try? JSONDecoder().decode(JSON.self, from: data), reply["ok"].bool != nil else {
+        guard let reply = try? JSON.parse(data), reply["ok"].bool != nil else {
             if status == 404 { throw Unreachable() }
             throw EngineError(code: "HTTP_\(status)", message: String(localized: "Bot 插件返回了无法解析的响应（HTTP \(status)）"), detail: .null)
         }
@@ -428,7 +428,7 @@ final class BotModel {
                 event = line.dropFirst(6).trimmingCharacters(in: .whitespaces)
             } else if line.hasPrefix("data:") {
                 let data = Data(line.dropFirst(5).utf8)
-                let value = (try? JSONDecoder().decode(JSON.self, from: data)) ?? .null
+                let value = (try? JSON.parse(data)) ?? .null
                 handle(event, value)
                 event = ""
             }
