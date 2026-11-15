@@ -44,8 +44,8 @@ static NSString *const kDeniedMessage =
 /// title for the reason given there.
 static NSString *const kNotEnabledMessage =
     @"the user has not switched alarms on for this app yet. Nothing was scheduled. "
-     "Tell them they can turn it on themselves under Device capabilities (under Connectors) in the app's "
-     "sidebar — only they can grant it, and iOS asks once per app, so the app will not ask on its own.";
+     "Tell them they can turn it on themselves under Device capabilities (under Connectors) on the app's Tools "
+     "tab (in the sidebar before iOS 18) — only they can grant it, and iOS asks once per app, so the app will not ask on its own.";
 
 /// Said when iOS is too old for AlarmKit. Deliberately not phrased as a
 /// permission problem: sending the user to Settings to look for a switch that

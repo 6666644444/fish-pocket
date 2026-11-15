@@ -1,11 +1,11 @@
 import StoreKit
 import SwiftUI
 
-/// The root. On iPhone (from iOS 18) a tab bar: 会话, Bot, 应用, 工具 and 设置; a conversation
-/// is pushed on the 会话 tab's list and has the screen to itself. In regular width the session
-/// list is the split view's sidebar beside a conversation, always: with nothing selected — at
-/// launch, after archiving — a blank session in the current workspace opens. Before iOS 18 the
-/// phone has that layout too, the list a drawer that slides in from the left.
+/// The root. From iOS 18 the system's adaptable tab bar in every width: 会话, Bot, 应用, 工具 and 设置,
+/// at the bottom on a phone, at the top or as a sidebar where there is room (iPad, iPhone Duo open).
+/// The 会话 tab pushes a conversation over its list where it is narrow and keeps one beside it where it
+/// is wide. Before iOS 18 the session list is the split view's sidebar beside a conversation, always
+/// (with nothing selected a blank session opens), and on a phone a drawer that slides in from the left.
 struct MainView: View {
     /// The phone's tabs.
     enum HomeTab: Hashable { case sessions, bot, apps, tools, settings }
@@ -38,6 +38,8 @@ struct MainView: View {
     @State private var sessionsPath: [DrawerView.Route]
     /// The 工具 tab's stack: the plugin store is pushed on it when something asks for it.
     @State private var toolsPath: [ToolsTabView.Route] = []
+    /// The 会话 tab's own split view, where it is wide: the list can make way for the workbench.
+    @State private var sessionsColumns = NavigationSplitViewVisibility.all
     @State private var drag: CGFloat = 0
     /// The way a drag on the shell set off, fixed by its first move; nil between drags.
     /// A plain reference filled by the drawer's rows.
@@ -101,7 +103,8 @@ struct MainView: View {
         switch parts[0] {
         case "session":
             // A session on a computer is taken on trust while signed in: its page says so if it has gone.
-            if RemoteStore.sessionId(of: id) != nil ? app.remote.signedIn : app.workspace(of: id) != nil && !app.isArchived(id) { selection = id }
+            // A Bot's own session is its chat's, not a conversation to put back.
+            if RemoteStore.sessionId(of: id) != nil ? app.remote.signedIn : app.workspace(of: id).map({ !isTeamWorkspace($0) }) == true && !app.isArchived(id) { selection = id }
         case "bot": openBots([.bot(id)])
         case "room": openBots([.room(id)])
         case "bots": openBots([])
@@ -130,10 +133,22 @@ struct MainView: View {
         }
     }
 
-    /// Where a new conversation goes: the current workspace, never the Bot team's, which holds its sessions alone.
+    /// Where a new conversation goes: the current workspace, else the first-use one, never the Bot
+    /// team's, which holds the Bots' sessions alone (a blank one there would be reused: a Bot's chat).
     private var workspace: Workspace? {
-        let usable = app.workspaces.filter { $0.id != app.botTeam.teamWorkspaceId }
-        return usable.first { $0.id == workspaceId } ?? usable.first ?? app.workspaces.first
+        let usable = app.workspaces.filter { !isTeamWorkspace($0) }
+        return usable.first { $0.id == workspaceId } ?? usable.first { $0.title == "default-workspace" } ?? usable.first ?? app.workspaces.first
+    }
+
+    /// The Bot team's workspace: by the team's word once it answers, before that (the launch races the
+    /// Bot plugin) by ds-bot's default folder. The engine lists it before the first-use workspace.
+    private func isTeamWorkspace(_ workspace: Workspace) -> Bool {
+        workspace.id == app.botTeam.teamWorkspaceId || workspace.path.hasSuffix("/.dsh/bot/workspace")
+    }
+
+    /// The workspace a session shown here belongs to becomes the current one; the Bot team's never does.
+    private func remember(workspaceOf id: String) {
+        if let owner = app.workspace(of: id), !isTeamWorkspace(owner) { workspaceId = owner.id }
     }
 
     /// A button of the support dialog: the ask is answered for good.
@@ -152,10 +167,10 @@ struct MainView: View {
     /// The width's own layout, with the way into the plugin store.
     private var layout: some View {
         Group {
-            if sizeClass == .regular {
-                split
-            } else if #available(iOS 18.0, *) {
+            if #available(iOS 18.0, *) {
                 tabLayout
+            } else if sizeClass == .regular {
+                split
             } else {
                 drawerLayout
             }
@@ -232,25 +247,16 @@ struct MainView: View {
             Task { await follow(request.link) }
         }
         .onChange(of: workspaceId) { WidgetSnapshotWriter.shared.refresh() }
-        // A window narrowed past the sidebar has no place beside it for the store.
+        // Before iOS 18, a window narrowed past the sidebar has no place beside it for the store.
+        // The tab bar keeps its tabs in every width.
         .onChange(of: sizeClass) { _, size in
-            if usesTabs {
-                // Into the tab bar: the store has a tab, the conversation goes on the 会话 tab's stack.
-                if storeOpen {
-                    storeOpen = false
-                    tab = .tools
-                    toolsPath = [.plugins]
-                } else {
-                    tab = botOpen ? .bot : .sessions
-                }
-                sessionsPath = selection.map { [.session($0)] } ?? []
-            } else if size != .regular, storeOpen {
+            if !usesTabs, size != .regular, storeOpen {
                 storeOpen = false
                 sheet = .store
-            } else if selection == nil {
-                // Out of the tab bar with the list on screen: the split view always shows a conversation.
-                newConversation(in: workspace)
             }
+            // Wide again (an iPad window, iPhone Duo opened): the system put the 会话 tab's list away
+            // on the way down, before the conversation was pushed over it. It comes back.
+            if usesTabs, size == .regular { sessionsColumns = .all }
         }
         // On the tab bar the Bot pages are its Bot tab. A conversation left pushed under another
         // tab is not on screen: what finishes there meanwhile is marked unread, and the watch told.
@@ -332,7 +338,7 @@ struct MainView: View {
             }
             if launchedUnderBot { launchedUnderBot = false } else { botOpen = false }
             if let id {
-                if let owner = app.workspace(of: id) { workspaceId = owner.id }
+                remember(workspaceOf: id)
             } else {
                 newConversation(in: workspace)
             }
@@ -393,11 +399,13 @@ struct MainView: View {
         usesTabs && tab != .sessions ? nil : selection
     }
 
-    /// The tab bar is the layout (`layout`).
+    /// The tab bar is the layout (`layout`), in every width.
     private var usesTabs: Bool {
-        guard sizeClass != .regular else { return false }
-        if #available(iOS 18.0, *) { return true } else { return false }
+        if #available(iOS 18.0, *) { true } else { false }
     }
+
+    /// Where there is room for the session list beside the conversation, on the tab bar's 会话 tab.
+    private var sessionsSideBySide: Bool { usesTabs && sizeClass == .regular }
 
     /// `selection` on the tab bar: a session is pushed on the 会话 tab, in front; none, it is popped.
     private func showInTabs(_ id: String?) {
@@ -405,7 +413,7 @@ struct MainView: View {
             sessionsPath.removeAll { $0.session != nil }
             return
         }
-        if let owner = app.workspace(of: id) { workspaceId = owner.id }
+        remember(workspaceOf: id)
         launchedUnderBot = false
         tab = .sessions
         // Over the archive when it was open, so back returns there.
@@ -617,9 +625,14 @@ struct MainView: View {
             search: {
                 sheet = nil
                 if usesTabs {
-                    // Search is the 会话 tab's own field.
+                    // Search is the 会话 tab's own field: over the list where the list is under the
+                    // conversation, beside it where it is wide (the conversation stays).
                     tab = .sessions
-                    sessionsPath.removeAll()
+                    if sessionsSideBySide {
+                        withAnimation { sessionsColumns = .all }
+                    } else {
+                        sessionsPath.removeAll()
+                    }
                     searchRequest += 1
                     return
                 }
@@ -632,8 +645,11 @@ struct MainView: View {
     }
 
     private func toggleSidebar() {
-        // The tab bar has no sidebar to show.
-        if usesTabs { return }
+        // On the tab bar the 会话 tab's list, where it is beside the conversation.
+        if usesTabs {
+            if sessionsSideBySide, tab == .sessions { toggleSessionsList() }
+            return
+        }
         if sizeClass == .regular {
             withAnimation { sidebar = sidebar == .detailOnly ? .all : .detailOnly }
         } else {
@@ -759,21 +775,13 @@ struct MainView: View {
 
     // MARK: Tab bar
 
-    /// The phone's layout from iOS 18. A conversation, a Bot's chat or a group, pushed, hides the
-    /// bar: their input sits where it would be.
+    /// The layout from iOS 18. Where the bar is at the bottom, a conversation, a Bot's chat or a
+    /// group, pushed, hides it: their input sits where it would be.
     @available(iOS 18.0, *)
     private var tabLayout: some View {
         TabView(selection: $tab) {
             Tab(DrawerView.sessionsTitle, systemImage: "bubble.left.and.bubble.right", value: HomeTab.sessions) {
-                NavigationStack(path: $sessionsPath) {
-                    drawer(.sessions)
-                        .navigationDestination(for: DrawerView.Route.self) { route in
-                            switch route {
-                            case .archived: drawer(.archived)
-                            case .session(let id): pushedConversation(id).toolbar(.hidden, for: .tabBar)
-                            }
-                        }
-                }
+                if sessionsSideBySide { sessionsSplit } else { sessionsStack }
             }
             .badge(waitingCount)
             Tab("Bot", systemImage: "face.smiling", value: HomeTab.bot) {
@@ -791,6 +799,73 @@ struct MainView: View {
                 SettingsView(asTab: true)
             }
         }
+        .tabViewStyle(.sidebarAdaptable)
+        // iPhone Duo open keeps a column at its trailing edge for the bar buttons and the tab bar. The
+        // system settles what goes there when the tab view is made: made folded, then opened, the
+        // buttons of the conversation beside the list never show. Made again at each fold, it holds
+        // everything that counts outside it (the tab, each tab's path, the conversation).
+        .id(ThisDevice.isDuo ? sizeClass : nil)
+    }
+
+    /// The 会话 tab where it is narrow: the list, with the conversation pushed over it.
+    @available(iOS 18.0, *)
+    private var sessionsStack: some View {
+        NavigationStack(path: $sessionsPath) {
+            drawer(.sessions)
+                .navigationDestination(for: DrawerView.Route.self) { route in
+                    switch route {
+                    case .archived: drawer(.archived)
+                    case .session(let id): pushedConversation(id).toolbar(.hidden, for: .tabBar)
+                    }
+                }
+        }
+    }
+
+    /// The 会话 tab where it is wide: the list beside the conversation, which is always there, as the
+    /// split view's: with none selected (at launch, after archiving) a blank one opens.
+    @available(iOS 18.0, *)
+    private var sessionsSplit: some View {
+        NavigationSplitView(columnVisibility: $sessionsColumns) {
+            drawer(.sessions)
+                .navigationDestination(for: DrawerView.Route.self) { route in
+                    switch route {
+                    case .archived: drawer(.archived)
+                    case .session(let id): pushedConversation(id)
+                    }
+                }
+                // Widths as the split view's (`split`): a width that follows the fold hangs it.
+                .navigationSplitViewColumnWidth(min: 280, ideal: 320, max: 360)
+                .modifier(SidebarToggle(system: systemSidebarButton))
+        } detail: {
+            NavigationStack {
+                if let selection { pushedConversation(selection) } else { conversation(openDrawer: nil) }
+            }
+            .modifier(PastTheFold())
+            // The list's button where the system's cannot be counted on (`systemSidebarButton`), and
+            // room for the workbench.
+            .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomInSessions, toggle: sessionsListToggle))
+        }
+        .navigationSplitViewStyle(.balanced)
+        // Only while this tab is in front: a conversation archived from another one does not pull it here.
+        .task(id: selection == nil && !app.workspaces.isEmpty && tab == .sessions) {
+            if selection == nil, !app.workspaces.isEmpty, tab == .sessions { newConversation(in: workspace) }
+        }
+    }
+
+    /// The 会话 tab's list button in the conversation's bar, where the system's is removed
+    /// (`systemSidebarButton`). From iOS 27.1 the system's is there, beside the list's own buttons
+    /// and in the conversation's bar once the list is away: a second one would say the same.
+    private var sessionsListToggle: (() -> Void)? {
+        systemSidebarButton ? nil : toggleSessionsList
+    }
+
+    private func toggleSessionsList() {
+        withAnimation { sessionsColumns = sessionsColumns == .detailOnly ? .all : .detailOnly }
+    }
+
+    /// The workbench takes about 420 pt: under this much, the list makes way for it, as the sidebar does.
+    private func makeRoomInSessions() {
+        if windowWidth < 1100 { withAnimation { sessionsColumns = .detailOnly } }
     }
 
     /// What the 会话 tab's list shows waiting on the user: this phone's conversations and those on
@@ -853,7 +928,8 @@ struct MainView: View {
                     // chat has a back button where the conversation has its sidebar button, so the
                     // sidebar's goes beside it.
                     .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomForWorkbench, toggle: sizeClass == .regular ? hideSidebar : nil))
-                    .toolbar(usesTabs ? .hidden : .automatic, for: .tabBar)
+                    // Its input takes the bar's place where the bar is at the bottom.
+                    .toolbar(usesTabs && sizeClass != .regular ? .hidden : .automatic, for: .tabBar)
                 }
         }
     }

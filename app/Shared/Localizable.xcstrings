@@ -41619,6 +41619,40 @@
         }
       }
     },
+    "底部标签栏" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tab Bar at the Bottom"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Barra de pestañas abajo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面下部のタブバー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하단 탭 바"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "底部標籤列"
+          }
+        }
+      }
+    },
     "建相簿、收藏、隐藏、把图存进相册或删掉，在对话里说一声就行。删照片前 iOS 会再问你一次。" : {
       "localizations" : {
         "en" : {
@@ -103275,6 +103309,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在對話裡請 Agent 做個實用工具或小遊戲，做好就放進「App」裡，點開就能用，也能放到主畫面上。先試試內建的倒數日和水果翻翻。"
+          }
+        }
+      }
+    },
+    "首页改成苹果的标签栏，会话、Bot、应用、工具、设置一点就到。插件、连接器、远程控制、操控手机都在「工具」里，搜索放进了会话列表。iPad 和 iPhone Duo 上，标签栏会自动放到顶部或变成侧边栏。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The home screen now uses Apple's tab bar, so Sessions, Bot, Apps, Tools and Settings are one tap away. Plugins, Connectors, Remote Control and Phone Control are all under Tools, and search is in the session list. On iPad and iPhone Duo, the tab bar moves to the top or turns into a sidebar on its own."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La pantalla de inicio usa ahora la barra de pestañas de Apple: Sesiones, Bot, Apps, Herramientas y Configuración están a un toque. Complementos, Conectores, Control remoto y Control del teléfono están en Herramientas, y la búsqueda está en la lista de sesiones. En iPad y iPhone Duo, la barra de pestañas pasa sola arriba o se convierte en una barra lateral."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ホーム画面が Apple のタブバーになり、セッション、Bot、アプリ、ツール、設定にワンタップで移動できます。プラグイン、コネクタ、リモート操作、iPhone を操作はすべて「ツール」にまとめ、検索はセッション一覧に入りました。iPad と iPhone Duo では、タブバーが自動的に上部に移動するか、サイドバーに切り替わります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "홈 화면이 Apple 탭 바로 바뀌어 세션, Bot, 앱, 도구, 설정을 한 번에 열 수 있어요. 플러그인, 커넥터, 원격 제어, iPhone 조작은 모두 「도구」에 있고, 검색은 세션 목록에 들어갔어요. iPad와 iPhone Duo에서는 탭 바가 자동으로 위쪽으로 옮겨지거나 사이드바로 바뀌어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "首頁改成 Apple 的標籤列，對話、Bot、App、工具、設定一點就到。外掛、連接器、遠端控制、操控手機都在「工具」裡，搜尋放進了對話列表。在 iPad 和 iPhone Duo 上，標籤列會自動移到頂部或變成側邊欄。"
           }
         }
       }

@@ -299,6 +299,10 @@ struct ConversationView: View {
                 }
             }
             .readableWidth()
+            // The starter prompts scroll past the dock's padding to the screen's edge, not into the
+            // safe area beside it: the status bar's column on iPhone Duo unfolded, the notch's side
+            // in landscape. Cut at the sides only: under the input sits the AI label.
+            .mask { Rectangle().padding(.vertical, -200) }
             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { app.composerHeight = $0 }
         }
         .modifier(ComposerDrop(composer: model.composer, enabled: model.subagentReadOnly(parentAvailable: parentAvailable(model)) == nil))
