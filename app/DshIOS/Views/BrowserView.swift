@@ -78,6 +78,8 @@ final class BrowserPage: NSObject {
         // As in Safari, a pinch zooms every page, including one that asks not to be zoomed
         // (`user-scalable=no`, `maximum-scale=1`), as most mobile sites do.
         configuration.ignoresViewportScaleLimits = true
+        // 我的应用, so the agent can look at an app it made: `fishapp://<id>/`.
+        configuration.setURLSchemeHandler(MiniAppServer.preview, forURLScheme: MiniAppServer.scheme)
         configuration.userContentController.add(
             BrowserPresence.Listener(presence), contentWorld: Self.agentWorld, name: BrowserPresence.Listener.name)
         webView = WKWebView(frame: .zero, configuration: configuration)
@@ -327,7 +329,12 @@ final class BrowserPage: NSObject {
         let candidate = hasScheme ? trimmed : (isLoopback(trimmed) ? "http://" : "https://") + trimmed
         guard let url = URL(string: candidate), let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else { return .failure(.invalid) }
         if components.user != nil || components.password != nil { return .failure(.credentials) }
-        guard let scheme = url.scheme?.lowercased(), scheme == "http" || scheme == "https" else { return .failure(.unsupportedScheme) }
+        guard let scheme = url.scheme?.lowercased() else { return .failure(.unsupportedScheme) }
+        if scheme == MiniAppServer.scheme {
+            guard let host = url.host(), MiniApp.validId(host) else { return .failure(.invalid) }
+            return .success(url)
+        }
+        guard scheme == "http" || scheme == "https" else { return .failure(.unsupportedScheme) }
         guard let host = url.host(), !host.isEmpty else { return .failure(.invalid) }
         if sameOrigin(url, applicationOrigin) { return .failure(.applicationOrigin) }
         return .success(url)

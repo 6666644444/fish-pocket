@@ -13,6 +13,8 @@ struct DshIOSApp: App {
         // Siri, Shortcuts and the Control Center button: the window in front follows the link.
         DshIntentBridge.open = { LinkInbox.shared.request = LinkRequest(link: $0) }
         WatchLink.shared.activate()
+        // 我的应用: the compiler is ready before the first app opens.
+        MiniAppCompiler.shared.warmUp()
     }
 
     var body: some Scene {
@@ -82,6 +84,7 @@ struct RootView: View {
     /// The session this window opened on.
     let session: String?
     @EnvironmentObject private var engine: NodeEngine
+    @Environment(\.scenePhase) private var scenePhase
     @AppStorage(ThemePreference.key) private var themePreference = ThemePreference.system
     /// A `dsh://` link, held here because a widget can launch the app: the main view
     /// is not up until the engine is, and follows it then.
@@ -93,17 +96,31 @@ struct RootView: View {
         content
             .background(WindowAppearance(style: ThemePreference.style(themePreference)))
             .onOpenURL { url in
-                if let parsed = DshLink(url: url) { link = LinkRequest(link: parsed) }
+                if let parsed = DshLink(url: url) { follow(LinkRequest(link: parsed)) }
             }
             .onChange(of: inbox.request?.token, initial: true) {
                 guard let request = inbox.request else { return }
                 inbox.request = nil
-                link = request
+                follow(request)
+            }
+            // A widget or Shortcuts may offer an app the agent made since the list was last written.
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .background { MiniAppStore.shared.refresh() }
             }
             // A `dsh://` link goes to a window that is already open. Any window may also take a plain
             // launch: unless one allows it, iPadOS opens another window on every tap of the app's icon.
             // `preferring` stays narrow, so `openWindow` still gets its new window.
             .handlesExternalEvents(preferring: ["\(DshLink.scheme)://"], allowing: ["*"])
+    }
+
+    /// An app of 我的应用 opens at once, over whatever is up: it needs no engine. The rest
+    /// waits for the main view.
+    private func follow(_ request: LinkRequest) {
+        if case .app(let id) = request.link {
+            MiniAppPresenter.open(id)
+        } else {
+            link = request
+        }
     }
 
     @ViewBuilder
