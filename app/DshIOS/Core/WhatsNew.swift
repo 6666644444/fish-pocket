@@ -36,6 +36,11 @@ enum WhatsNew {
     /// Newest first. Until the app reaches an entry's version (and build, when it names one),
     /// the entry is not shown. Entries of one version are shown together, newest first.
     static let releases: [Release] = [
+        Release(version: "1.2.1", build: 106, features: [
+            Feature(symbol: "app.badge",
+                    title: "换个 App 图标",
+                    detail: "设置 → App 图标里可以把主屏幕上的图标换成别的颜色或贴纸版的大肥鱼，也可以换成不带人物的鲸鱼图标，或者只写着 Fish Pocket 的字标。"),
+        ]),
         Release(version: "1.2.1", build: 105, features: [
             Feature(symbol: "hand.tap",
                     title: "让智能体操作其他 App",
