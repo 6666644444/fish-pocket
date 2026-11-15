@@ -48,6 +48,8 @@ struct FishPocketHTTP: Sendable {
         var request = URLRequest(url: base.appending(path: path))
         request.httpMethod = method
         request.timeoutInterval = 30
+        // Every answer is current state (a balance, a takedown list): never one kept from before.
+        request.cachePolicy = .reloadIgnoringLocalCacheData
         request.setValue("application/json", forHTTPHeaderField: "accept")
         if let body {
             request.setValue("application/json", forHTTPHeaderField: "content-type")

@@ -10,6 +10,7 @@ struct PluginStoreView: View {
     @State private var model = PluginStoreModel()
     @State private var managing = false
     @State private var searching = false
+    @State private var showReports = false
 
     private var manager: PluginManagerModel { app.plugins }
 
@@ -31,11 +32,15 @@ struct PluginStoreView: View {
             ToolbarItem(placement: .topBarTrailing) { menu }
         }
         .sheet(isPresented: $managing) { StoreSourcesSheet(model: model) }
-        .task(id: app.revision()) { await model.prepare(app) }
+        .sheet(isPresented: $showReports) { PluginReportsPage() }
+        .task(id: app.revision()) {
+            PluginReports.shared.loadTakedowns()
+            await model.prepare(app)
+        }
         .task(id: app.revision("plugin-manager/changed")) {
             await manager.refresh(revision: app.revision("plugin-manager/changed"))
             guard model.readiness == .ready, model.market.result != nil else { return }
-            await model.market.reload(app, limit: max(model.market.entries.count, 50))
+            await model.market.reload(app, limit: max(model.market.fetched.count, 50))
         }
         .task(id: app.revision("plugin-market/changed")) {
             guard model.readiness == .ready else { return }
@@ -102,6 +107,9 @@ struct PluginStoreView: View {
                 } icon: {
                     Image(systemName: "shippingbox")
                 }
+            }
+            if PluginReports.shared.available {
+                Button { showReports = true } label: { Label("我的举报", systemImage: "flag") }
             }
         } label: {
             Image(systemName: "ellipsis")
@@ -654,7 +662,15 @@ private struct StorePackageRow: View {
                     StoreArt(name: package.name, icon: package.icon)
                 }
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(package.title).font(.callout).foregroundStyle(Palette.ink).lineLimit(1)
+                    HStack(spacing: 6) {
+                        Text(package.title).font(.callout).foregroundStyle(Palette.ink).lineLimit(1)
+                        // Fish Pocket's review (`PluginReports`): a plugin taken down keeps running until switched off.
+                        switch PluginReports.shared.takedown(package.name) {
+                        case .removed?: PluginTag(text: String(localized: "已下架"), tone: Palette.removed)
+                        case .reviewing?: PluginTag(text: String(localized: "审核中"), tone: Palette.waiting)
+                        case nil: EmptyView()
+                        }
+                    }
                     if let summary = package.summary {
                         Text(summary).font(.footnote).foregroundStyle(Palette.secondary).lineLimit(1)
                     }
