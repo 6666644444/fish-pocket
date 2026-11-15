@@ -9730,6 +9730,46 @@
         }
       }
     },
+    "装好开源的 iCTRL 后，智能体能像你一样操控 iPhone、iPad：点按、输入、读取屏幕，在各个 App 之间替你办事。「探索」里的「操控手机」可以查看状态、一键启动，还有设置教程。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "With the open-source iCTRL installed, the agent can control your iPhone or iPad the way you would: tapping, typing and reading the screen to get things done across apps. Phone Control under Explore shows its status, starts it with one tap and links to the setup guide."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con iCTRL, de código abierto, instalado, el agente puede controlar tu iPhone o iPad como lo harías tú: toca, escribe y lee la pantalla para hacer cosas en distintas apps. Control del teléfono, en Explorar, muestra su estado, lo inicia con un toque y enlaza a la guía de configuración."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オープンソースの iCTRL をインストールすると、エージェントがあなたと同じように iPhone や iPad を操作し、タップ、入力、画面の読み取りでアプリをまたいで作業します。「探索」の「iPhone を操作」で、状態の確認、ワンタップでの起動、設定ガイドの表示ができます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오픈 소스 앱 iCTRL을 설치하면 에이전트가 사용자처럼 iPhone이나 iPad를 조작해요. 탭하고, 입력하고, 화면을 읽으며 여러 앱에서 일을 처리해요. 「탐색」의 ‘iPhone 조작’에서 상태 확인, 한 번에 시작하기, 설정 가이드를 볼 수 있어요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "装好开源的 iCTRL 后，智能体能像你一样操控 iPhone、iPad：点按、输入、读取屏幕，在各个 App 之间替你办事。「探索」里的「操控手机」可以查看状态、一键启动，还有设置教程。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "安裝好開源的 iCTRL 後，AI 代理能像你一樣操控 iPhone、iPad：點按、輸入、讀取螢幕，在各個 App 之間幫你辦事。「探索」裡的「操控手機」可以查看狀態、一鍵啟動，還有設定教學。"
+          }
+        }
+      }
+    },
     "装好开源的 iCTRL 后，智能体可以替你点按、输入、读取其他 App 的屏幕。侧边栏新增「操控手机」，在那里查看状态、一键启动，还有设置教程。" : {
       "localizations" : {
         "en" : {
@@ -9762,7 +9802,8 @@
             "value" : "安裝好開源的 iCTRL 後，AI 代理可以幫你點按、輸入、讀取其他 App 的螢幕。側邊欄新增「操控手機」，在那裡查看狀態、一鍵啟動，還有設定教學。"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "要先停用这个插件吗？" : {
       "localizations" : {
@@ -10274,6 +10315,46 @@
         }
       }
     },
+    "让智能体操控你的 iPhone、iPad" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let the agent control your iPhone and iPad"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deja que el agente controle tu iPhone y iPad"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントが iPhone・iPad を操作"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트가 iPhone·iPad를 조작해요"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "让智能体操控你的 iPhone、iPad"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "讓 AI 代理操控你的 iPhone、iPad"
+          }
+        }
+      }
+    },
     "让智能体操作其他 App" : {
       "localizations" : {
         "en" : {
@@ -10306,7 +10387,8 @@
             "value" : "讓 AI 代理操作其他 App"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "让智能体点按其他 App" : {
       "localizations" : {
@@ -46798,6 +46880,46 @@
         }
       }
     },
+    "把对话分享成图片" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share a Conversation as an Image"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comparte una conversación como imagen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会話を画像で共有"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화를 이미지로 공유"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "把对话分享成图片"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "把對話分享成圖片"
+          }
+        }
+      }
+    },
     "把录音文件里说的话转成文字。默认只在本机识别，录音不上传" : {
       "localizations" : {
         "en" : {
@@ -67738,6 +67860,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "點一下就開始新對話。"
+          }
+        }
+      }
+    },
+    "点会话标题的菜单，或长按一条回复，选「分享为图片」。挑几轮对话画成一张长图，发给别人或存进相册，密钥会自动打码。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the menu on the conversation title, or touch and hold a reply, and choose Share as Image. Pick the turns you want and they become one long image to send or save to Photos, with keys hidden automatically."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre el menú del título de la conversación, o mantén pulsada una respuesta, y elige Compartir como imagen. Elige los turnos que quieras y se convierten en una imagen larga para enviarla o guardarla en Fotos; las claves se ocultan solas."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会話タイトルのメニュー、または返信の長押しから「画像として共有」を選びます。選んだやり取りを 1 枚の長い画像にして、送ったり写真に保存したりできます。キーは自動で伏せられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화 제목의 메뉴를 열거나 답장을 길게 눌러 ‘이미지로 공유’를 선택하세요. 고른 대화가 긴 이미지 한 장이 되어 보내거나 사진에 저장할 수 있어요. 키는 자동으로 가려져요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "点会话标题的菜单，或长按一条回复，选「分享为图片」。挑几轮对话画成一张长图，发给别人或存进相册，密钥会自动打码。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點對話標題的選單，或長按一則回覆，選「以圖片分享」。挑幾輪對話畫成一張長圖，傳給別人或存進照片，金鑰會自動遮蔽。"
           }
         }
       }
