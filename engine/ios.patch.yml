@@ -11,24 +11,9 @@
 - id: sandbox
   disabled: true
 
-# New sessions start in full access instead of the stock workspace-write + ask.
-# Only the default moves: the picker in 设置 still offers the other modes, and
-# a default the user chose there wins. A patch replaces an entry's whole
-# config, so the stock preset table is repeated here unchanged
-# (test/permission-default.test.mjs fails when it drifts from the shipped one).
-- id: permission
-  config:
-    presets:
-      read-only:
-        sandbox: read-only
-        approval: ask
-      workspace-write:
-        sandbox: workspace-write
-        approval: ask
-      danger-full-access:
-        sandbox: danger-full-access
-        approval: never
-    defaultPreset: danger-full-access
+# New sessions start in full access, but not from here: this overlay sits above
+# the layer 设置 writes, so a value set here could not be changed there. The
+# default goes into the profile's own patch instead (runtime/permission-default.mjs).
 
 # What the official product collects: session logs uploaded with official API
 # requests (on by default), message ratings, the /feedback command and usage
