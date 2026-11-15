@@ -21,9 +21,9 @@ struct DshWidgets: WidgetBundle {
     }
 }
 
-/// Agent status on the lock screen and in the Dynamic Island: a status dot and
-/// the elapsed time when compact; the session, the step it waits on and the
-/// approval buttons when expanded.
+/// Agent status on the lock screen and in the Dynamic Island: a status dot (or the kind of
+/// step running) and the elapsed time when compact; the session, the step it is on or waits
+/// on and the approval buttons when expanded.
 struct DshLiveActivity: Widget {
     var body: some WidgetConfiguration {
         // From iOS 18 the activity also shows on a paired Apple Watch (in the Smart Stack):
@@ -68,13 +68,15 @@ struct DshLiveActivity: Widget {
                         }
                         if let detail = state.detail {
                             Text(detail).font(.subheadline).foregroundStyle(.secondary).lineLimit(2)
+                        } else {
+                            StepLine(state: state).font(.subheadline)
                         }
                         if let approval = state.approval { ApprovalButtons(approval: approval).padding(.top, 4) }
                     }
                     .padding(.horizontal, 4)
                 }
             } compactLeading: {
-                CompactLeading(phase: state.phase)
+                CompactLeading(state: state)
             } compactTrailing: {
                 Group {
                     if state.phase == .approval || state.phase == .question {
@@ -132,6 +134,8 @@ private struct WristView: View {
             Text(state.title).font(.headline).lineLimit(1)
             if let detail = state.detail {
                 Text(detail).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+            } else {
+                StepLine(state: state).font(.caption)
             }
         }
         // The Smart Stack gives the card no margins of its own.
@@ -154,10 +158,28 @@ private struct LockScreenView: View {
             Text(state.title).font(.headline).lineLimit(1)
             if let detail = state.detail {
                 Text(detail).font(.subheadline).foregroundStyle(.secondary).lineLimit(2)
+            } else {
+                StepLine(state: state).font(.subheadline)
             }
             if let approval = state.approval { ApprovalButtons(approval: approval).padding(.top, 4) }
         }
         .padding(16)
+    }
+}
+
+/// What the session is doing now, 「正在运行命令」, while it runs: the kind of step only.
+private struct StepLine: View {
+    let state: DshActivityAttributes.ContentState
+
+    var body: some View {
+        if state.phase == .running, let step = state.step {
+            HStack(spacing: 4) {
+                if let symbol = state.stepSymbol { Image(systemName: symbol).imageScale(.small) }
+                Text(step)
+            }
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+        }
     }
 }
 
@@ -195,27 +217,35 @@ private struct Elapsed: View {
     }
 }
 
-/// The dot and the mark side by side. iPhone Duo's island stands upright and is too narrow for
-/// both (the dot was cut in half): there the mark alone carries the status colour.
+/// The dot and the mark side by side; while a step runs, its symbol in the dot's colour takes the
+/// dot's place. iPhone Duo's island stands upright and is too narrow for both (the dot was cut in
+/// half): there the mark alone carries the status colour.
 private struct CompactLeading: View {
-    let phase: DshActivityAttributes.ContentState.Phase
+    let state: DshActivityAttributes.ContentState
 
     var body: some View {
         // The upright island came with the iOS 27 SDK (SwiftUI 8): Xcode 26 still builds the widget.
         #if canImport(SwiftUI, _version: 8.0)
         if #available(iOS 27.0, *) {
-            Narrowable(phase: phase)
+            Narrowable(state: state)
         } else {
-            Self.full(phase)
+            Self.full(state)
         }
         #else
-        Self.full(phase)
+        Self.full(state)
         #endif
     }
 
-    static func full(_ phase: DshActivityAttributes.ContentState.Phase) -> some View {
+    static func full(_ state: DshActivityAttributes.ContentState) -> some View {
         HStack(spacing: 5) {
-            Dot(phase: phase)
+            if state.phase == .running, let symbol = state.stepSymbol {
+                Image(systemName: symbol)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Tint.of(state.phase))
+                    .contentTransition(.symbolEffect(.replace))
+            } else {
+                Dot(phase: state.phase)
+            }
             Mark()
         }
         .padding(.leading, 2)
@@ -224,14 +254,14 @@ private struct CompactLeading: View {
     #if canImport(SwiftUI, _version: 8.0)
     @available(iOS 27.0, *)
     private struct Narrowable: View {
-        let phase: DshActivityAttributes.ContentState.Phase
+        let state: DshActivityAttributes.ContentState
         @Environment(\.isDynamicIslandLimitedInWidth) private var limited
 
         var body: some View {
             if limited {
-                Mark().foregroundStyle(Tint.of(phase))
+                Mark().foregroundStyle(Tint.of(state.phase))
             } else {
-                CompactLeading.full(phase)
+                CompactLeading.full(state)
             }
         }
     }

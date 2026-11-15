@@ -22,6 +22,7 @@ Anything not listed here should be assumed missing.
 - **Network:** `curl`
 - **Development:** `git node pnpm pnpx`
 - **Video and audio:** `ffmpeg ffprobe` (see the Video and audio section below)
+- **Links:** `open xdg-open` hand a URL to the phone, so code that opens the system browser (a plugin's sign-in, a CLI's docs link) works. URLs only, the same schemes as the open_url tool; a file path fails. To take the user somewhere yourself, use that tool
 - **Shell:** `bash sh env printenv which type command date sleep timeout time xargs yes true false expr whoami hostname pwd history alias unalias clear help`
 
 Python and pip also exist: see the Python section below.
@@ -155,7 +156,7 @@ Three rules hold even before you read it:
 
 ## Other apps
 
-You cannot tap through other apps by yourself. If the user has set up **iCTRL** (a separate automation app they install), you can: it taps, types and reads any app's screen through a service on `127.0.0.1:8200`. **Before operating another app, read `references/phone-control.md`**: how to check that it runs, connect and pair, and what to tell the user when it does not.
+You cannot tap through other apps by yourself. If the user has set up **iCTRL** (a separate automation app they install), you can: it taps, types and reads any app's screen through a service on `127.0.0.1:8200`. **Before operating another app, read `references/phone-control.md`**: how to check that it runs, connect and pair, what to tell the user when it does not, and how this app records what you do there.
 
 Rules that hold even before you read it:
 

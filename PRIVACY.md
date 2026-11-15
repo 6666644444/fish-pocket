@@ -1,6 +1,6 @@
 # 隐私政策 / Privacy Policy
 
-生效日期 / Effective: 2026-11-11
+生效日期 / Effective: 2026-11-16
 
 [中文](#中文) · [English](#english)
 
@@ -8,7 +8,7 @@
 
 Fish Pocket 是独立的开源社区项目，与深度求索（DeepSeek）不存在隶属、合作、授权或背书关系。
 
-**不登录 Fish Pocket 账号时，我们不收集你的数据。** 这时开发者收不到你的对话、文件、账号或使用情况。只有你选择登录 Fish Pocket 账号、使用 Fish Pocket 额度时，才会用到开发者运营的服务器，见下方「Fish Pocket 账号与额度」。App 里没有广告、分析或第三方追踪 SDK，官方客户端的会话日志上传、消息评价、反馈和使用分析在这个版本里都已关闭。
+**不登录 Fish Pocket 账号时，我们不收集你的数据。** 这时开发者收不到你的对话、文件、账号或使用情况。只有你选择登录 Fish Pocket 账号使用额度，或者在插件市场举报插件时，才会把数据发给开发者运营的服务器，见下方「Fish Pocket 账号与额度」和「插件举报」。App 里没有广告、分析或第三方追踪 SDK，官方客户端的会话日志上传、消息评价、反馈和使用分析在这个版本里都已关闭。
 
 ### 保存在你设备上的内容
 
@@ -42,6 +42,12 @@ Fish Pocket 账号是可选功能，登录后可以用 App 内购买的额度调
 
 登录凭证保存在本机的钥匙串里。你可以随时在「设置 → Fish Pocket 账号」退出登录，或注销账号；注销后账号无法恢复，剩余积分作废。
 
+### 插件举报（可选）
+
+在插件市场举报插件时，你填写的内容（插件的名称、版本和来源，问题类型，描述和附上的日志）以及 App 的版本号会发给开发者运营的 Fish Pocket 服务器，用于人工审核；登录了 Fish Pocket 账号时还会附上账号标识。举报不会转给插件作者。举报编号和处理进度的记录只保存在你的设备上。
+
+打开插件市场时，App 会从 Fish Pocket 服务器读取已下架插件的名单，用来隐藏这些插件。这个请求不带账号或设备信息。
+
 ### 儿童
 
 本 App 不面向 13 岁以下的儿童。
@@ -54,7 +60,7 @@ Fish Pocket 账号是可选功能，登录后可以用 App 内购买的额度调
 
 Fish Pocket is an independent open-source community project. It is not affiliated with, authorized by or endorsed by DeepSeek.
 
-**Unless you sign in to a Fish Pocket account, we do not collect your data.** Without one, the developer receives none of your conversations, files, account details or usage information. Only if you choose to sign in to Fish Pocket and use Fish Pocket credits does the app use servers the developer runs; see "Fish Pocket account and credits" below. The app contains no advertising, analytics or third-party tracking SDKs, and the official client's session log upload, message ratings, feedback and usage analytics are turned off in this build.
+**Unless you sign in to a Fish Pocket account, we do not collect your data.** Without one, the developer receives none of your conversations, files, account details or usage information. Only if you choose to sign in to Fish Pocket and use its credits, or report a plugin in the plugin market, does the app send data to servers the developer runs; see "Fish Pocket account and credits" and "Plugin reports" below. The app contains no advertising, analytics or third-party tracking SDKs, and the official client's session log upload, message ratings, feedback and usage analytics are turned off in this build.
 
 ### What stays on your device
 
@@ -87,6 +93,12 @@ A Fish Pocket account is optional. Once signed in, you can use credits bought in
 - **Conversations:** when you pick a model under "Fish Pocket credits", what you send is forwarded through the Fish Pocket servers to the provider serving the DeepSeek models (DeepSeek itself or a provider hosting its models) and handled under that provider's privacy policy. The Fish Pocket servers read usage for billing only and do not store conversation content.
 
 Sign-in tokens are kept in this device's Keychain. You can sign out or delete your account at any time in Settings → Fish Pocket credits; a deleted account cannot be restored and its remaining credits are forfeited.
+
+### Plugin reports (optional)
+
+When you report a plugin in the plugin market, what you fill in (the plugin's name, version and source, the type of problem, your description and any log you attach) and the app's version are sent to the Fish Pocket servers the developer runs, for review by a person; if you are signed in to Fish Pocket, your account identifier is included. Reports are not passed on to the plugin's author. Your report numbers and their progress are kept only on your device.
+
+When you open the plugin market, the app reads the list of plugins taken down from the Fish Pocket servers, to hide them. This request carries no account or device information.
 
 ### Children
 

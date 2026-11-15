@@ -9,6 +9,7 @@ import SwiftUI
 /// SideStore 里，本 App 不碰；详细步骤放在官网教程里，页面里只给入口。
 struct PhoneControlView: View {
     @State private var service = PhoneControlService()
+    @AppStorage(PhoneRecorder.enabledKey) private var recording = true
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
@@ -42,6 +43,15 @@ struct PhoneControlView: View {
                 case .checking:
                     EmptyView()
                 }
+            }
+            .groupedRow()
+
+            Section {
+                Toggle(isOn: $recording) {
+                    Label("录下操作过程", systemImage: "record.circle")
+                }
+            } footer: {
+                Text("智能体操作其他 App 时，把屏幕录下来，放在对话里那一轮的下面，可以倍速回看，也可以分享。录像只存在这台手机上，没有声音。")
             }
             .groupedRow()
 

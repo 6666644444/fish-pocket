@@ -68,7 +68,7 @@ struct BotEarlierParts: View {
         let team = app.botTeam
         switch item["kind"].string {
         case "user":
-            Text(item["text"].string ?? "").font(.callout)
+            QuotedText(text: item["text"].string ?? "").font(.callout)
                 .padding(.horizontal, 16).padding(.vertical, 10)
                 .userBubble()
                 .frame(maxWidth: .infinity, alignment: .trailing)
