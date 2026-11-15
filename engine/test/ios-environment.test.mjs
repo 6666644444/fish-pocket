@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { COMMANDS } from '../runtime/shell.mjs';
 import { FFMPEG_COMMANDS } from '../runtime/ffmpeg/index.mjs';
+import { OPEN_COMMANDS } from '../runtime/open-url.mjs';
 
 const text = fs.readFileSync(new URL('../skills/ios-environment/SKILL.md', import.meta.url), 'utf8');
 
@@ -26,8 +27,8 @@ test('every command listed as existing exists', () => {
   assert.ok(listed.length > 80);
   // Shell builtins are not commands of the world.
   const builtin = new Set(['type', 'command']);
-  // FFmpeg is linked into the app only: a development machine has no binding for it.
-  const appOnly = new Set(FFMPEG_COMMANDS);
+  // FFmpeg and open (the native addon) exist in the app only: a development machine has no binding for them.
+  const appOnly = new Set([...FFMPEG_COMMANDS, ...OPEN_COMMANDS]);
   assert.deepEqual(listed.filter((name) => !COMMANDS.has(name) && !builtin.has(name) && !appOnly.has(name)), []);
 });
 

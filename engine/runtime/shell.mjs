@@ -8,6 +8,7 @@ import { Bash, InMemoryFs, MountableFs, OverlayFs, ReadWriteFs, decodeBytesToUtf
 import { NODE_CLIS, parseNodeArgv, startNodeWorker } from './node-worker.mjs';
 import { gitAvailable, gitCommand } from './git/index.mjs';
 import { nativeCommandNames, nativeShellCommands } from './native-programs.mjs';
+import { OPEN_COMMANDS, openAvailable, openShellCommands } from './open-url.mjs';
 
 export const SHELLS = new Set(['bash', 'sh', 'dash', 'zsh']);
 export const BIN = '/bin';
@@ -105,6 +106,7 @@ const custom = [
 export const COMMANDS = new Set([
   ...getCommandNames(), ...getNetworkCommandNames(), ...custom.map((c) => c.name),
   ...(gitAvailable() ? ['git'] : []), ...nativeCommandNames(),
+  ...(openAvailable() ? OPEN_COMMANDS : []),
 ]);
 
 // just-bash's real-directory filesystems rooted at "/" return realpath()
@@ -156,6 +158,8 @@ export function shell(writable) {
       ...(gitAvailable() ? [gitCommand(defineCommand, decodeBytesToUtf8, writable)] : []),
       // Python and ffmpeg, like node, run outside the interpreter's filesystem fence.
       ...nativeShellCommands(defineCommand, decodeBytesToUtf8),
+      // open / xdg-open hand URLs to the system (open-url.mjs).
+      ...(openAvailable() ? openShellCommands(defineCommand) : []),
     ],
     network: { dangerouslyAllowFullInternetAccess: true },
     executionLimitProfile: 'normal',
