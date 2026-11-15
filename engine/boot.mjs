@@ -67,6 +67,21 @@ if (process.env.DSH_IOS_DEBUG === '1') {
 process.on('uncaughtException', (error) => console.error('[dsh-ios] uncaught', error));
 process.on('unhandledRejection', (error) => console.error('[dsh-ios] unhandled rejection', error));
 
+// Full access for new sessions, as a default the user can change (runtime/permission-default.mjs).
+// Once per install; a failure only leaves the stock default.
+// Imported here, after the redirects above, like the engine itself.
+try {
+  const { seedPermissionDefault } = await import('./runtime/permission-default.mjs');
+  const outcome = await seedPermissionDefault({
+    home: process.env.DSH_HOME,
+    marker: path.join(process.env.DSH_HOME, '.ios-permission-default'),
+    installAnchor: path.join(here, 'node_modules/@deepseek-ai/dsh/package.json'),
+  });
+  if (outcome !== 'done') console.log(`[dsh-ios] permission default: ${outcome}`);
+} catch (error) {
+  console.error('[dsh-ios] permission default not set', error);
+}
+
 process.argv = [
   process.execPath,
   path.join(here, 'node_modules/@deepseek-ai/dsh/lib/bin.js'),
