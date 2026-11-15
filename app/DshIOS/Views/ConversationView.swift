@@ -31,6 +31,8 @@ struct ConversationView: View {
     @State private var showNewWorkspace = false
     @State private var jobs = JobsModel()
     @State private var headerSheet: SessionHeaderSheet?
+    /// 「分享为图片」, from the title's menu (every round) or a reply's (its round).
+    @State private var sharing: ShareFocus?
     @State private var presets = AgentPresetCatalog()
     /// The reader is at the end of the timeline, so it follows new output (C-12).
     @State private var atBottom = true
@@ -349,7 +351,8 @@ struct ConversationView: View {
                         SessionTitleMenu(
                             // 新会话 sits beside the drawer button on every started conversation,
                             // so on a phone the title always makes room for it.
-                            sessionId: sessionId, streamTitle: model.title, catalog: presets, crowded: true
+                            sessionId: sessionId, streamTitle: model.title, catalog: presets, crowded: true,
+                            shareImage: { sharing = ShareFocus(turn: nil) }
                         ) { headerSheet = .logExport }
                     }
                 }
@@ -374,6 +377,7 @@ struct ConversationView: View {
             openChanges: { openWorkbench(.changes) },
             openBrowser: openBrowser,
             regenerate: { text in Task { await model.send(text: text) } },
+            shareImage: { turn in sharing = ShareFocus(turn: turn) },
             fork: { turn in
                 Task { await app.fork(session: sessionId, atSeq: model.forkBoundary(turn: turn), from: .turn) }
             },
@@ -426,6 +430,17 @@ struct ConversationView: View {
                     .environment(\.systemLists, true)
                 case .logExport: SessionLogExportSheet(sessionId: sessionId)
                 }
+            }
+            .sheetNotices()
+        }
+        .sheet(item: $sharing) { focus in
+            let rounds = ShareRound.rounds(of: model)
+            SheetStack {
+                ConversationShareSheet(
+                    title: app.durableTitle(of: sessionId) ?? model.title ?? String(localized: "新会话"),
+                    rounds: rounds,
+                    focus: focus.turn.flatMap { turn in rounds.first { $0.turns.contains(turn) }?.id }
+                )
             }
             .sheetNotices()
         }
@@ -764,6 +779,8 @@ struct ConversationActions {
     /// The workbench's browser, which the agent's browser tool drives.
     var openBrowser: () -> Void = {}
     var regenerate: (String) -> Void = { _ in }
+    /// 「分享为图片」, starting from a reply's round; nil where the conversation offers none (a Bot's chat).
+    var shareImage: ((Int?) -> Void)?
     var fork: (Int) -> Void = { _ in }
     /// Quote text into the composer (`MessageQuotes`); nil where nothing can be sent (a read-only child).
     var quote: ((String) -> Void)?
@@ -771,6 +788,12 @@ struct ConversationActions {
     var revealQuestion: (String) -> Void = { _ in }
     /// Open what a row holds in the conversation's sheet.
     var present: (TimelineDetail) -> Void = { _ in }
+}
+
+/// Which round the share sheet starts with: a reply's, or (nil) all of them.
+struct ShareFocus: Identifiable {
+    let turn: Int?
+    let id = UUID()
 }
 
 /// What a row of the timeline opens.

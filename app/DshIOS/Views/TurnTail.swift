@@ -51,6 +51,9 @@ struct TurnMenu: ViewModifier {
         if let regeneratePrompt, bot == nil {
             Button { actions.regenerate(regeneratePrompt) } label: { Label("重新生成", systemImage: "arrow.clockwise") }
         }
+        if let turn, bot == nil, let share = actions.shareImage {
+            Button { share(turn) } label: { Label("分享为图片", systemImage: "photo.on.rectangle") }
+        }
         if let turn, bot == nil {
             Button { actions.fork(turn) } label: { Label("从这里分叉", systemImage: "arrow.triangle.branch") }
         }

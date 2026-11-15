@@ -65,7 +65,7 @@ struct MarkdownView: View {
                 CodeBlockView(language: language, code: code)
             }
         case .table(let rows):
-            ScrollView(.horizontal, showsIndicators: false) {
+            SidewaysScroll {
                 Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 6) {
                     ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
                         GridRow {
@@ -233,6 +233,8 @@ struct FileLinkScope: Equatable {
 extension EnvironmentValues {
     @Entry var fileLinkScope: FileLinkScope?
     @Entry var fileMentions: [String: String] = [:]
+    /// Drawn into a picture (「分享为图片」): nothing scrolls or folds away, and nothing is there to tap.
+    @Entry var drawnAsPicture = false
 }
 
 /// Where a conversation's web links open: its own browser (S-87), the page the agent drives too.
@@ -362,29 +364,35 @@ struct CodeBlockView: View {
     let code: String
     @State private var copied = false
     @State private var expanded = false
-    private let cap = 24
+    /// In a picture the code is whole and wraps, with nothing to tap.
+    @Environment(\.drawnAsPicture) private var picture
+    private var cap: Int { picture ? .max : 24 }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Text(language?.isEmpty == false ? language! : "code").font(.caption).foregroundStyle(Palette.secondary)
                 Spacer()
-                Button {
-                    copyToPasteboard(code)
-                    copied = true
-                    Task { try? await Task.sleep(for: .seconds(1.5)); copied = false }
-                } label: {
-                    Image(systemName: copied ? "checkmark" : "doc.on.doc").font(.caption).foregroundStyle(Palette.secondary).hitTarget()
+                if !picture {
+                    Button {
+                        copyToPasteboard(code)
+                        copied = true
+                        Task { try? await Task.sleep(for: .seconds(1.5)); copied = false }
+                    } label: {
+                        Image(systemName: copied ? "checkmark" : "doc.on.doc").font(.caption).foregroundStyle(Palette.secondary).hitTarget()
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("复制代码")
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("复制代码")
             }
             .padding(.leading, 14)
             .padding(.trailing, 2)
+            .padding(.vertical, picture ? 10 : 0)
             let lines = code.components(separatedBy: "\n")
-            ScrollView(.horizontal, showsIndicators: false) {
+            SidewaysScroll {
                 Text(expanded || lines.count <= cap ? code : lines.prefix(cap).joined(separator: "\n"))
-                    .font(.system(.subheadline, design: .monospaced))
+                    // A size down in a picture, where long lines wrap instead of scrolling.
+                    .font(.system(picture ? .footnote : .subheadline, design: .monospaced))
                     .lineSpacing(2)
                     .padding(.horizontal, 14)
                     .padding(.bottom, lines.count > cap ? 4 : 12)
@@ -398,6 +406,21 @@ struct CodeBlockView: View {
             }
         }
         .background(Palette.field, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+}
+
+/// Wide content (a table, code) scrolls sideways on screen. In a picture it wraps instead: a
+/// scroll view draws nothing into one.
+struct SidewaysScroll<Content: View>: View {
+    @ViewBuilder let content: Content
+    @Environment(\.drawnAsPicture) private var picture
+
+    var body: some View {
+        if picture {
+            content.fixedSize(horizontal: false, vertical: true)
+        } else {
+            ScrollView(.horizontal, showsIndicators: false) { content }
+        }
     }
 }
 
