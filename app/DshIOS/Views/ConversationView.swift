@@ -1162,7 +1162,7 @@ private struct UserBubble: View {
                         .hidden()
                         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { fullHeight = $0 }
                 }
-                .font(.callout)
+                .font(.body)
                 .lineSpacing(3)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
