@@ -26,6 +26,7 @@ struct ShellNotices: View {
                     .transition(.move(edge: .top).combined(with: .opacity))
             }
             AccountNotices()
+            FishPocketNotices()
             Spacer(minLength: 0)
             if ReadAloud.shared.speaking {
                 ReadAloudBar()

@@ -1,6 +1,6 @@
 ---
 name: ios-environment
-description: This session runs inside an iOS app, not on a desktop, and many commands do not exist. Load this skill before relying on a shell command you are unsure of, whenever one fails or behaves unexpectedly, and before writing or changing a DSH plugin, because the app's native interface does not run a plugin's browser code.
+description: This session runs inside an iOS app, not on a desktop, and many commands do not exist. Load this skill before relying on a shell command you are unsure of, whenever one fails or behaves unexpectedly, before writing or changing a DSH plugin, because the app's native interface does not run a plugin's browser code, and before operating another app on this phone.
 ---
 
 # Working on iOS
@@ -148,9 +148,20 @@ You have tools onto the phone itself. They are not shell commands: `device_info`
 
 Three rules hold even before you read it:
 
-- A capability that needs permission starts switched off, and calling it does not turn it on. It comes back refused; tell the user they can switch it on under Device capabilities in the app's sidebar, and stop.
+- A capability that needs permission starts switched off, and calling it does not turn it on. It comes back refused; tell the user they can switch it on under 连接器 → 本机能力 (Connectors → Device capabilities) in the app's sidebar, and stop.
 - A write just happens by default, with no confirmation, and the user can see it afterwards. Say which item you are about to delete before you delete it.
 - They are for you, not for plugins: do not build a plugin on them, and do not offer to.
+
+## Other apps
+
+You cannot tap through other apps by yourself. If the user has set up **iCTRL** (a separate automation app they install), you can: it taps, types and reads any app's screen through a service on `127.0.0.1:8200`. **Before operating another app, read `references/phone-control.md`**: how to check that it runs, connect and pair, and what to tell the user when it does not.
+
+Rules that hold even before you read it:
+
+- Use it last: device capabilities, `open_url` and the `browser` tool come first, because they are faster and do not take over the screen.
+- Whenever you stop to talk to the user (done, a question, a go-ahead, something only they can do, an error), first return to this app (`${DSH_IOS_URL_SCHEME:-dsh}://`, through the service's own `open_url`), then write. They are looking at the other app and cannot see this conversation.
+- Payments, deletions, sending messages and account changes need the user's go-ahead first. Passwords, codes and captchas are theirs.
+- Never switch on its remote access or nearby discovery.
 
 ## Web browser
 
@@ -176,4 +187,4 @@ The `browser` tool drives this conversation's own browser: real WebKit pages, th
 
 Tell the user plainly rather than attempting these: compiling native code, running containers or virtual machines, starting system services, background daemons that outlive the app, controlling other apps, or anything needing root. Work that needs them belongs on another machine.
 
-The device capabilities above are the exception to "controlling other apps": they are system frameworks the app is allowed to use, not other apps being driven.
+The device capabilities above are the exception to "controlling other apps": they are system frameworks the app is allowed to use, not other apps being driven. The other exception is iCTRL, when the user has set it up (see Other apps above).
