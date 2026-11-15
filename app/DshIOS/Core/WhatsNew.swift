@@ -33,9 +33,20 @@ enum WhatsNew {
         }
     }
 
+    /// Said only by a build that has the account: one made without the service's address
+    /// (a fork, a local build) shows it nowhere, so has nothing to announce.
+    private static var fishPocketAccount: [Release] {
+        guard FishPocketAPI.available else { return [] }
+        return [Release(version: "1.2.1", build: 108, features: [
+            Feature(symbol: "sparkles",
+                    title: "Fish Pocket 账号",
+                    detail: "不需要 DeepSeek 账号，也不需要 API Key：用 Apple 或手机号登录 Fish Pocket 账号，就能用账号里的额度对话，按用量扣积分。额度在 App Store 版本里购买，买了不会过期。入口在设置 → 连接方式。"),
+        ])]
+    }
+
     /// Newest first. Until the app reaches an entry's version (and build, when it names one),
     /// the entry is not shown. Entries of one version are shown together, newest first.
-    static let releases: [Release] = [
+    static let releases: [Release] = fishPocketAccount + [
         Release(version: "1.2.1", build: 107, features: [
             Feature(symbol: "app.badge",
                     title: "换个 App 图标",

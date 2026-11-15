@@ -100729,6 +100729,40 @@
           }
         }
       }
+    },
+    "不需要 DeepSeek 账号，也不需要 API Key：用 Apple 或手机号登录 Fish Pocket 账号，就能用账号里的额度对话，按用量扣积分。额度在 App Store 版本里购买，买了不会过期。入口在设置 → 连接方式。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No DeepSeek account or API key needed: sign in to a Fish Pocket account with Apple or a phone number and chat on its credits, deducted by usage. Credits are bought in the App Store version and never expire. Find it under Settings → Ways to Connect."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No necesitas una cuenta de DeepSeek ni una clave API: inicia sesión en una cuenta de Fish Pocket con Apple o con tu número de teléfono y chatea con sus créditos, que se descuentan según el uso. Los créditos se compran en la versión del App Store y no caducan. Lo encontrarás en Configuración → Formas de conexión."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek アカウントも API Key も不要です。Apple または電話番号で Fish Pocket アカウントにサインインすれば、アカウントのクレジットで会話でき、使った分だけ消費されます。クレジットは App Store 版で購入でき、期限はありません。設定 → 接続方法 から利用できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek 계정도 API Key도 필요 없어요. Apple이나 전화번호로 Fish Pocket 계정에 로그인하면 계정의 크레딧으로 대화할 수 있고, 사용한 만큼만 차감돼요. 크레딧은 App Store 버전에서 구매하며 만료되지 않아요. 설정 → 연결 방식에서 찾을 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不需要 DeepSeek 帳號，也不需要 API Key：用 Apple 或手機號碼登入 Fish Pocket 帳號，就能用帳號裡的額度對話，依用量扣積分。額度在 App Store 版本裡購買，買了不會過期。入口在設定 → 連線方式。"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
