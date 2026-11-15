@@ -842,6 +842,12 @@ extension SessionModel {
         }
         return nil
     }
+
+    /// Whether this reasoning block is still growing: its last paragraph is not finished yet.
+    func reasoningStreaming(_ id: String) -> Bool {
+        if running, case .reasoning(id, _)? = live.last { return true }
+        return false
+    }
 }
 
 /// Its views in a row at their natural width when that fits, else one above the other, centred.
@@ -1515,25 +1521,47 @@ struct ReasoningSheet: View {
     /// The text as it stands now, where no session model holds it (a remote session).
     var current: ((String) -> String?)?
     @Environment(\.dismiss) private var dismiss
+    @Environment(AppModel.self) private var app
+    /// The 思考过程翻译 plugin's view of this block; only for this phone's sessions.
+    @State private var translation: ReasoningTranslation?
+    @State private var original = false
+
+    private var latest: String { model?.reasoningText(id) ?? current?(id) ?? text }
 
     var body: some View {
-        let text = model?.reasoningText(id) ?? current?(id) ?? text
+        let text = latest
+        let translated = translation?.setup == nil ? nil : translation
+        let shown = translated.map { original || $0.failed ? text : $0.text } ?? text
         NavigationStack {
             ScrollView {
-                MarkdownView(text: text, cached: false).padding(16).modifier(LinkOpening())
+                VStack(alignment: .leading, spacing: 12) {
+                    if let translated { ReasoningTranslationBar(translation: translated, original: $original) }
+                    MarkdownView(text: shown, cached: false).modifier(LinkOpening())
+                }
+                .padding(16)
             }
             .background(Palette.background)
             .navigationTitle("思考")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button { copyToPasteboard(text) } label: { Image(systemName: "doc.on.doc") }
+                    Button { copyToPasteboard(shown) } label: { Image(systemName: "doc.on.doc") }
                         .accessibilityLabel("复制")
                 }
             }
             .closeButton(dismiss)
         }
         .detailSheet()
+        .task {
+            guard let model else { return }
+            let translation = ReasoningTranslation(sessionId: model.sessionId, client: app.client)
+            self.translation = translation
+            translation.update(latest, running: model.reasoningStreaming(id))
+            await translation.prepare()
+        }
+        .onChange(of: text) { translation?.update(text, running: model?.reasoningStreaming(id) ?? false) }
+        .onChange(of: model?.reasoningStreaming(id)) { _, streaming in translation?.update(latest, running: streaming ?? false) }
+        .onDisappear { translation?.cancel() }
     }
 }
 
