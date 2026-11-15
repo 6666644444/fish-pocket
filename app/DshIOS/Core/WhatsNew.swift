@@ -36,6 +36,11 @@ enum WhatsNew {
     /// Newest first. Until the app reaches an entry's version (and build, when it names one),
     /// the entry is not shown. Entries of one version are shown together, newest first.
     static let releases: [Release] = [
+        Release(version: "1.2.1", build: 106, features: [
+            Feature(symbol: "quote.opening",
+                    title: "引用消息再提问",
+                    detail: "长按一条消息选「引用」，也可以在「选择文本」里选中一段再引用。引用显示在输入框上方，和你的问题一起发给智能体。"),
+        ]),
         Release(version: "1.2.1", build: 105, features: [
             Feature(symbol: "hand.tap",
                     title: "让智能体操作其他 App",

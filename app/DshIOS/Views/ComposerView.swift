@@ -406,6 +406,10 @@ struct ComposerView: View {
                 AttachmentRail(composer: composer)
                     .padding(.horizontal, 13)
                     .padding(.top, composer.attachments.isEmpty ? 0 : 6)
+                // A queued message being edited is text only: the draft's quotes wait with the draft.
+                QuoteRail(quotes: composer.quotes) { composer.removeQuote(at: $0) }
+                    .padding(.horizontal, 13)
+                    .padding(.top, composer.quotes.isEmpty ? 0 : 6)
             }
             if let hint = commandHint {
                 Text(hint).font(.footnote).foregroundStyle(Palette.secondary)
@@ -920,12 +924,19 @@ private struct DraftEditor: View {
     var body: some View {
         let editingQueue = composer.editingQueue != nil
         NavigationStack {
-            TextEditor(text: $composer.text)
-                .font(.body)
-                .tint(Palette.ink)
-                .focused($focused)
-                .padding(.horizontal, 12)
-                .scrollContentBackground(.hidden)
+            VStack(alignment: .leading, spacing: 8) {
+                if !editingQueue {
+                    QuoteRail(quotes: composer.quotes) { composer.removeQuote(at: $0) }
+                        .padding(.horizontal, 17)
+                        .padding(.top, composer.quotes.isEmpty ? 0 : 8)
+                }
+                TextEditor(text: $composer.text)
+                    .font(.body)
+                    .tint(Palette.ink)
+                    .focused($focused)
+                    .padding(.horizontal, 12)
+                    .scrollContentBackground(.hidden)
+            }
                 .background(Palette.background)
                 .navigationTitle(editingQueue ? "编辑排队消息" : "编辑消息")
                 .navigationBarTitleDisplayMode(.inline)

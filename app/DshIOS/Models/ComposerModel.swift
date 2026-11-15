@@ -150,6 +150,9 @@ final class ComposerModel {
     @ObservationIgnored let app: AppModel
 
     var text: String { didSet { if text != oldValue { persistDraft() } } }
+    /// Text quoted from the conversation, in the order added. Each is sent as a blockquote ahead of
+    /// the text (`MessageQuotes.compose`) and kept with the draft (C-92).
+    private(set) var quotes: [String] = [] { didSet { if quotes != oldValue { persistDraft() } } }
     private(set) var attachments: [DraftAttachment] = []
     private(set) var pending: [PendingSubmission] = []
     /// A command line being executed: sending waits for it (C-87).
@@ -170,8 +173,9 @@ final class ComposerModel {
     /// Cleared here; hidden until the projection catches up.
     private var clearedGoalId: String?
 
-    @ObservationIgnored private var failedDrafts: [(seq: Int, text: String)] = []
+    @ObservationIgnored private var failedDrafts: [(seq: Int, text: String, quotes: [String])] = []
     @ObservationIgnored private var restoredText: String?
+    @ObservationIgnored private var restoredQuotes: [String] = []
     @ObservationIgnored private var sendSeq = 0
     @ObservationIgnored private var uploadTasks: [UUID: Task<Void, Never>] = [:]
     @ObservationIgnored private var uploadQueue: [UUID] = []
@@ -185,7 +189,9 @@ final class ComposerModel {
         self.session = session
         sessionId = session.sessionId
         self.app = app
-        text = Self.loadDraft(session.sessionId)
+        let draft = Self.loadDraft(session.sessionId)
+        text = draft.text
+        quotes = draft.quotes
         mentions = Self.loadMentions(session.sessionId)
     }
 
@@ -268,7 +274,7 @@ final class ComposerModel {
             return QueueRow(
                 id: item["id"].string ?? item["itemId"].string ?? UUID().uuidString,
                 editableText: attachments.isEmpty ? joined : nil,
-                preview: joined.split(whereSeparator: \.isWhitespace).joined(separator: " "),
+                preview: MessageQuotes.preview(joined),
                 attachments: attachments
             )
         }
@@ -281,7 +287,7 @@ final class ComposerModel {
     }
 
     var uploadsPending: Bool { attachments.contains { if case .ready = $0.upload { false } else { $0.upload != nil } } }
-    var isEmpty: Bool { text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && attachments.isEmpty }
+    var isEmpty: Bool { text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && attachments.isEmpty && quotes.isEmpty }
     /// Nothing the main button could send, or save: a queued message is text only.
     var nothingToSend: Bool { editingQueue != nil ? text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty : isEmpty }
 
@@ -311,19 +317,40 @@ final class ComposerModel {
         return stored["draft"]["mentions"].object.compactMapValues(\.string)
     }
 
-    private static func loadDraft(_ sessionId: String) -> String {
+    private static func loadDraft(_ sessionId: String) -> (text: String, quotes: [String]) {
         guard let raw = UserDefaults.standard.string(forKey: storageKey(sessionId)),
-              let stored = try? JSONDecoder().decode(JSON.self, from: Data(raw.utf8)) else { return "" }
-        return stored["draft"]["text"].string ?? stored["draft"].string ?? ""
+              let stored = try? JSONDecoder().decode(JSON.self, from: Data(raw.utf8)) else { return ("", []) }
+        let text = stored["draft"]["text"].string ?? stored["draft"].string ?? ""
+        let restored = DraftQuotes.restore(text: text, quotes: stored["draft"]["quotes"].array)
+        return (restored.text, restored.quotes)
     }
 
     private func persistDraft() {
         // A queued message in the input is not the draft: the draft waits in `setAside`.
         guard editingQueue == nil else { return }
         let key = Self.storageKey(sessionId)
-        guard !text.isEmpty else { UserDefaults.standard.removeObject(forKey: key); return }
-        let stored: JSON = ["draft": ["text": .string(text), "references": [], "mentions": .object(mentions.mapValues { .string($0) })]]
-        if let data = try? JSONEncoder().encode(stored) { UserDefaults.standard.set(String(decoding: data, as: UTF8.self), forKey: key) }
+        guard !text.isEmpty || !quotes.isEmpty else { UserDefaults.standard.removeObject(forKey: key); return }
+        let draft = DraftQuotes.store(quotes: quotes, text: text)
+        var fields: [String: JSON] = ["text": .string(draft.text), "references": [], "mentions": .object(mentions.mapValues { .string($0) })]
+        if !draft.quotes.isEmpty { fields["quotes"] = .array(draft.quotes) }
+        if let data = try? JSONEncoder().encode(JSON.object(["draft": .object(fields)])) { UserDefaults.standard.set(String(decoding: data, as: UTF8.self), forKey: key) }
+    }
+
+    // MARK: Quotes
+
+    /// Quote text from the conversation into the draft (the web's `insertQuote`). Blank text is
+    /// refused; the same text twice stays one quote.
+    func addQuote(_ text: String) {
+        let quote = text.replacingOccurrences(of: "\r\n", with: "\n").replacingOccurrences(of: "\r", with: "\n")
+        guard !quote.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        if !quotes.contains(quote) { quotes.append(quote) }
+        voice.mode = false
+        requestFocus()
+    }
+
+    func removeQuote(at index: Int) {
+        guard quotes.indices.contains(index) else { return }
+        quotes.remove(at: index)
     }
 
     // MARK: Sending (C-20, C-91, C-94)
@@ -364,7 +391,7 @@ final class ComposerModel {
         case .preferred: running && context.busyEnter == "steer"
         }
         clearField()
-        sendMessage(text, steer: steer, running: running)
+        sendMessage(text, quotes: quotes, steer: steer, running: running)
     }
 
     /// Send a written question at once (询问 AI). Whatever the reader had typed or attached in
@@ -372,30 +399,34 @@ final class ComposerModel {
     func send(prompt: String) {
         let draft = text, kept = attachments
         attachments = []
-        sendMessage(prompt, steer: false, running: session?.running ?? false)
+        sendMessage(prompt, quotes: [], steer: false, running: session?.running ?? false)
         text = draft
         attachments = kept
     }
 
-    private func sendMessage(_ draft: String, steer: Bool, running: Bool) {
-        let trimmed = draft.trimmingCharacters(in: .whitespacesAndNewlines)
+    /// Quotes keep their own place in the draft and join the text only here, the way the web
+    /// serializes its quote nodes: what the echo shows is what the engine receives.
+    private func sendMessage(_ draft: String, quotes sentQuotes: [String], steer: Bool, running: Bool) {
+        let trimmed = MessageQuotes.compose(quotes: sentQuotes, text: expandMentions(draft))
+        let shown = MessageQuotes.compose(quotes: sentQuotes, text: draft)
         let sent = attachments
         let requestId = UUID().uuidString.lowercased()
         pending.append(PendingSubmission(
-            id: requestId, text: trimmed, attachments: sent.map(\.name),
+            id: requestId, text: shown, attachments: sent.map(\.name),
             placement: running ? (steer ? .steering : .queued) : .transcript
         ))
         // Sending the restored text consumes the failures it held.
-        if restoredText != nil { failedDrafts.removeAll(); restoredText = nil }
+        if restoredText != nil { failedDrafts.removeAll(); restoredText = nil; restoredQuotes = [] }
         sendSeq += 1
         let seq = sendSeq
         text = ""
         attachments = []
+        if !sentQuotes.isEmpty { quotes = [] }
         Task {
             do {
                 guard let session else { throw CancellationError() }
                 var content = try Self.content(for: sent)
-                if !trimmed.isEmpty { content.append(["type": "text", "text": .string(expandMentions(trimmed))]) }
+                if !trimmed.isEmpty { content.append(["type": "text", "text": .string(trimmed)]) }
                 try await session.prompt(content: content, steer: steer, requestId: requestId)
                 ShareSuggestions.didSend(in: sessionId, app: app)
                 mentions = [:]
@@ -406,7 +437,7 @@ final class ComposerModel {
                 retire(requestId)
             } catch {
                 retire(requestId)
-                restoreFailed(seq: seq, draft: draft, attachments: sent)
+                restoreFailed(seq: seq, draft: draft, quotes: sentQuotes, attachments: sent)
                 Haptics.error()
                 app.showToast(errorText(error))
             }
@@ -415,13 +446,18 @@ final class ComposerModel {
 
     /// Failed drafts come back in send order, joined by blank lines, only into an
     /// empty input (or one still holding the last restore); attachments always return.
-    private func restoreFailed(seq: Int, draft: String, attachments sent: [DraftAttachment]) {
+    private func restoreFailed(seq: Int, draft: String, quotes failed: [String], attachments sent: [DraftAttachment]) {
         attachments = sent + attachments
-        failedDrafts.append((seq, draft))
-        guard text.isEmpty || text == restoredText else { return }
-        let joined = failedDrafts.sorted { $0.seq < $1.seq }.map(\.text).joined(separator: "\n\n")
+        failedDrafts.append((seq, draft, failed))
+        guard text.isEmpty || text == restoredText, quotes.isEmpty || quotes == restoredQuotes else { return }
+        let ordered = failedDrafts.sorted { $0.seq < $1.seq }
+        let joined = ordered.map(\.text).filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }.joined(separator: "\n\n")
+        var restored: [String] = []
+        for quote in ordered.flatMap(\.quotes) where !restored.contains(quote) { restored.append(quote) }
         text = joined
+        quotes = restored
         restoredText = joined
+        restoredQuotes = restored
     }
 
     /// Execute a command line (C-100). The draft stays until it is accepted, and comes
