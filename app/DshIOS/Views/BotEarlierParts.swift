@@ -83,7 +83,7 @@ struct BotEarlierParts: View {
         case "answer":
             note(String(localized: "你回答了卡片"), symbol: "checkmark.bubble")
         case "closed":
-            note(String(localized: "卡片没有回答"), symbol: "xmark.bubble")
+            note(String(localized: "卡片没有回答"), symbol: "xmark.circle")
         case "view":
             note(item["title"].string.flatMap { $0.isEmpty ? nil : $0 } ?? String(localized: "表单"), symbol: "rectangle.on.rectangle")
         case "event":

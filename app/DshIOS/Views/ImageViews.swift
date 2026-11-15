@@ -198,7 +198,7 @@ struct AttachmentThumb: View {
             } else if failed {
                 Button { failed = false; attempt += 1 } label: {
                     VStack(spacing: 6) {
-                        Image(systemName: "photo.badge.exclamationmark")
+                        Image(systemName: "exclamationmark.triangle")
                         if size.width > 100 { Text("图片加载失败，轻点重试").font(.caption) }
                     }
                     .foregroundStyle(Palette.secondary)
