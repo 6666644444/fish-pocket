@@ -71,7 +71,7 @@
 - **Uses what your iPhone already has.** The agent checks your calendar, adds reminders, reads health data, looks up contacts and searches maps, each one turned on by you. See [Device capabilities](#device-capabilities).
 - **Phone control.** With the open-source [iCTRL](https://github.com/OpenMinis/iCTRL) installed, the agent can open other apps and tap, type and read the screen for you, then come back to the conversation with the result. See [Phone control](#phone-control).
 - **Bot mode.** A standing team of Bots. Each Bot has its own look, memory and working folder; chat with one, put several in a group, or let them start work on a schedule. The backend is the open-source [DS Bot](https://github.com/Fei2411/DS-Bot), and the interface is rebuilt natively. See [Bot mode](#bot-mode).
-- **Remote control.** Manage the Codex, Claude Code and DeepSeek Harness sessions on your computers and servers from the phone, in the same sidebar as the sessions on the device: follow their progress, keep the conversation going, answer approvals, stop a run. See [Remote control](#remote-control).
+- **Remote control.** Manage the Codex, Claude Code and DeepSeek Harness sessions on your computers and servers from the phone, in the same session list as the sessions on the device: follow their progress, keep the conversation going, answer approvals, stop a run. See [Remote control](#remote-control).
 - **Everything the official Web UI does.** Chat, tool calls, file editing, search, plan mode, approvals, subagents, scheduled tasks and plugins: what the official DSH Web UI can do, this can do.
 - **A fully native interface.** Chat, approvals, the workbench, plugins and settings are all rebuilt in SwiftUI and designed for iOS, not a web page in a WebView. Dark mode is supported: follow the system, or pick light or dark in Settings. The official Web UI is still there in Settings if you want it.
 - **A terminal that works.** Built-in bash, `node`, `pnpm`, `python3`, `pip`, `git` and `ffmpeg`, plus `rg`, `jq`, `curl`, `sed`, `awk` and other everyday commands. Node, Git, Python and FFmpeg run as native code with no emulator in between, so they are far faster than Linux emulators on iOS (iSH, UTM SE).
@@ -93,7 +93,7 @@ The engine runs on the phone, so the agent can use what your iPhone already has.
 
 **Calendar · Reminders · Alarms · Contacts · Health · Photos · Files · Music · Location · Maps · Smart Home · Mail & Messages**, plus on-device recognition such as image reading and transcription.
 
-You turn on each one yourself under Device capabilities in the sidebar, and the agent cannot use what is off. Once on, plugins you install can use it too, and there is a record of what was used.
+You turn on each one yourself under Tools → Connectors → Device capabilities (in the sidebar on iPad), and the agent cannot use what is off. Once on, plugins you install can use it too, and there is a record of what was used.
 
 ## Phone control
 
@@ -103,7 +103,7 @@ With the open-source app [iCTRL](https://github.com/OpenMinis/iCTRL) installed, 
 - **Stop it anytime.** While it works, iOS shows "Automation Running" at the top of the screen; press both volume buttons together to stop it.
 - **Only on this phone.** iCTRL's service listens on the device only; keep its built-in remote access off. What the agent sees in other apps goes with the conversation to the model provider you chose.
 
-It is an optional advanced feature. iCTRL is a third-party open-source app, not provided by Fish Pocket, and needs iOS 17.4 or later, Developer Mode and sideloading; a free Apple ID is enough, and the first setup takes a computer once. When Phone Control in the sidebar shows Running, it is ready. For every step, see the [setup guide](https://fish.deepseek1024.com/en/phone-control/) on the website.
+It is an optional advanced feature. iCTRL is a third-party open-source app, not provided by Fish Pocket, and needs iOS 17.4 or later, Developer Mode and sideloading; a free Apple ID is enough, and the first setup takes a computer once. When Phone Control under Tools (in the sidebar on iPad) shows Running, it is ready. For every step, see the [setup guide](https://fish.deepseek1024.com/en/phone-control/) on the website.
 
 ## Bot mode
 
@@ -115,7 +115,7 @@ The backend is the open-source [DS Bot](https://github.com/Fei2411/DS-Bot). Fish
 
 ## Remote control
 
-The agents on your computers and servers are in reach too. Sign in to [Agents Anywhere](https://github.com/anywhere-labs/Agents-Anywhere) and the Codex, Claude Code and DeepSeek Harness sessions on those machines appear in the same sidebar as the sessions on the device: follow their progress, keep the conversation going, answer approvals, stop a run, or start a new session on that machine. The Lock Screen, Dynamic Island and widgets treat remote sessions the same as local ones.
+The agents on your computers and servers are in reach too. Sign in to [Agents Anywhere](https://github.com/anywhere-labs/Agents-Anywhere) and the Codex, Claude Code and DeepSeek Harness sessions on those machines appear in the same session list as the sessions on the device: follow their progress, keep the conversation going, answer approvals, stop a run, or start a new session on that machine. The Lock Screen, Dynamic Island and widgets treat remote sessions the same as local ones.
 
 On a personal computer, install the Agents Anywhere desktop app and sign in from Fish Pocket with a QR code; no public IP needed. A cloud server without a desktop runs its Connector instead. The phone and the machine talk through an Agents Anywhere server, either its cloud service or one you host. It is optional: nothing happens until you sign in, and sessions on the device stay on the device. For the steps, see the [remote control guide](docs/remote-control.md) (in Chinese).
 
