@@ -27,6 +27,8 @@ struct SettingsView: View {
     @State private var languageChanged = false
     @AppStorage(BackgroundKeeper.continuedKey) private var continuedProcessing = false
     @AppStorage(WidgetSnapshotWriter.showTitlesKey) private var widgetTitles = true
+    /// The phone's 设置 tab rather than a sheet: no ✕.
+    var asTab = false
 
     private var mirror: SettingsMirror { app.settings }
 
@@ -177,7 +179,7 @@ struct SettingsView: View {
             }
             .navigationTitle("设置")
             .navigationBarTitleDisplayMode(.large)
-            .closeButton(dismiss)
+            .modifier(SettingsClose(shown: !asTab, dismiss: dismiss))
             .alert("重启 App 后生效", isPresented: $languageChanged) {
                 Button("好", role: .cancel) {}
             } message: {
@@ -664,5 +666,15 @@ private struct ShareAppRow: View {
             Spacer(minLength: 0)
         }
         .padding(.vertical, 4)
+    }
+}
+
+/// The settings sheet's ✕; the 设置 tab has none.
+private struct SettingsClose: ViewModifier {
+    let shown: Bool
+    let dismiss: DismissAction
+
+    func body(content: Content) -> some View {
+        if shown { content.closeButton(dismiss) } else { content }
     }
 }

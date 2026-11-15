@@ -1,11 +1,15 @@
 import StoreKit
 import SwiftUI
 
-/// The root: a conversation, always. On iPhone the session list is a drawer
-/// that slides in from the left (edge swipe or the top-left button); in
-/// regular width it is the split view's sidebar. With nothing selected — at
-/// launch, after archiving — a blank session in the current workspace opens.
+/// The root. On iPhone (from iOS 18) a tab bar: 会话, Bot, 工具 and 设置; a conversation
+/// is pushed on the 会话 tab's list and has the screen to itself. In regular width the session
+/// list is the split view's sidebar beside a conversation, always: with nothing selected — at
+/// launch, after archiving — a blank session in the current workspace opens. Before iOS 18 the
+/// phone has that layout too, the list a drawer that slides in from the left.
 struct MainView: View {
+    /// The phone's tabs.
+    enum HomeTab: Hashable { case sessions, bot, tools, settings }
+
     enum Sheet: String, Identifiable { case settings, plugins, store, schedules, signIn, cordis, share, watch, capabilities, connectors, phoneControl, remote, fishPocket; var id: String { rawValue } }
 
     @Environment(AppModel.self) private var app
@@ -29,6 +33,11 @@ struct MainView: View {
     @State private var windowWidth: CGFloat = 0
     @State private var searchRequest = 0
     @State private var drawerOpen = false
+    @State private var tab = HomeTab.sessions
+    /// The 会话 tab's stack: the archive, and the conversation on screen (`selection`) on top.
+    @State private var sessionsPath: [DrawerView.Route]
+    /// The 工具 tab's stack: the plugin store is pushed on it when something asks for it.
+    @State private var toolsPath: [ToolsTabView.Route] = []
     @State private var drag: CGFloat = 0
     /// The way a drag on the shell set off, fixed by its first move; nil between drags.
     /// A plain reference filled by the drawer's rows.
@@ -61,6 +70,7 @@ struct MainView: View {
     /// `session`: the one this window opened on, when it opened on one.
     init(session: String? = nil, link: Binding<LinkRequest?> = .constant(nil)) {
         _selection = State(initialValue: session)
+        _sessionsPath = State(initialValue: session.map { [.session($0)] } ?? [])
         _placeRestored = State(initialValue: session != nil)
         _link = link
     }
@@ -70,7 +80,11 @@ struct MainView: View {
     /// The page in front, as it is kept for the next launch: a conversation, the Bot list, a
     /// Bot's chat or a group.
     private var place: String? {
-        guard botOpen else { return selection.map { "session:\($0)" } }
+        // On the tab bar only 会话 and Bot are kept: from the other tabs the next launch goes back
+        // to whichever of the two was last in front.
+        if usesTabs, tab != .sessions, tab != .bot { return nil }
+        // On the tab bar the list with nothing pushed is a place too: the next launch stays there.
+        guard botOpen else { return selection.map { "session:\($0)" } ?? (usesTabs ? "sessions" : nil) }
         switch botPath.last {
         case .bot(let id)?: return "bot:\(id)"
         case .room(let id)?: return "room:\(id)"
@@ -98,6 +112,7 @@ struct MainView: View {
     private func openBots(_ path: [BotRoute]) {
         launchedUnderBot = true
         botOpen = true
+        if usesTabs { tab = .bot }
         botPath = path
     }
 
@@ -115,8 +130,10 @@ struct MainView: View {
         }
     }
 
+    /// Where a new conversation goes: the current workspace, never the Bot team's, which holds its sessions alone.
     private var workspace: Workspace? {
-        app.workspaces.first { $0.id == workspaceId } ?? app.workspaces.first
+        let usable = app.workspaces.filter { $0.id != app.botTeam.teamWorkspaceId }
+        return usable.first { $0.id == workspaceId } ?? usable.first ?? app.workspaces.first
     }
 
     /// A button of the support dialog: the ask is answered for good.
@@ -135,7 +152,13 @@ struct MainView: View {
     /// The width's own layout, with the way into the plugin store.
     private var layout: some View {
         Group {
-            if sizeClass == .regular { split } else { drawerLayout }
+            if sizeClass == .regular {
+                split
+            } else if #available(iOS 18.0, *) {
+                tabLayout
+            } else {
+                drawerLayout
+            }
         }
         // The drawer and the new conversation page, which have no way to the store themselves.
         .onChange(of: app.pluginStoreRequest) { _, token in
@@ -154,6 +177,7 @@ struct MainView: View {
             sheet = nil
             storeOpen = false
             botOpen = true
+            if usesTabs { tab = .bot }
             botPath = request.route.map { route in request.push && botPath.last != route ? botPath + [route] : [route] } ?? []
             setDrawer(false)
         }
@@ -210,10 +234,37 @@ struct MainView: View {
         .onChange(of: workspaceId) { WidgetSnapshotWriter.shared.refresh() }
         // A window narrowed past the sidebar has no place beside it for the store.
         .onChange(of: sizeClass) { _, size in
-            if size != .regular, storeOpen {
+            if usesTabs {
+                // Into the tab bar: the store has a tab, the conversation goes on the 会话 tab's stack.
+                if storeOpen {
+                    storeOpen = false
+                    tab = .tools
+                    toolsPath = [.plugins]
+                } else {
+                    tab = botOpen ? .bot : .sessions
+                }
+                sessionsPath = selection.map { [.session($0)] } ?? []
+            } else if size != .regular, storeOpen {
                 storeOpen = false
                 sheet = .store
+            } else if selection == nil {
+                // Out of the tab bar with the list on screen: the split view always shows a conversation.
+                newConversation(in: workspace)
             }
+        }
+        // On the tab bar the Bot pages are its Bot tab. A conversation left pushed under another
+        // tab is not on screen: what finishes there meanwhile is marked unread, and the watch told.
+        .onChange(of: tab) { _, tab in
+            guard usesTabs else { return }
+            botOpen = tab == .bot
+            app.currentSession = shownSession
+        }
+        .onChange(of: botOpen) { _, open in if usesTabs, open { tab = .bot } }
+        // Back to the list (or the archive) on the 会话 tab: no conversation on screen any more.
+        .onChange(of: sessionsPath) { _, path in
+            guard usesTabs else { return }
+            let top = path.last?.session
+            if top != selection { selection = top }
         }
     }
 
@@ -261,14 +312,18 @@ struct MainView: View {
         // Windows take turns: what is read is the one in front.
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
-                app.currentSession = selection
+                app.currentSession = shownSession
                 ReadAloud.shared.scope = onScreen
             }
         }
         // Reading aloud belongs to the conversation on screen: moving to another one stops it.
         .onChange(of: onScreen, initial: true) { _, session in ReadAloud.shared.scope = session }
         .onChange(of: selection) { _, id in
-            app.currentSession = id
+            app.currentSession = shownSession
+            if usesTabs {
+                showInTabs(id)
+                return
+            }
             if launchedUnderBot { launchedUnderBot = false } else { botOpen = false }
             if let id {
                 if let owner = app.workspace(of: id) { workspaceId = owner.id }
@@ -288,6 +343,7 @@ struct MainView: View {
             sheet = nil
             botOpen = false
             selection = id
+            if usesTabs { showInTabs(id) }
             setDrawer(false)
         }
         .onChange(of: app.newSessionRequest?.token) { _, token in
@@ -322,7 +378,34 @@ struct MainView: View {
             placeRestored = true
             restorePlace()
         }
-        if selection == nil { newConversation(in: workspace) }
+        if selection == nil, !usesTabs { newConversation(in: workspace) }
+    }
+
+    /// The conversation the user is looking at (`AppModel.currentSession`): on the tab bar, only
+    /// while the 会话 tab is in front.
+    private var shownSession: String? {
+        usesTabs && tab != .sessions ? nil : selection
+    }
+
+    /// The tab bar is the layout (`layout`).
+    private var usesTabs: Bool {
+        guard sizeClass != .regular else { return false }
+        if #available(iOS 18.0, *) { return true } else { return false }
+    }
+
+    /// `selection` on the tab bar: a session is pushed on the 会话 tab, in front; none, it is popped.
+    private func showInTabs(_ id: String?) {
+        guard let id else {
+            sessionsPath.removeAll { $0.session != nil }
+            return
+        }
+        if let owner = app.workspace(of: id) { workspaceId = owner.id }
+        launchedUnderBot = false
+        tab = .sessions
+        // Over the archive when it was open, so back returns there.
+        if sessionsPath.last != .session(id) {
+            sessionsPath = sessionsPath.filter { $0.session == nil } + [.session(id)]
+        }
     }
 
     #if DEBUG
@@ -525,6 +608,13 @@ struct MainView: View {
             newWindow: supportsMultipleWindows ? { openWindow(id: DshIOSApp.window) } : nil,
             search: {
                 sheet = nil
+                if usesTabs {
+                    // Search is the 会话 tab's own field.
+                    tab = .sessions
+                    sessionsPath.removeAll()
+                    searchRequest += 1
+                    return
+                }
                 if sizeClass == .regular { withAnimation { sidebar = .all } } else { setDrawer(true) }
                 searchRequest += 1
             },
@@ -534,6 +624,8 @@ struct MainView: View {
     }
 
     private func toggleSidebar() {
+        // The tab bar has no sidebar to show.
+        if usesTabs { return }
         if sizeClass == .regular {
             withAnimation { sidebar = sidebar == .detailOnly ? .all : .detailOnly }
         } else {
@@ -618,13 +710,18 @@ struct MainView: View {
         sheet = nil
         botOpen = false
         selection = id
+        if usesTabs { showInTabs(id) }
         setDrawer(false)
     }
 
     /// 插件, from the sidebar or the new conversation page.
     private func openPlugins() {
         setDrawer(false)
-        if sizeClass == .regular { storeOpen = true } else { sheet = .store }
+        if usesTabs {
+            sheet = nil
+            tab = .tools
+            if toolsPath.last != .plugins { toolsPath = [.plugins] }
+        } else if sizeClass == .regular { storeOpen = true } else { sheet = .store }
     }
 
     private func setDrawer(_ open: Bool) {
@@ -632,21 +729,91 @@ struct MainView: View {
         withAnimation(.snappy(duration: 0.25)) { drawerOpen = open }
     }
 
-    private var drawer: some View {
+    private var drawer: some View { drawer(.sidebar) }
+
+    private func drawer(_ style: DrawerView.Style) -> some View {
         DrawerView(
             selection: selection,
             workspace: workspace,
             rowFrames: rowFrames,
             pluginsSelected: storeOpen,
-            select: { id in storeOpen = false; botOpen = false; selection = id; setDrawer(false) },
+            select: { id in storeOpen = false; botOpen = false; selection = id; if usesTabs { showInTabs(id) }; setDrawer(false) },
             newConversation: { workspace in storeOpen = false; botOpen = false; workspaceId = workspace.id; newConversation(in: workspace); setDrawer(false) },
             openSettings: { sheet = .settings },
             openSchedules: { sheet = .schedules },
             openCordis: { sheet = .cordis },
             openSignIn: { sheet = .signIn },
             searchRequest: searchRequest,
-            openInWindow: supportsMultipleWindows ? { openWindow(id: DshIOSApp.window, value: SessionWindow(session: $0)) } : nil
+            openInWindow: supportsMultipleWindows ? { openWindow(id: DshIOSApp.window, value: SessionWindow(session: $0)) } : nil,
+            style: style
         )
+    }
+
+    // MARK: Tab bar
+
+    /// The phone's layout from iOS 18. A conversation, a Bot's chat or a group, pushed, hides the
+    /// bar: their input sits where it would be.
+    @available(iOS 18.0, *)
+    private var tabLayout: some View {
+        TabView(selection: $tab) {
+            Tab(DrawerView.sessionsTitle, systemImage: "bubble.left.and.bubble.right", value: HomeTab.sessions) {
+                NavigationStack(path: $sessionsPath) {
+                    drawer(.sessions)
+                        .navigationDestination(for: DrawerView.Route.self) { route in
+                            switch route {
+                            case .archived: drawer(.archived)
+                            case .session(let id): pushedConversation(id).toolbar(.hidden, for: .tabBar)
+                            }
+                        }
+                }
+            }
+            .badge(waitingCount)
+            Tab("Bot", systemImage: "face.smiling", value: HomeTab.bot) {
+                botStack(openDrawer: nil)
+            }
+            .badge(botPendingCount)
+            Tab("工具", systemImage: "square.grid.2x2", value: HomeTab.tools) {
+                ToolsTabView(path: $toolsPath)
+            }
+            Tab("设置", systemImage: "gearshape", value: HomeTab.settings) {
+                SettingsView(asTab: true)
+            }
+        }
+    }
+
+    /// What the 会话 tab's list shows waiting on the user: this phone's conversations and those on
+    /// the computers. The Bots' and the groups' sessions are left out, as the list leaves them out:
+    /// they count on the Bot tab.
+    private var waitingCount: Int {
+        let team = app.botTeam
+        let teamSessions = team.teamSessionIds
+        let local = app.sessions.keys.filter { id in
+            app.isWaiting(id) && !app.isArchived(id) && !teamSessions.contains(id)
+                && (team.teamWorkspaceId == nil || app.workspace(of: id)?.id != team.teamWorkspaceId)
+        }
+        let remote = app.remote.signedIn ? app.remote.listed().filter { $0.deviceOnline && $0.waiting }.count : 0
+        return local.count + remote
+    }
+
+    /// What the Bots wait on the user for, on the Bot tab.
+    private var botPendingCount: Int {
+        let team = app.botTeam
+        return team.bots.reduce(0) { $0 + team.pendingCount(of: $1) }
+    }
+
+    /// A conversation on the 会话 tab's stack. Back is the system's; there is no drawer to open.
+    @ViewBuilder
+    private func pushedConversation(_ id: String) -> some View {
+        if let remote = RemoteStore.sessionId(of: id) {
+            RemoteConversationView(sessionId: remote, selection: $selection, openDrawer: nil)
+                .id(id)
+        } else {
+            ConversationView(sessionId: id, selection: $selection, openDrawer: nil, switchWorkspace: { workspace in
+                workspaceId = workspace.id
+                newConversation(in: workspace)
+            })
+            .id(id)
+        }
     }
 
     /// The session on screen: a Bot's chat or a group when the Bot pages are open, else the conversation.
@@ -674,6 +841,7 @@ struct MainView: View {
                     // chat has a back button where the conversation has its sidebar button, so the
                     // sidebar's goes beside it.
                     .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomForWorkbench, toggle: sizeClass == .regular ? hideSidebar : nil))
+                    .toolbar(usesTabs ? .hidden : .automatic, for: .tabBar)
                 }
         }
     }
@@ -714,6 +882,7 @@ struct MainView: View {
             // A computer's session from the lock screen or a widget, after signing out: nothing to open.
             if RemoteStore.sessionId(of: id) != nil, !app.remote.signedIn { return }
             selection = id
+            if usesTabs { showInTabs(id) }
         case .new(let workspaceId, let preset, let draft):
             let deadline = ContinuousClock.now + .seconds(10)
             while app.workspaces.isEmpty || creating, ContinuousClock.now < deadline {
@@ -786,6 +955,8 @@ struct MainView: View {
                 if let prompt { app.pendingPrompts[id] = prompt }
                 if focus { app.pendingFocus.insert(id) }
                 selection = id
+                // The engine may hand back the blank conversation already selected: shown all the same.
+                if usesTabs { showInTabs(id) }
             }
             catch {
                 if let files { try? FileManager.default.removeItem(at: files.folder) }
