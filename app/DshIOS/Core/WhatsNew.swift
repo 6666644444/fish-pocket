@@ -35,48 +35,42 @@ enum WhatsNew {
 
     /// Said only by a build that has the account: one made without the service's address
     /// (a fork, a local build) shows it nowhere, so has nothing to announce.
-    private static var fishPocketAccount: [Release] {
+    private static var fishPocketAccount: [Feature] {
         guard FishPocketAPI.available else { return [] }
-        return [Release(version: "1.2.1", build: 108, features: [
+        return [
             Feature(symbol: "sparkles",
                     title: "Fish Pocket 账号",
                     detail: "不需要 DeepSeek 账号，也不需要 API Key：用 Apple 或手机号登录 Fish Pocket 账号，就能用账号里的额度对话，按用量扣积分。额度在 App Store 版本里购买，买了不会过期。入口在设置 → 连接方式。"),
-        ])]
+        ]
     }
 
     /// Newest first. Until the app reaches an entry's version (and build, when it names one),
     /// the entry is not shown. Entries of one version are shown together, newest first.
     static let releases: [Release] = [
-        Release(version: "1.2.1", build: 111, features: [
+        // 105 to 111 never went out on their own: one entry, its first build. 操控手机 leads.
+        Release(version: "1.2.1", build: 110, features: [
+            Feature(symbol: "hand.tap",
+                    title: "让智能体操控你的 iPhone、iPad",
+                    detail: "装好开源的 iCTRL 后，智能体能像你一样操控 iPhone、iPad：点按、输入、读取屏幕，在各个 App 之间替你办事。「探索」里的「操控手机」可以查看状态、一键启动，还有设置教程。"),
             Feature(symbol: "rectangle.bottomthird.inset.filled",
                     title: "底部标签栏",
                     detail: "首页改成苹果的标签栏，会话、Bot、应用、探索、设置一点就到。插件、连接器、本机能力、操控手机、远程控制都在「探索」里，搜索放进了会话列表。iPad 和 iPhone Duo 上，标签栏会自动放到顶部或变成侧边栏。"),
-        ]),
-        Release(version: "1.2.1", build: 110, features: [
             Feature(symbol: "apps.iphone",
                     title: "做自己的小应用",
                     detail: "在对话里让 Agent 做个小工具或小游戏，做好就放进「应用」里，点开就能用，也能放到主屏幕上。先试试自带的倒数日、番茄钟和水果翻翻。"),
-        ]),
-        Release(version: "1.2.1", build: 109, features: [
             Feature(symbol: "record.circle",
                     title: "回看智能体的操作",
                     detail: "智能体操作其他 App 时会把屏幕录下来，放在对话里，默认两倍速回看。分享时会生成一段带 Fish Pocket 外框的视频。"),
-        ]),
-    ] + fishPocketAccount + [
-        Release(version: "1.2.1", build: 107, features: [
+            Feature(symbol: "photo.on.rectangle",
+                    title: "把对话分享成图片",
+                    detail: "点会话标题的菜单，或长按一条回复，选「分享为图片」。挑几轮对话画成一张长图，发给别人或存进相册，密钥会自动打码。"),
+        ] + fishPocketAccount + [
             Feature(symbol: "app.badge",
                     title: "换个 App 图标",
                     detail: "设置 → App 图标里可以把主屏幕上的图标换成别的颜色或贴纸版的大肥鱼，也可以换成不带人物的鲸鱼图标，或者只写着 Fish Pocket 的字标。"),
-        ]),
-        Release(version: "1.2.1", build: 106, features: [
             Feature(symbol: "quote.opening",
                     title: "引用消息再提问",
                     detail: "长按一条消息选「引用」，也可以在「选择文本」里选中一段再引用。引用显示在输入框上方，和你的问题一起发给智能体。"),
-        ]),
-        Release(version: "1.2.1", build: 105, features: [
-            Feature(symbol: "hand.tap",
-                    title: "让智能体操作其他 App",
-                    detail: "装好开源的 iCTRL 后，智能体可以替你点按、输入、读取其他 App 的屏幕。侧边栏新增「操控手机」，在那里查看状态、一键启动，还有设置教程。"),
         ]),
         Release(version: "1.2.1", build: 103, features: [
             Feature(symbol: "character.bubble",
