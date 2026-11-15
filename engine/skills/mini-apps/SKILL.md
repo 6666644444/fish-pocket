@@ -17,7 +17,7 @@ One folder per app: `~/apps/<id>/`. The id is the folder's name and the app's ad
   - `index.html`: a page of your own, for apps that do not use React. `<script type="module" src="./main.js">` and relative paths work.
 - Any other files beside them: more `.jsx`/`.tsx`/`.ts`/`.js` modules, `.css`, `.json`, images, audio.
 
-The app ships two examples, `~/apps/days` (a tool) and `~/apps/fruit-flip` (a game), unless the user deleted them. Read one before writing your first app: they show the format, text in the phone's language, and a layout made for a phone.
+The app ships three examples, `~/apps/days` and `~/apps/pomodoro` (tools) and `~/apps/fruit-flip` (a game), unless the user deleted them. Read one before writing your first app: they show the format, text in the phone's language, and a layout made for a phone.
 
 ## Working copy and published copy
 

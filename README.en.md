@@ -93,7 +93,7 @@ The engine runs on the phone, so the agent can use what your iPhone already has.
 
 **Calendar · Reminders · Alarms · Contacts · Health · Photos · Files · Music · Location · Maps · Smart Home · Mail & Messages**, plus on-device recognition such as image reading and transcription.
 
-You turn on each one yourself under Tools → Connectors → Device capabilities (in the sidebar before iOS 18), and the agent cannot use what is off. Once on, plugins you install can use it too, and there is a record of what was used.
+You turn on each one yourself under Explore → Device capabilities (in the sidebar before iOS 18), and the agent cannot use what is off. Once on, plugins you install can use it too, and there is a record of what was used.
 
 ## Phone control
 
@@ -103,7 +103,7 @@ With the open-source app [iCTRL](https://github.com/OpenMinis/iCTRL) installed, 
 - **Stop it anytime.** While it works, iOS shows "Automation Running" at the top of the screen; press both volume buttons together to stop it.
 - **Only on this phone.** iCTRL's service listens on the device only; keep its built-in remote access off. What the agent sees in other apps goes with the conversation to the model provider you chose.
 
-It is an optional advanced feature. iCTRL is a third-party open-source app, not provided by Fish Pocket, and needs iOS 17.4 or later, Developer Mode and sideloading; a free Apple ID is enough, and the first setup takes a computer once. When Phone Control under Tools (in the sidebar before iOS 18) shows Running, it is ready. For every step, see the [setup guide](https://fish.deepseek1024.com/en/phone-control/) on the website.
+It is an optional advanced feature. iCTRL is a third-party open-source app, not provided by Fish Pocket, and needs iOS 17.4 or later, Developer Mode and sideloading; a free Apple ID is enough, and the first setup takes a computer once. When Phone Control under Explore (in the sidebar before iOS 18) shows Running, it is ready. For every step, see the [setup guide](https://fish.deepseek1024.com/en/phone-control/) on the website.
 
 ## Bot mode
 

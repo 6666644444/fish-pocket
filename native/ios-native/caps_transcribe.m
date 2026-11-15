@@ -68,7 +68,7 @@ static NSString *const kRestrictedMessage =
 /// screen's title, because this file is not translated and the screen is.
 static NSString *const kNotEnabledMessage =
     @"the user has not switched speech recognition on for this app yet. Nothing was transcribed. "
-     "Tell them they can turn it on themselves under Device capabilities (under Connectors) on the app's Tools "
+     "Tell them they can turn it on themselves under Device capabilities on the app's Explore "
      "tab (in the sidebar before iOS 18) — only they can grant it, and iOS asks once per app, so the app will not ask on its own.";
 
 /// Reading an audio file's header is I/O, and Node's thread is the one thread

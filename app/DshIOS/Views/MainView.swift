@@ -1,14 +1,14 @@
 import StoreKit
 import SwiftUI
 
-/// The root. From iOS 18 the system's adaptable tab bar in every width: 会话, Bot, 应用, 工具 and 设置,
+/// The root. From iOS 18 the system's adaptable tab bar in every width: 会话, Bot, 应用, 探索 and 设置,
 /// at the bottom on a phone, at the top or as a sidebar where there is room (iPad, iPhone Duo open).
 /// The 会话 tab pushes a conversation over its list where it is narrow and keeps one beside it where it
 /// is wide. Before iOS 18 the session list is the split view's sidebar beside a conversation, always
 /// (with nothing selected a blank session opens), and on a phone a drawer that slides in from the left.
 struct MainView: View {
     /// The phone's tabs.
-    enum HomeTab: Hashable { case sessions, bot, apps, tools, settings }
+    enum HomeTab: Hashable { case sessions, bot, apps, explore, settings }
 
     enum Sheet: String, Identifiable { case settings, plugins, store, schedules, signIn, cordis, share, watch, capabilities, connectors, phoneControl, remote, fishPocket, miniApps; var id: String { rawValue } }
 
@@ -36,8 +36,8 @@ struct MainView: View {
     @State private var tab = HomeTab.sessions
     /// The 会话 tab's stack: the archive, and the conversation on screen (`selection`) on top.
     @State private var sessionsPath: [DrawerView.Route]
-    /// The 工具 tab's stack: the plugin store is pushed on it when something asks for it.
-    @State private var toolsPath: [ToolsTabView.Route] = []
+    /// The 探索 tab's stack: the plugin store is pushed on it when something asks for it.
+    @State private var explorePath: [ExploreTabView.Route] = []
     /// The 会话 tab's own split view, where it is wide: the list can make way for the workbench.
     @State private var sessionsColumns = NavigationSplitViewVisibility.all
     @State private var drag: CGFloat = 0
@@ -389,8 +389,19 @@ struct MainView: View {
         if !placeRestored {
             placeRestored = true
             restorePlace()
+            // On the tab bar someone with no conversation yet has nothing to see in the list: the
+            // new conversation page is where they start. Back from it is the (empty) list.
+            if usesTabs, selection == nil, tab == .sessions, !hasConversations { newConversation(in: workspace) }
         }
         if selection == nil, !usesTabs { newConversation(in: workspace) }
+    }
+
+    /// Any conversation of the user's, archived ones and those on a computer included; the Bots' are not.
+    private var hasConversations: Bool {
+        if app.remote.signedIn { return true }
+        let team = app.botTeam.teamWorkspaceId
+        return app.workspaces.contains { $0.id != team && !app.sessions(in: $0, includeArchived: true).isEmpty }
+            || !app.sessions(in: nil, includeArchived: true).isEmpty
     }
 
     /// The conversation the user is looking at (`AppModel.currentSession`): on the tab bar, only
@@ -743,8 +754,8 @@ struct MainView: View {
         setDrawer(false)
         if usesTabs {
             sheet = nil
-            tab = .tools
-            if toolsPath.last != .plugins { toolsPath = [.plugins] }
+            tab = .explore
+            if explorePath.last != .plugins { explorePath = [.plugins] }
         } else if sizeClass == .regular { storeOpen = true } else { sheet = .store }
     }
 
@@ -780,23 +791,33 @@ struct MainView: View {
     @available(iOS 18.0, *)
     private var tabLayout: some View {
         TabView(selection: $tab) {
-            Tab(DrawerView.sessionsTitle, systemImage: "bubble.left.and.bubble.right", value: HomeTab.sessions) {
+            Tab(value: HomeTab.sessions) {
                 if sessionsSideBySide { sessionsSplit } else { sessionsStack }
+            } label: {
+                tabLabel(Text(DrawerView.sessionsTitle), "bubble.left.and.bubble.right", .sessions)
             }
             .badge(waitingCount)
-            Tab("Bot", systemImage: "face.smiling", value: HomeTab.bot) {
+            Tab(value: HomeTab.bot) {
                 botStack(openDrawer: nil)
+            } label: {
+                tabLabel(Text(verbatim: "Bot"), "face.smiling", .bot, filled: "face.smiling.inverse")
             }
             .badge(botPendingCount)
             // 我的应用: the user's own tools and games, opened as often as a home screen's.
-            Tab(MiniAppsPage.tabTitle, systemImage: "apps.iphone", value: HomeTab.apps) {
+            Tab(value: HomeTab.apps) {
                 NavigationStack { MiniAppsPage(asTab: true) }
+            } label: {
+                tabLabel(Text(MiniAppsPage.tabTitle), "square.grid.2x2", .apps)
             }
-            Tab("工具", systemImage: "square.grid.2x2", value: HomeTab.tools) {
-                ToolsTabView(path: $toolsPath)
+            Tab(value: HomeTab.explore) {
+                ExploreTabView(path: $explorePath)
+            } label: {
+                tabLabel(Text("探索"), "safari", .explore)
             }
-            Tab("设置", systemImage: "gearshape", value: HomeTab.settings) {
+            Tab(value: HomeTab.settings) {
                 SettingsView(asTab: true)
+            } label: {
+                tabLabel(Text("设置"), "gearshape", .settings)
             }
         }
         .tabViewStyle(.sidebarAdaptable)
@@ -866,6 +887,13 @@ struct MainView: View {
     /// The workbench takes about 420 pt: under this much, the list makes way for it, as the sidebar does.
     private func makeRoomInSessions() {
         if windowWidth < 1100 { withAnimation { sessionsColumns = .detailOnly } }
+    }
+
+    /// A tab's name and icon: outlined, and filled while it is the one in front. Left alone the
+    /// system fills every icon that has a filled form, so it is told not to.
+    private func tabLabel(_ title: Text, _ symbol: String, _ value: HomeTab, filled: String? = nil) -> some View {
+        Label { title } icon: { Image(systemName: tab == value ? filled ?? "\(symbol).fill" : symbol) }
+            .environment(\.symbolVariants, .none)
     }
 
     /// What the 会话 tab's list shows waiting on the user: this phone's conversations and those on

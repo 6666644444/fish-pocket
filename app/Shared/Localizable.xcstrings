@@ -7946,7 +7946,8 @@
             "value" : "服務和本機能力"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "查看" : {
       "localizations" : {
@@ -34138,6 +34139,46 @@
         }
       }
     },
+    "外部服务" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "External services"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Servicios externos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外部サービス"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "외부 서비스"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外部服务"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外部服務"
+          }
+        }
+      }
+    },
     "大肥鱼接活，再分给研究员、程序员这些 Bot。它们记得你的偏好，到点自己开工。" : {
       "localizations" : {
         "en" : {
@@ -37808,7 +37849,8 @@
             "value" : "工具"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "工具 %@ 请求越权执行" : {
       "localizations" : {
@@ -47708,6 +47750,46 @@
         }
       }
     },
+    "探索" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explore"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explorar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "探索"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "탐색"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "探索"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "探索"
+          }
+        }
+      }
+    },
     "探索未至之境" : {
       "localizations" : {
         "en" : {
@@ -47738,6 +47820,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "探索未至之境"
+          }
+        }
+      }
+    },
+    "接入 GitHub、Notion 等外部服务" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect GitHub, Notion and other services"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conecta GitHub, Notion y otros servicios"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub や Notion などの外部サービスに接続"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub, Notion 등 외부 서비스 연결"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接入 GitHub、Notion 等外部服务"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接入 GitHub、Notion 等外部服務"
           }
         }
       }
@@ -47774,7 +47896,8 @@
             "value" : "串接外部服務和本機能力"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "接着上一段对话继续" : {
       "localizations" : {
@@ -47944,7 +48067,8 @@
             "value" : "控制裝置"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "推理等级" : {
       "localizations" : {
@@ -54336,6 +54460,86 @@
         }
       }
     },
+    "日历、健康、照片等" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendar, Health, Photos…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendario, Salud, Fotos…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カレンダー、ヘルスケア、写真など"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "캘린더, 건강, 사진 등"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日历、健康、照片等"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行事曆、健康、照片等"
+          }
+        }
+      }
+    },
+    "日历、健康、照片等本机数据和功能" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendar, Health, Photos and more on this device"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendario, Salud, Fotos y más de este dispositivo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カレンダー、ヘルスケア、写真など、このデバイスのデータと機能"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "캘린더, 건강, 사진 등 이 기기의 데이터와 기능"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日历、健康、照片等本机数据和功能"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "行事曆、健康、照片等本機資料和功能"
+          }
+        }
+      }
+    },
     "日期" : {
       "localizations" : {
         "en" : {
@@ -55801,6 +56005,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "更多操作"
+          }
+        }
+      }
+    },
+    "更多设备" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More Devices"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Más dispositivos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかのデバイス"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다른 기기"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更多设备"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更多裝置"
           }
         }
       }
@@ -65788,6 +66032,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "淺色"
+          }
+        }
+      }
+    },
+    "测试版不开放 Fish Pocket 账号登录，请在 App Store 版里登录。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket accounts can’t sign in to the beta. Please sign in with the App Store version."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las cuentas de Fish Pocket no pueden iniciar sesión en la versión beta. Inicia sesión en la versión de la App Store."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テスト版では Fish Pocket アカウントにログインできません。App Store 版でログインしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "테스트 버전에서는 Fish Pocket 계정으로 로그인할 수 없어요. App Store 버전에서 로그인해 주세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "测试版不开放 Fish Pocket 账号登录，请在 App Store 版里登录。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "測試版不開放 Fish Pocket 帳號登入，請在 App Store 版登入。"
           }
         }
       }
@@ -101960,7 +102244,8 @@
             "value" : "單獨的圖像"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "在对话里让 Agent 做一个小应用" : {
       "localizations" : {
@@ -101992,6 +102277,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在對話裡請 Agent做一個小 App"
+          }
+        }
+      }
+    },
+    "在对话里让 Agent 做个小工具或小游戏，做好就放进「应用」里，点开就能用，也能放到主屏幕上。先试试自带的倒数日、番茄钟和水果翻翻。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ask the agent in a chat for a small tool or game. It lands in Apps, ready to open, and can go on your Home Screen too. Start with the built-in Days, Pomodoro and Fruit Flip."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pide al agente en un chat una pequeña herramienta o un juego. Aparece en Apps, listo para abrir, y también puedes ponerlo en la pantalla de inicio. Empieza con Días, Pomodoro y Frutas pareja, que vienen incluidas."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャットでエージェントに小さなツールやゲームを頼むと「アプリ」に追加され、すぐに開けます。ホーム画面にも置けます。まずは付属のカウントダウン、ポモドーロ、フルーツめくりを試してみましょう。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화에서 에이전트에게 작은 도구나 게임을 부탁하면 ‘앱’에 들어가 바로 열 수 있어요. 홈 화면에도 둘 수 있어요. 먼저 기본으로 들어 있는 디데이, 뽀모도로, 과일 짝맞추기를 써 보세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在对话里让 Agent 做个小工具或小游戏，做好就放进「应用」里，点开就能用，也能放到主屏幕上。先试试自带的倒数日、番茄钟和水果翻翻。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在對話裡請 Agent 做個實用工具或小遊戲，做好就放進「App」裡，點開就能用，也能放到主畫面上。先試試內建的倒數日、番茄鐘和水果翻翻。"
           }
         }
       }
@@ -102062,7 +102387,8 @@
             "value" : "小尺寸放一個 App，中尺寸最多放四個。"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "小工具和小游戏" : {
       "localizations" : {
@@ -102368,7 +102694,8 @@
             "value" : "打開「捷徑」App，點一下右上角的 ＋ 新增捷徑。"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "打开「我的应用」里的一个应用。在快捷指令里把它添加到主屏幕，就是这个应用的图标。" : {
       "localizations" : {
@@ -102510,7 +102837,8 @@
             "value" : "打開捷徑"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "把你做的小工具和小游戏放到主屏幕上。" : {
       "localizations" : {
@@ -102584,7 +102912,8 @@
             "value" : "搜尋 Fish Pocket，加入「打開小 App」，選擇「%@」。"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "搜索 Fish Pocket，添加「打开小应用」，选择要打开的应用。" : {
       "localizations" : {
@@ -102618,7 +102947,8 @@
             "value" : "搜尋 Fish Pocket，加入「打開小 App」，選擇要打開的 App。"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "搜索 Fish Pocket，选择「我的应用」小组件。" : {
       "localizations" : {
@@ -102652,7 +102982,8 @@
             "value" : "搜尋 Fish Pocket，選擇「我的 App」小工具。"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "添加到主屏幕" : {
       "localizations" : {
@@ -102720,7 +103051,8 @@
             "value" : "加入後按住小工具，選「編輯小工具」，挑要放的 App。"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "点顶部的快捷指令名称，选「添加到主屏幕」，可以改名字和图标。" : {
       "localizations" : {
@@ -102754,7 +103086,8 @@
             "value" : "點一下頂部的捷徑名稱，選「加入主畫面」，可以改名稱和圖像。"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "让 Agent 修复" : {
       "localizations" : {
@@ -103026,7 +103359,8 @@
             "value" : "按住主畫面空白處，點一下左上角的按鈕，再點一下「加入小工具」。"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "tab.apps" : {
       "comment" : "Tab and page title: the user's own mini apps",
@@ -103107,6 +103441,47 @@
             "value" : "在對話裡請 Agent 做個實用工具或小遊戲，做好就放進「App」裡，點開就能用，也能放到主畫面上。先試試內建的倒數日和水果翻翻。"
           }
         }
+      },
+      "extractionState" : "stale"
+    },
+    "首页改成苹果的标签栏，会话、Bot、应用、探索、设置一点就到。插件、连接器、本机能力、操控手机、远程控制都在「探索」里，搜索放进了会话列表。iPad 和 iPhone Duo 上，标签栏会自动放到顶部或变成侧边栏。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The home screen now uses Apple's tab bar, so Sessions, Bot, Apps, Explore and Settings are one tap away. Plugins, Connectors, Device capabilities, Phone Control and Remote Control are all under Explore, and search is in the session list. On iPad and iPhone Duo, the tab bar moves to the top or turns into a sidebar on its own."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La pantalla de inicio usa ahora la barra de pestañas de Apple: Sesiones, Bot, Apps, Explorar y Configuración están a un toque. Complementos, Conectores, Funciones del dispositivo, Control del teléfono y Control remoto están en Explorar, y la búsqueda está en la lista de sesiones. En iPad y iPhone Duo, la barra de pestañas pasa sola arriba o se convierte en una barra lateral."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ホーム画面が Apple のタブバーになり、セッション、Bot、アプリ、探索、設定にワンタップで移動できます。プラグイン、コネクタ、デバイス機能、iPhone を操作、リモート操作はすべて「探索」にまとめ、検索はセッション一覧に入りました。iPad と iPhone Duo では、タブバーが自動的に上部に移動するか、サイドバーに切り替わります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "홈 화면이 Apple 탭 바로 바뀌어 세션, Bot, 앱, 탐색, 설정을 한 번에 열 수 있어요. 플러그인, 커넥터, 기기 기능, iPhone 조작, 원격 제어는 모두 「탐색」에 있고, 검색은 세션 목록에 들어갔어요. iPad와 iPhone Duo에서는 탭 바가 자동으로 위쪽으로 옮겨지거나 사이드바로 바뀌어요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "首页改成苹果的标签栏，会话、Bot、应用、探索、设置一点就到。插件、连接器、本机能力、操控手机、远程控制都在「探索」里，搜索放进了会话列表。iPad 和 iPhone Duo 上，标签栏会自动放到顶部或变成侧边栏。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "首頁改成 Apple 的標籤列，對話、Bot、App、探索、設定一點就到。外掛、連接器、本機能力、操控手機、遠端控制都在「探索」裡，搜尋放進了對話列表。在 iPad 和 iPhone Duo 上，標籤列會自動移到頂部或變成側邊欄。"
+          }
+        }
       }
     },
     "首页改成苹果的标签栏，会话、Bot、应用、工具、设置一点就到。插件、连接器、远程控制、操控手机都在「工具」里，搜索放进了会话列表。iPad 和 iPhone Duo 上，标签栏会自动放到顶部或变成侧边栏。" : {
@@ -103141,7 +103516,8 @@
             "value" : "首頁改成 Apple 的標籤列，對話、Bot、App、工具、設定一點就到。外掛、連接器、遠端控制、操控手機都在「工具」裡，搜尋放進了對話列表。在 iPad 和 iPhone Duo 上，標籤列會自動移到頂部或變成側邊欄。"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     }
   },
   "version" : "1.0"

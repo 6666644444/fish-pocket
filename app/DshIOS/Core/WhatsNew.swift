@@ -50,12 +50,12 @@ enum WhatsNew {
         Release(version: "1.2.1", build: 111, features: [
             Feature(symbol: "rectangle.bottomthird.inset.filled",
                     title: "底部标签栏",
-                    detail: "首页改成苹果的标签栏，会话、Bot、应用、工具、设置一点就到。插件、连接器、远程控制、操控手机都在「工具」里，搜索放进了会话列表。iPad 和 iPhone Duo 上，标签栏会自动放到顶部或变成侧边栏。"),
+                    detail: "首页改成苹果的标签栏，会话、Bot、应用、探索、设置一点就到。插件、连接器、本机能力、操控手机、远程控制都在「探索」里，搜索放进了会话列表。iPad 和 iPhone Duo 上，标签栏会自动放到顶部或变成侧边栏。"),
         ]),
         Release(version: "1.2.1", build: 110, features: [
             Feature(symbol: "apps.iphone",
                     title: "做自己的小应用",
-                    detail: "在对话里让 Agent 做个小工具或小游戏，做好就放进「应用」里，点开就能用，也能放到主屏幕上。先试试自带的倒数日和水果翻翻。"),
+                    detail: "在对话里让 Agent 做个小工具或小游戏，做好就放进「应用」里，点开就能用，也能放到主屏幕上。先试试自带的倒数日、番茄钟和水果翻翻。"),
         ]),
         Release(version: "1.2.1", build: 109, features: [
             Feature(symbol: "record.circle",

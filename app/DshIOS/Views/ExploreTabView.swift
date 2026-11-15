@@ -1,32 +1,40 @@
 import SwiftUI
+import WatchConnectivity
 
-/// The phone's 工具 tab: what gives the agent more to reach, beyond a conversation of its own —
-/// plugins, connectors, the computers of remote control, phone control, the web version. Before
-/// iOS 18 these are rows of the sidebar.
-struct ToolsTabView: View {
-    enum Route: Hashable { case plugins, connectors, remote, phoneControl }
+/// The 探索 tab: what the agent can be given beyond a conversation of its own — plugins,
+/// connectors, this device's capabilities, phone control — then the other devices (the computers
+/// of remote control, Apple Watch), the web version and sharing the app. Before iOS 18 these are
+/// rows of the sidebar, and Apple Watch and sharing stay in 设置.
+struct ExploreTabView: View {
+    enum Route: Hashable { case plugins, connectors, capabilities, phoneControl, remote, watch, share }
 
     @Environment(AppModel.self) private var app
     @Environment(\.scenePhase) private var scenePhase
     @Binding var path: [Route]
     @State private var phoneControl = PhoneControlService()
+    @State private var watch = WatchPairing.current
 
     var body: some View {
         NavigationStack(path: $path) {
             List {
                 Section {
                     row(.plugins, "插件", "puzzlepiece.extension", "发现、安装和管理插件")
-                    row(.connectors, "连接器", "point.3.connected.trianglepath.dotted", "接入外部服务和本机能力", status: connectorStatus)
+                    row(.connectors, "连接器", "point.3.connected.trianglepath.dotted", "接入 GitHub、Notion 等外部服务", status: connectorStatus)
+                    row(.capabilities, "本机能力", "iphone", "日历、健康、照片等本机数据和功能")
+                    row(.phoneControl, "操控手机", "hand.tap", "让智能体点按其他 App", status: phoneControl.state == .running ? String(localized: "运行中") : nil,
+                        live: phoneControl.state == .running)
                 } header: {
                     Text("扩展智能体")
                 }
                 Section {
                     row(.remote, "远程控制", "laptopcomputer.and.iphone", "在手机上管电脑里的智能体", status: remoteStatus,
                         warns: app.remote.expired)
-                    row(.phoneControl, "操控手机", "hand.tap", "让智能体点按其他 App", status: phoneControl.state == .running ? String(localized: "运行中") : nil,
-                        live: phoneControl.state == .running)
+                    if WCSession.isSupported() {
+                        row(.watch, "Apple Watch", "applewatch", "在手腕上看会话、做确认",
+                            status: watch == .installed ? String(localized: "已安装") : nil)
+                    }
                 } header: {
-                    Text("控制设备")
+                    Text("更多设备")
                 }
                 Section {
                     // Opens over everything: the mark of the links that leave the page.
@@ -36,22 +44,30 @@ struct ToolsTabView: View {
                         }
                     }
                     .foregroundStyle(Palette.ink)
+                    row(.share, "分享 Fish Pocket", "square.and.arrow.up", "海报、二维码或链接")
                 }
             }
-            .navigationTitle("工具")
+            .navigationTitle("探索")
             .navigationBarTitleDisplayMode(.large)
             .navigationDestination(for: Route.self) { route in
                 switch route {
                 case .plugins: PluginStoreView()
                 case .connectors: BotConnectorsPage().settingsStyle()
-                case .remote: RemoteControlPage().environment(\.systemLists, true)
+                case .capabilities: NativeCapabilitiesView().environment(\.systemLists, true)
                 case .phoneControl: PhoneControlView().environment(\.systemLists, true)
+                case .remote: RemoteControlPage().environment(\.systemLists, true)
+                case .watch: WatchSetupPage()
+                case .share: ShareAppPage()
                 }
             }
-            // The row says whether iCTRL runs; that changes while the user is in iCTRL.
+            // The rows say whether iCTRL runs and whether the watch has the app; both change while
+            // the user is in another app.
             .task { await phoneControl.refresh() }
+            .onAppear { watch = WatchPairing.current }
             .onChange(of: scenePhase) { _, phase in
-                if phase == .active { Task { await phoneControl.refresh() } }
+                guard phase == .active else { return }
+                watch = WatchPairing.current
+                Task { await phoneControl.refresh() }
             }
         }
     }

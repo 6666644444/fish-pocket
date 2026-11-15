@@ -63,7 +63,6 @@ struct MiniAppScreen: View {
     let app: MiniApp
     let close: () -> Void
     @State private var page = MiniAppPage()
-    @State private var guide = false
     /// The published copy is in place (made now the first time, or after the agent changed it).
     @State private var ready = false
 
@@ -100,7 +99,7 @@ struct MiniAppScreen: View {
                         Menu {
                             Button("重新载入", systemImage: "arrow.clockwise") { page.reload() }
                             Button("让 Agent 修改", systemImage: "wand.and.stars") { MiniAppPresenter.askAgent(MiniAppPresenter.editDraft(app)) }
-                            Button("添加到主屏幕", systemImage: "plus.square.on.square") { guide = true }
+                            Button("添加到主屏幕", systemImage: "plus.square.on.square") { MiniAppHomeScreen.add(app) }
                         } label: {
                             Image(systemName: "ellipsis")
                         }
@@ -110,7 +109,6 @@ struct MiniAppScreen: View {
                     }
                 }
         }
-        .sheet(isPresented: $guide) { SheetStack { MiniAppHomeScreenGuide(app: app) } }
     }
 
     private func errorBanner(_ error: String) -> some View {
@@ -318,41 +316,42 @@ private enum LocalNetworkRules {
     }
 }
 
-/// How to put an app on the home screen. iOS lets no app place an icon there itself: a widget,
-/// or a shortcut the user adds from the Shortcuts app.
-struct MiniAppHomeScreenGuide: View {
-    let app: MiniApp?
-
-    var body: some View {
-        List {
-            Section {
-                step(1, Text("长按主屏幕空白处，点左上角的按钮，再点「添加小组件」。"))
-                step(2, Text("搜索 Fish Pocket，选择「我的应用」小组件。"))
-                step(3, Text("添加后长按小组件，选「编辑小组件」，挑要放的应用。"))
-            } header: {
-                Text("小组件")
-            } footer: {
-                Text("小尺寸放一个应用，中尺寸最多放四个。")
-            }
-            Section {
-                step(1, Text("打开「快捷指令」App，点右上角的 ＋ 新建快捷指令。"))
-                step(2, app.map { Text("搜索 Fish Pocket，添加「打开小应用」，选择「\($0.name)」。") } ?? Text("搜索 Fish Pocket，添加「打开小应用」，选择要打开的应用。"))
-                step(3, Text("点顶部的快捷指令名称，选「添加到主屏幕」，可以改名字和图标。"))
-                Button("打开快捷指令") {
-                    if let url = URL(string: "shortcuts://create-shortcut") { UIApplication.shared.open(url) }
-                }
-            } header: {
-                Text("单独的图标")
-            }
-        }
-        .navigationTitle("添加到主屏幕")
-        .toolbarTitleDisplayMode(.inline)
+/// Puts an app on the home screen through Safari. iOS lets no app place an icon there itself, but
+/// Safari's 添加到主屏幕 does for a web page: the website's page (AppLinks.addToHomeScreen) takes the
+/// app's name and icon from what follows its `#`, and when opened from the home screen goes on to
+/// `dsh://app/<id>`. The fragment never reaches the server. The icon is drawn here, as the 应用 tab
+/// draws it: Safari's canvas does not draw emoji.
+@MainActor
+enum MiniAppHomeScreen {
+    static func add(_ app: MiniApp) {
+        var fragment = URLComponents()
+        fragment.queryItems = [
+            URLQueryItem(name: "id", value: app.id),
+            URLQueryItem(name: "name", value: app.name),
+            URLQueryItem(name: "color", value: String(app.color.drop { $0 == "#" })),
+            URLQueryItem(name: "scheme", value: DshLink.scheme),
+        ] + [iconPNG(app).map { URLQueryItem(name: "img", value: $0) }].compactMap { $0 }
+        // The page reads it with URLSearchParams, where a bare + is a space.
+        let encoded = (fragment.percentEncodedQuery ?? "").replacingOccurrences(of: "+", with: "%2B")
+        guard var components = URLComponents(url: AppLinks.addToHomeScreen, resolvingAgainstBaseURL: false) else { return }
+        components.percentEncodedFragment = encoded
+        guard let url = components.url else { return }
+        Haptics.tap()
+        UIApplication.shared.open(url)
     }
 
-    private func step(_ number: Int, _ text: Text) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: 10) {
-            Text("\(number)").font(.subheadline.weight(.semibold)).monospacedDigit().foregroundStyle(Palette.secondary)
-            text.font(.subheadline)
+    /// The home screen's icon, 180 points square and edge to edge (iOS rounds the corners), as
+    /// base64url PNG.
+    private static func iconPNG(_ app: MiniApp) -> String? {
+        let icon = ZStack {
+            Rectangle().fill(Color(miniApp: app.color).gradient)
+            Text(verbatim: app.icon).font(.system(size: 90))
         }
+        .frame(width: 180, height: 180)
+        let renderer = ImageRenderer(content: icon)
+        renderer.scale = 1
+        guard let data = renderer.uiImage?.pngData() else { return nil }
+        return data.base64EncodedString()
+            .replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
     }
 }

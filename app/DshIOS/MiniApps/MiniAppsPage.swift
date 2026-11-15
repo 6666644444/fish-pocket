@@ -7,7 +7,6 @@ struct MiniAppsPage: View {
     var asTab = false
     @State private var store = MiniAppStore.shared
     @State private var deleting: MiniApp?
-    @State private var guide: MiniApp?
     @Environment(\.scenePhase) private var scenePhase
 
     private let columns = [GridItem(.adaptive(minimum: 76, maximum: 96), spacing: 12, alignment: .top)]
@@ -49,7 +48,6 @@ struct MiniAppsPage: View {
         }
         .onAppear { store.refresh() }
         .onChange(of: scenePhase) { _, phase in if phase == .active { store.refresh() } }
-        .sheet(item: $guide) { app in SheetStack { MiniAppHomeScreenGuide(app: app) } }
         .confirmationDialog("删除「\(deleting?.name ?? "")」？", isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }), titleVisibility: .visible) {
             Button("删除应用", role: .destructive) {
                 guard let app = deleting else { return }
@@ -78,7 +76,7 @@ struct MiniAppsPage: View {
     private func menu(_ app: MiniApp) -> some View {
         Button("打开", systemImage: "arrow.up.forward.app") { open(app) }
         Button("让 Agent 修改", systemImage: "wand.and.stars") { ask(MiniAppPresenter.editDraft(app)) }
-        Button("添加到主屏幕", systemImage: "plus.square.on.square") { guide = app }
+        Button("添加到主屏幕", systemImage: "plus.square.on.square") { MiniAppHomeScreen.add(app) }
         Divider()
         Button("删除", systemImage: "trash", role: .destructive) { deleting = app }
     }

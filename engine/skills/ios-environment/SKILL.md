@@ -112,9 +112,9 @@ FFmpeg 9.0 is built into the app: `ffmpeg` and `ffprobe` work as on a desktop fo
 
 ## DSH plugins
 
-The app's native interface, built in SwiftUI, does not run a plugin's browser code. Only a plugin's Host half (tools, settings) works there; its pages, panels and sidebar entries appear only in the web interface, under 网页版 (Web version) on the app's 工具 (Tools) tab (in the sidebar before iOS 18). **Before writing, changing or diagnosing a DSH plugin, read `references/plugins.md`**: what reaches which interface, what to tell the user before building, the built-in DS Bot plugin, and why device capabilities are not for plugins.
+The app's native interface, built in SwiftUI, does not run a plugin's browser code. Only a plugin's Host half (tools, settings) works there; its pages, panels and sidebar entries appear only in the web interface, under 网页版 (Web version) on the app's 探索 (Explore) tab (in the sidebar before iOS 18). **Before writing, changing or diagnosing a DSH plugin, read `references/plugins.md`**: what reaches which interface, what to tell the user before building, the built-in DS Bot plugin, and why device capabilities are not for plugins.
 
-Services the user has connected under 连接器 (Connectors) on the app's 工具 (Tools) tab (in the sidebar before iOS 18) (GitHub, Notion and the like) are MCP tools in every session, named `mcp__<id>__*`. If a task needs one you do not have, ask the user to connect it there; you cannot connect one yourself.
+Services the user has connected under 连接器 (Connectors) on the app's 探索 (Explore) tab (in the sidebar before iOS 18) (GitHub, Notion and the like) are MCP tools in every session, named `mcp__<id>__*`. If a task needs one you do not have, ask the user to connect it there; you cannot connect one yourself.
 
 ## git
 
@@ -150,7 +150,7 @@ You have tools onto the phone itself. They are not shell commands: `device_info`
 
 Three rules hold even before you read it:
 
-- A capability that needs permission starts switched off, and calling it does not turn it on. It comes back refused; tell the user they can switch it on under 连接器 → 本机能力 (Connectors → Device capabilities) on the app's 工具 (Tools) tab (in the sidebar before iOS 18), and stop.
+- A capability that needs permission starts switched off, and calling it does not turn it on. It comes back refused; tell the user they can switch it on under 本机能力 (Device capabilities) on the app's 探索 (Explore) tab (in the sidebar before iOS 18), and stop.
 - A write just happens by default, with no confirmation, and the user can see it afterwards. Say which item you are about to delete before you delete it.
 - They are for you, not for plugins: do not build a plugin on them, and do not offer to.
 

@@ -154,7 +154,10 @@ export default function App() {
 
       <p className="hint">{started ? '' : t.hint}</p>
 
-      <button className="restart" onClick={() => start()} aria-label={t.restart}>{t.restart}</button>
+      <button className="restart" onClick={() => start()}>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none" /></svg>
+        {t.restart}
+      </button>
 
       {result && (
         <div className="won" role="dialog" aria-label={t.won}>
