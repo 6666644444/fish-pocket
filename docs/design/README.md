@@ -136,6 +136,6 @@ iPad（regular 宽度）保留常驻侧栏：抽屉内容直接作为 `Navigatio
 
 ## 7. App 图标与启动屏
 
-- **图标**：吉祥物大肥鱼的头像：蓝发、鲸鳍、女仆头饰，眨眼笑。形象基于社区鲸鱼娘，图片按 CC BY-NC-SA 4.0 使用，不适用项目的 MIT 协议（见 `THIRD_PARTY_NOTICES.md`），也不使用 DeepSeek 官方 Logo。图标和启动图由 `brand/make-icons.py` 从 `brand/mascot-icon.png` 生成。
+- **图标**：吉祥物大肥鱼的头像：蓝发、鲸鳍、女仆头饰，眨眼笑。形象基于社区鲸鱼娘，图片按 CC BY-NC-SA 4.0 使用，不适用项目的 MIT 协议（见 `THIRD_PARTY_NOTICES.md`），也不使用 DeepSeek 官方 Logo。图标和启动图由 `brand/make-icons.py` 从 `brand/mascot-icon.png` 生成。设置 → App 图标里还有备选图标，分两组：「插画」是吉祥物换色和贴纸版；「简洁」和「字标」不带人物，给觉得吉祥物太二次元的人用。用代码画的由 `brand/make-drawn-icons.swift` 和 `brand/make-wordmark-icons.swift` 生成（先跑它们，再跑 `make-icons.py`；字标用 Geist Pixel、Noto Sans 和 JetBrains Mono 三个开源字体，字体文件不在仓库里，跑之前按脚本开头的说明自己下载）；AI 生成的原图放在 `brand/generated/`，存进仓库前要去掉图片元数据，再由 `make-icons.py` 做成图标。
 - **启动屏**：`Info.plist` 的 `UILaunchScreen` = 背景色 `Background` + 居中的 `LaunchMark`（同一图形，浅色墨色 / 深色浅灰两套）。引擎启动期间 `StartupView` 保持同一图形在同一位置，只在下方加一行进度，避免闪跳。
 - **重新生成**：`swiftc -O docs/design/brand/render-icon.swift -o /tmp/render-icon && /tmp/render-icon app/DshIOS/Assets.xcassets`。

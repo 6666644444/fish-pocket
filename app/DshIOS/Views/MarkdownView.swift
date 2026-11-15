@@ -21,7 +21,7 @@ struct MarkdownView: View {
                 view(for: block)
             }
         }
-        .font(.callout)
+        .font(.body)
         .lineSpacing(4)
         .foregroundStyle(Palette.ink)
         .modifier(TextSelecting(enabled: selectable))
@@ -66,7 +66,7 @@ struct MarkdownView: View {
                     ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
                         GridRow {
                             ForEach(Array(row.enumerated()), id: \.offset) { _, cell in
-                                inline(cell, .subheadline).font(index == 0 ? .subheadline.bold() : .subheadline)
+                                inline(cell, .callout).font(index == 0 ? .callout.bold() : .callout)
                             }
                         }
                         if index == 0 { Divider() }
@@ -84,7 +84,7 @@ struct MarkdownView: View {
         }
     }
 
-    private func inline(_ text: String, _ style: UIFont.TextStyle = .callout) -> some View {
+    private func inline(_ text: String, _ style: UIFont.TextStyle = .body) -> some View {
         var string = cached ? MarkdownCache.inline(text) : MarkdownCache.render(text)
         if linksFiles && !fileMentions.isEmpty { string = Self.linkMentions(string, fileMentions) }
         // Links are blue, as in every chat app; the app's own tint is the text's ink.
@@ -182,7 +182,7 @@ enum MarkdownCache {
         // Inline code: a shade behind it, as in the design's `spawn` chip.
         for run in string.runs where run.inlinePresentationIntent?.contains(.code) == true {
             string[run.range].backgroundColor = Palette.bubble
-            string[run.range].font = .system(.subheadline, design: .monospaced)
+            string[run.range].font = .system(.callout, design: .monospaced)
         }
         linkify(&string)
         // A link is blue text on nothing, in the reply's own font, even an address written as code.
@@ -370,7 +370,7 @@ struct CodeBlockView: View {
             let lines = code.components(separatedBy: "\n")
             ScrollView(.horizontal, showsIndicators: false) {
                 Text(expanded || lines.count <= cap ? code : lines.prefix(cap).joined(separator: "\n"))
-                    .font(.system(.footnote, design: .monospaced))
+                    .font(.system(.subheadline, design: .monospaced))
                     .lineSpacing(2)
                     .padding(.horizontal, 14)
                     .padding(.bottom, lines.count > cap ? 4 : 12)

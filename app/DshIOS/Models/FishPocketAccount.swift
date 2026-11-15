@@ -85,6 +85,18 @@ final class FishPocketAccount {
 
     var available: Bool { http != nil }
 
+    /// A call anyone may make, sent with the account when signed in (a plugin report): a session
+    /// that can't be renewed any more goes out without one rather than failing the call.
+    func sendAsUser(_ method: String, _ path: String, body: JSON? = nil) async throws -> JSON {
+        guard let http else { throw FishPocketError(status: 0, code: "unavailable", message: "") }
+        guard signedIn else { return try await http.send(method, path, body: body) }
+        do {
+            return try await authorized(method, path, body: body)
+        } catch let error as FishPocketError where error.status == 401 || error.code == "account_deleted" {
+            return try await http.send(method, path, body: body)
+        }
+    }
+
     // MARK: Start
 
     /// On each engine connection: make sure the engine holds this device's

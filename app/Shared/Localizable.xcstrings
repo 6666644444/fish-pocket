@@ -4745,6 +4745,40 @@
         }
       }
     },
+    "App 图标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Icon"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Icono de la app"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App アイコン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 아이콘"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App 圖示"
+          }
+        }
+      }
+    },
     "App 版本" : {
       "localizations" : {
         "en" : {
@@ -5500,6 +5534,74 @@
         }
       }
     },
+    "像素字标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pixel Wordmark"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logotipo pixelado"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ドット絵ロゴタイプ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "픽셀 워드마크"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "像素字標"
+          }
+        }
+      }
+    },
+    "像素鲸鱼" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pixel Whale"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ballena pixelada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ドット絵クジラ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "픽셀 고래"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "像素鯨魚"
+          }
+        }
+      }
+    },
     "先在 iPhone 的 Watch App 里配对手表，再按下面的步骤安装。" : {
       "localizations" : {
         "en" : {
@@ -5598,6 +5700,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "先確認 TestFlight 裡的 Fish Pocket 已經裝好，詳情頁裡「Apple Watch」一項寫著「是」，手錶系統是 watchOS 10 或更新版本。仍然沒有的話，打開 iPhone 上的 Watch App，在「可用的 App」裡也能安裝。"
+          }
+        }
+      }
+    },
+    "几何鲸鱼" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geometric Whale"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ballena geométrica"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幾何学クジラ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기하학 고래"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幾何鯨魚"
           }
         }
       }
@@ -5870,6 +6006,108 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在詳細資訊頁下方，和「自動更新」在同一組。打開後手錶就開始安裝，裝好後在手錶上打開一次就連上了。"
+          }
+        }
+      }
+    },
+    "大肥鱼" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大肥鱼"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大肥鱼"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大肥鱼"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大肥鱼"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "大肥魚"
+          }
+        }
+      }
+    },
+    "字标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wordmark"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logotipo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ロゴタイプ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "워드마크"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "字標"
+          }
+        }
+      }
+    },
+    "小鲸鱼" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little Whale"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ballenita"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "子クジラ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아기 고래"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "小鯨魚"
           }
         }
       }
@@ -6622,6 +6860,74 @@
         }
       }
     },
+    "换个 App 图标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change the App Icon"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambia el icono de la app"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App アイコンを変更"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱 아이콘 바꾸기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "換個 App 圖示"
+          }
+        }
+      }
+    },
+    "插画" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Illustrated"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ilustrados"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "イラスト"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "일러스트"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插畫"
+          }
+        }
+      }
+    },
     "操控手机" : {
       "localizations" : {
         "en" : {
@@ -6690,6 +6996,40 @@
         }
       }
     },
+    "日志（可选）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log (Optional)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registro (opcional)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログ（任意）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그(선택)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "記錄（選填）"
+          }
+        }
+      }
+    },
     "智能体现在可以替你点按、输入、读取其他 App 的屏幕。它操作时屏幕会被占用，顶部会显示 iOS 的「Automation Running」提示；同时按住两个音量键也能停止。点「停止服务」后 iCTRL 会发一条通知，长按它并点「停止」才会真的停下。" : {
       "localizations" : {
         "en" : {
@@ -6754,6 +7094,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "AI 代理看到的其他 App 畫面，會隨對話傳給你選的模型服務商。付款、刪除、幫你傳訊息前，它會先問你；密碼和驗證碼由你自己輸入。"
+          }
+        }
+      }
+    },
+    "更换后，iOS 会弹出一次提示。Apple Watch 上的图标不会变。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS shows a notice once when you change it. The icon on Apple Watch stays the same."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al cambiarlo, iOS muestra un aviso una vez. El icono del Apple Watch no cambia."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変更すると、iOS が一度だけお知らせを表示します。Apple Watch のアイコンは変わりません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "변경하면 iOS가 알림을 한 번 표시합니다. Apple Watch의 아이콘은 바뀌지 않습니다."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更換後，iOS 會跳出一次提示。Apple Watch 上的圖示不會變。"
           }
         }
       }
@@ -7439,6 +7813,40 @@
         }
       }
     },
+    "樱花粉" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sakura Pink"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rosa sakura"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "さくらピンク"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "벚꽃 핑크"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "櫻花粉"
+          }
+        }
+      }
+    },
     "正在从相册读取…" : {
       "localizations" : {
         "en" : {
@@ -7915,6 +8323,74 @@
         }
       }
     },
+    "没能更换图标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't Change the Icon"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo cambiar el icono"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アイコンを変更できませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아이콘을 변경하지 못했습니다"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無法更換圖示"
+          }
+        }
+      }
+    },
+    "海报字标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poster Wordmark"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logotipo de cartel"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ポスター風ロゴタイプ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "포스터 워드마크"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "海報字標"
+          }
+        }
+      }
+    },
     "清除网站数据" : {
       "localizations" : {
         "en" : {
@@ -8125,6 +8601,40 @@
         }
       }
     },
+    "简洁" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simple"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sencillos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "シンプル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "심플"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "簡潔"
+          }
+        }
+      }
+    },
     "系统语言是繁体中文时自动切换，用词按台湾的习惯；也可以在设置 → 语言里选繁體中文。" : {
       "localizations" : {
         "en" : {
@@ -8161,6 +8671,108 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "系統語言是繁體中文時自動切換，用詞依照台灣的習慣；也可以在設定 → 語言裡選繁體中文。"
+          }
+        }
+      }
+    },
+    "终端字标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminal Wordmark"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logotipo de terminal"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ターミナル風ロゴタイプ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "터미널 워드마크"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終端機字標"
+          }
+        }
+      }
+    },
+    "葡萄紫" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grape Purple"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Morado uva"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "グレープパープル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "포도 보라"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "葡萄紫"
+          }
+        }
+      }
+    },
+    "薄荷绿" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mint Green"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verde menta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ミントグリーン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "민트 그린"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "薄荷綠"
           }
         }
       }
@@ -8263,6 +8875,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "安裝好開源的 iCTRL 後，AI 代理可以幫你點按、輸入、讀取其他 App 的螢幕。側邊欄新增「操控手機」，在那裡查看狀態、一鍵啟動，還有設定教學。"
+          }
+        }
+      }
+    },
+    "要先停用这个插件吗？" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disable This Plugin for Now?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Desactivar este complemento por ahora?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このプラグインを無効にしておきますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 플러그인을 우선 비활성화할까요?"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要先停用這個外掛嗎？"
           }
         }
       }
@@ -8743,6 +9389,40 @@
         }
       }
     },
+    "设置 → App 图标里可以把主屏幕上的图标换成别的颜色或贴纸版的大肥鱼，也可以换成不带人物的鲸鱼图标，或者只写着 Fish Pocket 的字标。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Settings → App Icon, switch your Home Screen icon to 大肥鱼 in another color or as a sticker, to a whale without the character, or to a wordmark that simply reads Fish Pocket."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En Ajustes → Icono de la app, cambia el icono de la pantalla de inicio por 大肥鱼 en otro color o en versión pegatina, por una ballena sin el personaje o por un logotipo que solo dice Fish Pocket."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定 → App アイコンで、ホーム画面のアイコンを別の色やステッカー版の大肥鱼、キャラクターなしのクジラ、または Fish Pocket と書かれただけのロゴタイプに変えられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정 → 앱 아이콘에서 홈 화면 아이콘을 다른 색이나 스티커 버전의 大肥鱼, 캐릭터 없는 고래, 또는 Fish Pocket이라고만 적힌 워드마크로 바꿀 수 있습니다."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定 → App 圖示裡可以把主畫面上的圖示換成別的顏色或貼紙版的大肥魚，也可以換成不帶人物的鯨魚圖示，或是只寫著 Fish Pocket 的字標。"
+          }
+        }
+      }
+    },
     "设置教程" : {
       "localizations" : {
         "en" : {
@@ -8807,6 +9487,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "讀取頁面"
+          }
+        }
+      }
+    },
+    "贴纸" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sticker"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pegatina"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ステッカー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스티커"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "貼紙"
           }
         }
       }
@@ -9385,6 +10099,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "還沒有 API Key？"
+          }
+        }
+      }
+    },
+    "还没有举报" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Reports Yet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no hay reportes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "報告はまだありません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "신고 내역이 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "還沒有檢舉"
           }
         }
       }
@@ -14650,6 +15398,176 @@
         }
       }
     },
+    "举报会发给 Fish Pocket 人工审核，不会通知插件作者。确认有问题的插件会从插件市场下架。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reports are reviewed by a person at Fish Pocket. The plugin’s author isn’t notified. Plugins found to have problems are taken down from the plugin market."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los reportes los revisa una persona de Fish Pocket. No se avisa al autor del complemento. Los complementos con problemas confirmados se retiran del mercado de complementos."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "報告は Fish Pocket の担当者が審査します。プラグインの作者には通知されません。問題が確認されたプラグインはプラグインマーケットから取り下げられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "신고는 Fish Pocket 담당자가 직접 검토하며, 플러그인 작성자에게는 알리지 않아요. 문제가 확인된 플러그인은 플러그인 마켓에서 내려가요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檢舉會交由 Fish Pocket 人工審核，不會通知外掛作者。確認有問題的外掛會從外掛市集下架。"
+          }
+        }
+      }
+    },
+    "举报已提交" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report Sent"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reporte enviado"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "報告を送信しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "신고를 보냈어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已送出檢舉"
+          }
+        }
+      }
+    },
+    "举报插件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report Plugin"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reportar complemento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プラグインを報告"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "플러그인 신고"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檢舉外掛"
+          }
+        }
+      }
+    },
+    "举报此插件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report This Plugin"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reportar este complemento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このプラグインを報告"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 플러그인 신고"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檢舉這個外掛"
+          }
+        }
+      }
+    },
+    "举报编号" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report Number"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Número de reporte"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "報告番号"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "신고 번호"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檢舉編號"
+          }
+        }
+      }
+    },
     "之前问过的" : {
       "localizations" : {
         "en" : {
@@ -15938,6 +16856,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "程式碼來源"
+          }
+        }
+      }
+    },
+    "以上都不是" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None of the above"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguno de los anteriores"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上記のいずれでもない"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "위 항목에 해당하지 않음"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以上皆非"
           }
         }
       }
@@ -19042,6 +19994,40 @@
         }
       }
     },
+    "停用插件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disable Plugin"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desactivar complemento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プラグインを無効にする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "플러그인 비활성화"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停用外掛"
+          }
+        }
+      }
+    },
     "停用第三方插件并重启" : {
       "localizations" : {
         "en" : {
@@ -19106,6 +20092,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "健康"
+          }
+        }
+      }
+    },
+    "偷偷做与介绍不符的事，或越权访问" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Secretly does things its description doesn’t mention, or reaches beyond its permissions"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hace a escondidas cosas que su descripción no menciona o accede más allá de sus permisos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "説明にないことを隠れて行う、または権限を超えてアクセスする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설명과 다른 일을 몰래 하거나 권한 밖에 접근해요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暗中做與介紹不符的事，或越權存取"
           }
         }
       }
@@ -20844,6 +21864,40 @@
         }
       }
     },
+    "其他" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その他"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기타"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其他"
+          }
+        }
+      }
+    },
     "其他 Bot" : {
       "localizations" : {
         "en" : {
@@ -21384,6 +22438,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "內建外掛"
+          }
+        }
+      }
+    },
+    "冒充与侵权" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impersonation or Infringement"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suplantación o infracción"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "なりすまし・権利侵害"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사칭 및 권리 침해"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "冒充與侵權"
+          }
+        }
+      }
+    },
+    "冒用他人名义或侵犯版权" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uses someone else’s name or infringes copyright"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa el nombre de otra persona o infringe derechos de autor"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "他人の名前をかたる、または著作権を侵害している"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다른 사람의 이름을 도용하거나 저작권을 침해해요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "冒用他人名義或侵犯著作權"
           }
         }
       }
@@ -27100,6 +28222,40 @@
         }
       }
     },
+    "只保存在这台设备上。左滑可移除记录，不影响审核。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kept on this device only. Swipe left to remove a record; this doesn’t affect the review."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo se guarda en este dispositivo. Desliza a la izquierda para quitar un registro; no afecta a la revisión."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このデバイスにだけ保存されます。左にスワイプすると記録を削除できます。審査には影響しません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 기기에만 저장돼요. 왼쪽으로 밀어 기록을 지울 수 있으며, 검토에는 영향을 주지 않아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只儲存在這台裝置上。向左滑動可移除紀錄，不影響審核。"
+          }
+        }
+      }
+    },
     "只在信任这些包时允许。" : {
       "localizations" : {
         "en" : {
@@ -27640,6 +28796,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "可用工具"
+          }
+        }
+      }
+    },
+    "可粘贴相关的输出或报错" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paste any related output or errors"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pega la salida o los errores relacionados"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "関連する出力やエラーを貼り付けられます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "관련 출력이나 오류를 붙여 넣을 수 있어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可貼上相關的輸出或錯誤訊息"
           }
         }
       }
@@ -30500,6 +31690,40 @@
         }
       }
     },
+    "在插件详情页底部可以举报有问题的插件。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can report a plugin with problems at the bottom of its page."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puedes reportar un complemento con problemas al final de su página."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題のあるプラグインは、詳細ページの一番下から報告できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "문제가 있는 플러그인은 상세 페이지 맨 아래에서 신고할 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在外掛詳細資料頁底部可以檢舉有問題的外掛。"
+          }
+        }
+      }
+    },
     "在插件详情页或安装失败时点一下，新会话会带上插件和安装记录帮你排查。" : {
       "localizations" : {
         "en" : {
@@ -32098,6 +33322,40 @@
         }
       }
     },
+    "失效与崩溃" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Broken or Crashing"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No funciona o se bloquea"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "動作しない・クラッシュする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "작동 안 함 및 충돌"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "失效與當機"
+          }
+        }
+      }
+    },
     "失败" : {
       "localizations" : {
         "en" : {
@@ -32944,6 +34202,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "它做事時要遵守的要求、偏好和背景"
+          }
+        }
+      }
+    },
+    "它已装在本机并正在启用。停用后它不再运行，以后可以在「已安装」里重新启用。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It’s installed and enabled on this device. Once disabled it stops running; you can enable it again later under Installed."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Está instalado y activado en este dispositivo. Al desactivarlo deja de ejecutarse; puedes volver a activarlo más tarde en Instalado."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このデバイスにインストールされ、有効になっています。無効にすると動作しなくなります。あとで「インストール済み」から再び有効にできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 기기에 설치되어 사용 중이에요. 비활성화하면 더 이상 실행되지 않으며, 나중에 ‘설치됨’에서 다시 켤 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "它已安裝在本機並已啟用。停用後就不會再執行，之後可以在「已安裝」裡重新啟用。"
           }
         }
       }
@@ -34032,6 +35324,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "實驗性外掛"
+          }
+        }
+      }
+    },
+    "审核中" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Under Review"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En revisión"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "審査中"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "검토 중"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "審核中"
           }
         }
       }
@@ -35838,6 +37164,40 @@
         }
       }
     },
+    "已下架" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taken Down"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retirado"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取り下げ済み"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "게시 중단됨"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已下架"
+          }
+        }
+      }
+    },
     "已中断" : {
       "localizations" : {
         "en" : {
@@ -36728,6 +38088,40 @@
         }
       }
     },
+    "已处理，未发现问题" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reviewed, no problem found"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisado, sin problemas"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "対応済み・問題は見つかりませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "처리됨, 문제 없음"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已處理，未發現問題"
+          }
+        }
+      }
+    },
     "已复制" : {
       "localizations" : {
         "en" : {
@@ -37546,6 +38940,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已撤銷"
+          }
+        }
+      }
+    },
+    "已收到，等待处理" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Received, awaiting review"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recibido, pendiente de revisión"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "受付済み・対応待ち"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "접수됨, 처리 대기 중"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已收到，等待處理"
           }
         }
       }
@@ -40135,7 +41563,144 @@
         }
       }
     },
+    "引用消息再提问" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quote a message, then ask"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cita un mensaje y pregunta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メッセージを引用して質問"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "메시지를 인용해서 질문"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "引用訊息再提問"
+          }
+        }
+      }
+    },
+    "长按一条消息选「引用」，也可以在「选择文本」里选中一段再引用。引用显示在输入框上方，和你的问题一起发给智能体。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touch and hold a message and choose Quote, or select part of it in Select Text and quote that. Quotes appear above the input and go to the agent along with your question."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantén pulsado un mensaje y elige Citar, o selecciona una parte en Seleccionar texto y cítala. Las citas aparecen sobre el campo de entrada y se envían al agente junto con tu pregunta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メッセージを長押しして「引用」を選ぶか、「テキストを選択」で一部を選んで引用できます。引用は入力欄の上に表示され、質問と一緒にエージェントに送られます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "메시지를 길게 누르고 ‘인용’을 선택하거나, ‘텍스트 선택’에서 일부를 골라 인용할 수 있어요. 인용은 입력창 위에 표시되고 질문과 함께 에이전트에게 전달돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "長按一則訊息選「引用」，也可以在「選擇文字」裡選取一段再引用。引用會顯示在輸入框上方，和你的問題一起傳給 AI 代理。"
+          }
+        }
+      }
+    },
+    "引用" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quote"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Citar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "引用"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "인용"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "引用"
+          }
+        }
+      }
+    },
+    "引用：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quote: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cita: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "引用：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "인용: %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "引用：%@"
+          }
+        }
+      }
+    },
     "引用回复" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -41972,6 +43537,40 @@
         }
       }
     },
+    "恶意代码与权限滥用" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Malicious Code or Permission Abuse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Código malicioso o abuso de permisos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "悪意のあるコード・権限の乱用"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "악성 코드 및 권한 남용"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "惡意程式碼與權限濫用"
+          }
+        }
+      }
+    },
     "想和 Bot 聊天的人" : {
       "localizations" : {
         "en" : {
@@ -42108,6 +43707,40 @@
         }
       }
     },
+    "我们会尽快审核。处理进度可以在「插件」页右上角的「我的举报」里查看。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We’ll review it as soon as we can. You can follow its progress in My Reports, at the top right of the Plugins page."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo revisaremos lo antes posible. Puedes seguir su estado en Mis reportes, arriba a la derecha de la página Complementos."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "できるだけ早く審査します。進捗は「プラグイン」ページ右上の「自分の報告」で確認できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최대한 빨리 검토할게요. 처리 상태는 ‘플러그인’ 페이지 오른쪽 위의 ‘내 신고’에서 확인할 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我們會盡快審核。處理進度可以在「外掛」頁面右上角的「我的檢舉」查看。"
+          }
+        }
+      }
+    },
     "我安装插件「%@」后没有拿到结果。帮我确认它装上了没有，没装上就找出原因。" : {
       "localizations" : {
         "en" : {
@@ -42172,6 +43805,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "我安裝外掛「%@」失敗了。幫我找出原因，能修好就直接修，修不好就告訴我該怎麼辦。"
+          }
+        }
+      }
+    },
+    "我的举报" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Reports"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mis reportes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自分の報告"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내 신고"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我的檢舉"
           }
         }
       }
@@ -45527,6 +47194,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "送出"
+          }
+        }
+      }
+    },
+    "提交举报" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send Report"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar reporte"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "報告を送信"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "신고하기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "送出檢舉"
+          }
+        }
+      }
+    },
+    "提交失败，请稍后再试。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t send. Please try again later."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo enviar. Inténtalo de nuevo más tarde."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "送信できませんでした。しばらくしてからもう一度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "보내지 못했어요. 잠시 후 다시 시도해 주세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "送出失敗，請稍後再試。"
           }
         }
       }
@@ -67527,6 +69262,40 @@
         }
       }
     },
+    "移除引用" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove Quote"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quitar cita"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "引用を削除"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "인용 삭제"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "移除引用"
+          }
+        }
+      }
+    },
     "移除照片" : {
       "localizations" : {
         "en" : {
@@ -70200,6 +71969,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "終端機錯誤：%@"
+          }
+        }
+      }
+    },
+    "经 Fish Pocket 审核，这个插件存在问题，已从插件市场下架，不能再安装。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket reviewed this plugin and found a problem. It has been taken down from the plugin market and can no longer be installed."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket revisó este complemento y encontró un problema. Se retiró del mercado de complementos y ya no se puede instalar."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket の審査でこのプラグインに問題が見つかったため、プラグインマーケットから取り下げました。インストールできません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket 검토 결과 이 플러그인에 문제가 있어 플러그인 마켓에서 내려갔어요. 더 이상 설치할 수 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "經 Fish Pocket 審核，這個外掛有問題，已從外掛市集下架，無法再安裝。"
           }
         }
       }
@@ -73638,6 +75441,40 @@
         }
       }
     },
+    "装不上、用不了或导致崩溃" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Won’t install, doesn’t work or causes crashes"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se instala, no funciona o provoca bloqueos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "インストールできない、使えない、またはクラッシュを引き起こす"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설치되지 않거나 작동하지 않거나 충돌을 일으켜요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "裝不起來、用不了或導致當機"
+          }
+        }
+      }
+    },
     "要求修改" : {
       "localizations" : {
         "en" : {
@@ -75969,6 +77806,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "說明"
+          }
+        }
+      }
+    },
+    "说明你看到了什么、在哪里看到的" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Describe what you saw and where you saw it"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Describe qué viste y dónde lo viste"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "何を、どこで見たかを書いてください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "무엇을 어디에서 봤는지 적어 주세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "說明你看到了什麼、在哪裡看到的"
           }
         }
       }
@@ -81413,6 +83284,40 @@
         }
       }
     },
+    "这个插件被举报，正在审核。安装前请确认你信任它的来源。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This plugin has been reported and is under review. Before installing, make sure you trust where it comes from."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este complemento fue reportado y está en revisión. Antes de instalarlo, asegúrate de que confías en su origen."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このプラグインは報告を受けて審査中です。インストールする前に、入手元が信頼できるか確認してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 플러그인은 신고되어 검토 중이에요. 설치하기 전에 출처를 믿을 수 있는지 확인해 주세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這個外掛被檢舉，正在審核中。安裝前請確認你信任它的來源。"
+          }
+        }
+      }
+    },
     "这个文件不在改动里了" : {
       "localizations" : {
         "en" : {
@@ -86310,6 +88215,74 @@
         }
       }
     },
+    "问题描述" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descripción"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題の説明"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "문제 설명"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題描述"
+          }
+        }
+      }
+    },
+    "问题类型" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type of Problem"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tipo de problema"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題の種類"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "문제 유형"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題類型"
+          }
+        }
+      }
+    },
     "问题诊断" : {
       "localizations" : {
         "en" : {
@@ -86510,6 +88483,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "隨時可用"
+          }
+        }
+      }
+    },
+    "隐私与数据采集" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy or Data Collection"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacidad o recopilación de datos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プライバシー・データ収集"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개인정보 및 데이터 수집"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隱私與資料蒐集"
           }
         }
       }
@@ -89423,6 +91430,40 @@
         }
       }
     },
+    "会附上你登录的 Fish Pocket 账号，便于核实。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your signed-in Fish Pocket account is included so the report can be verified."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se incluirá la cuenta de Fish Pocket con la que iniciaste sesión, para poder verificar el reporte."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確認のため、サインイン中の Fish Pocket アカウントが添えられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확인을 위해 로그인한 Fish Pocket 계정이 함께 전송돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "會附上你登入的 Fish Pocket 帳號，方便查證。"
+          }
+        }
+      }
+    },
     "停止中" : {
       "localizations" : {
         "en" : {
@@ -89793,6 +91834,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "名稱"
+          }
+        }
+      }
+    },
+    "名称、介绍或内容含违法、色情、暴力等信息" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Its name, description or content includes illegal, sexual, violent or similar material"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Su nombre, descripción o contenido incluye material ilegal, sexual, violento o similar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前、説明、内容に違法・性的・暴力的などの情報が含まれている"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이름, 소개 또는 내용에 불법, 음란, 폭력 등의 정보가 있어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名稱、介紹或內容含違法、色情、暴力等資訊"
           }
         }
       }
@@ -91629,6 +93704,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未知裝置"
+          }
+        }
+      }
+    },
+    "未经同意收集或上传数据" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collects or uploads data without consent"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recopila o sube datos sin consentimiento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同意なくデータを収集・アップロードしている"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "동의 없이 데이터를 수집하거나 업로드해요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未經同意收集或上傳資料"
           }
         }
       }
@@ -94287,6 +96396,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "遠端控制透過開源專案 Agents Anywhere 實現。對話內容經它的伺服器轉發：官方雲端服務，或你自己部署的伺服器。本機的對話不受影響，也不會上傳。"
+          }
+        }
+      }
+    },
+    "违法和不良信息" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Illegal or Harmful Content"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contenido ilegal o dañino"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "違法・有害な情報"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "불법 및 유해 정보"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "違法與不良資訊"
           }
         }
       }
@@ -98583,6 +100726,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "請在 App Store 版本裡購買，額度在兩個版本裡通用。"
+          }
+        }
+      }
+    },
+    "不需要 DeepSeek 账号，也不需要 API Key：用 Apple 或手机号登录 Fish Pocket 账号，就能用账号里的额度对话，按用量扣积分。额度在 App Store 版本里购买，买了不会过期。入口在设置 → 连接方式。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No DeepSeek account or API key needed: sign in to a Fish Pocket account with Apple or a phone number and chat on its credits, deducted by usage. Credits are bought in the App Store version and never expire. Find it under Settings → Ways to Connect."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No necesitas una cuenta de DeepSeek ni una clave API: inicia sesión en una cuenta de Fish Pocket con Apple o con tu número de teléfono y chatea con sus créditos, que se descuentan según el uso. Los créditos se compran en la versión del App Store y no caducan. Lo encontrarás en Configuración → Formas de conexión."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek アカウントも API Key も不要です。Apple または電話番号で Fish Pocket アカウントにサインインすれば、アカウントのクレジットで会話でき、使った分だけ消費されます。クレジットは App Store 版で購入でき、期限はありません。設定 → 接続方法 から利用できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek 계정도 API Key도 필요 없어요. Apple이나 전화번호로 Fish Pocket 계정에 로그인하면 계정의 크레딧으로 대화할 수 있고, 사용한 만큼만 차감돼요. 크레딧은 App Store 버전에서 구매하며 만료되지 않아요. 설정 → 연결 방식에서 찾을 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不需要 DeepSeek 帳號，也不需要 API Key：用 Apple 或手機號碼登入 Fish Pocket 帳號，就能用帳號裡的額度對話，依用量扣積分。額度在 App Store 版本裡購買，買了不會過期。入口在設定 → 連線方式。"
           }
         }
       }

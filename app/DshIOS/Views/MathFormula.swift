@@ -118,7 +118,7 @@ struct MathBlockView: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
-        let size = UIFont.preferredFont(forTextStyle: .callout).pointSize
+        let size = UIFont.preferredFont(forTextStyle: .body).pointSize
         if let math = MathTypesetter.typeset(.init(latex: latex, display: true, source: latex), size: size) {
             let image = Image(uiImage: math.image).renderingMode(.template).accessibilityLabel(Text(verbatim: latex))
             ViewThatFits(in: .horizontal) {

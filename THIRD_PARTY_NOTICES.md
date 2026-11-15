@@ -72,12 +72,13 @@ libgit2 的完整许可证见其仓库的 [COPYING](https://github.com/libgit2/l
 这个协议覆盖下面的文件：
 
 - `docs/design/brand/mascot-icon.png`
-- `app/DshIOS/Assets.xcassets/AppIcon.appiconset/`、`LaunchMark.imageset/` 和 `ShareMascot.imageset/` 里的 PNG
+- `app/DshIOS/Assets.xcassets/AppIcon.appiconset/`、`AppIcon-Pink.appiconset/`、`AppIcon-Mint.appiconset/`、`AppIcon-Violet.appiconset/`、`AppIcon-Sticker.appiconset/`、`LaunchMark.imageset/` 和 `ShareMascot.imageset/` 里的 PNG，以及 `AppIconPreview/` 里的 `Default`、`Pink`、`Mint`、`Violet`、`Sticker` 五张
+- `docs/design/brand/generated/sticker.png`
 - `docs/assets/icon.png`、`docs/assets/mascot.png`
 - `docs/assets/demo-widget.gif`、`docs/assets/demo-ipad.gif`（画面含 App 图标）
 - `docs/promo/` 里的宣传片（画面含吉祥物）
 
-本项目的修改：`mascot-icon.png` 以原始鲸鱼娘形象为基础，用 AI 重新生成了表情。其余文件由 `docs/design/brand/make-icons.py` 从它生成，只做了缩放、圆角和灰度处理；`ShareMascot.imageset/` 里的分享海报用图另外去掉了背景。这些修改同样按 CC BY-NC-SA 4.0 发布。
+本项目的修改：`mascot-icon.png` 以原始鲸鱼娘形象为基础，用 AI 重新生成了表情。其余文件由 `docs/design/brand/make-icons.py` 从它生成，只做了缩放、圆角、灰度和换色处理（樱花粉、薄荷绿、葡萄紫三个备选图标把蓝色换成了别的色相）；备选图标「贴纸」是用 AI 图片生成把吉祥物重画成的扁平贴纸，原图在 `docs/design/brand/generated/sticker.png`；`ShareMascot.imageset/` 里的分享海报用图另外去掉了背景。这些修改同样按 CC BY-NC-SA 4.0 发布。「简洁」一组的备选图标里，小鲸鱼（`AppIcon-Whale` 和 `AppIconPreview/Whale.imageset`）由 `docs/design/brand/make-drawn-icons.swift` 用代码画成；「字标」一组（`AppIcon-Word*` 和 `AppIconPreview/` 里同名的三张）由 `docs/design/brand/make-wordmark-icons.swift` 用代码画成，字体是 Geist Pixel、Noto Sans 和 JetBrains Mono（均为 SIL Open Font License 1.1），仓库里只有渲染出的图片，不含字体文件；「几何鲸鱼」「像素鲸鱼」（`AppIcon-Geometric`、`AppIcon-Pixel`、`AppIconPreview/` 里同名的两张，原图 `docs/design/brand/generated/geometric.png`、`pixel.png`）用 AI 图片生成。这些都不含吉祥物，按 MIT 授权。
 
 **如果你要商用这份代码：** 先按 [LICENSE](LICENSE) 的附加条款取得作者的授权。授权只覆盖代码，不覆盖这些图片，请换掉上面的文件，或者自行取得原作者的许可。
 

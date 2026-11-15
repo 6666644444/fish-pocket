@@ -27,7 +27,7 @@ struct RemoteComposer: View {
     private static let maxBytes = 20 << 20
 
     private var empty: Bool {
-        model.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && model.attachments.isEmpty
+        model.draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && model.attachments.isEmpty && model.quotes.isEmpty
     }
 
     var body: some View {
@@ -36,6 +36,9 @@ struct RemoteComposer: View {
             if !suggestions.isEmpty { commandPanel(suggestions) }
             VStack(alignment: .leading, spacing: 8) {
                 if !model.attachments.isEmpty || !reading.isEmpty { rail }
+                QuoteRail(quotes: model.quotes) { model.removeQuote(at: $0) }
+                    .padding(.horizontal, 13)
+                    .padding(.top, model.quotes.isEmpty ? 0 : 6)
                 if let hint = commandHint {
                     Text(hint).font(.footnote).foregroundStyle(Palette.secondary).padding(.horizontal, 17).padding(.top, 4)
                 }
@@ -53,6 +56,7 @@ struct RemoteComposer: View {
             .padding(5)
             .composerSurface()
         }
+        .onChange(of: model.quoteRequest) { focused = true }
         // The command list is read the first time a draft could name one.
         .task(id: model.draft.hasPrefix("/") && model.canCommand) {
             if model.draft.hasPrefix("/"), model.commands.isEmpty { await model.loadCommands() }
