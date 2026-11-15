@@ -441,9 +441,9 @@ struct ComposerView: View {
     /// three the expand button leads to a page with the room.
     private var input: some View {
         // Between three lines and four, whatever the text size.
-        let threeLines = UIFont.preferredFont(forTextStyle: .callout).lineHeight * 3.5
+        let threeLines = UIFont.preferredFont(forTextStyle: .body).lineHeight * 3.5
         return TextField(placeholder, text: Bindable(composer).text, axis: .vertical)
-            .font(.callout)
+            .font(.body)
             .lineLimit(1...5)
             .focused($focused)
             .tint(Palette.ink)

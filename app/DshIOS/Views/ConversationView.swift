@@ -1050,7 +1050,8 @@ private struct TurnJumpSheet: View {
 
     var body: some View {
         NavigationStack {
-            List(outline) { entry in
+            // Newest first: the button shows while reading back, so the way home is on top.
+            List(outline.sorted { $0.turn > $1.turn }) { entry in
                 Button { jump(entry) } label: {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("第 \(entry.turn) 轮").font(.caption).foregroundStyle(Palette.secondary)
@@ -1164,7 +1165,7 @@ private struct UserBubble: View {
                         .hidden()
                         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { fullHeight = $0 }
                 }
-                .font(.callout)
+                .font(.body)
                 .lineSpacing(3)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)

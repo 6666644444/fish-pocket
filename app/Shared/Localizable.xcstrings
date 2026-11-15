@@ -6690,6 +6690,40 @@
         }
       }
     },
+    "日志（可选）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Log (Optional)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registro (opcional)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ログ（任意）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그(선택)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "記錄（選填）"
+          }
+        }
+      }
+    },
     "智能体现在可以替你点按、输入、读取其他 App 的屏幕。它操作时屏幕会被占用，顶部会显示 iOS 的「Automation Running」提示；同时按住两个音量键也能停止。点「停止服务」后 iCTRL 会发一条通知，长按它并点「停止」才会真的停下。" : {
       "localizations" : {
         "en" : {
@@ -8267,6 +8301,40 @@
         }
       }
     },
+    "要先停用这个插件吗？" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disable This Plugin for Now?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Desactivar este complemento por ahora?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このプラグインを無効にしておきますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 플러그인을 우선 비활성화할까요?"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要先停用這個外掛嗎？"
+          }
+        }
+      }
+    },
     "要和装 Fish Pocket 的是同一台 iPhone。" : {
       "localizations" : {
         "en" : {
@@ -9385,6 +9453,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "還沒有 API Key？"
+          }
+        }
+      }
+    },
+    "还没有举报" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Reports Yet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no hay reportes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "報告はまだありません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "신고 내역이 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "還沒有檢舉"
           }
         }
       }
@@ -14650,6 +14752,176 @@
         }
       }
     },
+    "举报会发给 Fish Pocket 人工审核，不会通知插件作者。确认有问题的插件会从插件市场下架。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reports are reviewed by a person at Fish Pocket. The plugin’s author isn’t notified. Plugins found to have problems are taken down from the plugin market."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los reportes los revisa una persona de Fish Pocket. No se avisa al autor del complemento. Los complementos con problemas confirmados se retiran del mercado de complementos."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "報告は Fish Pocket の担当者が審査します。プラグインの作者には通知されません。問題が確認されたプラグインはプラグインマーケットから取り下げられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "신고는 Fish Pocket 담당자가 직접 검토하며, 플러그인 작성자에게는 알리지 않아요. 문제가 확인된 플러그인은 플러그인 마켓에서 내려가요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檢舉會交由 Fish Pocket 人工審核，不會通知外掛作者。確認有問題的外掛會從外掛市集下架。"
+          }
+        }
+      }
+    },
+    "举报已提交" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report Sent"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reporte enviado"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "報告を送信しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "신고를 보냈어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已送出檢舉"
+          }
+        }
+      }
+    },
+    "举报插件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report Plugin"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reportar complemento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プラグインを報告"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "플러그인 신고"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檢舉外掛"
+          }
+        }
+      }
+    },
+    "举报此插件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report This Plugin"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reportar este complemento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このプラグインを報告"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 플러그인 신고"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檢舉這個外掛"
+          }
+        }
+      }
+    },
+    "举报编号" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report Number"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Número de reporte"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "報告番号"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "신고 번호"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檢舉編號"
+          }
+        }
+      }
+    },
     "之前问过的" : {
       "localizations" : {
         "en" : {
@@ -15938,6 +16210,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "程式碼來源"
+          }
+        }
+      }
+    },
+    "以上都不是" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None of the above"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguno de los anteriores"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上記のいずれでもない"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "위 항목에 해당하지 않음"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以上皆非"
           }
         }
       }
@@ -19042,6 +19348,40 @@
         }
       }
     },
+    "停用插件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disable Plugin"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desactivar complemento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プラグインを無効にする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "플러그인 비활성화"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停用外掛"
+          }
+        }
+      }
+    },
     "停用第三方插件并重启" : {
       "localizations" : {
         "en" : {
@@ -19106,6 +19446,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "健康"
+          }
+        }
+      }
+    },
+    "偷偷做与介绍不符的事，或越权访问" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Secretly does things its description doesn’t mention, or reaches beyond its permissions"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hace a escondidas cosas que su descripción no menciona o accede más allá de sus permisos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "説明にないことを隠れて行う、または権限を超えてアクセスする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설명과 다른 일을 몰래 하거나 권한 밖에 접근해요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暗中做與介紹不符的事，或越權存取"
           }
         }
       }
@@ -20844,6 +21218,40 @@
         }
       }
     },
+    "其他" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otro"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その他"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기타"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其他"
+          }
+        }
+      }
+    },
     "其他 Bot" : {
       "localizations" : {
         "en" : {
@@ -21384,6 +21792,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "內建外掛"
+          }
+        }
+      }
+    },
+    "冒充与侵权" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impersonation or Infringement"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suplantación o infracción"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "なりすまし・権利侵害"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사칭 및 권리 침해"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "冒充與侵權"
+          }
+        }
+      }
+    },
+    "冒用他人名义或侵犯版权" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uses someone else’s name or infringes copyright"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa el nombre de otra persona o infringe derechos de autor"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "他人の名前をかたる、または著作権を侵害している"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다른 사람의 이름을 도용하거나 저작권을 침해해요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "冒用他人名義或侵犯著作權"
           }
         }
       }
@@ -27100,6 +27576,40 @@
         }
       }
     },
+    "只保存在这台设备上。左滑可移除记录，不影响审核。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kept on this device only. Swipe left to remove a record; this doesn’t affect the review."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo se guarda en este dispositivo. Desliza a la izquierda para quitar un registro; no afecta a la revisión."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このデバイスにだけ保存されます。左にスワイプすると記録を削除できます。審査には影響しません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 기기에만 저장돼요. 왼쪽으로 밀어 기록을 지울 수 있으며, 검토에는 영향을 주지 않아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只儲存在這台裝置上。向左滑動可移除紀錄，不影響審核。"
+          }
+        }
+      }
+    },
     "只在信任这些包时允许。" : {
       "localizations" : {
         "en" : {
@@ -27640,6 +28150,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "可用工具"
+          }
+        }
+      }
+    },
+    "可粘贴相关的输出或报错" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paste any related output or errors"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pega la salida o los errores relacionados"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "関連する出力やエラーを貼り付けられます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "관련 출력이나 오류를 붙여 넣을 수 있어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可貼上相關的輸出或錯誤訊息"
           }
         }
       }
@@ -30500,6 +31044,40 @@
         }
       }
     },
+    "在插件详情页底部可以举报有问题的插件。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can report a plugin with problems at the bottom of its page."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puedes reportar un complemento con problemas al final de su página."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題のあるプラグインは、詳細ページの一番下から報告できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "문제가 있는 플러그인은 상세 페이지 맨 아래에서 신고할 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在外掛詳細資料頁底部可以檢舉有問題的外掛。"
+          }
+        }
+      }
+    },
     "在插件详情页或安装失败时点一下，新会话会带上插件和安装记录帮你排查。" : {
       "localizations" : {
         "en" : {
@@ -32098,6 +32676,40 @@
         }
       }
     },
+    "失效与崩溃" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Broken or Crashing"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No funciona o se bloquea"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "動作しない・クラッシュする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "작동 안 함 및 충돌"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "失效與當機"
+          }
+        }
+      }
+    },
     "失败" : {
       "localizations" : {
         "en" : {
@@ -32944,6 +33556,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "它做事時要遵守的要求、偏好和背景"
+          }
+        }
+      }
+    },
+    "它已装在本机并正在启用。停用后它不再运行，以后可以在「已安装」里重新启用。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It’s installed and enabled on this device. Once disabled it stops running; you can enable it again later under Installed."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Está instalado y activado en este dispositivo. Al desactivarlo deja de ejecutarse; puedes volver a activarlo más tarde en Instalado."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このデバイスにインストールされ、有効になっています。無効にすると動作しなくなります。あとで「インストール済み」から再び有効にできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 기기에 설치되어 사용 중이에요. 비활성화하면 더 이상 실행되지 않으며, 나중에 ‘설치됨’에서 다시 켤 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "它已安裝在本機並已啟用。停用後就不會再執行，之後可以在「已安裝」裡重新啟用。"
           }
         }
       }
@@ -34032,6 +34678,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "實驗性外掛"
+          }
+        }
+      }
+    },
+    "审核中" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Under Review"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En revisión"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "審査中"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "검토 중"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "審核中"
           }
         }
       }
@@ -35838,6 +36518,40 @@
         }
       }
     },
+    "已下架" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taken Down"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retirado"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取り下げ済み"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "게시 중단됨"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已下架"
+          }
+        }
+      }
+    },
     "已中断" : {
       "localizations" : {
         "en" : {
@@ -36728,6 +37442,40 @@
         }
       }
     },
+    "已处理，未发现问题" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reviewed, no problem found"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisado, sin problemas"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "対応済み・問題は見つかりませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "처리됨, 문제 없음"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已處理，未發現問題"
+          }
+        }
+      }
+    },
     "已复制" : {
       "localizations" : {
         "en" : {
@@ -37546,6 +38294,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已撤銷"
+          }
+        }
+      }
+    },
+    "已收到，等待处理" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Received, awaiting review"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recibido, pendiente de revisión"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "受付済み・対応待ち"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "접수됨, 처리 대기 중"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已收到，等待處理"
           }
         }
       }
@@ -42109,6 +42891,40 @@
         }
       }
     },
+    "恶意代码与权限滥用" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Malicious Code or Permission Abuse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Código malicioso o abuso de permisos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "悪意のあるコード・権限の乱用"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "악성 코드 및 권한 남용"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "惡意程式碼與權限濫用"
+          }
+        }
+      }
+    },
     "想和 Bot 聊天的人" : {
       "localizations" : {
         "en" : {
@@ -42245,6 +43061,40 @@
         }
       }
     },
+    "我们会尽快审核。处理进度可以在「插件」页右上角的「我的举报」里查看。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We’ll review it as soon as we can. You can follow its progress in My Reports, at the top right of the Plugins page."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo revisaremos lo antes posible. Puedes seguir su estado en Mis reportes, arriba a la derecha de la página Complementos."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "できるだけ早く審査します。進捗は「プラグイン」ページ右上の「自分の報告」で確認できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최대한 빨리 검토할게요. 처리 상태는 ‘플러그인’ 페이지 오른쪽 위의 ‘내 신고’에서 확인할 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我們會盡快審核。處理進度可以在「外掛」頁面右上角的「我的檢舉」查看。"
+          }
+        }
+      }
+    },
     "我安装插件「%@」后没有拿到结果。帮我确认它装上了没有，没装上就找出原因。" : {
       "localizations" : {
         "en" : {
@@ -42309,6 +43159,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "我安裝外掛「%@」失敗了。幫我找出原因，能修好就直接修，修不好就告訴我該怎麼辦。"
+          }
+        }
+      }
+    },
+    "我的举报" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Reports"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mis reportes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自分の報告"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내 신고"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我的檢舉"
           }
         }
       }
@@ -45664,6 +46548,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "送出"
+          }
+        }
+      }
+    },
+    "提交举报" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send Report"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar reporte"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "報告を送信"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "신고하기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "送出檢舉"
+          }
+        }
+      }
+    },
+    "提交失败，请稍后再试。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t send. Please try again later."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo enviar. Inténtalo de nuevo más tarde."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "送信できませんでした。しばらくしてからもう一度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "보내지 못했어요. 잠시 후 다시 시도해 주세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "送出失敗，請稍後再試。"
           }
         }
       }
@@ -70375,6 +71327,40 @@
         }
       }
     },
+    "经 Fish Pocket 审核，这个插件存在问题，已从插件市场下架，不能再安装。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket reviewed this plugin and found a problem. It has been taken down from the plugin market and can no longer be installed."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket revisó este complemento y encontró un problema. Se retiró del mercado de complementos y ya no se puede instalar."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket の審査でこのプラグインに問題が見つかったため、プラグインマーケットから取り下げました。インストールできません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket 검토 결과 이 플러그인에 문제가 있어 플러그인 마켓에서 내려갔어요. 더 이상 설치할 수 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "經 Fish Pocket 審核，這個外掛有問題，已從外掛市集下架，無法再安裝。"
+          }
+        }
+      }
+    },
     "结果" : {
       "localizations" : {
         "en" : {
@@ -73809,6 +74795,40 @@
         }
       }
     },
+    "装不上、用不了或导致崩溃" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Won’t install, doesn’t work or causes crashes"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se instala, no funciona o provoca bloqueos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "インストールできない、使えない、またはクラッシュを引き起こす"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설치되지 않거나 작동하지 않거나 충돌을 일으켜요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "裝不起來、用不了或導致當機"
+          }
+        }
+      }
+    },
     "要求修改" : {
       "localizations" : {
         "en" : {
@@ -76140,6 +77160,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "說明"
+          }
+        }
+      }
+    },
+    "说明你看到了什么、在哪里看到的" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Describe what you saw and where you saw it"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Describe qué viste y dónde lo viste"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "何を、どこで見たかを書いてください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "무엇을 어디에서 봤는지 적어 주세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "說明你看到了什麼、在哪裡看到的"
           }
         }
       }
@@ -81584,6 +82638,40 @@
         }
       }
     },
+    "这个插件被举报，正在审核。安装前请确认你信任它的来源。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This plugin has been reported and is under review. Before installing, make sure you trust where it comes from."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este complemento fue reportado y está en revisión. Antes de instalarlo, asegúrate de que confías en su origen."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このプラグインは報告を受けて審査中です。インストールする前に、入手元が信頼できるか確認してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 플러그인은 신고되어 검토 중이에요. 설치하기 전에 출처를 믿을 수 있는지 확인해 주세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這個外掛被檢舉，正在審核中。安裝前請確認你信任它的來源。"
+          }
+        }
+      }
+    },
     "这个文件不在改动里了" : {
       "localizations" : {
         "en" : {
@@ -86481,6 +87569,74 @@
         }
       }
     },
+    "问题描述" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descripción"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題の説明"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "문제 설명"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題描述"
+          }
+        }
+      }
+    },
+    "问题类型" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type of Problem"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tipo de problema"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題の種類"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "문제 유형"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "問題類型"
+          }
+        }
+      }
+    },
     "问题诊断" : {
       "localizations" : {
         "en" : {
@@ -86681,6 +87837,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "隨時可用"
+          }
+        }
+      }
+    },
+    "隐私与数据采集" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy or Data Collection"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacidad o recopilación de datos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プライバシー・データ収集"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개인정보 및 데이터 수집"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隱私與資料蒐集"
           }
         }
       }
@@ -89594,6 +90784,40 @@
         }
       }
     },
+    "会附上你登录的 Fish Pocket 账号，便于核实。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your signed-in Fish Pocket account is included so the report can be verified."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se incluirá la cuenta de Fish Pocket con la que iniciaste sesión, para poder verificar el reporte."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確認のため、サインイン中の Fish Pocket アカウントが添えられます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확인을 위해 로그인한 Fish Pocket 계정이 함께 전송돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "會附上你登入的 Fish Pocket 帳號，方便查證。"
+          }
+        }
+      }
+    },
     "停止中" : {
       "localizations" : {
         "en" : {
@@ -89964,6 +91188,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "名稱"
+          }
+        }
+      }
+    },
+    "名称、介绍或内容含违法、色情、暴力等信息" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Its name, description or content includes illegal, sexual, violent or similar material"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Su nombre, descripción o contenido incluye material ilegal, sexual, violento o similar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前、説明、内容に違法・性的・暴力的などの情報が含まれている"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이름, 소개 또는 내용에 불법, 음란, 폭력 등의 정보가 있어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名稱、介紹或內容含違法、色情、暴力等資訊"
           }
         }
       }
@@ -91800,6 +93058,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未知裝置"
+          }
+        }
+      }
+    },
+    "未经同意收集或上传数据" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collects or uploads data without consent"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recopila o sube datos sin consentimiento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同意なくデータを収集・アップロードしている"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "동의 없이 데이터를 수집하거나 업로드해요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未經同意收集或上傳資料"
           }
         }
       }
@@ -94458,6 +95750,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "遠端控制透過開源專案 Agents Anywhere 實現。對話內容經它的伺服器轉發：官方雲端服務，或你自己部署的伺服器。本機的對話不受影響，也不會上傳。"
+          }
+        }
+      }
+    },
+    "违法和不良信息" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Illegal or Harmful Content"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contenido ilegal o dañino"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "違法・有害な情報"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "불법 및 유해 정보"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "違法與不良資訊"
           }
         }
       }
