@@ -63,6 +63,40 @@
       },
       "shouldTranslate" : false
     },
+    "%@ · 在其他 App 里的操作" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · Actions in other apps"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · Acciones en otras apps"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · 他のアプリでの操作"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · 다른 앱에서 한 조작"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · 在其他 App 裡的操作"
+          }
+        }
+      }
+    },
     "%@ 不可用，正在改用 %@ 重试（第 %lld 个源，共 %lld 个）" : {
       "localizations" : {
         "en" : {
@@ -412,6 +446,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@@%2$@ 與 DSH %3$@ 不相容（需要 %4$@），執行它可能導致當機或資料遺失。"
+          }
+        }
+      }
+    },
+    "%@×" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@×"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@×"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@×"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@×"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@×"
+          }
+        }
+      }
+    },
+    "%@× 播放" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@× speed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Velocidad %@×"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@× 再生"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@× 재생"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@× 播放"
           }
         }
       }
@@ -4609,6 +4711,74 @@
         }
       }
     },
+    "Agent 操作中 %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agent at work %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agente trabajando %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェント操作中 %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트 조작 중 %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agent 操作中 %@"
+          }
+        }
+      }
+    },
+    "Agent 操控 %@ 的实录 · fish.deepseek1024.com" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An agent using an %@, as it happened · fish.deepseek1024.com"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un agente usando un %@, tal cual · fish.deepseek1024.com"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントが %@ を操作した実録 · fish.deepseek1024.com"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트의 %@ 조작 실제 기록 · fish.deepseek1024.com"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agent 操控 %@ 的實錄 · fish.deepseek1024.com"
+          }
+        }
+      }
+    },
     "Agent 等你确认或做完一轮，手腕上轻轻提醒。" : {
       "localizations" : {
         "en" : {
@@ -5738,6 +5908,210 @@
         }
       }
     },
+    "分享出去的视频长 %@。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The shared video is %@ long."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El video compartido dura %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共有する動画の長さは %@ です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공유할 동영상은 %@ 길이예요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分享出去的影片長 %@。"
+          }
+        }
+      }
+    },
+    "分享录像" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share Recording"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compartir grabación"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "録画を共有"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "녹화 공유"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分享錄影"
+          }
+        }
+      }
+    },
+    "删除录像" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Recording"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar grabación"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "録画を削除"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "녹화 삭제"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除錄影"
+          }
+        }
+      }
+    },
+    "删除这段录像？" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this recording?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Eliminar esta grabación?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この録画を削除しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 녹화를 삭제할까요?"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除這段錄影？"
+          }
+        }
+      }
+    },
+    "原速" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Normal speed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Velocidad normal"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "等速"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "원래 속도"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "原速"
+          }
+        }
+      }
+    },
+    "只删除录像，对话不受影响。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only the recording is deleted. The conversation stays as it is."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo se elimina la grabación. La conversación no cambia."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "削除されるのは録画だけで、会話はそのまま残ります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "녹화만 삭제되고 대화는 그대로 남아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只刪除錄影，對話不受影響。"
+          }
+        }
+      }
+    },
     "启动后智能体才能操作其他 App。如果点了没反应、或 iCTRL 打不开，多半是签名过期了：免费 Apple ID 签的 App 每 7 天要在 SideStore 里刷新一次。" : {
       "localizations" : {
         "en" : {
@@ -5802,6 +6176,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "啟動服務"
+          }
+        }
+      }
+    },
+    "回看智能体的操作" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Watch What the Agent Did"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mira lo que hizo el agente"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントの操作を見返す"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트의 조작 다시 보기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回看 AI 代理的操作"
           }
         }
       }
@@ -6010,6 +6418,40 @@
         }
       }
     },
+    "在这台手机上生成，画面外加上 Fish Pocket 的标识。录像没有声音。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Made on this phone, with the Fish Pocket mark around the screen. Recordings have no sound."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se genera en este teléfono, con la marca de Fish Pocket alrededor de la pantalla. Las grabaciones no tienen sonido."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この iPhone 上で作成し、画面の外側に Fish Pocket のロゴを入れます。録画に音声はありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 iPhone에서 만들고, 화면 바깥에 Fish Pocket 로고를 넣어요. 녹화에는 소리가 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在這支手機上產生，畫面外加上 Fish Pocket 的標誌。錄影沒有聲音。"
+          }
+        }
+      }
+    },
     "大肥鱼" : {
       "localizations" : {
         "en" : {
@@ -6074,6 +6516,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "字標"
+          }
+        }
+      }
+    },
+    "完成 · 用时 %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done in %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hecho en %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了 · 所要時間 %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료 · 걸린 시간 %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完成 · 用時 %@"
           }
         }
       }
@@ -6214,6 +6690,40 @@
         }
       }
     },
+    "录下操作过程" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Record What It Does"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grabar lo que hace"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作を録画"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "조작 과정 녹화"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "錄下操作過程"
+          }
+        }
+      }
+    },
     "微信交流群" : {
       "localizations" : {
         "en" : {
@@ -6278,6 +6788,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "怎麼安裝"
+          }
+        }
+      }
+    },
+    "我让 Agent：" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I asked the agent:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le pedí al agente:"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントへの依頼："
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트에게 한 요청:"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我讓 Agent："
           }
         }
       }
@@ -6928,6 +7472,108 @@
         }
       }
     },
+    "播放操作录像" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play recording"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproducir grabación"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作の録画を再生"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "조작 녹화 재생"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "播放操作錄影"
+          }
+        }
+      }
+    },
+    "播放速度" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Playback Speed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Velocidad de reproducción"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "再生速度"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "재생 속도"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "播放速度"
+          }
+        }
+      }
+    },
+    "操作录像" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Screen Recording"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grabación de pantalla"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作の録画"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "조작 녹화"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "操作錄影"
+          }
+        }
+      }
+    },
     "操控手机" : {
       "localizations" : {
         "en" : {
@@ -7026,6 +7672,108 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "記錄（選填）"
+          }
+        }
+      }
+    },
+    "显示我的请求" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show My Request"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar mi petición"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自分の依頼を表示"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내 요청 표시"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顯示我的請求"
+          }
+        }
+      }
+    },
+    "智能体操作其他 App 时会把屏幕录下来，放在对话里，默认两倍速回看。分享时会生成一段带 Fish Pocket 外框的视频。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When the agent works in other apps, the screen is recorded and kept in the conversation, playing at 2× by default. Sharing makes a video with a Fish Pocket frame around it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando el agente trabaja en otras apps, la pantalla se graba y queda en la conversación, con reproducción a 2× por defecto. Al compartirla se genera un video con un marco de Fish Pocket."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントがほかのアプリを操作すると画面が録画され、会話の中に残ります。標準では 2 倍速で再生されます。共有するときは Fish Pocket の枠を付けた動画を作成します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트가 다른 앱을 조작하면 화면이 녹화되어 대화에 남아요. 기본 2배속으로 재생돼요. 공유할 때는 Fish Pocket 테두리를 두른 동영상을 만들어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 代理操作其他 App 時會把螢幕錄下來，放在對話裡，預設兩倍速回看。分享時會產生一段帶有 Fish Pocket 外框的影片。"
+          }
+        }
+      }
+    },
+    "智能体操作其他 App 时，把屏幕录下来，放在对话里那一轮的下面，可以倍速回看，也可以分享。录像只存在这台手机上，没有声音。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "While the agent works in other apps, the screen is recorded and placed under that turn in the conversation, where you can watch it sped up or share it. Recordings stay on this phone and have no sound."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mientras el agente trabaja en otras apps, se graba la pantalla y la grabación aparece bajo ese turno de la conversación, donde puedes verla acelerada o compartirla. Las grabaciones se quedan en este teléfono y no tienen sonido."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントがほかのアプリを操作している間、画面を録画して、会話のその回の下に置きます。倍速で見返したり共有したりできます。録画はこの iPhone の中だけに保存され、音声はありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트가 다른 앱을 조작하는 동안 화면을 녹화해서 대화의 해당 차례 아래에 둬요. 배속으로 다시 보거나 공유할 수 있어요. 녹화는 이 iPhone에만 저장되고 소리는 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 代理操作其他 App 時，把螢幕錄下來，放在對話裡那一輪的下面，可以倍速回看，也可以分享。錄影只存在這支手機上，沒有聲音。"
           }
         }
       }
@@ -7983,6 +8731,40 @@
         }
       }
     },
+    "正在生成…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Making…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generando…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作成中…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "만드는 중…"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在產生…"
+          }
+        }
+      }
+    },
     "正在识别…" : {
       "localizations" : {
         "en" : {
@@ -8357,6 +9139,40 @@
         }
       }
     },
+    "没能生成视频" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't Make the Video"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo generar el video"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "動画を作成できませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "동영상을 만들지 못했어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無法產生影片"
+          }
+        }
+      }
+    },
     "海报字标" : {
       "localizations" : {
         "en" : {
@@ -8523,6 +9339,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "點一下"
+          }
+        }
+      }
+    },
+    "生成视频并分享" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make Video and Share"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generar video y compartir"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "動画を作成して共有"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "동영상 만들어 공유하기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "產生影片並分享"
           }
         }
       }
@@ -9249,6 +10099,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "影片"
+          }
+        }
+      }
+    },
+    "视频上不显示你对 Agent 说了什么。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The video won't show what you said to the agent."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El video no mostrará lo que le dijiste al agente."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントに伝えた内容は動画に表示されません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트에게 한 말은 동영상에 표시되지 않아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "影片上不顯示你對 Agent 說了什麼。"
+          }
+        }
+      }
+    },
+    "视频上方会显示：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shown above the video: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se mostrará sobre el video: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "動画の上に表示されます：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "동영상 위에 표시돼요: %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "影片上方會顯示：%@"
           }
         }
       }
