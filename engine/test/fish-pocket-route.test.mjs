@@ -1,7 +1,7 @@
-// The `fish-pocket` model route (ios.patch.yml): a profile on the stock pi-ai
-// entry, OpenAI Chat Completions to the Fish Pocket gateway. Loaded here from the
-// overlay itself, as the engine reads it, and driven against a local server
-// standing in for the gateway.
+// The `fish-pocket` model route (plugins/fish-pocket): its own entry running
+// pi-ai's OpenAI Chat Completions code against the Fish Pocket gateway, apart
+// from the `llm-pi-ai` settings where the user's own providers live. Driven here
+// against a local server standing in for the gateway.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -9,31 +9,19 @@ import http from 'node:http';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { Context } from '@deepseek-ai/cordis';
-import { interpolate } from '@deepseek-ai/cordis-plugin-loader';
 import { entryListSchema } from '@deepseek-ai/cordis-plugin-include';
-import * as PiAi from '@deepseek-ai/dsh-llm-pi-ai';
+import * as FishPocket from '../plugins/fish-pocket/index.mjs';
 
 const require = createRequire(import.meta.url);
 const yaml = require(require.resolve('js-yaml', { paths: [require.resolve('@deepseek-ai/cordis-plugin-include')] }));
 const overlay = yaml.load(fs.readFileSync(fileURLToPath(new URL('../ios.patch.yml', import.meta.url)), 'utf8'), { schema: entryListSchema });
-const entry = overlay.find((item) => item.id === 'llm-pi-ai');
 const KEY = `fpk_${'a'.repeat(43)}`;
 const REF = 'FISH_POCKET_RUNTIME_KEY';
 
-/** The entry as the loader resolves it with FISH_POCKET_API_URL set to `api`. */
-function resolved(api) {
+/** Mount the route with FISH_POCKET_API_URL set to `api`; `seen` records what it registers. */
+async function mount(api, credentials, seen = {}) {
   const saved = process.env.FISH_POCKET_API_URL;
-  if (api === undefined) delete process.env.FISH_POCKET_API_URL;
-  else process.env.FISH_POCKET_API_URL = api;
-  try {
-    return { config: interpolate({}, entry.config) };
-  } finally {
-    if (saved === undefined) delete process.env.FISH_POCKET_API_URL;
-    else process.env.FISH_POCKET_API_URL = saved;
-  }
-}
-
-async function mount(config, credentials) {
+  process.env.FISH_POCKET_API_URL = api;
   const ctx = new Context();
   let adapter;
   ctx.provide('llm');
@@ -44,14 +32,22 @@ async function mount(config, credentials) {
       adapter = registered;
       return { replace() {}, dispose() {} };
     },
-    registerConfigurableProviders: () => ({ replace() {}, dispose() {} }),
-    registerModelDiscovery: () => () => {},
+    registerConfigurableProviders: (entries) => {
+      seen.directory = entries;
+      return { replace() {}, dispose() {} };
+    },
+    registerModelDiscovery: (ns) => {
+      seen.discovery = ns;
+      return () => {};
+    },
   });
   ctx.set('credentials', {
     resolve: async (ref) => (credentials.has(ref) ? { value: credentials.get(ref), source: 'store' } : undefined),
   });
-  ctx.plugin(PiAi, config);
+  ctx.plugin(FishPocket);
   await new Promise((done) => setTimeout(done, 30));
+  if (saved === undefined) delete process.env.FISH_POCKET_API_URL;
+  else process.env.FISH_POCKET_API_URL = saved;
   assert.ok(adapter, 'route registered');
   return adapter;
 }
@@ -99,15 +95,27 @@ async function run(adapter, options) {
 }
 
 test('the route points at FISH_POCKET_API_URL, and nowhere without it', () => {
-  assert.equal(resolved('https://api.example.test/').config.providers['fish-pocket'].baseURL, 'https://api.example.test/v1');
-  assert.equal(new URL(resolved(undefined).config.providers['fish-pocket'].baseURL).hostname, 'fish-pocket.invalid');
-  // Only the Fish Pocket profile: user profiles live in the settings document.
-  assert.deepEqual(Object.keys(resolved(undefined).config.providers), ['fish-pocket']);
+  assert.equal(FishPocket.profile('https://api.example.test/').baseURL, 'https://api.example.test/v1');
+  assert.equal(new URL(FishPocket.profile(undefined).baseURL).hostname, 'fish-pocket.invalid');
+});
+
+// Config for llm-pi-ai in the --patch overlay overrides the user's own providers
+// (they vanish from the Models page) and every write to them is refused.
+test('the overlay leaves the user\'s llm-pi-ai providers alone', () => {
+  assert.equal(overlay.find((item) => item.id === 'llm-pi-ai'), undefined);
+  assert.ok(overlay.some((item) => item.insert?.some((entry) => entry.id === 'fish-pocket')));
+});
+
+test('the route keeps out of the Models page directory and discovery', async () => {
+  const seen = {};
+  await mount('https://api.example.test', new Map(), seen);
+  assert.equal(seen.directory, undefined);
+  assert.equal(seen.discovery, undefined);
 });
 
 test('models appear only once the runtime key is stored', async () => {
   const credentials = new Map();
-  const adapter = await mount(resolved('https://api.example.test').config, credentials);
+  const adapter = await mount('https://api.example.test', credentials);
   assert.deepEqual(await adapter.listModels('fish-pocket'), []);
   credentials.set(REF, KEY);
   assert.deepEqual((await adapter.listModels('fish-pocket')).map((m) => m.id), ['deepseek-flash']);
@@ -116,7 +124,7 @@ test('models appear only once the runtime key is stored', async () => {
 test('chat completions go to the gateway with the runtime key and DeepSeek thinking switches', async () => {
   const server = await gateway();
   try {
-    const adapter = await mount(resolved(server.api).config, new Map([[REF, KEY]]));
+    const adapter = await mount(server.api, new Map([[REF, KEY]]));
     const events = await run(adapter, turn('high'));
     await run(adapter, turn('off'));
     const [thinking, plain] = server.requests;
@@ -138,7 +146,7 @@ test('chat completions go to the gateway with the runtime key and DeepSeek think
 test('a 402 from the gateway ends the turn with QUOTA', async () => {
   const server = await gateway(402);
   try {
-    const adapter = await mount(resolved(server.api).config, new Map([[REF, KEY]]));
+    const adapter = await mount(server.api, new Map([[REF, KEY]]));
     const finish = (await run(adapter, turn('off'))).find((event) => event.type === 'finish');
     assert.equal(finish.reason.kind, 'error');
     assert.equal(finish.reason.failure.code, 'QUOTA');
