@@ -81,6 +81,8 @@ struct MiniAppsPage: View {
         }
         .padding(16)
         .background(Palette.field, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        // A phone's width; on an iPad or an open Duo the button would otherwise span the screen.
+        .frame(maxWidth: 520, alignment: .leading)
     }
 
     private func section(_ title: String, _ apps: [MiniApp], note: String? = nil) -> some View {
