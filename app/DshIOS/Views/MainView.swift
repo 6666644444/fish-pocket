@@ -159,6 +159,14 @@ struct MainView: View {
         action()
     }
 
+    /// The width the layout is made for: the size class, as it was last seen on screen. Leaving the
+    /// screen, iOS draws the app at its other width for the app switcher's snapshot and then back
+    /// (iPhone Duo open: folded, then open again). Following that would make the layout over twice
+    /// out of sight, and whatever a page had presented (a file's preview) would be gone, or on a
+    /// device be left standing empty.
+    @State private var settledWidth: UserInterfaceSizeClass?
+    private var layoutWidth: UserInterfaceSizeClass? { settledWidth ?? sizeClass }
+
     /// Announcements are made once, so never under a sheet.
     private var canAnnounce: Bool {
         scenePhase == .active && onboarding == nil && sheet == nil && whatsNew == nil
@@ -169,7 +177,7 @@ struct MainView: View {
         Group {
             if #available(iOS 18.0, *) {
                 tabLayout
-            } else if sizeClass == .regular {
+            } else if layoutWidth == .regular {
                 split
             } else {
                 drawerLayout
@@ -247,16 +255,9 @@ struct MainView: View {
             Task { await follow(request.link) }
         }
         .onChange(of: workspaceId) { WidgetSnapshotWriter.shared.refresh() }
-        // Before iOS 18, a window narrowed past the sidebar has no place beside it for the store.
-        // The tab bar keeps its tabs in every width.
+        .onAppear { settledWidth = sizeClass }
         .onChange(of: sizeClass) { _, size in
-            if !usesTabs, size != .regular, storeOpen {
-                storeOpen = false
-                sheet = .store
-            }
-            // Wide again (an iPad window, iPhone Duo opened): the system put the 会话 tab's list away
-            // on the way down, before the conversation was pushed over it. It comes back.
-            if usesTabs, size == .regular { sessionsColumns = .all }
+            if scenePhase == .active { settle(size) }
         }
         // On the tab bar the Bot pages are its Bot tab. A conversation left pushed under another
         // tab is not on screen: what finishes there meanwhile is marked unread, and the watch told.
@@ -324,6 +325,8 @@ struct MainView: View {
         // Windows take turns: what is read is the one in front.
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
+                // Folded or opened while away: that one counts.
+                settle(sizeClass)
                 app.currentSession = shownSession
                 ReadAloud.shared.scope = onScreen
             }
@@ -416,7 +419,22 @@ struct MainView: View {
     }
 
     /// Where there is room for the session list beside the conversation, on the tab bar's 会话 tab.
-    private var sessionsSideBySide: Bool { usesTabs && sizeClass == .regular }
+    private var sessionsSideBySide: Bool { usesTabs && layoutWidth == .regular }
+
+    /// The window's width changed on screen (an iPad window resized, iPhone Duo folded or opened).
+    private func settle(_ size: UserInterfaceSizeClass?) {
+        guard size != layoutWidth else { return }
+        settledWidth = size
+        // Before iOS 18, a window narrowed past the sidebar has no place beside it for the store.
+        // The tab bar keeps its tabs in every width.
+        if !usesTabs, size != .regular, storeOpen {
+            storeOpen = false
+            sheet = .store
+        }
+        // Wide again: the system put the 会话 tab's list away on the way down, before the
+        // conversation was pushed over it. It comes back.
+        if usesTabs, size == .regular { sessionsColumns = .all }
+    }
 
     /// `selection` on the tab bar: a session is pushed on the 会话 tab, in front; none, it is popped.
     private func showInTabs(_ id: String?) {
@@ -647,7 +665,7 @@ struct MainView: View {
                     searchRequest += 1
                     return
                 }
-                if sizeClass == .regular { withAnimation { sidebar = .all } } else { setDrawer(true) }
+                if layoutWidth == .regular { withAnimation { sidebar = .all } } else { setDrawer(true) }
                 searchRequest += 1
             },
             toggleSidebar: toggleSidebar,
@@ -661,7 +679,7 @@ struct MainView: View {
             if sessionsSideBySide, tab == .sessions { toggleSessionsList() }
             return
         }
-        if sizeClass == .regular {
+        if layoutWidth == .regular {
             withAnimation { sidebar = sidebar == .detailOnly ? .all : .detailOnly }
         } else {
             setDrawer(!drawerOpen)
@@ -756,7 +774,7 @@ struct MainView: View {
             sheet = nil
             tab = .explore
             if explorePath.last != .plugins { explorePath = [.plugins] }
-        } else if sizeClass == .regular { storeOpen = true } else { sheet = .store }
+        } else if layoutWidth == .regular { storeOpen = true } else { sheet = .store }
     }
 
     private func setDrawer(_ open: Bool) {
@@ -825,7 +843,7 @@ struct MainView: View {
         // system settles what goes there when the tab view is made: made folded, then opened, the
         // buttons of the conversation beside the list never show. Made again at each fold, it holds
         // everything that counts outside it (the tab, each tab's path, the conversation).
-        .id(ThisDevice.isDuo ? sizeClass : nil)
+        .id(ThisDevice.isDuo ? layoutWidth : nil)
     }
 
     /// The 会话 tab where it is narrow: the list, with the conversation pushed over it.
@@ -955,9 +973,9 @@ struct MainView: View {
                     // Set here as well: what the split view sets does not reach a pushed page. A pushed
                     // chat has a back button where the conversation has its sidebar button, so the
                     // sidebar's goes beside it.
-                    .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomForWorkbench, toggle: sizeClass == .regular ? hideSidebar : nil))
+                    .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomForWorkbench, toggle: layoutWidth == .regular ? hideSidebar : nil))
                     // Its input takes the bar's place where the bar is at the bottom.
-                    .toolbar(usesTabs && sizeClass != .regular ? .hidden : .automatic, for: .tabBar)
+                    .toolbar(usesTabs && layoutWidth != .regular ? .hidden : .automatic, for: .tabBar)
                 }
         }
     }
