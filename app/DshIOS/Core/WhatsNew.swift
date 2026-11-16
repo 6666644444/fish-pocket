@@ -47,6 +47,11 @@ enum WhatsNew {
     /// Newest first. Until the app reaches an entry's version (and build, when it names one),
     /// the entry is not shown. Entries of one version are shown together, newest first.
     static let releases: [Release] = [
+        Release(version: "1.2.1", build: 112, features: [
+            Feature(symbol: "globe",
+                    title: "看懂模型的思考过程",
+                    detail: "在「插件」里启用官方的「思考过程翻译」后，点开思考全文默认显示译文，可以随时切回原文；思考还在进行时也会边出边译。"),
+        ]),
         // 105 to 111 never went out on their own: one entry, its first build. 操控手机 leads.
         Release(version: "1.2.1", build: 110, features: [
             Feature(symbol: "hand.tap",
@@ -54,7 +59,7 @@ enum WhatsNew {
                     detail: "装好开源的 iCTRL 后，智能体能像你一样操控 iPhone、iPad：点按、输入、读取屏幕，在各个 App 之间替你办事。「探索」里的「操控手机」可以查看状态、一键启动，还有设置教程。"),
             Feature(symbol: "rectangle.bottomthird.inset.filled",
                     title: "底部标签栏",
-                    detail: "首页改成苹果的标签栏，会话、Bot、应用、探索、设置一点就到。插件、连接器、本机能力、操控手机、远程控制都在「探索」里，搜索放进了会话列表。iPad 和 iPhone Duo 上，标签栏会自动放到顶部或变成侧边栏。"),
+                    detail: "首页改成苹果的标签栏，会话、Bot、小工具、探索、设置一点就到。插件、连接器、本机能力、操控手机、远程控制都在「探索」里，搜索放进了会话列表。iPad 和 iPhone Duo 上，标签栏会自动放到顶部或变成侧边栏。"),
             Feature(symbol: "apps.iphone",
                     title: "做自己的小工具",
                     detail: "在对话里让 Agent 做个小工具或小游戏，做好就放进「小工具」里，点开就能用，也能放到主屏幕上。先试试自带的倒数日、番茄钟和水果翻翻。"),
