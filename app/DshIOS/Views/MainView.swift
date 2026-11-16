@@ -956,6 +956,8 @@ struct MainView: View {
                     // chat has a back button where the conversation has its sidebar button, so the
                     // sidebar's goes beside it.
                     .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomForWorkbench, toggle: sizeClass == .regular ? hideSidebar : nil))
+                    // iPhone Duo open: no inspector on a pushed chat (see `workbenchInSheet`).
+                    .environment(\.workbenchInSheet, usesTabs && ThisDevice.isDuo)
                     // Its input takes the bar's place where the bar is at the bottom.
                     .toolbar(usesTabs && sizeClass != .regular ? .hidden : .automatic, for: .tabBar)
                 }

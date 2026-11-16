@@ -19,6 +19,7 @@ struct ConversationView: View {
     /// The split view's sidebar, as far as the conversation reaches it: room for the workbench, and
     /// (in a Bot's chat, which is pushed and has no drawer button of its own) the sidebar's button.
     @Environment(\.splitSidebar) private var splitSidebar
+    @Environment(\.workbenchInSheet) private var workbenchInSheet
     @State private var model: SessionModel?
     @State private var context = ComposerContext()
     @State private var workbenchOpen = false
@@ -307,7 +308,7 @@ struct ConversationView: View {
         }
         .modifier(ComposerDrop(composer: model.composer, enabled: model.subagentReadOnly(parentAvailable: parentAvailable(model)) == nil))
         // Under the toolbar: what is inside an inspector's main view does not reach the navigation bar.
-        .modifier(WorkbenchBeside(shown: workbenchShown(sizeClass == .regular), regular: sizeClass == .regular) {
+        .modifier(WorkbenchBeside(shown: workbenchShown(workbenchBeside), regular: workbenchBeside, inspector: !workbenchInSheet) {
             workbenchPage(model)
         })
         // It names the window in the iPad app switcher. Not drawn while the title is the principal
@@ -394,7 +395,7 @@ struct ConversationView: View {
             }
         ))
         // Over the conversation on a phone, beside it where there is room.
-        .sheet(isPresented: workbenchShown(sizeClass != .regular)) {
+        .sheet(isPresented: workbenchShown(!workbenchBeside)) {
             workbenchPage(model)
                 .presentationDetents([.large])
                 .presentationCornerRadius(36)
@@ -404,7 +405,7 @@ struct ConversationView: View {
         .fullScreenCover(isPresented: Binding(get: { fullBrowser != nil }, set: { if !$0 { fullBrowser = nil } })) {
             if let fullBrowser { FullScreenBrowser(model: fullBrowser) { self.fullBrowser = nil } }
         }
-        .onChange(of: workbenchOpen) { _, open in if open, sizeClass == .regular { splitSidebar.makeRoom() } }
+        .onChange(of: workbenchOpen) { _, open in if open, workbenchBeside { splitSidebar.makeRoom() } }
         .focusedSceneValue(\.workbenchCommands, WorkbenchCommands(available: !blank && hasTools, toggle: toggleWorkbench, open: openWorkbench))
         // The sheet leaves the background live, so the composer keeps its focus and the
         // keyboard would stay over the sheet; an answer comes first.
@@ -466,10 +467,13 @@ struct ConversationView: View {
         titleBesideWorkbench ? .topBarLeading : .principal
     }
 
-    private var titleBesideWorkbench: Bool { sizeClass == .regular && workbenchOpen }
+    /// The workbench opens beside the conversation where there is room, over it otherwise.
+    private var workbenchBeside: Bool { sizeClass == .regular && !workbenchInSheet }
+
+    private var titleBesideWorkbench: Bool { workbenchBeside && workbenchOpen }
 
     /// The workbench's browser is already on screen beside the conversation.
-    private var browserBeside: Bool { sizeClass == .regular && workbenchOpen && workbenchTab == .browser }
+    private var browserBeside: Bool { workbenchBeside && workbenchOpen && workbenchTab == .browser }
 
     /// The conversation's tools (workbench, browser, background jobs) are reachable here: DSH's own
     /// conversations and a Bot's chat, not a group's session.
@@ -747,6 +751,12 @@ struct TimelineScroll {
 extension EnvironmentValues {
     /// Set by the split view: what a conversation in its detail can do with the sidebar.
     @Entry var splitSidebar = SplitSidebar()
+    /// A conversation pushed onto a tab's stack on iPhone Duo (a Bot's chat, a group): no
+    /// inspector, and the workbench comes up as a sheet. Open, the Duo keeps a column at its
+    /// trailing edge for the system's controls, and there an inspector on a pushed page keeps the
+    /// push from showing at all (the path takes it, the list stays on screen, a link to it reports
+    /// no destination); the workbench beside it, with stacks of its own, takes the page away too.
+    @Entry var workbenchInSheet = false
     @Entry var timelineScroll = TimelineScroll()
     /// The user's own messages in a Bot's chat, in the Bot's colour; nil keeps the plain bubble.
     @Entry var userBubbleTint: BubbleTint?
@@ -1718,10 +1728,12 @@ struct SplitSidebar: Equatable {
 private struct WorkbenchBeside<Page: View>: ViewModifier {
     @Binding var shown: Bool
     let regular: Bool
+    /// iOS 26's inspector, unless the page is pushed where one breaks the push (`workbenchInSheet`).
+    var inspector = true
     @ViewBuilder let page: () -> Page
 
     func body(content: Content) -> some View {
-        if #available(iOS 26.0, *) {
+        if #available(iOS 26.0, *), inspector {
             content.inspector(isPresented: $shown) {
                 // Only where it is shown: on a phone this content stays built while closed, and its
                 // toolbar lands in the conversation's bar.
