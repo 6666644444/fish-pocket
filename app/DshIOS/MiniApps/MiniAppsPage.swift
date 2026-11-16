@@ -9,8 +9,15 @@ struct MiniAppsPage: View {
     @State private var store = MiniAppStore.shared
     @State private var deleting: MiniApp?
     @Environment(\.scenePhase) private var scenePhase
+    /// An iPad or an open Duo: the page uses the whole width, as a home screen does.
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
-    private let columns = [GridItem(.adaptive(minimum: 76, maximum: 96), spacing: 12, alignment: .top)]
+    private var wide: Bool { sizeClass == .regular }
+    private var iconSize: CGFloat { wide ? 72 : 60 }
+    private var columns: [GridItem] {
+        wide ? [GridItem(.adaptive(minimum: 100, maximum: 120), spacing: 16, alignment: .top)]
+             : [GridItem(.adaptive(minimum: 76, maximum: 96), spacing: 12, alignment: .top)]
+    }
 
     var body: some View {
         let examples = MiniAppExamples.ids
@@ -34,7 +41,7 @@ struct MiniAppsPage: View {
                     .padding(.horizontal, 16)
                     .padding(.bottom, 12)
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, wide ? 24 : 16)
             .padding(.top, 12)
         }
         .refreshable { store.refresh() }
@@ -59,30 +66,54 @@ struct MiniAppsPage: View {
     }
 
     /// The page's one way in for a tool of the user's own, first on the page whatever is already there.
+    /// Full width everywhere: stacked on a phone, one row with the button at its end when wide.
+    @ViewBuilder
     private var createCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .top, spacing: 12) {
-                Image(systemName: "wand.and.stars")
-                    .font(.title2)
-                    .foregroundStyle(Palette.ink)
-                    .frame(width: 32)
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("做一个自己的小工具").font(.headline).foregroundStyle(Palette.ink)
-                    Text("说说你想要什么，比如「做个记账本」「做个背单词卡片」，Agent 做好后会放在这里，点开就能用。")
-                        .font(.subheadline)
-                        .foregroundStyle(Palette.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
+        Group {
+            if wide {
+                HStack(alignment: .center, spacing: 16) {
+                    cardIcon
+                    cardText
+                    Spacer(minLength: 16)
+                    startButton.buttonStyle(.capsule(.primary, height: 44, fill: false))
                 }
+                .padding(20)
+            } else {
+                VStack(alignment: .leading, spacing: 14) {
+                    HStack(alignment: .top, spacing: 12) {
+                        cardIcon
+                        cardText
+                    }
+                    startButton.buttonStyle(.capsule(.primary, height: 46))
+                }
+                .padding(16)
             }
-            Button { create() } label: {
-                Label("开始做", systemImage: "plus")
-            }
-            .buttonStyle(.capsule(.primary, height: 46))
         }
-        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(Palette.field, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-        // A phone's width; on an iPad or an open Duo the button would otherwise span the screen.
-        .frame(maxWidth: 520, alignment: .leading)
+    }
+
+    private var cardIcon: some View {
+        Image(systemName: "wand.and.stars")
+            .font(.title2)
+            .foregroundStyle(Palette.ink)
+            .frame(width: 32)
+    }
+
+    private var cardText: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("做一个自己的小工具").font(.headline).foregroundStyle(Palette.ink)
+            Text("说说你想要什么，比如「做个记账本」「做个背单词卡片」，Agent 做好后会放在这里，点开就能用。")
+                .font(.subheadline)
+                .foregroundStyle(Palette.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private var startButton: some View {
+        Button { create() } label: {
+            Label("开始做", systemImage: "plus")
+        }
     }
 
     private func section(_ title: String, _ apps: [MiniApp], note: String? = nil) -> some View {
@@ -106,7 +137,7 @@ struct MiniAppsPage: View {
 
     private func tile(_ app: MiniApp) -> some View {
         VStack(spacing: 6) {
-            MiniAppIcon(icon: app.icon, color: app.color, size: 60)
+            MiniAppIcon(icon: app.icon, color: app.color, size: iconSize)
             Text(app.name).font(.caption).foregroundStyle(Palette.ink).lineLimit(1)
         }
         .frame(maxWidth: .infinity)
