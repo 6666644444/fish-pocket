@@ -365,6 +365,40 @@
         }
       }
     },
+    "%@ 里的小工具「%@」运行时出错了：\n\n%@\n\n帮我修好。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The tool “%2$@” in %1$@ hit an error while running:\n\n%3$@\n\nPlease fix it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La herramienta «%2$@» de %1$@ ha dado un error al ejecutarse:\n\n%3$@\n\nArréglala, por favor."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ のツール「%2$@」の実行中にエラーが発生しました：\n\n%3$@\n\n直してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ 에 있는 도구 ‘%2$@’ 실행 중 오류가 났어요:\n\n%3$@\n\n고쳐 주세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ 裡的實用工具「%2$@」執行時出錯了：\n\n%3$@\n\n幫我修好。"
+          }
+        }
+      }
+    },
     "%@ 需要你确认后才会执行。" : {
       "localizations" : {
         "en" : {
@@ -2630,6 +2664,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld 個子代理，正在執行"
+          }
+        }
+      }
+    },
+    "%lld 个小工具" : {
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tool"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tools"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld herramienta"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld herramientas"
+                }
+              }
+            }
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 個のツール"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도구 %lld개"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 个小工具"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 個實用工具"
           }
         }
       }
@@ -20281,6 +20379,40 @@
         }
       }
     },
+    "修改 %@ 里的小工具「%@」：" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change the tool “%2$@” in %1$@: "
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambia la herramienta «%2$@» de %1$@: "
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ のツール「%2$@」を修正："
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ 에 있는 도구 ‘%2$@’ 수정: "
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "修改 %1$@ 裡的實用工具「%2$@」："
+          }
+        }
+      }
+    },
     "修改 Bot" : {
       "localizations" : {
         "en" : {
@@ -20651,6 +20783,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "偏好"
+          }
+        }
+      }
+    },
+    "做一个自己的小工具" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make a Tool of Your Own"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea tu propia herramienta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自分だけのツールを作る"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "나만의 도구 만들기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "做一個自己的實用工具"
+          }
+        }
+      }
+    },
+    "做自己的小工具" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make Your Own Tools"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea tus propias herramientas"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自分だけのツールを作る"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "나만의 도구 만들기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "做自己的實用工具"
           }
         }
       }
@@ -25853,6 +26053,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "刪除排程任務"
+          }
+        }
+      }
+    },
+    "删除小工具" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Tool"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar herramienta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ツールを削除"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도구 삭제"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除實用工具"
           }
         }
       }
@@ -32759,6 +32993,80 @@
         }
       }
     },
+    "在对话里让 Agent 做一个小工具" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ask the agent in a chat to make a tool"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pide al agente en un chat que cree una herramienta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャットでエージェントにツールを作ってもらいましょう"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화에서 에이전트에게 도구를 만들어 달라고 하세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在對話裡請 Agent 做一個實用工具"
+          }
+        }
+      }
+    },
+    "在对话里让 Agent 做个小工具或小游戏，做好就放进「小工具」里，点开就能用，也能放到主屏幕上。先试试自带的倒数日、番茄钟和水果翻翻。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ask the agent in a chat for a small tool or game. It lands in Tools, ready to open, and can go on your Home Screen too. Start with the built-in Days, Pomodoro and Fruit Flip."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pide al agente en un chat una pequeña herramienta o un juego. Aparece en Herramientas, listo para abrir, y también puedes ponerlo en la pantalla de inicio. Empieza con Días, Pomodoro y Frutas pareja, que vienen incluidas."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャットでエージェントに小さなツールやゲームを頼むと「ツール」に追加され、すぐに開けます。ホーム画面にも置けます。まずは付属のカウントダウン、ポモドーロ、フルーツめくりを試してみましょう。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화에서 에이전트에게 작은 도구나 게임을 부탁하면 ‘도구’에 들어가 바로 열 수 있어요. 홈 화면에도 둘 수 있어요. 먼저 기본으로 들어 있는 디데이, 뽀모도로, 과일 짝맞추기를 써 보세요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在对话里让 Agent 做个小工具或小游戏，做好就放进「小工具」里，点开就能用，也能放到主屏幕上。先试试自带的倒数日、番茄钟和水果翻翻。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在對話裡請 Agent 做個實用工具或小遊戲，做好就放進「實用工具」裡，點開就能用，也能放到主畫面上。先試試內建的倒數日、番茄鐘和水果翻翻。"
+          }
+        }
+      }
+    },
     "在对话里让 DSH 安排，例如「每天早上 9 点总结提交」。" : {
       "localizations" : {
         "en" : {
@@ -37355,6 +37663,142 @@
         }
       }
     },
+    "小工具" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tools"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herramientas"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ツール"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도구"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "實用工具"
+          }
+        }
+      }
+    },
+    "小工具只在这台设备上运行，彼此隔离，读不到你的文件和对话，可以联网。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tools run only on this device, each on its own. They can’t read your files or chats, but they can use the internet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las herramientas solo se ejecutan en este dispositivo, aisladas entre sí. No pueden leer tus archivos ni tus chats, pero sí usar internet."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ツールはこのデバイス上だけで、それぞれ独立して動きます。ファイルや会話は読み取れませんが、インターネットには接続できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도구는 이 기기에서만, 서로 분리된 채로 실행돼요. 파일과 대화는 읽을 수 없지만 인터넷은 쓸 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "實用工具只在這台裝置上執行，彼此隔離，讀不到你的檔案和對話，可以連網。"
+          }
+        }
+      }
+    },
+    "小工具已删除" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tool deleted"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herramienta eliminada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ツールは削除されました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "삭제된 도구"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "實用工具已刪除"
+          }
+        }
+      }
+    },
+    "小工具的文件和它保存的数据都会删除，无法恢复。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The tool’s files and the data it saved will be deleted. This can’t be undone."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se eliminarán los archivos de la herramienta y los datos que haya guardado. No se puede deshacer."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ツールのファイルと保存したデータはすべて削除され、元に戻せません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도구 파일과 도구가 저장한 데이터가 모두 삭제되며 되돌릴 수 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "實用工具的檔案和它儲存的資料都會刪除，無法復原。"
+          }
+        }
+      }
+    },
     "小组件里也有远程会话" : {
       "localizations" : {
         "en" : {
@@ -41754,6 +42198,40 @@
         }
       }
     },
+    "帮我做一个小工具：" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make me a tool: "
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hazme una herramienta: "
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ツールを作って："
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도구를 만들어 줘: "
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幫我做一個實用工具："
+          }
+        }
+      }
+    },
     "常见邮箱会自动识别，其他邮箱请手动填写。" : {
       "localizations" : {
         "en" : {
@@ -42204,6 +42682,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "開始使用"
+          }
+        }
+      }
+    },
+    "开始做" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make One"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作ってみる"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "만들기 시작"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開始做"
           }
         }
       }
@@ -45089,6 +45601,40 @@
         }
       }
     },
+    "我做的" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Made by Me"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mis creaciones"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自分で作ったもの"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내가 만든 것"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我做的"
+          }
+        }
+      }
+    },
     "我安装插件「%@」后没有拿到结果。帮我确认它装上了没有，没装上就找出原因。" : {
       "localizations" : {
         "en" : {
@@ -45769,6 +46315,40 @@
         }
       }
     },
+    "打开一个小工具。在快捷指令里把它添加到主屏幕，就是这个小工具的图标。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens one of your tools. Add it to the Home Screen from Shortcuts to give that tool an icon of its own."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre una de tus herramientas. Añádelo a la pantalla de inicio desde Atajos para que esa herramienta tenga su propio icono."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ツールを 1 つ開きます。ショートカットからホーム画面に追加すると、そのツール専用のアイコンになります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도구 하나를 열어요. 단축어에서 홈 화면에 추가하면 그 도구만의 아이콘이 돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打開一個實用工具。在捷徑裡把它加入主畫面，就是這個實用工具的圖像。"
+          }
+        }
+      }
+    },
     "打开会话" : {
       "localizations" : {
         "en" : {
@@ -45935,6 +46515,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "開啟後，Bot 回覆的步驟裡會附上它的思考和用時。這兩項和網頁版共用。"
+          }
+        }
+      }
+    },
+    "打开小工具" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Tool"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir herramienta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ツールを開く"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "도구 열기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打開實用工具"
           }
         }
       }
@@ -70354,6 +70968,40 @@
         }
       }
     },
+    "示例" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Examples"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ejemplos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サンプル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "예시"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "範例"
+          }
+        }
+      }
+    },
     "禁用条件" : {
       "localizations" : {
         "en" : {
@@ -76669,6 +77317,40 @@
         }
       }
     },
+    "自带的几个示例，看看 Agent 能做出什么。用不上可以长按删除。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A few built-in examples of what the agent can make. Don’t need them? Touch and hold to delete."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algunos ejemplos incluidos para ver lo que puede crear el agente. Si no los necesitas, mantén pulsado para eliminarlos."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントに何が作れるかを示す付属のサンプルです。不要なら長押しで削除できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트가 무엇을 만들 수 있는지 보여 주는 기본 예시예요. 필요 없으면 길게 눌러 삭제하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "內建的幾個範例，看看 Agent 能做出什麼。用不到可以長按刪除。"
+          }
+        }
+      }
+    },
     "至少 %lld 个字符。" : {
       "localizations" : {
         "en" : {
@@ -79544,6 +80226,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "說話時文字就會出現。需要你自己開通火山引擎的豆包語音並填寫 API Key，費用由火山引擎依你的用量收取。API Key 只儲存在這台裝置上，只用來連線火山引擎，不會上傳到其他任何地方。"
+          }
+        }
+      }
+    },
+    "说说你想要什么，比如「做个记账本」「做个背单词卡片」，Agent 做好后会放在这里，点开就能用。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Say what you want, like “make an expense tracker” or “make vocabulary flashcards”. The agent puts it here when it’s done, ready to open."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di lo que quieres, por ejemplo «haz un registro de gastos» o «haz tarjetas para memorizar vocabulario». El agente lo dejará aquí cuando esté listo para abrirlo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「家計簿を作って」「単語カードを作って」のように、ほしいものを伝えてください。できあがるとエージェントがここに置くので、タップするだけで使えます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‘가계부 만들어 줘’, ‘단어 암기 카드 만들어 줘’처럼 원하는 걸 말해 보세요. 에이전트가 다 만들면 여기에 두니 눌러서 바로 쓸 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "說說你想要什麼，比如「做個記帳本」「做個背單字卡片」，Agent 做好後會放在這裡，點開就能用。"
           }
         }
       }
@@ -87818,6 +88534,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "選所有 Bot，或者勾選幾個 Bot"
+          }
+        }
+      }
+    },
+    "选择小组件里放哪些小工具。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose which tools the widget shows."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige qué herramientas muestra el widget."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウィジェットに表示するツールを選びます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "위젯에 넣을 도구를 고르세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選擇小工具裡放哪些實用工具。"
           }
         }
       }
@@ -103865,42 +104615,42 @@
       "extractionState" : "stale"
     },
     "tab.apps" : {
-      "comment" : "Tab and page title: the user's own mini apps",
+      "comment" : "Tab and page title: the small tools and games the user had the agent make",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apps"
+            "value" : "Tools"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apps"
+            "value" : "Herramientas"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "アプリ"
+            "value" : "ツール"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "앱"
+            "value" : "도구"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "应用"
+            "value" : "小工具"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App"
+            "value" : "實用工具"
           }
         }
       }

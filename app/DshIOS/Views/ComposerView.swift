@@ -278,7 +278,12 @@ struct ComposerView: View {
         }
         .task(id: pendingDraft) {
             guard let pendingDraft else { return }
-            composer.text = composer.text.isEmpty ? pendingDraft : composer.text + "\n" + pendingDraft
+            // The same draft again (小工具's 开始做 tapped twice before sending) is not added twice.
+            if composer.text.isEmpty {
+                composer.text = pendingDraft
+            } else if !composer.text.contains(pendingDraft) {
+                composer.text += "\n" + pendingDraft
+            }
             voice.mode = false
             consumeDraft()
         }

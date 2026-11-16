@@ -1,11 +1,11 @@
 ---
 name: mini-apps
-description: Make or change an app for 我的应用 (My Apps) - a small tool or game the user keeps on this phone and opens full screen, from the app or a home-screen widget. Load this skill whenever the user asks for a mini app, a small tool, utility, calculator, tracker, timer or game they want to keep and use, or asks to change or fix one under ~/apps.
+description: Make or change an app for 小工具 (Tools) - a small tool or game the user keeps on this phone and opens full screen, from the app or a home-screen widget. Load this skill whenever the user asks for a mini app, a small tool, utility, calculator, tracker, timer or game they want to keep and use, or asks to change or fix one under ~/apps.
 ---
 
-# Mini apps (我的应用)
+# Mini apps (小工具)
 
-The user can keep small web apps in this iOS app: tools, trackers, games. Each one is a folder under `~/apps`. The app lists them under 应用 (Apps), a tab of its own (我的应用 in the sidebar before iOS 18), opens each full screen in a web view of its own, and lets the user put it on the home screen. Opening one does not start you or the engine: it is plain front-end code running in WebKit.
+The user can keep small web apps in this iOS app: tools, trackers, games. Each one is a folder under `~/apps`. The app lists them under 小工具 (Tools), a tab of its own (a 小工具 row in the sidebar before iOS 18), opens each full screen in a web view of its own, and lets the user put it on the home screen. Opening one does not start you or the engine: it is plain front-end code running in WebKit.
 
 ## Where and what
 
@@ -69,7 +69,7 @@ When the app is written, end your reply with a link to it **on a line of its own
 [记账本](fishapp://ledger)
 ```
 
-Mention once that it is under the 应用 (Apps) tab and can go on the home screen from the app's ··· menu. Do not explain the folder layout unless asked.
+Mention once that it is under the 小工具 (Tools) tab and can go on the home screen from the app's ··· menu. Do not explain the folder layout unless asked.
 
 ## Changing an app
 

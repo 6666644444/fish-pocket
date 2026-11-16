@@ -50,7 +50,7 @@ extension Color {
 
 /// An app of 我的应用, for Shortcuts and the widget's settings.
 struct MiniAppEntity: AppEntity {
-    static var typeDisplayRepresentation: TypeDisplayRepresentation = "小应用"
+    static var typeDisplayRepresentation: TypeDisplayRepresentation = "小工具"
     static var defaultQuery = MiniAppQuery()
 
     let id: String
@@ -86,11 +86,11 @@ struct MiniAppQuery: EntityStringQuery {
 
 /// Opens one app of 我的应用. Added to the home screen from Shortcuts, it is the app's own icon there.
 struct OpenMiniAppIntent: AppIntent {
-    static var title: LocalizedStringResource = "打开小应用"
-    static var description = IntentDescription("打开「我的应用」里的一个应用。在快捷指令里把它添加到主屏幕，就是这个应用的图标。")
+    static var title: LocalizedStringResource = "打开小工具"
+    static var description = IntentDescription("打开一个小工具。在快捷指令里把它添加到主屏幕，就是这个小工具的图标。")
     static var openAppWhenRun = true
 
-    @Parameter(title: "应用")
+    @Parameter(title: "小工具")
     var app: MiniAppEntity
 
     static var parameterSummary: some ParameterSummary {
@@ -112,10 +112,10 @@ struct OpenMiniAppIntent: AppIntent {
 
 /// The 我的应用 widget's settings: which apps it shows.
 struct MiniAppsWidgetIntent: WidgetConfigurationIntent {
-    static var title: LocalizedStringResource = "我的应用"
-    static var description = IntentDescription("选择小组件里放哪些应用。")
+    static var title: LocalizedStringResource = "小工具"
+    static var description = IntentDescription("选择小组件里放哪些小工具。")
 
-    @Parameter(title: "应用", size: [.systemSmall: 1, .systemMedium: 4])
+    @Parameter(title: "小工具", size: [.systemSmall: 1, .systemMedium: 4])
     var apps: [MiniAppEntity]?
 
     init() {}
