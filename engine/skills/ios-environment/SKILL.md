@@ -64,7 +64,7 @@ Pipes, redirects, `&&`, `||`, variables, arrays, functions, loops, here-document
 
 - `$HOME` is `/home/dsh` and `$TMPDIR` is `/tmp`. Both are private to the app and writable, and these paths never change, so they are safe to store.
 - The first-use workspace is under `~/Documents`. Workspaces are not visible in the Files app.
-- `~/apps` holds the user's mini apps (我的应用), one folder each, which the app opens full screen. Load the `mini-apps` skill before creating or changing anything there.
+- `~/apps` holds the user's mini apps (小工具), one folder each, which the app opens full screen. Load the `mini-apps` skill before creating or changing anything there.
 - `/` is the app's own tree: `home`, `tmp`, `opt`, plus anything you create. Writing to `/abc` or `/usr/local` works and stays inside the app.
 - `/etc`, `/usr/share` and `/System` are the real system and read-only. `/opt/dsh` is the app itself and read-only.
 - `/bin` and `/usr/bin` exist only in the shell, for its commands. A Node script does not see them.

@@ -1,9 +1,10 @@
 import SwiftUI
 
-/// 我的应用: the small tools and games the agent made, as icons on a grid. They run on this
-/// phone only, each on its own.
+/// 小工具: the small tools and games the agent made, as icons on a grid. They run on this
+/// phone only, each on its own. The ones the app came with sit apart under 示例, so they read
+/// as examples of what to ask for rather than a catalog of ours.
 struct MiniAppsPage: View {
-    /// The phone's 应用 tab, under a large title; otherwise a sheet with its close button.
+    /// The phone's 小工具 tab, under a large title; otherwise a sheet with its close button.
     var asTab = false
     @State private var store = MiniAppStore.shared
     @State private var deleting: MiniApp?
@@ -12,55 +13,93 @@ struct MiniAppsPage: View {
     private let columns = [GridItem(.adaptive(minimum: 76, maximum: 96), spacing: 12, alignment: .top)]
 
     var body: some View {
-        Group {
-            if store.loaded && store.apps.isEmpty {
-                empty
-            } else {
-                ScrollView {
-                    LazyVGrid(columns: columns, spacing: 20) {
-                        ForEach(store.apps) { app in
-                            Button { open(app) } label: { tile(app) }
-                                .buttonStyle(.plain)
-                                .contextMenu { menu(app) }
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
-                    Text("应用只在这台设备上运行，彼此隔离，读不到你的文件和对话，可以联网。")
-                        .font(.footnote)
-                        .foregroundStyle(Palette.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 32)
-                        .padding(.vertical, 28)
+        let examples = MiniAppExamples.ids
+        let mine = store.apps.filter { !examples.contains($0.id) }
+        let samples = store.apps.filter { examples.contains($0.id) }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 28) {
+                createCard
+                if !mine.isEmpty {
+                    section(String(localized: "我做的"), mine)
                 }
-                .refreshable { store.refresh() }
+                if !samples.isEmpty {
+                    section(String(localized: "示例"), samples,
+                            note: String(localized: "自带的几个示例，看看 Agent 能做出什么。用不上可以长按删除。"))
+                }
+                Text("小工具只在这台设备上运行，彼此隔离，读不到你的文件和对话，可以联网。")
+                    .font(.footnote)
+                    .foregroundStyle(Palette.secondary)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 12)
             }
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
         }
+        .refreshable { store.refresh() }
         .background(Palette.background)
-        .navigationTitle(asTab ? Self.tabTitle : String(localized: "我的应用"))
+        .navigationTitle(Self.tabTitle)
         .toolbarTitleDisplayMode(asTab ? .large : .inline)
-        .toolbar {
-            // A sheet's close button is on the right: there the new app goes on the left.
-            ToolbarItem(placement: asTab ? .topBarTrailing : .topBarLeading) {
-                Button { create() } label: { Image(systemName: "plus") }
-                    .accessibilityLabel("做一个应用")
-            }
-        }
         .onAppear { store.refresh() }
         .onChange(of: scenePhase) { _, phase in if phase == .active { store.refresh() } }
         .confirmationDialog("删除「\(deleting?.name ?? "")」？", isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }), titleVisibility: .visible) {
-            Button("删除应用", role: .destructive) {
+            Button("删除小工具", role: .destructive) {
                 guard let app = deleting else { return }
                 Task { await store.delete(app) }
             }
         } message: {
-            Text("应用的文件和它保存的数据都会删除，无法恢复。")
+            Text("小工具的文件和它保存的数据都会删除，无法恢复。")
         }
     }
 
-    /// The 应用 tab's name and title.
+    /// The 小工具 tab's name and the page's title.
     static var tabTitle: String {
-        String(localized: "tab.apps", defaultValue: "应用", comment: "Tab and page title: the user's own mini apps")
+        String(localized: "tab.apps", defaultValue: "小工具", comment: "Tab and page title: the small tools and games the user had the agent make")
+    }
+
+    /// The page's one way in for a tool of the user's own, first on the page whatever is already there.
+    private var createCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: "wand.and.stars")
+                    .font(.title2)
+                    .foregroundStyle(Palette.ink)
+                    .frame(width: 32)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("做一个自己的小工具").font(.headline).foregroundStyle(Palette.ink)
+                    Text("说说你想要什么，比如「做个记账本」「做个背单词卡片」，Agent 做好后会放在这里，点开就能用。")
+                        .font(.subheadline)
+                        .foregroundStyle(Palette.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            Button { create() } label: {
+                Label("开始做", systemImage: "plus")
+            }
+            .buttonStyle(.capsule(.primary, height: 46))
+        }
+        .padding(16)
+        .background(Palette.field, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+
+    private func section(_ title: String, _ apps: [MiniApp], note: String? = nil) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title).font(.title3.weight(.semibold)).foregroundStyle(Palette.ink)
+                if let note {
+                    Text(note).font(.footnote).foregroundStyle(Palette.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            LazyVGrid(columns: columns, spacing: 20) {
+                ForEach(apps) { app in
+                    Button { open(app) } label: { tile(app) }
+                        .buttonStyle(.plain)
+                        .contextMenu { menu(app) }
+                }
+            }
+        }
     }
 
     private func tile(_ app: MiniApp) -> some View {
@@ -81,26 +120,13 @@ struct MiniAppsPage: View {
         Button("删除", systemImage: "trash", role: .destructive) { deleting = app }
     }
 
-    private var empty: some View {
-        ContentUnavailableView {
-            Label("还没有应用", systemImage: "square.grid.2x2")
-        } description: {
-            Text("在对话里让 Agent 做个小工具或小游戏，比如「做个记账本」，做好后会出现在这里。")
-        } actions: {
-            Button("做一个应用") { create() }
-                .buttonStyle(.borderedProminent)
-                .tint(Palette.ink)
-                .foregroundStyle(Palette.onInk)
-        }
-    }
-
     private func open(_ app: MiniApp) {
         Haptics.tap()
         MiniAppPresenter.open(app.id)
     }
 
     private func create() {
-        ask(String(localized: "帮我做一个小应用："))
+        ask(String(localized: "帮我做一个小工具："))
     }
 
     /// A new conversation with `draft` in the composer; the shell closes this sheet to show it.
@@ -124,7 +150,7 @@ struct MiniAppIcon: View {
     }
 }
 
-/// A reply's link to an app on a line of its own (`[记账本](fishapp://ledger)`), as a card that
+/// A reply's link to a tool on a line of its own (`[记账本](fishapp://ledger)`), as a card that
 /// opens it.
 struct MiniAppCard: View {
     let id: String
@@ -148,7 +174,7 @@ struct MiniAppCard: View {
                 MiniAppIcon(icon: app?.icon ?? MiniApp.defaultIcon, color: app?.color ?? MiniApp.defaultColor, size: 44)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(app?.name ?? title).font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink).lineLimit(1)
-                    Text(looked && app == nil ? String(localized: "应用已删除") : app?.summary ?? String(localized: "我的应用"))
+                    Text(looked && app == nil ? String(localized: "小工具已删除") : app?.summary ?? String(localized: "小工具"))
                         .font(.footnote).foregroundStyle(Palette.secondary).lineLimit(2)
                 }
                 Spacer(minLength: 0)
