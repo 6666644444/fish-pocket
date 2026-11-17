@@ -32,6 +32,13 @@
 </tr>
 </table>
 
+<table>
+<tr>
+<td align="center" width="50%"><img src="docs/assets/demo-phone.gif" width="250" alt="The agent is asked to open Settings and switch the appearance to Dark; through iCTRL it goes to the Appearance page in Settings and taps Dark, the whole phone turns dark, and it returns to Fish Pocket to report, with a recording of what it did under the message"><br/><b>Phone control</b><br/><sub>Say it once: it taps through Settings, comes back to tell you, and attaches a recording</sub></td>
+<td align="center" width="50%"><img src="docs/assets/demo-browser.gif" width="250" alt="The agent is asked to search Bilibili for cats in the built-in browser; a glow and a pointer show on the page while it scrolls and switches to sorting by views, then it lists the three most-watched videos back in the chat"><br/><b>Built-in browser control</b><br/><sub>It browses sites like Bilibili and Douyin for you and brings the highlights back to the chat</sub></td>
+</tr>
+</table>
+
 <p align="center">
   <img src="docs/assets/demo-bot.gif" width="250" alt="Creating a Bot and picking its look and color; asking it in chat for today's tech news, its avatar moving while it searches, then three stories coming back; finally the connectors page, listing services such as GitHub and Notion">
   <br/>
@@ -104,6 +111,8 @@ With the open-source app [iCTRL](https://github.com/OpenMinis/iCTRL) installed, 
 - **Only on this phone.** iCTRL's service listens on the device only; keep its built-in remote access off. What the agent sees in other apps goes with the conversation to the model provider you chose.
 
 It is an optional advanced feature. iCTRL is a third-party open-source app, not provided by Fish Pocket, and needs iOS 17.4 or later, Developer Mode and sideloading; a free Apple ID is enough, and the first setup takes a computer once. When Phone Control under Explore (in the sidebar before iOS 18) shows Running, it is ready. For every step, see the [setup guide](https://fish.deepseek1024.com/en/phone-control/) on the website.
+
+Phone control is built on [iCTRL](https://github.com/OpenMinis/iCTRL); thanks to OpenMinis for open-sourcing it.
 
 ## Bot mode
 
@@ -269,7 +278,8 @@ Fish Pocket also stands on the shoulders of these projects.
 **Ideas we learned from:**
 
 - [a-Shell](https://github.com/holzschu/a-shell): proof that iOS can have a genuinely useful local terminal
-- [iCTRL](https://github.com/OpenMinis/iCTRL): the open-source app phone control talks to, which taps, types and reads the screen for the agent
+- [iCTRL](https://github.com/OpenMinis/iCTRL): the open-source app phone control talks to, which taps, types and reads the screen for the agent; phone control would not exist without it
+- [page-agent](https://github.com/alibaba/page-agent): its page controller is how the agent reads, clicks and types in the built-in browser, and the glow, pointer and status panel on the page while it works come from it too
 - [OpenMinis](https://github.com/OpenMinis/OpenMinis): an AI agent that runs on the phone; our device capability categories and permission levels follow its design
 
 Thanks also to the DSH community, whose fan works gave us the "big fat fish" nickname. The whale girl mascot comes from the original character by [上善无形](https://space.bilibili.com/4456176) and the maid redesign by [ZipZipPipe](https://www.pixiv.net/artworks/148186519). Third-party licenses are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

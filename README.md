@@ -32,6 +32,13 @@
 </tr>
 </table>
 
+<table>
+<tr>
+<td align="center" width="50%"><img src="docs/assets/demo-phone.gif" width="250" alt="让智能体打开设置把外观换成深色模式；它通过 iCTRL 进入设置的外观页，点选深色，整台手机变成深色后回到 Fish Pocket 报告结果，消息下方附上这次的操作录像"><br/><b>操控手机</b><br/><sub>说一句话，它自己去设置里点好，再回来告诉你，附上操作录像</sub></td>
+<td align="center" width="50%"><img src="docs/assets/demo-browser.gif" width="250" alt="让智能体用内置浏览器在 B 站搜猫咪；网页上亮起光效和指针，它一边往下刷一边切到按播放量排序，最后回到对话列出播放最多的三个视频"><br/><b>操控内置浏览器</b><br/><sub>替你刷 B 站、抖音这些网站，翻完把要点整理回对话</sub></td>
+</tr>
+</table>
+
 <p align="center">
   <img src="docs/assets/demo-bot.gif" width="250" alt="新建一个 Bot，给它挑形象和颜色；在聊天里让它查今天的科技新闻，它的头像边搜索边动，查完把三条新闻发回来；最后打开连接器页面，里面是 GitHub、Notion 等可以连接的服务">
   <br/>
@@ -104,6 +111,8 @@
 - **只在这台手机上：** iCTRL 的服务只在本机监听，它自带的远程访问建议一直关着。智能体看到的其他 App 画面会随对话发给你选的模型服务商。
 
 这是可选的高级功能。iCTRL 是第三方开源 App，不是 Fish Pocket 提供的，需要 iOS 17.4 或更高版本、打开开发者模式并侧载；免费 Apple ID 就够，第一次设置要用一次电脑。装好后「探索」里的「操控手机」（iOS 17 上在侧边栏）显示「运行中」就能用。完整步骤见官网的[设置教程](https://fish.deepseek1024.com/phone-control/)。
+
+操控手机建立在 [iCTRL](https://github.com/OpenMinis/iCTRL) 之上，感谢 OpenMinis 把它开源出来。
 
 ## Bot 模式
 
@@ -269,7 +278,8 @@ Fish Pocket 站在这些优秀项目的肩膀上:
 - [FFmpeg](https://ffmpeg.org)：App 内的音视频处理，按 LGPL 以动态框架使用
 - [SwiftTerm](https://github.com/migueldeicaza/SwiftTerm)：终端界面
 - [a-Shell](https://github.com/holzschu/a-shell)：证明了 iOS 上可以有真正好用的本地终端
-- [iCTRL](https://github.com/OpenMinis/iCTRL)：操控手机对接的开源 App，替智能体点按、输入、读取屏幕
+- [iCTRL](https://github.com/OpenMinis/iCTRL)：操控手机对接的开源 App，替智能体点按、输入、读取屏幕，没有它就没有操控手机这个功能
+- [page-agent](https://github.com/alibaba/page-agent)：智能体操作内置浏览器时读网页、点击和输入都靠它的 page controller，操作时网页上的光效、指针和状态面板也来自它
 - [OpenMinis](https://github.com/OpenMinis/OpenMinis)：跑在手机上的 AI Agent，本机能力的分类和权限档位参考了它的设计
 
 也感谢 DSH 社区的朋友们，“大肥鱼”这个外号来自大家的二创。吉祥物鲸鱼娘的原始角色来自[上善无形](https://space.bilibili.com/4456176)，女仆版二次设计来自 [ZipZipPipe](https://www.pixiv.net/artworks/148186519)。第三方许可证见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
