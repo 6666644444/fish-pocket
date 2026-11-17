@@ -754,7 +754,8 @@ private struct SavedPrompt: View {
 
 // MARK: Web fallback
 
-/// The engine's own web UI, for plugin interfaces that only exist in the browser.
+/// The engine's own web UI, for plugin interfaces that only exist in the browser. Its icon on the
+/// home screen (更多 → 添加到主屏幕) opens the app straight on it (`dsh://web`).
 struct WebFallbackView: View {
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
@@ -765,7 +766,18 @@ struct WebFallbackView: View {
                 .ignoresSafeArea(edges: .bottom)
                 .navigationTitle("网页版")
                 .navigationBarTitleDisplayMode(.inline)
-                .closeButton(dismiss)
+                .toolbar {
+                    ToolbarItemGroup(placement: .topBarTrailing) {
+                        Menu {
+                            Button("添加到主屏幕", systemImage: "plus.square.on.square") { HomeScreenShortcut.addWeb() }
+                        } label: {
+                            Image(systemName: "ellipsis")
+                        }
+                        .accessibilityLabel("更多")
+                        Button { dismiss() } label: { Image(systemName: "xmark") }
+                            .accessibilityLabel("关闭")
+                    }
+                }
         }
     }
 }

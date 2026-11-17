@@ -1033,6 +1033,8 @@ struct MainView: View {
             if let shared { await receive(shared) }
         case .app(let id):
             MiniAppPresenter.open(id)
+        case .web:
+            webOpen = true
         }
     }
 
