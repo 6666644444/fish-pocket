@@ -316,42 +316,17 @@ private enum LocalNetworkRules {
     }
 }
 
-/// Puts an app on the home screen through Safari. iOS lets no app place an icon there itself, but
-/// Safari's 添加到主屏幕 does for a web page: the website's page (AppLinks.addToHomeScreen) takes the
-/// app's name and icon from what follows its `#`, and when opened from the home screen goes on to
-/// `dsh://app/<id>`. The fragment never reaches the server. The icon is drawn here, as the 应用 tab
-/// draws it: Safari's canvas does not draw emoji.
+/// Puts an app on the home screen (`HomeScreenShortcut`), its icon drawn as the 应用 tab draws it.
 @MainActor
 enum MiniAppHomeScreen {
     static func add(_ app: MiniApp) {
-        var fragment = URLComponents()
-        fragment.queryItems = [
-            URLQueryItem(name: "id", value: app.id),
-            URLQueryItem(name: "name", value: app.name),
-            URLQueryItem(name: "color", value: String(app.color.drop { $0 == "#" })),
-            URLQueryItem(name: "scheme", value: DshLink.scheme),
-        ] + [iconPNG(app).map { URLQueryItem(name: "img", value: $0) }].compactMap { $0 }
-        // The page reads it with URLSearchParams, where a bare + is a space.
-        let encoded = (fragment.percentEncodedQuery ?? "").replacingOccurrences(of: "+", with: "%2B")
-        guard var components = URLComponents(url: AppLinks.addToHomeScreen, resolvingAgainstBaseURL: false) else { return }
-        components.percentEncodedFragment = encoded
-        guard let url = components.url else { return }
-        Haptics.tap()
-        UIApplication.shared.open(url)
-    }
-
-    /// The home screen's icon, 180 points square and edge to edge (iOS rounds the corners), as
-    /// base64url PNG.
-    private static func iconPNG(_ app: MiniApp) -> String? {
         let icon = ZStack {
             Rectangle().fill(Color(miniApp: app.color).gradient)
             Text(verbatim: app.icon).font(.system(size: 90))
         }
-        .frame(width: 180, height: 180)
-        let renderer = ImageRenderer(content: icon)
-        renderer.scale = 1
-        guard let data = renderer.uiImage?.pngData() else { return nil }
-        return data.base64EncodedString()
-            .replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
+        HomeScreenShortcut.add(name: app.name, items: [
+            URLQueryItem(name: "id", value: app.id),
+            URLQueryItem(name: "color", value: String(app.color.drop { $0 == "#" })),
+        ], icon: icon)
     }
 }
