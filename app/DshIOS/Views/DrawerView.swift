@@ -378,7 +378,6 @@ struct DrawerView: View {
                 Image(systemName: "puzzlepiece.extension").font(.callout).foregroundStyle(Palette.ink).frame(width: 22)
                 Text("插件").font(.subheadline.weight(pluginsSelected ? .medium : .regular)).foregroundStyle(Palette.ink)
                 Spacer()
-                if !pluginsSelected { Text("发现").font(.footnote).foregroundStyle(Palette.secondary) }
             }
             .padding(.horizontal, 12)
             .frame(minHeight: 46)
