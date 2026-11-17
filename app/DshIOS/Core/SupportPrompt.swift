@@ -76,6 +76,8 @@ enum AppLinks {
     /// The app's App Store page, with no storefront so each reader lands in their own. The share
     /// poster's QR code is a picture of this link: scripts/make-share-qr.swift redraws it.
     static let appStore = URL(string: "https://apps.apple.com/app/id6830703602")!
+    /// The public beta's TestFlight invitation, at the foot of 设置 under the website.
+    static let testFlight = URL(string: "https://testflight.apple.com/join/2SCftb2M")!
     /// The WeChat group's QR code at the bottom of 设置. It expires every 7 days; the website swaps
     /// the picture at this same path, so the app always shows the current one without an update.
     static let wechatGroupCode = site.appending(path: "wechat-group.png")
