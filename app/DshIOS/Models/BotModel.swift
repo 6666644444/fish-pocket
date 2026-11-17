@@ -109,6 +109,10 @@ final class BotModel {
     private(set) var rounds: [JSON] = []
     /// The group whose rounds `rounds` follows.
     private(set) var roundsRoom: String?
+    /// The rows of group rounds read from the group's book (`group-rows`), by the round's call id:
+    /// `{rows, open, active, speaking}`. `open` is the newest round, whose rows grow as the group
+    /// goes on; `active` says its members are at work, `speaking` who is answering.
+    private(set) var relayRows: [String: JSON] = [:]
     /// Open the scheduled tasks of the Bot or group whose chat asked (its ＋ tray).
     var scheduleRequest: BotComposer?
     /// Open a side question on the Bot whose chat asked (its ＋ tray).
@@ -528,6 +532,28 @@ final class BotModel {
     }
 
     func round(_ callId: String) -> JSON? { rounds.first { $0["callId"].string == callId } }
+
+    /// Read a ranged round's rows from the group's book. `roomId` may be the group's Session.
+    func loadRows(of relay: RoomRelay, roomId: String) async {
+        guard var payload = relay.range else { return }
+        payload["roomId"] = .string(roomId)
+        guard let value = try? await call("group-rows", .object(payload)), value != relayRows[relay.call.id] else { return }
+        relayRows[relay.call.id] = value
+    }
+
+    /// What a round shows: its rows from the book, or the replies an older result carries.
+    func replies(of relay: RoomRelay) -> [JSON] {
+        relay.range == nil ? relay.replies : relayRows[relay.call.id]?["rows"].array ?? []
+    }
+
+    /// How many rows the rounds read so far hold: it grows as members speak.
+    var relayRowCount: Int { relayRows.values.reduce(0) { $0 + $1["rows"].array.count } }
+
+    /// A ranged round is read and closed, and nobody spoke in it: there is nothing to draw.
+    func rowsEmpty(_ relay: RoomRelay) -> Bool {
+        guard relay.range != nil, let view = relayRows[relay.call.id] else { return false }
+        return view["open"].bool == false && view["rows"].array.isEmpty
+    }
     var speaking: [String] { rounds.flatMap { $0["speaking"].array.compactMap(\.string) } }
 
     /// The tool a member runs in the open group's round, and what it works on. Not the words

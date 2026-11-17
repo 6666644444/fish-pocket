@@ -104,11 +104,12 @@ C-49 `/goal` 气泡 · C-90 原子 chip · C-16 鲸鱼动画与流光 · C-30 �
 
 ## 3.3 上游 `0.2.2-rc.3` 新增（尚未移植）
 
-引擎 2026-11-17 从 `0.2.2-rc.1` 升到 `0.2.2-rc.3`。协议层的删除、改形和新增方法见 [protocol.md](protocol.md) §0.2。原生已经跟上了三处按新形状改的接口：`account/watch`（结果改成 `{type, state}` 信封）、`subagents/prompt`（去掉 `parentSessionId` 和 `mode`）、`subagents/interruptByUser`（取代 `interruptByParent`）。下面是上游新增、原生还没有的能力。
+引擎 2026-11-17 从 `0.2.2-rc.1` 升到 `0.2.2-rc.3`。协议层的删除、改形和新增方法见 [protocol.md](protocol.md) §0.2。原生已经按新形状跟上的接口：`account/watch`（结果改成 `{type, state}` 信封）、账户通知卡片（`account/getNotifications` 加 `account/reportNotificationEvent`，取代赠金卡片）、`subagents/prompt`（去掉 `parentSessionId` 和 `mode`）、`subagents/interruptByUser`（取代 `interruptByParent`）、`pluginManager/updateBundle`（git 安装的包要带 `spec`）、网页搜索设置（`web-deepseek-api` 的 `baseURL`、`apiKeyEnv` 拆成 `searchBaseURL`、`fetchBaseURL`、`searchApiKeyEnv`、`fetchApiKeyEnv`）。Office 渲染（`office-kit`）和 Office 技能在 iOS 上关闭，见 `engine/ios.patch.yml`。下面是上游新增、原生还没有的能力。
 
 | 上游新增 | 原生现状 |
 |---|---|
-| 账户通知（`account/getNotifications`、`account/getNotificationContent`、`account/reportNotificationEvent`，取代赠金卡片） | 没有 |
+| 账户通知的定时轮询（`nextPollAfterSeconds`）和详情（`account/getNotificationContent`） | 没有；卡片只在登录和打开设置时读一次 |
+| 网页搜索和获取各自的计费方式（`web-deepseek-api` 的 `searchBilling`、`fetchBilling`） | 没有，用默认的 `auto` |
 | 智能体团队开关（`agentTeams/setEnabled`） | 没有 |
 | 终端输出订阅（`terminal/watch`） | 没有 |
 | 文件搜索（`workspaceFiles/search`） | 没有（文件搜索只筛当前文件夹，见 §3 S-77） |

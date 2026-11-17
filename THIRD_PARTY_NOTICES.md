@@ -60,7 +60,7 @@ libgit2 的完整许可证见其仓库的 [COPYING](https://github.com/libgit2/l
 
 需要单独留意的两项：
 
-- **`@deepseek-ai/libreoffice-kit`（MPL-2.0）：** 只保留了很小的 JS 外壳，平台二进制和 wasm 在打包时已删除，`office-to-pdf` 也已禁用。
+- **`@deepseek-ai/libreoffice-kit`（MPL-2.0）：** 只保留了很小的 JS 外壳，平台二进制、静态库和 wasm 在打包时已删除，`office-kit` 和 Office 技能也已禁用（`engine/ios.patch.yml`）。
 - **`ds-bot`（Apache-2.0）：** 它的 npm 包只带 LICENSE，不带上游仓库的 NOTICE。按 Apache-2.0 第 4 条，`engine/notices/ds-bot.NOTICE`（取自上游 v0.3.8）在打包时放到 `ds-bot/NOTICE`，随 App 一起分发。原生界面只调用它的接口，没有使用它的界面代码。
 - **`just-bash` 自带的 CPython（Python 许可证）：** 位于 `just-bash/vendor/cpython-emscripten`，随 just-bash 一起打包，但 iOS 上没有启用 `python` 命令。
 

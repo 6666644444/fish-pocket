@@ -234,7 +234,8 @@ final class AccountModel {
     /// A button on the card: report the click, drop the card, and answer with the
     /// page to open (an `app_route` card points at the account page).
     func act(_ notice: AccountNotification, _ action: AccountNotification.Action) -> URL? {
-        report(notice.id, "cta_clicked")
+        // A `dismiss` button closes the card like ✕ does; `cta_clicked` is for the others.
+        report(notice.id, action.target == "dismiss" ? "dismissed" : "cta_clicked")
         notifications.removeAll { $0.id == notice.id }
         if action.target == "dismiss" { return nil }
         if action.route == "account" { return accountInfoURL ?? usageURL }

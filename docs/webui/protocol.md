@@ -81,7 +81,7 @@
 
 **新包**
 
-`dsh-deepseek-account` 承接了从 `dsh-api-account-controller` 挪来的账户通知方法（`account/getNotifications`、`account/getNotificationContent`、`account/reportNotificationEvent`），方法名不变。
+`dsh-deepseek-account` 承接了 `dsh-api-account-controller` 原有的全部 `account/*` 方法，方法名不变；三个账户通知方法（`account/getNotifications`、`account/getNotificationContent`、`account/reportNotificationEvent`）是它新增的。
 
 **请求形状变化**
 

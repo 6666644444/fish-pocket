@@ -756,9 +756,9 @@ final class PluginInstallTask {
     func retry() {
         guard phase == .failed else { return }
         if let update {
-            let registry = updateRegistry, title = confirmed?.title ?? update.name
+            let registry = updateRegistry, spec = updateSpec, title = confirmed?.title ?? update.name
             reset()
-            updateTo(name: update.name, title: title, from: update.from, to: update.to, registry: registry)
+            updateTo(name: update.name, title: title, from: update.from, to: update.to, registry: registry, spec: spec)
             return
         }
         specAgain()

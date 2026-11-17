@@ -60,7 +60,7 @@ for device in "${devices[@]}"; do
       xcrun simctl list devices | grep -q "$device) (Booted)" && break
       sleep 3
     done
-    SMOKE_PORT="$port" SMOKE_SCREENS="${SMOKE_SCREENS:-key}" \
+    SIM_DEVICE="$device" SMOKE_PORT="$port" SMOKE_SCREENS="${SMOKE_SCREENS:-key}" \
       "$root/scripts/smoke-sim.sh" "$out/$label" >"$out/$label.log" 2>&1
     echo "$?" >"$out/$label.status"
   ) &
