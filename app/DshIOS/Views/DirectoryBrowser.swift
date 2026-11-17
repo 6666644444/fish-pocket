@@ -5,6 +5,9 @@ import SwiftUI
 /// read: a system folder picker returns paths outside the sandbox it cannot reach, and
 /// the engine's own home is not somewhere users keep projects.
 struct NewWorkspaceView: View {
+    /// Where the new workspace goes instead of a new conversation in it: a picker that asked for
+    /// one (导入 DeepSeek 会话) keeps its own page and selects it.
+    var onCreated: ((String) -> Void)?
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
     @State private var stack: [String] = []
@@ -100,7 +103,11 @@ struct NewWorkspaceView: View {
             let value = try await app.client.call("workspace/create", ["request": ["path": .string(path)]])
             Haptics.success()
             dismiss()
-            app.newSessionRequest = NewSessionRequest(workspaceId: value["workspace"]["workspaceId"].string)
+            if let onCreated {
+                if let id = value["workspace"]["workspaceId"].string { onCreated(id) }
+            } else {
+                app.newSessionRequest = NewSessionRequest(workspaceId: value["workspace"]["workspaceId"].string)
+            }
         } catch {
             Haptics.error()
             failure = error.localizedDescription
