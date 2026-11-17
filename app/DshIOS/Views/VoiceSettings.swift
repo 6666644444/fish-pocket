@@ -1,11 +1,11 @@
 import AVFoundation
 import SwiftUI
 
-/// 设置 → 语音: which service recognizes hold-to-talk, and the voice replies are read in. DeepSeek uses the key or account the
+/// 设置 → 语音输入: which service recognizes hold-to-talk. DeepSeek uses the key or account the
 /// models already use; Volcengine (豆包语音) takes the user's own API Key: how to get one, where
 /// it goes, and a check that it works. Also the sheet the microphone button opens when
 /// Volcengine is chosen without a key; `onReady` then runs once a working service is set up.
-struct VoiceSettingsPage: View {
+struct VoiceInputSettingsPage: View {
     var onReady: (() -> Void)?
     @State private var speech = VolcSpeech.shared
     @State private var preferences = VoicePreferences.shared
@@ -33,8 +33,6 @@ struct VoiceSettingsPage: View {
                     ForEach(VoicePreferences.Source.allCases) { Text($0.title).tag($0) }
                 }
                 .pickerValueTint()
-            } header: {
-                Text("语音输入")
             } footer: {
                 switch preferences.source {
                 case .deepseek:
@@ -64,27 +62,10 @@ struct VoiceSettingsPage: View {
             } else {
                 volcengine
             }
-
-            Section {
-                Picker("声音", selection: $preferences.readingVoice) {
-                    ForEach(DeepSeekSpeech.Voice.allCases) { Text($0.title).tag($0) }
-                }
-                .pickerValueTint()
-                Button("试听") {
-                    ReadAloud.shared.stop()
-                    ReadAloud.shared.enqueue(String(localized: "你好，我会用这个声音为你朗读。"))
-                }
-            } header: {
-                Text("朗读")
-            } footer: {
-                Text("朗读回复和 Agent 念出来的话都用 DeepSeek 的声音，同样用「模型」里的 DeepSeek API Key，费用由 DeepSeek 按字数收取。")
-            }
-            .groupedRow()
-            .onChange(of: preferences.readingVoice) { ReadAloud.shared.stop() }
         }
         .groupedList()
         .scrollDismissesKeyboard(.immediately)
-        .navigationTitle("语音")
+        .navigationTitle("语音输入")
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -245,6 +226,61 @@ struct VoiceSettingsPage: View {
     private static func masked(_ key: String) -> String {
         guard key.count > 10 else { return String(repeating: "•", count: key.count) }
         return key.prefix(4) + "••••" + key.suffix(4)
+    }
+}
+
+/// 设置 → 朗读: the voice replies are read in, by the app and by the agent's `speak` tool.
+struct ReadAloudSettingsPage: View {
+    @State private var preferences = VoicePreferences.shared
+    @State private var reading = ReadAloud.shared
+
+    var body: some View {
+        List {
+            Section {
+                ForEach(DeepSeekSpeech.Voice.allCases) { voice in
+                    Button {
+                        Haptics.select()
+                        preferences.readingVoice = voice
+                    } label: {
+                        HStack {
+                            Text(voice.title).foregroundStyle(Palette.ink)
+                            Spacer()
+                            if preferences.readingVoice == voice {
+                                Image(systemName: "checkmark").font(.body.weight(.semibold)).foregroundStyle(Palette.ink)
+                            }
+                        }
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+            } header: {
+                Text("声音")
+            } footer: {
+                Text("朗读回复和 Agent 念出来的话都用 DeepSeek 的声音，同样用「模型」里的 DeepSeek API Key，费用由 DeepSeek 按字数收取。")
+            }
+            .groupedRow()
+
+            Section {
+                Button {
+                    Haptics.tap()
+                    if reading.speaking {
+                        reading.stop()
+                    } else {
+                        reading.enqueue(String(localized: "你好，我会用这个声音为你朗读。"))
+                    }
+                } label: {
+                    Text(reading.speaking ? "停止" : "试听")
+                }
+                .buttonStyle(.capsule(height: 50))
+            }
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets())
+        }
+        .groupedList()
+        .navigationTitle("朗读")
+        .navigationBarTitleDisplayMode(.inline)
+        .onChange(of: preferences.readingVoice) { ReadAloud.shared.stop() }
+        .onDisappear { ReadAloud.shared.stop() }
     }
 }
 
