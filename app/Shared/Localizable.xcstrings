@@ -2148,6 +2148,40 @@
         }
       }
     },
+    "%@（未加载）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (not loaded)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ (no cargado)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（未読み込み）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@(로드되지 않음)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@（未載入）"
+          }
+        }
+      }
+    },
     "%@（模拟器）" : {
       "localizations" : {
         "en" : {
@@ -2902,6 +2936,40 @@
         }
       }
     },
+    "%lld 个结果" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld results"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld resultados"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件の結果"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "결과 %lld개"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 個結果"
+          }
+        }
+      }
+    },
     "%lld 个路径" : {
       "localizations" : {
         "en" : {
@@ -3148,6 +3216,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld 已停用"
+          }
+        }
+      }
+    },
+    "%lld 已完成" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld completed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld completadas"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件完了"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld개 완료"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 已完成"
           }
         }
       }
@@ -3426,6 +3528,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld 執行中"
+          }
+        }
+      }
+    },
+    "%lld 进行中" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld in progress"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld en curso"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件進行中"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld개 진행 중"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 進行中"
           }
         }
       }
@@ -9686,6 +9822,40 @@
         }
       }
     },
+    "空响应" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empty response"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Respuesta vacía"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空のレスポンス"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "빈 응답"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空回應"
+          }
+        }
+      }
+    },
     "简洁" : {
       "localizations" : {
         "en" : {
@@ -10069,6 +10239,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "要先停用這個外掛嗎？"
+          }
+        }
+      }
+    },
+    "要先登录 DeepSeek 账号。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign in to your DeepSeek account first."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primero inicia sesión en tu cuenta de DeepSeek."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "先に DeepSeek アカウントにサインインしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "먼저 DeepSeek 계정에 로그인하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要先登入 DeepSeek 帳號。"
           }
         }
       }
@@ -11542,6 +11746,40 @@
         }
       }
     },
+    "配额已用尽" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quota exceeded"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuota agotada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "クォータ超過"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "할당량 소진"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "配額已用盡"
+          }
+        }
+      }
+    },
     "重新打开 App，直接回到上次所在的会话或 Bot 聊天。" : {
       "localizations" : {
         "en" : {
@@ -12356,6 +12594,40 @@
         }
       }
     },
+    "DeepSeek 获取 API" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek Fetch API"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API de obtención de DeepSeek"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek 取得 API"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek 가져오기 API"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek 擷取 API"
+          }
+        }
+      }
+    },
     "DeepSeek 语音暂不支持账号登录，请在「设置 → 模型」里填写 DeepSeek API Key" : {
       "localizations" : {
         "en" : {
@@ -12566,6 +12838,40 @@
         }
       }
     },
+    "DeepSeek 账号模型的对话用已登录的账号搜索，其他对话用这个 Key，默认和「模型」里的 DeepSeek API Key 是同一个。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversations on a DeepSeek account model search with the signed-in account. Others use this key, which by default is the same DeepSeek API key as in Models."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las conversaciones con un modelo de la cuenta DeepSeek buscan con la cuenta con la que iniciaste sesión. Las demás usan esta clave, que por defecto es la misma clave de API de DeepSeek de «Modelos»."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek アカウントのモデルを使う会話は、サインイン中のアカウントで検索します。それ以外の会話はこのキーを使い、デフォルトでは「モデル」の DeepSeek API キーと同じものです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek 계정 모델을 쓰는 대화는 로그인한 계정으로 검색해요. 그 밖의 대화는 이 키를 쓰며, 기본적으로 「모델」의 DeepSeek API 키와 같아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek 帳號模型的對話用已登入的帳號搜尋，其他對話用這個 Key，預設和「模型」裡的 DeepSeek API Key 是同一個。"
+          }
+        }
+      }
+    },
     "DeepSeek 账号需要重新登录" : {
       "localizations" : {
         "en" : {
@@ -12664,6 +12970,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "DeepSeek 帳戶餘額不足"
+          }
+        }
+      }
+    },
+    "DeepSeek（旧版）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek (legacy)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek (heredado)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek（旧版）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek(구버전)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek（舊版）"
           }
         }
       }
@@ -16361,36 +16701,36 @@
         }
       }
     },
-    "中转站、自部署服务等兼容 OpenAI 或 Anthropic 协议的接口。" : {
+    "中转站、自部署服务等兼容 OpenAI、Anthropic 或 Gemini 协议的接口。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Relays, self-hosted services, and other OpenAI- or Anthropic-compatible endpoints."
+            "value" : "Relays, self-hosted services, and other OpenAI-, Anthropic-, or Gemini-compatible endpoints."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Relés, servicios autoalojados y otras interfaces compatibles con los protocolos de OpenAI o Anthropic."
+            "value" : "Relés, servicios autoalojados y otras interfaces compatibles con los protocolos de OpenAI, Anthropic o Gemini."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "中継サービスやセルフホストのサービスなど、OpenAI または Anthropic プロトコル互換のエンドポイント。"
+            "value" : "中継サービスやセルフホストのサービスなど、OpenAI、Anthropic、または Gemini プロトコル互換のエンドポイント。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "중계 서비스, 자체 호스팅 서비스 등 OpenAI 또는 Anthropic 프로토콜과 호환되는 엔드포인트."
+            "value" : "중계 서비스, 자체 호스팅 서비스 등 OpenAI, Anthropic 또는 Gemini 프로토콜과 호환되는 엔드포인트."
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "中轉站、自行部署的服務等相容 OpenAI 或 Anthropic 協定的介面。"
+            "value" : "中轉站、自行部署的服務等相容 OpenAI、Anthropic 或 Gemini 協定的介面。"
           }
         }
       }
@@ -17343,6 +17683,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "僅一次"
+          }
+        }
+      }
+    },
+    "仅临时错误" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transient errors"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Errores transitorios"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一時的なエラーのみ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "일시적인 오류만"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "僅暫時性錯誤"
           }
         }
       }
@@ -18815,6 +19189,40 @@
         }
       }
     },
+    "任务板" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Task Board"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tablero de tareas"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タスクボード"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "작업 보드"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "任務板"
+          }
+        }
+      }
+    },
     "任务清单" : {
       "localizations" : {
         "en" : {
@@ -18947,6 +19355,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "任務接續執行"
+          }
+        }
+      }
+    },
+    "任务记录无效：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid task record: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registro de tarea no válido: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タスクレコードが無効です: %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "작업 기록이 올바르지 않아요: %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "任務記錄無效：%@"
           }
         }
       }
@@ -21093,6 +21535,40 @@
         }
       }
     },
+    "继续生成" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue Generating"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar generando"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生成を続ける"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이어서 생성"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "繼續產生"
+          }
+        }
+      }
+    },
     "暂停朗读" : {
       "localizations" : {
         "en" : {
@@ -21361,6 +21837,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "停止這個目標？"
+          }
+        }
+      }
+    },
+    "停用后，共享任务工具和团队协调指令不再提供给智能体。这可能影响缓存复用、增加后续的 token 用量，并影响当前任务的协作效果。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Once off, the agent no longer gets the shared task tools and team coordination instructions. This may affect cache reuse, increase later token usage, and affect collaboration on the current task."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al desactivarla, el agente deja de recibir las herramientas de tareas compartidas y las instrucciones de coordinación del equipo. Esto puede afectar a la reutilización de la caché, aumentar el uso posterior de tokens y afectar a la colaboración en la tarea actual."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無効にすると、共有タスクツールとチーム連携の指示はエージェントに提供されなくなります。キャッシュの再利用に影響し、以降のトークン使用量が増え、現在のタスクでの連携にも影響する場合があります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "끄면 에이전트에게 공유 작업 도구와 팀 조율 지침이 더 이상 제공되지 않아요. 캐시 재사용에 영향을 주고 이후 토큰 사용량이 늘며, 현재 작업의 협업에도 영향을 줄 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停用後，共享任務工具和團隊協調指示不再提供給 AI 代理。這可能影響快取重複使用、增加後續的 token 用量，並影響目前任務的協作效果。"
           }
         }
       }
@@ -22113,6 +22623,40 @@
         }
       }
     },
+    "先用当前对话那条模型线路自带的搜索，费用算在那条线路自己的 Key 或账号上；用不了时改为读取公开的搜索结果页，不另外收费。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First tries the search built into the model route this conversation uses, billed to that route’s own key or account. When that is unavailable, it reads a public search results page at no extra charge."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primero usa la búsqueda integrada de la ruta de modelo de esta conversación, con cargo a la clave o la cuenta de esa ruta. Si no está disponible, lee una página pública de resultados de búsqueda, sin coste adicional."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まずこの会話が使っているモデルルートに備わる検索を使い、料金はそのルート自身のキーまたはアカウントに請求されます。使えない場合は公開の検索結果ページを読み取り、追加料金はかかりません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "먼저 이 대화가 쓰는 모델 경로에 내장된 검색을 사용하고, 비용은 그 경로의 키나 계정에 청구돼요. 사용할 수 없으면 공개 검색 결과 페이지를 읽으며, 추가 요금은 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "先用目前對話那條模型線路內建的搜尋，費用算在那條線路自己的 Key 或帳號上；無法使用時改為讀取公開的搜尋結果頁，不另外收費。"
+          }
+        }
+      }
+    },
     "先粘贴 Key" : {
       "localizations" : {
         "en" : {
@@ -22827,6 +23371,40 @@
         }
       }
     },
+    "共享任务" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared Tasks"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tareas compartidas"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共有タスク"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공유 작업"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享任務"
+          }
+        }
+      }
+    },
     "关" : {
       "localizations" : {
         "en" : {
@@ -23163,40 +23741,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "關閉思考"
-          }
-        }
-      }
-    },
-    "关闭时搜索通过 DeepSeek Messages 完成。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "When off, search runs through DeepSeek Messages."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cuando está desactivada, la búsqueda se realiza a través de DeepSeek Messages."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "オフのときは DeepSeek Messages で検索します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "끄면 DeepSeek Messages를 통해 검색해요."
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "關閉時搜尋透過 DeepSeek Messages 完成。"
           }
         }
       }
@@ -25615,40 +26159,6 @@
         }
       }
     },
-    "创建队友" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Create teammate"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crear compañero de equipo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "チームメイトを作成"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "팀원 만들기"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "建立隊友"
-          }
-        }
-      }
-    },
     "创造模式" : {
       "localizations" : {
         "en" : {
@@ -25679,6 +26189,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "創造模式"
+          }
+        }
+      }
+    },
+    "初始延迟不能大于最大延迟。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Initial delay cannot exceed max delay."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El retraso inicial no puede superar el retraso máximo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "初期遅延は最大遅延以下にしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "초기 지연은 최대 지연보다 클 수 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "初始延遲不能大於最大延遲。"
+          }
+        }
+      }
+    },
+    "初始延迟（毫秒）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Initial delay (ms)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retraso inicial (ms)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "初期遅延（ミリ秒）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "초기 지연(밀리초)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "初始延遲（毫秒）"
           }
         }
       }
@@ -29797,6 +30375,40 @@
         }
       }
     },
+    "只显示前 %lld 个结果，请缩小搜索范围。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Showing only the first %lld results. Narrow your search."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo se muestran los primeros %lld resultados. Acota la búsqueda."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最初の %lld 件のみ表示しています。検索範囲を絞り込んでください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "처음 %lld개 결과만 표시해요. 검색 범위를 좁혀 보세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只顯示前 %lld 個結果，請縮小搜尋範圍。"
+          }
+        }
+      }
+    },
     "只有桌面端支持添加文件夹，请添加单个文件" : {
       "localizations" : {
         "en" : {
@@ -31531,6 +32143,74 @@
         }
       }
     },
+    "命令在 Agent 的只读沙箱里运行，包括你在这里输入的命令。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commands run in the agent’s read-only sandbox, including commands you type here."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los comandos se ejecutan en el espacio aislado de solo lectura del agente, incluidos los que escribas aquí."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コマンドはエージェントの読み取り専用サンドボックスで実行されます（ここで入力したコマンドも含みます）。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "명령은 에이전트의 읽기 전용 샌드박스에서 실행돼요. 여기에 입력한 명령도 마찬가지예요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指令在 Agent 的唯讀沙盒裡執行，包括你在這裡輸入的指令。"
+          }
+        }
+      }
+    },
+    "命令在 Agent 的工作区沙箱里运行，包括你在这里输入的命令。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commands run in the agent’s workspace sandbox, including commands you type here."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los comandos se ejecutan en el espacio aislado del espacio de trabajo del agente, incluidos los que escribas aquí."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コマンドはエージェントのワークスペースサンドボックスで実行されます（ここで入力したコマンドも含みます）。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "명령은 에이전트의 워크스페이스 샌드박스에서 실행돼요. 여기에 입력한 명령도 마찬가지예요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指令在 Agent 的工作區沙盒裡執行，包括你在這裡輸入的指令。"
+          }
+        }
+      }
+    },
     "命令超时" : {
       "localizations" : {
         "en" : {
@@ -31663,6 +32343,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "和郵件伺服器的連線斷了，再試一次"
+          }
+        }
+      }
+    },
+    "响应格式错误" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Malformed response"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Respuesta mal formada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不正なレスポンス"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "잘못된 형식의 응답"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回應格式錯誤"
           }
         }
       }
@@ -33781,40 +34495,6 @@
         }
       }
     },
-    "地址含 API 前缀，留空用默认。结果数为 1–50 的整数。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Include the API prefix in the URL; leave blank for the default. Results must be an integer from 1 to 50."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La dirección incluye el prefijo de la API; déjala en blanco para usar la predeterminada. El número de resultados debe ser un entero de 1 a 50."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "URL には API プレフィックスを含めてください。空欄の場合はデフォルトを使用します。結果数は 1〜50 の整数です。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "주소에 API 접두사를 포함하세요. 비워 두면 기본값을 사용해요. 결과 수는 1~50 사이의 정수예요."
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "網址含 API 前綴，留空用預設。結果數為 1–50 的整數。"
-          }
-        }
-      }
-    },
     "地址要以 https:// 开头" : {
       "localizations" : {
         "en" : {
@@ -35079,6 +35759,40 @@
         }
       }
     },
+    "失败的请求会持续重试，直到成功或本轮被停止。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed requests retry until they succeed or the turn is stopped."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las solicitudes fallidas se reintentan hasta que tienen éxito o se detiene el turno."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "失敗したリクエストは、成功するかターンが停止されるまで再試行されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "실패한 요청은 성공하거나 이번 턴이 중지될 때까지 계속 다시 시도해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "失敗的請求會持續重試，直到成功或本輪被停止。"
+          }
+        }
+      }
+    },
     "头像" : {
       "localizations" : {
         "en" : {
@@ -35385,6 +36099,40 @@
         }
       }
     },
+    "子智能体任务已停止" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subagent run stopped"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ejecución del subagente detenida"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サブエージェントの実行が停止しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하위 에이전트 실행이 중지됐어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "子代理任務已停止"
+          }
+        }
+      }
+    },
     "子智能体使用默认模型或继承父 Agent 的模型。" : {
       "localizations" : {
         "en" : {
@@ -35415,6 +36163,176 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "子代理使用預設模型或繼承父 Agent 的模型。"
+          }
+        }
+      }
+    },
+    "子智能体已完成任务" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subagent run completed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ejecución del subagente completada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サブエージェントの実行が完了しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하위 에이전트 실행이 완료됐어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "子代理已完成任務"
+          }
+        }
+      }
+    },
+    "子智能体已达 token 上限" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subagent reached the token limit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El subagente alcanzó el límite de tokens"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サブエージェントがトークンの上限に達しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하위 에이전트가 토큰 한도에 도달했어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "子代理已達 token 上限"
+          }
+        }
+      }
+    },
+    "子智能体异常结束" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subagent run ended unexpectedly"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La ejecución del subagente terminó de forma inesperada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サブエージェントの実行が予期せず終了しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하위 에이전트 실행이 예기치 않게 끝났어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "子代理異常結束"
+          }
+        }
+      }
+    },
+    "子智能体执行失败" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subagent run failed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La ejecución del subagente falló"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サブエージェントの実行が失敗しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하위 에이전트 실행에 실패했어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "子代理執行失敗"
+          }
+        }
+      }
+    },
+    "子智能体拒绝执行" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subagent declined the task"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El subagente rechazó la tarea"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サブエージェントがタスクを拒否しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하위 에이전트가 작업을 거부했어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "子代理拒絕執行"
           }
         }
       }
@@ -40923,7 +41841,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "非アクティブな目標"
+            "value" : "一時停止中の目標"
           }
         },
         "ko" : {
@@ -41518,6 +42436,40 @@
         }
       }
     },
+    "已被 %@ 覆盖，这里选的不生效。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Overridden by %@; the choice here has no effect."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anulado por %@; lo que elijas aquí no tiene efecto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ で上書きされているため、ここでの選択は反映されません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@이(가) 덮어쓰고 있어 여기서 고른 값은 적용되지 않아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已被 %@ 覆寫，這裡選的不會生效。"
+          }
+        }
+      }
+    },
     "已设置" : {
       "localizations" : {
         "en" : {
@@ -41650,6 +42602,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已詢問"
+          }
+        }
+      }
+    },
+    "已请求继续生成" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Requested to continue generating"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha solicitado continuar la generación"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生成の続行をリクエストしました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이어서 생성하도록 요청했어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已請求繼續產生"
           }
         }
       }
@@ -44750,6 +45736,40 @@
         }
       }
     },
+    "待继续的目标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inactive Goal"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Objetivo inactivo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "非アクティブな目標"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "비활성 목표"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待繼續的目標"
+          }
+        }
+      }
+    },
     "微信" : {
       "localizations" : {
         "en" : {
@@ -44882,6 +45902,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "必填"
+          }
+        }
+      }
+    },
+    "必须大于 0。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Must be greater than 0."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Debe ser mayor que 0."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0 より大きい値にしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "0보다 커야 해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "必須大於 0。"
           }
         }
       }
@@ -45971,6 +47025,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "所有安裝來源都無法連線（已嘗試：%@），請檢查網路或代理伺服器設定，或更換安裝來源"
+          }
+        }
+      }
+    },
+    "所有错误" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All errors"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos los errores"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべてのエラー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 오류"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所有錯誤"
           }
         }
       }
@@ -47908,6 +48996,40 @@
         }
       }
     },
+    "抖动比例" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jitter ratio"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Proporción de jitter"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ジッター比率"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지터 비율"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "抖動比例"
+          }
+        }
+      }
+    },
     "报告里已经去掉密钥和个人路径，可以直接贴到问题反馈里。" : {
       "localizations" : {
         "en" : {
@@ -48278,6 +49400,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "依姓名、電話或電子郵件查詢聯絡人。唯讀，不新增、不修改、不刪除"
+          }
+        }
+      }
+    },
+    "按名称搜索整个工作区，带 / 时匹配路径" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search the whole workspace by name; include / to match paths"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Busca por nombre en todo el espacio de trabajo; incluye / para buscar por ruta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ワークスペース全体を名前で検索します。/ を含めるとパスに一致します"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "워크스페이스 전체를 이름으로 검색해요. /를 넣으면 경로와 일치시켜요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "依名稱搜尋整個工作區，帶 / 時比對路徑"
           }
         }
       }
@@ -49384,6 +50540,40 @@
         }
       }
     },
+    "提供方" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Provider"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Proveedor"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロバイダー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "제공자"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "供應商"
+          }
+        }
+      }
+    },
     "提供方 / 模型" : {
       "localizations" : {
         "en" : {
@@ -49414,6 +50604,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "供應商 / 模型"
+          }
+        }
+      }
+    },
+    "提供方列表没读到，下面的选项可能不全。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t load the provider list, so the options below may be incomplete."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo cargar la lista de proveedores; puede que falten opciones abajo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロバイダーの一覧を読み込めませんでした。以下の選択肢は不完全な可能性があります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "제공자 목록을 불러오지 못했어요. 아래 선택지가 일부 빠져 있을 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒讀到供應商列表，下面的選項可能不完整。"
           }
         }
       }
@@ -50649,40 +51873,6 @@
         }
       }
     },
-    "搜索 API 地址" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search Base URL"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "URL base de búsqueda"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "検索 API アドレス"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "검색 API 주소"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "搜尋 API 網址"
-          }
-        }
-      }
-    },
     "搜索 Bot、群聊和私聊记录" : {
       "localizations" : {
         "en" : {
@@ -50883,6 +52073,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "搜尋外掛"
+          }
+        }
+      }
+    },
+    "搜索文件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search Files"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar archivos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルを検索"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일 검색"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜尋檔案"
           }
         }
       }
@@ -51121,6 +52345,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "搜尋自動化任務"
+          }
+        }
+      }
+    },
+    "搜索设置" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search Settings"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configuración de búsqueda"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "検索設定"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "검색 설정"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜尋設定"
           }
         }
       }
@@ -52826,6 +54084,40 @@
         }
       }
     },
+    "文件太多，或有目录没读到，结果可能不全。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Too many files, or a folder couldn’t be read, so results may be incomplete."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hay demasiados archivos o no se pudo leer alguna carpeta; los resultados pueden estar incompletos."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルが多すぎるか、読み取れなかったフォルダがあるため、結果が不完全な可能性があります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일이 너무 많거나 읽지 못한 폴더가 있어 결과가 일부 빠져 있을 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檔案太多，或有資料夾沒讀到，結果可能不完整。"
+          }
+        }
+      }
+    },
     "文件夹" : {
       "localizations" : {
         "en" : {
@@ -54109,40 +55401,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "開新對話，問它是做什麼的、能不能用"
-          }
-        }
-      }
-    },
-    "新版 Web 搜索 API" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "New Web Search API"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nueva API de búsqueda web"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しいWeb検索API"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "새 웹 검색 API"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新版 Web 搜尋 API"
           }
         }
       }
@@ -56212,6 +57470,40 @@
         }
       }
     },
+    "显示隐藏项" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show Hidden Items"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar elementos ocultos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隠し項目を表示"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "숨김 항목 표시"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "顯示隱藏項目"
+          }
+        }
+      }
+    },
     "智能体" : {
       "localizations" : {
         "en" : {
@@ -56299,6 +57591,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "AI 代理和你裝的第三方外掛都能使用這些能力，App 不區分是誰在呼叫。安裝外掛前請確認來源可信。"
+          }
+        }
+      }
+    },
+    "智能体团队协作" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agent Teamwork"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colaboración entre agentes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェント連携"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트 팀 협업"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 代理團隊協作"
+          }
+        }
+      }
+    },
+    "智能体团队协作的设置没有保存，请重试：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The agent teamwork setting wasn’t saved. Try again: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se guardó el ajuste de colaboración entre agentes. Inténtalo de nuevo: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェント連携の設定を保存できませんでした。もう一度お試しください: %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트 팀 협업 설정이 저장되지 않았어요. 다시 시도해 주세요: %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 代理團隊協作的設定沒有儲存，請重試：%@"
           }
         }
       }
@@ -57941,6 +59301,40 @@
         }
       }
     },
+    "最大延迟（毫秒）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Max delay (ms)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retraso máximo (ms)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最大遅延（ミリ秒）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최대 지연(밀리초)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最大延遲（毫秒）"
+          }
+        }
+      }
+    },
     "最大输出 token 数" : {
       "localizations" : {
         "en" : {
@@ -58039,6 +59433,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "最大遞迴深度"
+          }
+        }
+      }
+    },
+    "最大重试次数" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Max retries"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reintentos máximos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最大再試行回数"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최대 재시도 횟수"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最大重試次數"
           }
         }
       }
@@ -58583,6 +60011,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "未分組"
+          }
+        }
+      }
+    },
+    "未分配" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unassigned"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin asignar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未割り当て"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "미지정"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未指派"
           }
         }
       }
@@ -59335,40 +60797,6 @@
         }
       }
     },
-    "未配置时，只有 DeepSeek 账号模型的对话可以搜索。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Without it, only sessions using DeepSeek account models can search."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sin configurar, solo se pueden buscar las conversaciones con modelos de la cuenta de DeepSeek."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未設定の場合、DeepSeekアカウントのモデルを使う会話でのみ検索できます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "설정하지 않으면 DeepSeek 계정 모델을 사용하는 대화에서만 검색할 수 있어요."
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "未設定時，只有使用 DeepSeek 帳號模型的對話可以搜尋。"
-          }
-        }
-      }
-    },
     "本会话输入" : {
       "localizations" : {
         "en" : {
@@ -59467,6 +60895,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "本機服務"
+          }
+        }
+      }
+    },
+    "本机直接获取" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Direct fetch"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtención directa"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直接取得"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "직접 가져오기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本機直接擷取"
           }
         }
       }
@@ -64346,6 +65808,40 @@
         }
       }
     },
+    "此 API 协议仅接受 minimal、low、medium 和 high 档位，且每个档位的 API 参数值须与档位名称相同。请修改或删除其他档位。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This API protocol accepts only the minimal, low, medium, and high levels, each with its level name as the API value. Change or remove the other levels."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este protocolo de API solo acepta los niveles minimal, low, medium y high, cada uno con su nombre de nivel como valor de API. Cambia o elimina los demás niveles."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この API プロトコルで使用できるレベルは minimal、low、medium、high のみで、各レベルの API 値はレベル名と同じである必要があります。その他のレベルを変更または削除してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 API 프로토콜은 minimal, low, medium, high 수준만 받으며, 각 수준의 API 매개변수 값은 수준 이름과 같아야 해요. 다른 수준은 수정하거나 삭제하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此 API 協定僅接受 minimal、low、medium 和 high 等級，且每個等級的 API 參數值須與等級名稱相同。請修改或刪除其他等級。"
+          }
+        }
+      }
+    },
     "此 PDF 需要密码，暂不支持预览" : {
       "localizations" : {
         "en" : {
@@ -65684,6 +67180,108 @@
         }
       }
     },
+    "没搜 .gitignore 忽略的文件。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Files ignored by .gitignore weren’t searched."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se buscó en los archivos que ignora .gitignore."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ".gitignore で無視されるファイルは検索していません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ".gitignore가 무시하는 파일은 검색하지 않았어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒搜尋 .gitignore 忽略的檔案。"
+          }
+        }
+      }
+    },
+    "没搜 node_modules、dist、build 这类目录。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Folders such as node_modules, dist, and build weren’t searched."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se buscó en carpetas como node_modules, dist o build."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "node_modules、dist、build などのフォルダは検索していません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "node_modules, dist, build 같은 폴더는 검색하지 않았어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒搜尋 node_modules、dist、build 這類資料夾。"
+          }
+        }
+      }
+    },
+    "没搜隐藏项。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hidden items weren’t searched."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se buscó en los elementos ocultos."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隠し項目は検索していません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "숨김 항목은 검색하지 않았어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒搜尋隱藏項目。"
+          }
+        }
+      }
+    },
     "没有 Bot 可用" : {
       "localizations" : {
         "en" : {
@@ -66054,6 +67652,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "沒有符合的元件。"
+          }
+        }
+      }
+    },
+    "没有匹配项" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Matches"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin coincidencias"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一致する項目はありません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "일치하는 항목이 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒有符合的項目"
           }
         }
       }
@@ -67040,6 +68672,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "活躍時長"
+          }
+        }
+      }
+    },
+    "派生子智能体" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fork subagent"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crear subagente (heredar contexto)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サブエージェントを作成（コンテキストを継承）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하위 에이전트 만들기(컨텍스트 상속)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "衍生子代理"
+          }
+        }
+      }
+    },
+    "流提前结束" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stream closed early"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flujo cerrado antes de tiempo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ストリームの途中終了"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스트림 조기 종료"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "串流提前結束"
           }
         }
       }
@@ -68274,40 +69974,6 @@
         }
       }
     },
-    "清空搜索" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Clear search"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Borrar búsqueda"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "検索をクリア"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "검색 지우기"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "清空搜尋"
-          }
-        }
-      }
-    },
     "清空记录" : {
       "localizations" : {
         "en" : {
@@ -69130,6 +70796,40 @@
         }
       }
     },
+    "用「模型」里填的 DeepSeek API Key，要先填好。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uses the DeepSeek API key entered in Models; add it there first."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa la clave de API de DeepSeek indicada en «Modelos»; añádela primero allí."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「モデル」で入力した DeepSeek API キーを使います。先に入力しておいてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「모델」에 입력한 DeepSeek API 키를 사용해요. 먼저 입력해 두세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用「模型」裡填的 DeepSeek API Key，要先填好。"
+          }
+        }
+      }
+    },
     "用令牌连接" : {
       "localizations" : {
         "en" : {
@@ -69194,6 +70894,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "使用你在「模型」中填寫的 DeepSeek API Key，沒有 Key 時使用已登入的 DeepSeek 帳號（DeepSeek 目前還不支援以帳號登入使用語音），費用由 DeepSeek 依錄音長度收取。放開後整段辨識，說話時不顯示文字。錄音直接傳給 DeepSeek 辨識，App 不儲存錄音。"
+          }
+        }
+      }
+    },
+    "用共享任务板协调多个智能体的分工，复杂任务表现更好，token 开销也更高。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coordinates work across agents with a shared task board: better results on complex tasks, at a higher token cost."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coordina el trabajo de varios agentes con un tablero de tareas compartido: mejores resultados en tareas complejas, con un mayor coste en tokens."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共有タスクボードで複数のエージェントの分担を調整します。複雑なタスクで成果が上がる一方、トークンの消費も増えます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공유 작업 보드로 여러 에이전트의 분담을 조율해요. 복잡한 작업에서 결과가 더 좋지만 토큰도 더 많이 써요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用共享任務板協調多個 AI 代理的分工，複雜任務表現更好，token 開銷也更高。"
           }
         }
       }
@@ -69538,6 +71272,40 @@
         }
       }
     },
+    "由 Agent 打开。你一输入就由你接管，Agent 之后只能读取。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opened by the agent. Typing here takes over; the agent can then only read it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abierto por el agente. Al escribir aquí tomas el control; después el agente solo podrá leerlo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントが開きました。ここで入力すると操作を引き継ぎ、以後エージェントは読み取りのみ可能になります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트가 열었어요. 여기에 입력하면 제어권을 가져오고, 그 뒤로 에이전트는 읽기만 할 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "由 Agent 開啟。你一輸入就由你接管，Agent 之後只能讀取。"
+          }
+        }
+      }
+    },
     "由 Agent 预设按会话组成" : {
       "localizations" : {
         "en" : {
@@ -69568,6 +71336,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "由 Agent 預設組合依對話組成"
+          }
+        }
+      }
+    },
+    "由插件提供，到该插件自己的设置里配置。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Provided by a plugin. Configure it in that plugin’s own settings."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo proporciona un complemento. Configúralo en los ajustes de ese complemento."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プラグインが提供しています。そのプラグイン自身の設定で構成してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "플러그인이 제공해요. 해당 플러그인의 설정에서 구성하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "由外掛提供，請到該外掛自己的設定裡設定。"
           }
         }
       }
@@ -70828,6 +72630,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "確認"
+          }
+        }
+      }
+    },
+    "确认停用" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn Off"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desactivar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無効にする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "끄기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確認停用"
+          }
+        }
+      }
+    },
+    "确认停用智能体团队协作？" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn off agent teamwork?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Desactivar la colaboración entre agentes?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェント連携を無効にしますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트 팀 협업을 끌까요?"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確認停用 AI 代理團隊協作？"
           }
         }
       }
@@ -72754,40 +74624,6 @@
         }
       }
     },
-    "等待子智能体" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wait for subagent"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Espera al subagente"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "サブエージェントを待機中"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "하위 에이전트 대기"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "等待子代理"
-          }
-        }
-      }
-    },
     "等待扫码…" : {
       "localizations" : {
         "en" : {
@@ -72818,6 +74654,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "等待掃描…"
+          }
+        }
+      }
+    },
+    "等待消息" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wait for messages"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esperar mensajes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "メッセージを待機"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "메시지 대기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "等待訊息"
           }
         }
       }
@@ -75481,6 +77351,40 @@
         }
       }
     },
+    "网页搜索与获取" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web Search and Fetch"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Búsqueda y obtención web"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web 検索と取得"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "웹 검색 및 가져오기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "網頁搜尋與擷取"
+          }
+        }
+      }
+    },
     "网页版" : {
       "localizations" : {
         "en" : {
@@ -75579,40 +77483,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "網頁擷取"
-          }
-        }
-      }
-    },
-    "网页获取 API 地址" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Web Fetch Base URL"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "URL base de obtención de páginas"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Web 取得 API アドレス"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "웹 가져오기 API 주소"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "網頁擷取 API 網址"
           }
         }
       }
@@ -76773,6 +78643,40 @@
         }
       }
     },
+    "自动" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatic"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automático"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自動"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자동"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自動"
+          }
+        }
+      }
+    },
     "自动化" : {
       "localizations" : {
         "en" : {
@@ -77351,6 +79255,40 @@
         }
       }
     },
+    "自定义错误码" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom error code"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Código de error personalizado"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カスタムエラーコード"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용자 지정 오류 코드"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自訂錯誤碼"
+          }
+        }
+      }
+    },
     "自己记的" : {
       "localizations" : {
         "en" : {
@@ -77857,6 +79795,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "表單"
+          }
+        }
+      }
+    },
+    "被依赖阻塞" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blocked by dependencies"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bloqueada por dependencias"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "依存関係によりブロック中"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "의존 작업으로 막힘"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "被相依任務阻擋"
           }
         }
       }
@@ -79274,40 +81246,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "設定"
-          }
-        }
-      }
-    },
-    "设置 DeepSeek 的搜索提供方。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Set up the DeepSeek search provider."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Configura el proveedor de búsqueda de DeepSeek."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "DeepSeekの検索プロバイダを設定します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "DeepSeek 검색 제공자를 설정해요."
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "設定 DeepSeek 的搜尋供應商。"
           }
         }
       }
@@ -80944,6 +82882,40 @@
         }
       }
     },
+    "请填正整数；留空表示使用默认值。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a positive integer, or leave blank to use the default."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingresa un número entero positivo; déjalo en blanco para usar el valor predeterminado."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正の整数を入力してください。空欄にするとデフォルト値を使用します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "양의 정수를 입력하세요. 비워 두면 기본값을 사용해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請填正整數；留空表示使用預設值。"
+          }
+        }
+      }
+    },
     "请安装与当前 DSH 兼容的插件版本。" : {
       "localizations" : {
         "en" : {
@@ -81416,6 +83388,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "請求連接服務"
+          }
+        }
+      }
+    },
+    "请求限流" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rate limited"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Límite de frecuencia"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "レート制限"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "요청 제한"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請求頻率限制"
           }
         }
       }
@@ -82780,6 +84786,40 @@
         }
       }
     },
+    "负责人" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Owner"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Responsable"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オーナー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "담당자"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "負責人"
+          }
+        }
+      }
+    },
     "负责什么，比如：查资料、给出处" : {
       "localizations" : {
         "en" : {
@@ -83052,6 +85092,40 @@
         }
       }
     },
+    "超时" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timeout"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiempo agotado"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タイムアウト"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시간 초과"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "逾時"
+          }
+        }
+      }
+    },
     "跟着这个连接" : {
       "localizations" : {
         "en" : {
@@ -83154,6 +85228,40 @@
         }
       }
     },
+    "跟随当前对话用的 DeepSeek 账号或 API Key；对话用其他模型时，先用 API Key，没有再用已登录的账号。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follows the DeepSeek account or API key the conversation is using. When the conversation uses another model, the API key is tried first, then the signed-in account."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sigue la cuenta o la clave de API de DeepSeek que usa la conversación. Si la conversación usa otro modelo, primero se usa la clave de API y, si no hay, la cuenta con la que iniciaste sesión."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会話が使っている DeepSeek アカウントまたは API キーに従います。会話が別のモデルを使っている場合は、まず API キーを使い、なければサインイン中のアカウントを使います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화가 쓰는 DeepSeek 계정이나 API 키를 따라가요. 대화가 다른 모델을 쓰면 먼저 API 키를 쓰고, 없으면 로그인한 계정을 써요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟隨目前對話用的 DeepSeek 帳號或 API Key；對話用其他模型時，先用 API Key，沒有再用已登入的帳號。"
+          }
+        }
+      }
+    },
     "跟随系统" : {
       "localizations" : {
         "en" : {
@@ -83252,6 +85360,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "略過"
+          }
+        }
+      }
+    },
+    "跳过 .gitignore 忽略的文件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip Files Ignored by .gitignore"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Omitir archivos que ignora .gitignore"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ".gitignore で無視されるファイルをスキップ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ".gitignore가 무시하는 파일 건너뛰기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "略過 .gitignore 忽略的檔案"
           }
         }
       }
@@ -88742,6 +90884,40 @@
         }
       }
     },
+    "选择搜索和读取网页各用哪个提供方。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose the provider for searching and for reading web pages."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige el proveedor para buscar y para leer páginas web."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "検索と Web ページの読み取りに使うプロバイダーをそれぞれ選びます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "검색과 웹 페이지 읽기에 각각 쓸 제공자를 골라요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選擇搜尋和讀取網頁各用哪個供應商。"
+          }
+        }
+      }
+    },
     "选择文件夹" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -90227,6 +92403,74 @@
         }
       }
     },
+    "重试策略" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry Policy"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Política de reintentos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "再試行ポリシー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "재시도 정책"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重試策略"
+          }
+        }
+      }
+    },
+    "重试策略：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry policy: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Política de reintentos: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "再試行ポリシー: %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "재시도 정책: %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重試策略：%@"
+          }
+        }
+      }
+    },
     "钉钉" : {
       "localizations" : {
         "en" : {
@@ -90393,6 +92637,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "錯誤"
+          }
+        }
+      }
+    },
+    "错误码" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error Codes"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Códigos de error"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エラーコード"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오류 코드"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "錯誤碼"
           }
         }
       }
@@ -91073,6 +93351,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "隱藏金鑰"
+          }
+        }
+      }
+    },
+    "隐藏项未显示" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hidden Items Not Shown"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elementos ocultos no mostrados"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隠し項目は表示されていません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "숨김 항목은 표시되지 않아요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "隱藏項目未顯示"
           }
         }
       }
@@ -95618,6 +97930,40 @@
         }
       }
     },
+    "搜索失败：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search failed: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error en la búsqueda: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "検索に失敗しました: %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "검색에 실패했어요: %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜尋失敗：%@"
+          }
+        }
+      }
+    },
     "改动的文件" : {
       "localizations" : {
         "en" : {
@@ -96090,6 +98436,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "伺服器傳回的網址無效"
+          }
+        }
+      }
+    },
+    "服务器错误" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Server error"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error del servidor"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サーバーエラー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "서버 오류"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "伺服器錯誤"
           }
         }
       }
@@ -99020,6 +101400,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "結束遠端控制？"
+          }
+        }
+      }
+    },
+    "退避" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backoff"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retroceso"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バックオフ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "백오프"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退避"
           }
         }
       }
@@ -102562,6 +104976,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "網路連線失敗，請稍後再試。"
+          }
+        }
+      }
+    },
+    "网络错误" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Network error"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error de red"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ネットワークエラー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "네트워크 오류"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "網路錯誤"
           }
         }
       }

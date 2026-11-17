@@ -86,6 +86,12 @@ struct SessionHeaderActions: View {
         let schedules = app.activeSchedules(of: sessionId)
         if !subagents.isEmpty {
             entries.append(Entry(sheet: .subagents, icon: "person.2", dot: running > 0, label: running > 0 ? Text("\(subagents.count) 个子智能体，正在运行") : Text("\(subagents.count) 个子智能体")))
+        } else {
+            // A team's task board lives under the subagents; with tasks and no member yet, it is the entry.
+            let board = app.teamBoard(of: sessionId)
+            if !board.tasks.isEmpty || board.failure != nil {
+                entries.append(Entry(sheet: .subagents, icon: "checklist", dot: false, label: Text("任务板")))
+            }
         }
         if !schedules.isEmpty {
             entries.append(Entry(sheet: .reminders, icon: "clock", dot: false, label: Text("\(schedules.count) 个提醒")))

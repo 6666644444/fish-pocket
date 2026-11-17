@@ -158,7 +158,7 @@ struct OfficialPluginItem: Identifiable {
             items.append(.init(page: .subagent, title: String(localized: "子智能体"), summary: String(localized: "设置子智能体的递归层级、数量和模型。"), glyph: "person.2"))
         }
         if mirror.serves("web") || mirror.serves("web-search-deepseek") {
-            items.append(.init(page: .webSearch, title: String(localized: "网页搜索"), summary: String(localized: "设置 DeepSeek 的搜索提供方。"), glyph: "magnifyingglass"))
+            items.append(.init(page: .webSearch, title: String(localized: "网页搜索与获取"), summary: String(localized: "选择搜索和读取网页各用哪个提供方。"), glyph: "magnifyingglass"))
         }
         if mirror.serves("agent-loop") {
             items.append(.init(page: .agentLoop, title: String(localized: "Agent 循环"), summary: String(localized: "控制 Agent 派发工具调用的方式。"), glyph: "arrow.triangle.2.circlepath"))

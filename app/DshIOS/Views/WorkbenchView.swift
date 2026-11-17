@@ -112,7 +112,8 @@ private struct WorkbenchTerminal: View {
     let sessionId: String
     @Environment(AppModel.self) private var app
     @State private var connection: TerminalConnection?
-    @State private var terminals: [(id: String, title: String, exited: Bool)] = []
+    /// `agent`: the Agent opened it (`origin`, with the experimental terminal bundle's tools).
+    @State private var terminals: [(id: String, title: String, exited: Bool, agent: Bool)] = []
     @State private var error: String?
     @State private var renaming = false
     @State private var newTitle = ""
@@ -164,6 +165,12 @@ private struct WorkbenchTerminal: View {
         // Edge to edge: every column of a phone's width goes to the terminal.
         .background(Palette.grouped.ignoresSafeArea())
         .task { await reload() }
+        // The session's terminals as they come and go, the Agent's included (`terminal/watch`).
+        .task(id: app.generation) {
+            do {
+                for try await frame in app.mux.open("terminal/watch", ["sessionId": .string(sessionId)]) { show(frame.array) }
+            } catch {}
+        }
         .task(id: app.revision("settings/document-updated")) { await loadFontSize() }
         // The attachment does not survive a dropped connection; the new one brings a fresh screen.
         .onChange(of: app.generation) { _, _ in if connection?.phase == .disconnected { connection?.connect() } }
@@ -194,6 +201,15 @@ private struct WorkbenchTerminal: View {
                     status(String(localized: "终端错误：\(message)"), "重试") { connection.connect() }
                 case .connected where !connection.writable:
                     status(String(localized: "此终端当前只读。"), "接管输入") { connection.connect() }
+                case .connected where connection.info["origin"].string == "agent":
+                    // The Agent's terminal: what typing here does, and whose sandbox its commands run in.
+                    if connection.info["control"].string == "agent" {
+                        status(String(localized: "由 Agent 打开。你一输入就由你接管，Agent 之后只能读取。"), nil) {}
+                    } else if connection.info["sandboxMode"].string == "read-only" {
+                        status(String(localized: "命令在 Agent 的只读沙箱里运行，包括你在这里输入的命令。"), nil) {}
+                    } else if connection.info["sandboxMode"].string == "workspace-write" {
+                        status(String(localized: "命令在 Agent 的工作区沙箱里运行，包括你在这里输入的命令。"), nil) {}
+                    }
                 default:
                     EmptyView()
                 }
@@ -217,7 +233,8 @@ private struct WorkbenchTerminal: View {
         Menu {
             ForEach(terminals, id: \.id) { terminal in
                 Button { attach(terminal.id) } label: {
-                    let title = terminal.exited ? String(localized: "\(terminal.title)（已退出）") : terminal.title
+                    let name = terminal.agent ? "\(terminal.title) · Agent" : terminal.title
+                    let title = terminal.exited ? String(localized: "\(name)（已退出）") : name
                     if terminal.id == current { Label(title, systemImage: "checkmark") } else { Text(title) }
                 }
             }
@@ -249,8 +266,12 @@ private struct WorkbenchTerminal: View {
 
     private func loadTerminals() async -> [JSON] {
         let list = (try? await app.client.call("terminal/list", ["sessionId": .string(sessionId)]))?.array ?? []
-        terminals = list.map { ($0["id"].string ?? "", $0["title"].string ?? "bash", $0["state"].string != "running") }
+        show(list)
         return list
+    }
+
+    private func show(_ list: [JSON]) {
+        terminals = list.map { ($0["id"].string ?? "", $0["title"].string ?? "bash", $0["state"].string != "running", $0["origin"].string == "agent") }
     }
 
     private func reload() async {

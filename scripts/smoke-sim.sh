@@ -49,7 +49,7 @@ if [ "${SMOKE_SCREENS:-full}" = key ]; then
 else
   screens=(home drawer settings plugins store schedules signin support share watch connectors
            whatsnew capabilities phonecontrol remote start fishpocket topup miniapps workbench
-           approval question timeline)
+           filesearch approval question timeline)
 fi
 # The engine prints its URL with the launch token into the app's data container;
 # every launch has a new token, so a 303 means this launch's engine is up.
