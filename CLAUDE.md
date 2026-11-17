@@ -83,6 +83,21 @@
 - **GitHub 的编译检查**在合进 `main` 或 `release` 的 PR 上跑，合进 `main` 后再跑一次；推到 `release` 不跑，因为推上去的都是检查过的提交。
 - **GitHub 的编译检查用 Xcode 27.2**（`.github/workflows/ios-build.yml`，运行器是 `xcode-27`），和本机、Xcode Cloud 是同一代。它停在旧版本时出过一次事：本机和 Xcode Cloud 都能编的代码，旧编译器报「无法在合理时间内完成类型检查」。本机升级 Xcode 后，把工作流里的版本一起改；README「快速开始」里写的最低 Xcode 版本也跟着它走，因为没有别的地方验证更老的版本。
 
+## 引擎或插件升级后的回归
+
+**只要动了 `@deepseek-ai/dsh` 或 ds-bot 的版本，就必须在模拟器上把主体流程走一遍**，不能只跑单测和编译。它们的改动会从引擎接口、客户端槽位、插件装配一路影响到原生页面，单测和编译都看不出来。
+
+顺序：
+
+1. `scripts/build-engine.sh` 收紧，`cd engine && node --test test/*.test.mjs` 全绿（macOS 上先跑 `scripts/build-git-addon.sh`，否则 git 那项会报不存在）。
+2. `scripts/run-sim.sh` 编译、安装，`scripts/smoke-sim.sh` 在已装好的模拟器上把 `-dshOpen` 能到的每个页面截图，并断言 bundle 里的 DSH / ds-bot 版本、`ds-bot` 行无错、`/api/bot` 有响应、会话列表可读。
+3. `scripts/smoke-matrix.sh` 把同一份截图和断言在每个 iOS 版本上各跑一台 iPhone 加一台 iPad，外加 iPhone Duo（Duo 开合走的是另一套布局）。各设备用各自的引擎端口并行跑，截图为 `key` 那几张。
+4. **截图要自己逐张看**，脚本只保证页面起得来、数据没报错。重点看：会话首页、插件页（实验性插件列表里新版本带来的条目）、设置、计划任务、连接器、本机能力、小工具、新功能页，以及 iPad / Duo 上的分栏和 Tab 布局。
+5. 真跑一条会话链路：新建会话发一句「用 bash 运行 node -e "console.log(6*7)"，然后一句话告诉我结果」，确认工具卡片、流式回复、自动标题都正常。这条路径覆盖模型调用、工具执行、会话持久化，是升级最容易坏的一条。
+6. Bot 相关的确认：Bot Tab 与 Bot 聊天要人工点一遍（脚本只能验到 `/api/bot` 有响应、`bot` 行已挂载），ds-bot 网页版在 Safari 里打开引擎地址也应该能出 Bot 列表。
+
+以下这些脚本覆盖不到，靠人工点：Bot Tab / Bot 聊天的完整交互、输入框打字与发送、小工具里点开示例（`dsh://` 从外部打开会弹系统确认框）、分享扩展、手表。以后要自动化它们，给模拟器装一套 UI 驱动（AXe）比加 XCTest target 省事。
+
 ## 内置 skill：iOS 环境说明
 
 `engine/skills/ios-environment/` 随 App 打包，App 里的 Agent 靠它判断这台「iOS 沙盒」里能做什么、不能做什么。它写错了，Agent 就会去试不存在的命令，或者放弃本来能做的事。
@@ -173,6 +188,7 @@ Bot 功能的后台是内置的 ds-bot 插件，版本锁定在 `engine/plugins/
 - 只调用它的接口（`/api/bot`、`/api/bot/feed`），不使用、不移植它的前端代码（`client.js` 和它的界面组件）。
 - 它网页版的设计只作参考借鉴。原生界面要自己设计，交互做得比它更好，不照搬它的布局和流程。
 - ds-bot 网页版能做的事，都要用原生界面做。网页版入口可以保留，但只作为次要的备用入口，不能让用户依赖它完成主要操作。
+- 它的 peer 依赖全是 `*`，而 npm 上 `@deepseek-ai/dsh-llm`、`dsh-scope`、`dsh-tools`、`dsh-web`、`dsh-typert-protocol` 的 `latest` 标签还停在 `0.0.1-rc.x` 占位版。所以 `engine/package.json` 用 `overrides` 把它们钉成引擎自己的 DSH 版本；升级 `@deepseek-ai/dsh` 时这几行要一起改，否则会装出一棵顶层是占位版的树。
 
 ## Bot 的内置形象
 
