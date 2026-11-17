@@ -19,13 +19,14 @@
 | [pnpm](https://github.com/pnpm/pnpm) | 11.28.5 | MIT | Rico Sta. Cruz、Zoltan Kochan 及贡献者 | 插件安装 |
 | [DS Bot](https://github.com/Fei2411/DS-Bot)（`ds-bot`） | 0.3.8 | Apache-2.0 | Copyright 2026 Fei2411 and the DS Bot contributors | Bot 功能的后台，内置在引擎里 |
 | [Simple Icons](https://github.com/simple-icons/simple-icons) | 16.37.0 | CC0-1.0 | Simple Icons 贡献者 | Bot 连接器页面的品牌图标 |
-| [page-agent](https://github.com/alibaba/page-agent)（`@page-agent/page-controller`） | 1.12.4 | MIT | Copyright (c) 2026 SimonLuvRamen, Copyright (c) 2026 Alibaba Group Holding Limited | 智能体操作浏览器时读网页、点击和输入 |
+| [page-agent](https://github.com/alibaba/page-agent)（`@page-agent/page-controller`、`@page-agent/ui`） | 1.12.4 | MIT | Copyright (c) 2026 SimonLuvRamen, Copyright (c) 2026 Alibaba Group Holding Limited | 智能体操作浏览器时读网页、点击和输入，操作时网页上的光效、指针和状态面板 |
+| [ai-motion](https://www.npmjs.com/package/ai-motion) | 0.4.8 | MIT | Copyright (c) 2025 Simon | page-agent 遮罩层的动态光效 |
 | [React](https://github.com/facebook/react)（`react`、`react-dom`、`scheduler`） | 18.3.1 | MIT | Copyright (c) Meta Platforms, Inc. and affiliates | 「我的应用」里的小应用用的 React |
 | [Sucrase](https://github.com/alangpierce/sucrase) | 3.35.1 | MIT（打包进来的依赖 `ts-interface-checker` 为 Apache-2.0，其余为 MIT） | Copyright (c) 2012-2018 various contributors | 在手机上把小应用的 JSX、TypeScript 编译成 JavaScript |
 
 Simple Icons 是上面这句话的例外：用到的 28 个图标以 SVG 文件直接放在仓库里（`app/DshIOS/Assets.xcassets/Connectors`）。CC0 只覆盖图标文件本身，各图标仍是其品牌方的商标，App 里只用来标明连接的是哪家服务。
 
-page-agent 也是例外：`scripts/build-page-controller.sh` 把它的 page controller 和本仓库的一小段包装打成一个脚本，提交在 `app/DshIOS/Browser/PageController.js`，文件开头保留了它的 MIT 许可证全文。没有改动它的源码，只是没打包它的遮罩层（自动操作时挡住页面的那层）。它的页面结构提取移植自 [browser-use](https://github.com/browser-use/browser-use)（MIT）。
+page-agent 也是例外：`scripts/build-page-controller.sh` 把它的 page controller、遮罩层（自动操作时罩在页面上的光效和指针）、状态面板，连同遮罩层依赖的 ai-motion 和本仓库的一小段包装打成一个脚本，提交在 `app/DshIOS/Browser/PageController.js`，文件开头保留了 page-agent 和 ai-motion 的 MIT 许可证全文。没有改动它们的源码，只是在页面上加了一条样式，让遮罩层不挡用户的点按，用户随时可以接手。它的页面结构提取移植自 [browser-use](https://github.com/browser-use/browser-use)（MIT）。
 
 React 和 Sucrase 同样不走 npm 包：`scripts/build-mini-app-runtime.sh` 把它们打成几个脚本，提交在 `app/DshIOS/MiniApps/Runtime`，每个文件开头保留了所含各包的许可证全文。没有改动它们的源码。
 
