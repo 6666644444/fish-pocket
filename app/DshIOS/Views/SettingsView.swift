@@ -176,6 +176,7 @@ struct SettingsView: View {
                         linkRow("给个评分", "heart", "App Store", AppLinks.writeReview)
                     }
                     linkRow("官网", "safari", AppLinks.site.host() ?? "", AppLinks.site)
+                    linkRow("加入公测", "paperplane","TestFlight", AppLinks.testFlight)
                     linkRow("开源仓库", "chevron.left.forwardslash.chevron.right", UpdateChecker.repository, Self.repositoryURL)
                     linkRow("问题反馈", "exclamationmark.bubble", "GitHub Issues", Self.issuesURL)
                     // The site's picture is swapped in place when the 7-day code expires: always the current one.
