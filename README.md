@@ -18,7 +18,7 @@
   <b>还有三个大功能：<a href="#操控手机">操控手机</a>，让智能体替你点按其他 App；<a href="#bot-模式">Bot 模式</a>，一支原生界面的常驻 Bot 团队；<a href="#远程控制">远程控制</a>，在手机上管电脑和服务器里的 Codex、Claude Code 和 DSH 会话。</b>
 </p>
 
-<p align="center">如果你也想把大肥鱼装进口袋，<a href="https://testflight.apple.com/join/2SCftb2M"><b>加入 TestFlight 公测</b></a>（推荐，全球可用）或<a href="https://apps.apple.com/app/id6830703602">从 App Store 下载</a>（非中国大陆），再点个 ⭐ 支持一下吧。</p>
+<p align="center">如果你也想把大肥鱼装进口袋，<a href="https://apps.apple.com/app/id6830703602"><b>从 App Store 下载</b></a>，再点个 ⭐ 支持一下吧。想先试新版本的话，可以<a href="https://testflight.apple.com/join/2SCftb2M">加入 TestFlight 公测</a>。</p>
 
 <p align="center"><a href="https://fish.deepseek1024.com">官网</a> · <a href="README.en.md">English</a></p>
 
@@ -136,8 +136,8 @@ GitHub、Notion 这些服务在连接器里连一次，普通会话和 Bot 都�
 
 直接安装，需要 iOS 17 或更高版本：
 
-- **TestFlight（推荐，全球可用）**：在 iPhone 或 iPad 上打开 [TestFlight 公测链接](https://testflight.apple.com/join/2SCftb2M)。新版本最先发到这里，和开源仓库保持同步。
-- **App Store（非中国大陆）**：[在 App Store 下载](https://apps.apple.com/app/id6830703602)。目前只在中国大陆以外的地区上架。App Store 每个版本都要等审核，所以会比 TestFlight 和开源仓库晚一些。
+- **App Store（推荐）**：[在 App Store 下载](https://apps.apple.com/app/id6830703602)。每个版本都要等苹果审核，所以会比 TestFlight 和开源仓库晚一些。
+- **TestFlight（想先试新版本）**：在 iPhone 或 iPad 上打开 [TestFlight 公测链接](https://testflight.apple.com/join/2SCftb2M)。新版本最先发到这里，和开源仓库保持同步。
 
 自己编译：你需要 macOS、Xcode 27 或更高版本、Node 24 和 `xcodegen`，构建 libgit2 还需要 `cmake` 或 `uv`。要在 iPhone Duo 上铺满屏幕，需要用 Xcode 27.1 或更高版本编译，更早的版本编出来的包在 Duo 上只按普通 iPhone 的大小显示。
 
@@ -212,7 +212,7 @@ App 免费，代码以 MIT 协议开源，商用需要先取得授权，见[许�
 
 ### 中国大陆能用吗？
 
-能。用 TestFlight 公测安装，全球可用，包括中国大陆。App Store 版目前只在中国大陆以外的地区上架。
+能。在 App Store 下载就行。想先试新版本的话，也可以用 TestFlight 公测。
 
 ### 我的对话和代码会被上传吗？
 
