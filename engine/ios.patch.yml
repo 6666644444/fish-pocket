@@ -35,8 +35,18 @@
 - id: session-telemetry-otel
   disabled: true
 
-# LibreOffice ships macOS/Windows binaries and a wasm build; neither runs here.
-- id: office-to-pdf
+# LibreOffice ships macOS/Windows binaries and a wasm build; neither runs here
+# (scripts/build-engine.sh prunes them), so Office rendering, conversion and
+# recalculation are off, in the web UI's preview and for the model: the presets'
+# office_* tools need this service and stay unregistered without it. The Office
+# skills go with it: they turn those tools on and write files with python-docx
+# and python-pptx, which need lxml, a compiled extension pip cannot install
+# here (skills/ios-environment says so). 0.2.2-rc.3 renamed `office-to-pdf` to `office-kit`; a patch for an id
+# that no longer exists is skipped without a word at run time, so
+# test/ios-patch.test.mjs checks every id here against the composed profile.
+- id: office-kit
+  disabled: true
+- id: skill-office
   disabled: true
 
 # The first-use workspace lives under <Documents>/deepseek-harness; darwin
@@ -54,12 +64,21 @@
 # what it has). Applied after the profile layer, this
 # config replaces the profile's `bot` config. Without ds-bot installed, the
 # loader only warns that `bot` is absent.
+# Two things 0.3.8 turns on by itself stay off, as they were before it:
+# - memoryTidy: every half hour it has a model merge and move entries of the
+#   memories that changed. That spends the user's key or credits unasked, and the
+#   app has no screen for its undo (`memory-tidy-undo`).
+# - commandShield: it replaces every DSH slash command in a Bot's chat with an
+#   English refusal. The app already hides the ones a Bot must not run
+#   (BotComposer.hiddenCommands); the shield would only break /export there.
 - id: bot
   name: ds-bot
   config:
     updateCheck: false
     mainName: 大肥鱼
     mainRole: ''
+    memoryTidy: false
+    commandShield: false
 
 - insert:
     - id: subprocess-ios

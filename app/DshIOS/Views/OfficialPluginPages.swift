@@ -497,8 +497,11 @@ private struct WebSearchSettingsPage: View {
         .init(key: "baseURL", kind: .text),
         .init(key: "maxUses", kind: .number { _ in true }),
     ])
+    // 0.2.2-rc.3 gave searching and page reading an endpoint and a key reference each; the one
+    // `baseURL` and `apiKeyEnv` they shared are no longer fields, and writing them is refused.
     @State private var api = StagedForm(ns: "web-deepseek-api", specs: [
-        .init(key: "baseURL", kind: .text),
+        .init(key: "searchBaseURL", kind: .text),
+        .init(key: "fetchBaseURL", kind: .text),
         .init(key: "count", kind: .number { $0.rounded() == $0 && (1...50).contains($0) }, invalid: String(localized: "请填 1–50 的整数；留空表示使用默认值。")),
     ])
     @State private var selection = StagedForm(ns: "web", specs: [.init(key: "searchProvider", kind: .text), .init(key: "fetchProvider", kind: .text)])
@@ -516,8 +519,8 @@ private struct WebSearchSettingsPage: View {
     private var searchApi: Bool { switchAvailable && selection.text("searchProvider", mirror) == Self.providers.search.api }
     /// The section a key is written for: the selected one's reference, or the default.
     private var ref: String {
-        let ns = searchApi ? "web-deepseek-api" : "web-search-deepseek"
-        return mirror.namespace(ns)?["value"]["apiKeyEnv"].string.flatMap { $0.isEmpty ? nil : $0 } ?? "DEEPSEEK_API_KEY"
+        let named = searchApi ? mirror.namespace("web-deepseek-api")?["value"]["searchApiKeyEnv"] : mirror.namespace("web-search-deepseek")?["value"]["apiKeyEnv"]
+        return named?.string.flatMap { $0.isEmpty ? nil : $0 } ?? "DEEPSEEK_API_KEY"
     }
     private var available: Bool { mirror.serves("web-search-deepseek") || mirror.serves("web-deepseek-api") }
     private var dirty: Bool { messages.dirty || api.dirty || selection.dirty || !keyDraft.isEmpty }
@@ -564,7 +567,8 @@ private struct WebSearchSettingsPage: View {
         Form {
             Section {
                 if searchApi {
-                    StagedField(form: api, key: "baseURL", title: "API 地址", keyboard: .URL)
+                    StagedField(form: api, key: "searchBaseURL", title: "搜索 API 地址", keyboard: .URL)
+                    StagedField(form: api, key: "fetchBaseURL", title: "网页获取 API 地址", keyboard: .URL)
                     StagedField(form: api, key: "count", title: "每次搜索结果数")
                 } else {
                     StagedField(form: messages, key: "baseURL", title: "API 地址", keyboard: .URL)

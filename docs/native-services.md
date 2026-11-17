@@ -707,7 +707,7 @@ Apple 对 HealthKit 数据有硬条款：不得用于广告或基于使用的数
 | `app/DshIOS/PrivacyInfo.xcprivacy` | **待定，没动，见下。** |
 | `PRIVACY.md` | ✅ 已改：本机数据不另存、每次现读；使用记录留在本机可查可清；日历和提醒会随对话发给模型服务商（中英两版都改了） |
 | `engine/skills/ios-environment/SKILL.md` | ✅ 已改：日历和提醒两行、写操作要确认、`notify` 和 `reminders` 怎么选、被拒和「仅添加」怎么说 |
-| `docs/webui/parity.md` | ✅ 已改：新增 §3.3「本项目自有扩展」 |
+| `docs/webui/parity.md` | ✅ 已改：新增「本项目自有扩展」一节（现在是 §3.4；之后引擎升级插入 §3.3，顺延了编号） |
 | `docs/webui/settings-plugins.md` | ✅ 已改：`installTrust` 文案按 §4.1.1 加了本机能力那半句 |
 | `app/project.yml` + `InfoPlist.xcstrings` | ✅ 已改：日历和提醒两条用途描述，中英西三语 |
 

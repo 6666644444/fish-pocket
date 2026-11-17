@@ -8,7 +8,7 @@
 
 | 组件 | 版本 | 许可证 | 版权方 | 用途 |
 |---|---|---|---|---|
-| [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（`@deepseek-ai/dsh` 及其插件包） | 0.2.2-rc.1 | MIT | Copyright (c) 2026 DeepSeek | 引擎 |
+| [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（`@deepseek-ai/dsh` 及其插件包） | 0.2.2-rc.3 | MIT | Copyright (c) 2026 DeepSeek | 引擎 |
 | [nodejs-mobile](https://github.com/digidem/nodejs-mobile)（digidem 分支，上游为 [nodejs-mobile/nodejs-mobile](https://github.com/nodejs-mobile/nodejs-mobile)） | 24.20.0-0 | Node.js 许可证（MIT 及其捆绑组件的各自许可证） | Node.js 贡献者等 | 内嵌 Node 运行时，以预编译的 `NodeMobile.xcframework` 下载 |
 | [just-bash](https://github.com/vercel-labs/just-bash) | 3.6.0 | Apache-2.0 | Copyright 2025 Vercel Inc. | bash 解释器和内置命令 |
 | [CPython](https://github.com/python/cpython)（python.org 的 iOS 构建） | 3.15.2 | PSF 许可证第 2 版（及其捆绑组件的各自许可证） | Copyright (c) 2001 Python Software Foundation 等 | 内嵌 Python 运行时，以预编译的 `Python.xcframework` 下载，含标准库和 `ensurepip` 自带的 pip |
@@ -17,7 +17,7 @@
 | [SwiftTerm](https://github.com/migueldeicaza/SwiftTerm) | 1.10.0 | MIT | Copyright (c) 2019-2022 Miguel de Icaza 等 | 终端界面 |
 | [SwiftMath](https://github.com/mgriebling/SwiftMath) | 1.7.3 | MIT；随包的数学字体各有许可证（GUST 字体许可证、SIL OFL 等），见其 README 的 Fonts 一节 | Copyright (c) 2023 Computer Inspirations | 回复里的公式排版 |
 | [pnpm](https://github.com/pnpm/pnpm) | 11.28.5 | MIT | Rico Sta. Cruz、Zoltan Kochan 及贡献者 | 插件安装 |
-| [DS Bot](https://github.com/Fei2411/DS-Bot)（`ds-bot`） | 0.3.1 | Apache-2.0 | Copyright 2026 Fei2411 and the DS Bot contributors | Bot 功能的后台，内置在引擎里 |
+| [DS Bot](https://github.com/Fei2411/DS-Bot)（`ds-bot`） | 0.3.8 | Apache-2.0 | Copyright 2026 Fei2411 and the DS Bot contributors | Bot 功能的后台，内置在引擎里 |
 | [Simple Icons](https://github.com/simple-icons/simple-icons) | 16.37.0 | CC0-1.0 | Simple Icons 贡献者 | Bot 连接器页面的品牌图标 |
 | [page-agent](https://github.com/alibaba/page-agent)（`@page-agent/page-controller`） | 1.12.4 | MIT | Copyright (c) 2026 SimonLuvRamen, Copyright (c) 2026 Alibaba Group Holding Limited | 智能体操作浏览器时读网页、点击和输入 |
 | [React](https://github.com/facebook/react)（`react`、`react-dom`、`scheduler`） | 18.3.1 | MIT | Copyright (c) Meta Platforms, Inc. and affiliates | 「我的应用」里的小应用用的 React |
@@ -43,24 +43,25 @@ libgit2 的完整许可证见其仓库的 [COPYING](https://github.com/libgit2/l
 
 ## 打进 App 的 npm 包
 
-`scripts/build-engine.sh` 组装出的引擎目录约有 680 个 npm 包，分布如下：
+`scripts/build-engine.sh` 组装出的引擎目录约有 686 个 npm 包，按各包 `package.json` 的 `license` 字段统计分布如下：
 
 | 许可证 | 包数量 |
 |---|---|
-| MIT | 568 |
-| Apache-2.0 | 59 |
-| ISC | 23 |
-| BSD-3-Clause | 19 |
-| BlueOak-1.0.0 | 6 |
-| BSD-2-Clause | 2 |
-| 其他（0BSD、Unlicense、Python-2.0、MPL-2.0 各 1 个，双重许可 3 个） | 7 |
+| MIT | 579 |
+| Apache-2.0 | 58 |
+| BSD-3-Clause | 20 |
+| ISC | 16 |
+| BSD-2-Clause | 7 |
+| 其他（0BSD、Unlicense、Python-2.0、MPL-2.0、MIT-0、BlueOak-1.0.0 各 1 个） | 6 |
+
+另有 4 个包是双许可，已按首选许可证计入上表。
 
 上游自带的许可证文件会随包一起打进 App。准确清单以 `engine/package-lock.json` 为准，个别包不带单独的许可证文件，以其 `package.json` 的声明为准。
 
 需要单独留意的两项：
 
-- **`@deepseek-ai/libreoffice-kit`（MPL-2.0）：** 只保留了很小的 JS 外壳，平台二进制和 wasm 在打包时已删除，`office-to-pdf` 也已禁用。
-- **`ds-bot`（Apache-2.0）：** 它的 npm 包只带 LICENSE，不带上游仓库的 NOTICE。按 Apache-2.0 第 4 条，`engine/notices/ds-bot.NOTICE`（取自上游 v0.3.1）在打包时放到 `ds-bot/NOTICE`，随 App 一起分发。原生界面只调用它的接口，没有使用它的界面代码。
+- **`@deepseek-ai/libreoffice-kit`（MPL-2.0）：** 只保留了很小的 JS 外壳，平台二进制、静态库和 wasm 在打包时已删除，`office-kit` 和 Office 技能也已禁用（`engine/ios.patch.yml`）。
+- **`ds-bot`（Apache-2.0）：** 它的 npm 包只带 LICENSE，不带上游仓库的 NOTICE。按 Apache-2.0 第 4 条，`engine/notices/ds-bot.NOTICE`（取自上游 v0.3.8）在打包时放到 `ds-bot/NOTICE`，随 App 一起分发。原生界面只调用它的接口，没有使用它的界面代码。
 - **`just-bash` 自带的 CPython（Python 许可证）：** 位于 `just-bash/vendor/cpython-emscripten`，随 just-bash 一起打包，但 iOS 上没有启用 `python` 命令。
 
 ## 吉祥物（不适用 MIT）

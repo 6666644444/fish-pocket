@@ -287,7 +287,7 @@ struct BotExchangeSheet: View {
                     Button {
                         loadingWhole.insert(id)
                         Task {
-                            if let value = try? await team.call("exchange-text", ["id": .string(id)]), let text = value["text"].string {
+                            if let value = try? await team.call("exchange-text", ["id": .string(id), "a": .string(pair.a), "b": .string(pair.b)]), let text = value["text"].string {
                                 whole[id] = value["whole"].bool == false ? text + "\n\n…" : text
                             } else {
                                 app.showToast(String(localized: "这条消息读不出完整内容"), tone: .warning)
