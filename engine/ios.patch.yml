@@ -35,6 +35,15 @@
 - id: session-telemetry-otel
   disabled: true
 
+# Tells the model the user is in the DSH Web GUI at a 127.0.0.1 URL and how to
+# rebuild it from a source checkout (`pnpm run dev:web`). Here the user is in
+# the native interface and there is no checkout, so the prompt misleads every
+# session; ios-environment covers where things are and what the user sees.
+# Disabling drops anything an upgrade adds to it too: test/harness-dev-context
+# pins what it registers and fails when that changes.
+- id: harness-dev-context
+  disabled: true
+
 # LibreOffice ships macOS/Windows binaries and a wasm build; neither runs here
 # (scripts/build-engine.sh prunes them), so Office rendering, conversion and
 # recalculation are off, in the web UI's preview and for the model: the presets'
