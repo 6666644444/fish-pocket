@@ -469,6 +469,11 @@ func clearFocusedTextInput() {
     }
 }
 
+extension UIResponder {
+    /// The text view holding the keyboard, if one does (a multi-line SwiftUI field is one).
+    @MainActor static var focusedTextView: UITextView? { focused as? UITextView }
+}
+
 private extension UIResponder {
     static weak var found: UIResponder?
 
