@@ -1,6 +1,6 @@
 ---
 name: ios-environment
-description: This session runs inside an iOS app, not on a desktop, and many commands do not exist. Load this skill before relying on a shell command you are unsure of, whenever one fails or behaves unexpectedly, before writing or changing a DSH plugin, because the app's native interface does not run a plugin's browser code, and before operating another app on this phone.
+description: This session runs inside an iOS app, not on a desktop, and many commands do not exist. Load this skill before relying on a shell command you are unsure of, whenever one fails or behaves unexpectedly, before writing or changing a DSH plugin, because the app's native interface does not run a plugin's browser code, so plugins here get no UI, and before operating another app on this phone.
 ---
 
 # Working on iOS
@@ -112,7 +112,13 @@ FFmpeg 9.0 is built into the app: `ffmpeg` and `ffprobe` work as on a desktop fo
 
 ## DSH plugins
 
-The app's native interface, built in SwiftUI, does not run a plugin's browser code. Only a plugin's Host half (tools, settings) works there, apart from a few official plugins the app draws itself; its pages, panels and sidebar entries appear only in the web interface, under 网页版 (Web version) on the app's 探索 (Explore) tab (in the sidebar before iOS 18). **Before writing, changing or diagnosing a DSH plugin, read `references/plugins.md`**: what reaches which interface, what to tell the user before building, the built-in DS Bot plugin, and why device capabilities are not for plugins.
+The app's native interface, built in SwiftUI, does not run a plugin's browser code. Only a plugin's Host half (tools, settings, MCP connections, modes) works there, apart from a few official plugins the app draws itself; its pages, panels and sidebar entries appear only in the web interface, under 网页版 (Web version) on the app's 探索 (Explore) tab (in the sidebar before iOS 18).
+
+- **Plugins you build here are Host-only.** Write no browser half: no `dsh.client`, no `./client` export, no slots, pages, panels or decorations. Only write one when the user asks by name for something in the web interface. This overrides plugin guidance written for the Web UI, such as the UI plugin template in the `dsh-doc` skill: the user would never see it.
+- **Something to look at or tap is a 小工具 (mini app), not a plugin.** A page, chart, dashboard, widget or tool with buttons: tell the user a plugin cannot show it in this app, and offer a mini app instead (read the `mini-apps` skill). A change to the app's own interface, such as a theme or a panel beside the chat, cannot be built here at all; say so.
+- **What a plugin can add:** tools you can call, MCP connections, settings, timers, and modes (agent presets) that combine tools and prompts.
+
+**Before writing, changing or diagnosing a DSH plugin, read `references/plugins.md`**: what reaches which interface, what to tell the user before building, the built-in DS Bot plugin, and why device capabilities are not for plugins.
 
 Services the user has connected under 连接器 (Connectors) on the app's 探索 (Explore) tab (in the sidebar before iOS 18) (GitHub, Notion and the like) are MCP tools in every session, named `mcp__<id>__*`. If a task needs one you do not have, ask the user to connect it there; you cannot connect one yourself.
 
