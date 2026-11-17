@@ -620,8 +620,18 @@ struct ConversationView: View {
         .scrollClipDisabled()
     }
 
+    /// What it can do as an assistant on this phone: device capabilities, a 小工具, another app
+    /// through phone control, a scheduled task. Each one works when sent as is; a capability that is
+    /// switched off, or phone control not set up, gets the agent's answer saying where to turn it on.
     private static var suggestions: [String] {
-        [String(localized: "看看这个工作区里有什么"), String(localized: "写一个小脚本并运行"), String(localized: "解释一段代码"), String(localized: "整理今天的待办")]
+        [
+            String(localized: "看看我今天有什么安排"),
+            String(localized: "帮我做一个记账小工具"),
+            String(localized: "打开淘宝，看看我的快递到哪了"),
+            String(localized: "每天早上 8 点给我整理一份新闻早报"),
+            String(localized: "20 分钟后提醒我关火"),
+            String(localized: "附近有什么好吃的"),
+        ]
     }
 
     // MARK: Approvals and questions

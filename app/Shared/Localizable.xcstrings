@@ -4548,6 +4548,40 @@
     "1017" : {
       "shouldTranslate" : false
     },
+    "20 分钟后提醒我关火" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remind me to turn off the stove in 20 minutes"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recuérdame apagar el fuego en 20 minutos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20 分後に火を止めるよう知らせて"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20분 후에 불 끄라고 알려 줘"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "20 分鐘後提醒我關火"
+          }
+        }
+      }
+    },
     "30 天" : {
       "localizations" : {
         "en" : {
@@ -6250,6 +6284,40 @@
         }
       }
     },
+    "几个智能体分工协作" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agents working as a team"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Varios agentes trabajando en equipo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "複数のエージェントで分担"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여러 에이전트가 함께 일해요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幾個 AI 代理分工協作"
+          }
+        }
+      }
+    },
     "几何鲸鱼" : {
       "localizations" : {
         "en" : {
@@ -6624,6 +6692,40 @@
         }
       }
     },
+    "在 DeepSeek 官网导出聊天记录，新会话页点「导入 DeepSeek 会话」选中压缩包，以前的对话连同思考过程和图片都会出现在会话列表里，点开就能接着聊。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export your chats on the DeepSeek website, then tap Import DeepSeek chats on a new session and pick the zip. Past conversations land in your sessions, reasoning and images included, ready to continue."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exporta tus chats desde la web de DeepSeek, toca Importar chats de DeepSeek en una sesión nueva y elige el archivo zip. Tus conversaciones anteriores, con su razonamiento e imágenes, aparecen entre tus sesiones, listas para continuar."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek の公式サイトでチャット履歴を書き出し、新しいセッションで「DeepSeek のチャットを読み込む」をタップして zip ファイルを選ぶと、これまでの会話が思考過程や画像ごとセッション一覧に並び、そのまま続きを話せます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek 웹사이트에서 대화 기록을 내보낸 뒤, 새 세션에서 ‘DeepSeek 대화 가져오기’를 눌러 압축 파일을 고르세요. 예전 대화가 사고 과정과 이미지까지 그대로 세션 목록에 들어와 바로 이어서 이야기할 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 DeepSeek 官網匯出聊天紀錄，新對話頁點「匯入 DeepSeek 對話」選取壓縮檔，以前的對話連同思考過程和圖片都會出現在對話列表裡，點開就能接著聊。"
+          }
+        }
+      }
+    },
     "在「我的手表」里往下滑" : {
       "localizations" : {
         "en" : {
@@ -6794,6 +6896,74 @@
         }
       }
     },
+    "在照片或别的 App 里拷贝一张图，回到输入框长按选「粘贴」，图片就放进附件里，和从相册选的一样。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy a picture in Photos or another app, then touch and hold the input field and choose Paste. It’s added as an attachment, just like one picked from your library."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copia una imagen en Fotos u otra app, mantén pulsado el campo de entrada y elige Pegar. Se añade como adjunto, igual que si la eligieras de la fototeca."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「写真」などのアプリで画像をコピーし、入力欄を長押しして「ペースト」を選ぶと、アルバムから選んだときと同じように添付されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사진 앱이나 다른 앱에서 이미지를 복사한 뒤 입력창을 길게 눌러 ‘붙여넣기’를 고르면 앨범에서 고른 것처럼 첨부돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在「照片」或其他 App 裡拷貝一張圖，回到輸入框長按選「貼上」，圖片就會放進附件，和從相簿選的一樣。"
+          }
+        }
+      }
+    },
+    "在网页版右上角的「···」里选「添加到主屏幕」，以后点这个图标就进 Fish Pocket，直接打开网页版。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In the Web UI, choose Add to Home Screen from the ··· menu at the top right. That icon then opens Fish Pocket straight into the Web UI."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En la versión web, elige Añadir a pantalla de inicio en el menú ··· de arriba a la derecha. Ese icono abre Fish Pocket directamente en la versión web."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web 版の右上の「···」から「ホーム画面に追加」を選ぶと、そのアイコンから Fish Pocket の Web 版を直接開けます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "웹 버전 오른쪽 위의 ‘···’에서 ‘홈 화면에 추가’를 고르면, 그 아이콘을 누를 때 Fish Pocket이 웹 버전으로 바로 열려요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在網頁版右上角的「···」裡選「加入主畫面」，之後點這個圖示就會進 Fish Pocket，直接打開網頁版。"
+          }
+        }
+      }
+    },
     "在详情页下方，和「自动更新」在同一组。打开后手表就开始安装，装好后在手表上打开一次就连上了。" : {
       "localizations" : {
         "en" : {
@@ -6824,6 +6994,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在詳細資訊頁下方，和「自動更新」在同一組。打開後手錶就開始安裝，裝好後在手錶上打開一次就連上了。"
+          }
+        }
+      }
+    },
+    "在输入框的「+」里打开「智能体团队协作」，复杂的任务会拆给多个智能体，用一张共享任务板分工推进。效果更好，token 也用得更多。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn on Agent Teamwork under + in the input bar. Complex tasks are split across several agents, who divide the work on a shared task board. Better results, at the cost of more tokens."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activa Colaboración entre agentes en el + del campo de entrada. Las tareas complejas se reparten entre varios agentes, que se organizan con un tablero de tareas compartido. Mejores resultados, a cambio de más tokens."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入力欄の「+」で「エージェント連携」をオンにすると、複雑なタスクを複数のエージェントに振り分け、共有タスクボードで分担して進めます。成果が上がる分、トークンも多く使います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "입력창의 ‘+’에서 ‘에이전트 팀 협업’을 켜면 복잡한 작업을 여러 에이전트가 나눠 맡아 공유 작업 보드로 진행해요. 결과가 더 좋은 대신 토큰도 더 많이 써요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在輸入框的「+」裡開啟「AI 代理團隊協作」，複雜的任務會拆給多個 AI 代理，用一張共享任務板分工推進。效果更好，token 也用得更多。"
           }
         }
       }
@@ -7100,6 +7304,40 @@
         }
       }
     },
+    "帮我做一个记账小工具" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make me a tool for tracking expenses"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hazme una herramienta para anotar gastos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "家計簿のツールを作って"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가계부 도구를 만들어 줘"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幫我做一個記帳用的實用工具"
+          }
+        }
+      }
+    },
     "录下操作过程" : {
       "localizations" : {
         "en" : {
@@ -7266,6 +7504,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "截圖會傳給模型服務商"
+          }
+        }
+      }
+    },
+    "打开淘宝，看看我的快递到哪了" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Amazon and see where my package is"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre Amazon y mira dónde está mi paquete"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amazon を開いて荷物が今どこか見て"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "쿠팡 열어서 택배가 어디쯤 왔는지 봐 줘"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打開蝦皮，看看我的包裹到哪了"
           }
         }
       }
@@ -7712,6 +7984,40 @@
         }
       }
     },
+    "把 DeepSeek 的聊天记录搬过来" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bring over your DeepSeek chats"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trae tus chats de DeepSeek"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek のチャット履歴をお引っ越し"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek 대화 기록을 옮겨 와요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "把 DeepSeek 的聊天紀錄搬過來"
+          }
+        }
+      }
+    },
     "把 Fish Pocket 戴在手腕上" : {
       "localizations" : {
         "en" : {
@@ -8048,6 +8354,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "操控手機"
+          }
+        }
+      }
+    },
+    "新会话选「创造模式」，让 Agent 替你写插件：加新工具、接入外部服务，或者把工具和提示词组合成一个自己的模式。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick Creator mode for a new session and let the agent write plugins for you: add new tools, connect outside services, or combine tools and prompts into a mode of your own."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige Modo creador en una sesión nueva y deja que el agente escriba complementos por ti: agrega herramientas nuevas, conecta servicios externos o combina herramientas y prompts en un modo propio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいセッションで「クリエイターモード」を選ぶと、エージェントがプラグインを書いてくれます。新しいツールの追加や外部サービスとの連携、ツールとプロンプトを組み合わせた独自モードの作成もできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새 세션에서 ‘크리에이터 모드’를 고르면 에이전트가 플러그인을 대신 작성해요. 새 도구를 추가하거나 외부 서비스를 연결하고, 도구와 프롬프트를 조합해 나만의 모드를 만들 수도 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新對話選「創造模式」，請 Agent 幫你寫外掛：加入新工具、串接外部服務，或把工具和提示詞組合成一個自己的模式。"
           }
         }
       }
@@ -9584,6 +9924,40 @@
         }
       }
     },
+    "每天早上 8 点给我整理一份新闻早报" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Put together a news briefing for me every morning at 8"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepárame un resumen de noticias cada mañana a las 8"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "毎朝 8 時にニュースのまとめを作って"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "매일 아침 8시에 뉴스 브리핑을 정리해 줘"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每天早上 8 點幫我整理一份新聞早報"
+          }
+        }
+      }
+    },
     "没有配对的 Apple Watch" : {
       "localizations" : {
         "en" : {
@@ -9958,6 +10332,40 @@
         }
       }
     },
+    "用对话定制 Fish Pocket" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Customize Fish Pocket by chatting"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personaliza Fish Pocket conversando"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会話で Fish Pocket をカスタマイズ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화로 Fish Pocket 맞춤 설정"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用對話客製化 Fish Pocket"
+          }
+        }
+      }
+    },
     "界面支持繁体中文" : {
       "localizations" : {
         "en" : {
@@ -9994,6 +10402,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "介面支援繁體中文"
+          }
+        }
+      }
+    },
+    "直接粘贴图片" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paste images straight in"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pega imágenes directamente"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像をそのままペースト"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지를 바로 붙여넣기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直接貼上圖片"
+          }
+        }
+      }
+    },
+    "看看我今天有什么安排" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What’s on my schedule today?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué tengo en la agenda hoy?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今日の予定を教えて"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘 일정 알려 줘"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "看看我今天有什麼安排"
           }
         }
       }
@@ -10170,6 +10646,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "終端機字標"
+          }
+        }
+      }
+    },
+    "网页版也能放到主屏幕" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Put the Web UI on your Home Screen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pon la versión web en la pantalla de inicio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web 版もホーム画面に"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "웹 버전도 홈 화면에"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "網頁版也能放到主畫面"
           }
         }
       }
@@ -25153,6 +25663,7 @@
       }
     },
     "写一个小脚本并运行" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -55369,6 +55880,7 @@
       }
     },
     "整理今天的待办" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -74232,6 +74744,7 @@
       }
     },
     "看看这个工作区里有什么" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -82085,6 +82598,7 @@
       }
     },
     "解释一段代码" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -95365,6 +95879,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "附件"
+          }
+        }
+      }
+    },
+    "附近有什么好吃的" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Any good places to eat nearby?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué hay bueno para comer por aquí?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "近くにおいしいお店ある？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "근처에 맛집 있어?"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "附近有什麼好吃的"
           }
         }
       }
