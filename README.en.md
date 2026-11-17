@@ -128,7 +128,7 @@ The features match the official DSH Web UI: what it can do, this can do, with th
 To install it, you need iOS 17 or later:
 
 - **App Store (recommended)**: [download on the App Store](https://apps.apple.com/app/id6830703602). Every App Store version has to wait for Apple's review, so it lags behind TestFlight and this repository.
-- **TestFlight (new versions first)**: open the [TestFlight beta link](https://testflight.apple.com/join/2SCftb2M) on your iPhone or iPad. It is available worldwide; new versions land here first and stay in step with this repository.
+- **TestFlight (new versions first)**: open the [TestFlight beta link](https://testflight.apple.com/join/2SCftb2M) on your iPhone or iPad. New versions land here first and stay in step with this repository.
 
 To build it yourself, you need macOS, Xcode 27 or later, Node 24 and `xcodegen`, plus `cmake` or `uv` to build libgit2. Filling the screen on iPhone Duo takes Xcode 27.1 or later: a build from an earlier Xcode runs there at the size of an ordinary iPhone.
 

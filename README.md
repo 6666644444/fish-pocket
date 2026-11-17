@@ -128,7 +128,7 @@ GitHub、Notion 这些服务在连接器里连一次，普通会话和 Bot 都�
 直接安装，需要 iOS 17 或更高版本：
 
 - **App Store（推荐）**：[在 App Store 下载](https://apps.apple.com/app/id6830703602)。每个版本都要等苹果审核，所以会比 TestFlight 和开源仓库晚一些。
-- **TestFlight（想先试新版本）**：在 iPhone 或 iPad 上打开 [TestFlight 公测链接](https://testflight.apple.com/join/2SCftb2M)。全球可用，新版本最先发到这里，和开源仓库保持同步。
+- **TestFlight（想先试新版本）**：在 iPhone 或 iPad 上打开 [TestFlight 公测链接](https://testflight.apple.com/join/2SCftb2M)。新版本最先发到这里，和开源仓库保持同步。
 
 自己编译：你需要 macOS、Xcode 27 或更高版本、Node 24 和 `xcodegen`，构建 libgit2 还需要 `cmake` 或 `uv`。要在 iPhone Duo 上铺满屏幕，需要用 Xcode 27.1 或更高版本编译，更早的版本编出来的包在 Duo 上只按普通 iPhone 的大小显示。
 
