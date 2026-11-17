@@ -2668,6 +2668,40 @@
         }
       }
     },
+    "%lld 个对话无法导入" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld chats could not be imported"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudieron importar %lld chats"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件のチャットを読み込めませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화 %lld개를 가져올 수 없었어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 則對話無法匯入"
+          }
+        }
+      }
+    },
     "%lld 个小工具" : {
       "localizations" : {
         "en" : {
@@ -2932,6 +2966,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld 個路徑"
+          }
+        }
+      }
+    },
+    "%lld 个较早的对话超出上限，没有导入" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld older chats were over the limit and were not imported"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld chats más antiguos superaron el límite y no se importaron"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上限を超えた古いチャット %lld 件は読み込まれませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "한도를 넘은 오래된 대화 %lld개는 가져오지 않았어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 則較早的對話超出上限，沒有匯入"
           }
         }
       }
@@ -8796,6 +8864,40 @@
         }
       }
     },
+    "正在上传 %lld%%" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uploading %lld%%"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subiendo %lld %%"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アップロード中 %lld%%"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "업로드 중 %lld%%"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在上傳 %lld%%"
+          }
+        }
+      }
+    },
     "正在从相册读取…" : {
       "localizations" : {
         "en" : {
@@ -11066,6 +11168,40 @@
         }
       }
     },
+    "选择导出文件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose Export File"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elegir archivo exportado"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書き出したファイルを選択"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내보낸 파일 선택"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選擇匯出檔案"
+          }
+        }
+      }
+    },
     "计费方式" : {
       "localizations" : {
         "en" : {
@@ -12253,6 +12389,40 @@
     },
     "DeepSeek API Key" : {
       "shouldTranslate" : false
+    },
+    "DeepSeek 会话导入插件没有启动，请到插件页查看" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The DeepSeek chat import plugin didn't start. Check it on the Plugins page."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El complemento de importación de chats de DeepSeek no se inició. Revísalo en la página Complementos."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek チャット読み込みプラグインが起動しませんでした。プラグインのページで確認してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek 대화 가져오기 플러그인이 시작되지 않았어요. 플러그인 페이지에서 확인하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek 對話匯入外掛沒有啟動，請到外掛頁查看"
+          }
+        }
+      }
     },
     "DeepSeek 搜索" : {
       "localizations" : {
@@ -15065,6 +15235,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "上傳失敗，輕點重試"
+          }
+        }
+      }
+    },
+    "上传失败：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upload failed: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error al subir: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アップロードに失敗しました：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "업로드 실패: %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上傳失敗：%@"
           }
         }
       }
@@ -20957,6 +21161,40 @@
         }
       }
     },
+    "停止导入" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop importing"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detener importación"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み込みを中止"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가져오기 중지"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止匯入"
+          }
+        }
+      }
+    },
     "停止并归档" : {
       "localizations" : {
         "en" : {
@@ -22925,6 +23163,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "關閉後，主畫面和鎖定畫面小工具只顯示數量和狀態。裝置鎖定時，標題一律會被遮蔽。"
+          }
+        }
+      }
+    },
+    "关掉这一页会停止导入，已经导入的会话会保留" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Closing this page stops the import. Conversations already imported stay."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al cerrar esta página se detiene la importación. Las conversaciones ya importadas se conservan."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このページを閉じると読み込みは止まります。読み込み済みの会話は残ります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 페이지를 닫으면 가져오기가 멈춰요. 이미 가져온 대화는 남아 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "關閉這一頁會停止匯入，已匯入的對話會保留"
           }
         }
       }
@@ -28673,7 +28945,8 @@
             "value" : "探索外掛"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "发现新版本 %@" : {
       "localizations" : {
@@ -33101,6 +33374,40 @@
         }
       }
     },
+    "在工作区「%@」里" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In the workspace “%@”"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En el espacio de trabajo «%@»"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ワークスペース「%@」内"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "작업 공간 '%@'에"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在工作區「%@」裡"
+          }
+        }
+      }
+    },
     "在干活" : {
       "localizations" : {
         "en" : {
@@ -37391,6 +37698,210 @@
         }
       }
     },
+    "导入" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み込む"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가져오기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "匯入"
+          }
+        }
+      }
+    },
+    "导入 DeepSeek 会话" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import DeepSeek chats"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importar chats de DeepSeek"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek のチャットを読み込む"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek 대화 가져오기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "匯入 DeepSeek 對話"
+          }
+        }
+      }
+    },
+    "导入中断了，已写入的会话会保留在列表里" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The import was interrupted. Conversations already written stay in the list."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La importación se interrumpió. Las conversaciones ya guardadas se quedan en la lista."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み込みが中断されました。書き込み済みの会話は一覧に残ります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가져오기가 중단됐어요. 이미 저장된 대화는 목록에 남아 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "匯入中斷了，已寫入的對話會保留在列表裡"
+          }
+        }
+      }
+    },
+    "导入到" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import Into"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importar en"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み込み先"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가져올 위치"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "匯入到"
+          }
+        }
+      }
+    },
+    "导入失败：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import failed: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error al importar: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み込みに失敗しました：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가져오기 실패: %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "匯入失敗：%@"
+          }
+        }
+      }
+    },
+    "导入没有完成" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import didn't finish"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La importación no terminó"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み込みが完了しませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가져오기를 완료하지 못했어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "匯入沒有完成"
+          }
+        }
+      }
+    },
     "导出为 Markdown" : {
       "localizations" : {
         "en" : {
@@ -37523,6 +38034,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "匯出已就緒"
+          }
+        }
+      }
+    },
+    "导出文件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export File"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivo exportado"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書き出したファイル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내보낸 파일"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "匯出檔案"
+          }
+        }
+      }
+    },
+    "导出文件里没有可以导入的会话" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The export has no chats that can be imported"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La exportación no tiene chats que se puedan importar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書き出したファイルに読み込める会話がありません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내보낸 파일에 가져올 수 있는 대화가 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "匯出檔案裡沒有可以匯入的對話"
           }
         }
       }
@@ -40260,6 +40839,40 @@
         }
       }
     },
+    "已导入 %lld 个会话" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imported %lld conversations"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld conversaciones importadas"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 件の会話を読み込みました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화 %lld개를 가져왔어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已匯入 %lld 則對話"
+          }
+        }
+      }
+    },
     "已尝试的安装源：%@" : {
       "localizations" : {
         "en" : {
@@ -41310,6 +41923,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已經有一個叫「%@」的群組了"
+          }
+        }
+      }
+    },
+    "已经有一个导入在进行，请稍后再试" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Another import is in progress. Try again later."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya hay otra importación en curso. Inténtalo más tarde."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "別の読み込みが進行中です。しばらくしてからもう一度お試しください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다른 가져오기가 진행 중이에요. 잠시 후 다시 시도하세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已經有一個匯入在進行，請稍後再試"
           }
         }
       }
@@ -45975,6 +46622,40 @@
         }
       }
     },
+    "所选工作区已经不存在，请重新选择" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The chosen workspace no longer exists. Choose another."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El espacio de trabajo elegido ya no existe. Elige otro."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選んだワークスペースはもうありません。選び直してください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택한 작업 공간이 더 이상 없어요. 다시 선택하세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所選的工作區已經不存在，請重新選擇"
+          }
+        }
+      }
+    },
     "手动填写服务器" : {
       "localizations" : {
         "en" : {
@@ -46651,6 +47332,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "開啟方式"
+          }
+        }
+      }
+    },
+    "打开最近的会话" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Latest Conversation"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir la conversación más reciente"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最新の会話を開く"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최근 대화 열기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打開最近的對話"
           }
         }
       }
@@ -47592,6 +48307,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "副本"
+          }
+        }
+      }
+    },
+    "把 DeepSeek 官网的聊天记录带进来，变成这里的会话，可以接着聊。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bring your chats from the DeepSeek website over as conversations here, and pick up where you left off."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trae tus chats del sitio web de DeepSeek como conversaciones aquí y continúa donde lo dejaste."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek の Web サイトでのチャットをここの会話として取り込み、続きから話せます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek 웹사이트의 대화를 여기 대화로 가져와 이어서 나눌 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "把 DeepSeek 官網的聊天紀錄帶進來，變成這裡的對話，可以接著聊。"
           }
         }
       }
@@ -63224,6 +63973,46 @@
         }
       }
     },
+    "正在导入 %lld/%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importing %1$lld/%2$lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importando %1$lld/%2$lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み込み中 %1$lld/%2$lld"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가져오는 중 %1$lld/%2$lld"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在导入 %1$lld/%2$lld"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在匯入 %1$lld/%2$lld"
+          }
+        }
+      }
+    },
     "正在导出会话" : {
       "localizations" : {
         "en" : {
@@ -63356,6 +64145,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在開啟…"
+          }
+        }
+      }
+    },
+    "正在开启导入功能…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turning on importing…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activando la importación…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み込み機能をオンにしています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가져오기 기능을 켜는 중…"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在開啟匯入功能…"
           }
         }
       }
@@ -63900,6 +64723,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在讀取圖片"
+          }
+        }
+      }
+    },
+    "正在读取导出文件…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading the export file…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leyendo el archivo exportado…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "書き出したファイルを読み取っています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내보낸 파일을 읽는 중…"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在讀取匯出檔案…"
           }
         }
       }
@@ -65174,6 +66031,40 @@
         }
       }
     },
+    "每个对话成为这个工作区里的一个会话，保留原来的标题、时间、思考过程和联网搜索。再次导入同一份文件会多出一份。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each chat becomes a conversation in this workspace, keeping its title, times, thinking and web searches. Importing the same file again adds another copy."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada chat se convierte en una conversación de este espacio de trabajo y conserva su título, sus horas, el razonamiento y las búsquedas web. Importar el mismo archivo otra vez añade otra copia."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "各チャットはこのワークスペースの会話になり、タイトル、日時、思考過程、Web 検索がそのまま残ります。同じファイルをもう一度読み込むと、もう 1 組追加されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "각 대화는 이 작업 공간의 대화가 되며 제목, 시간, 생각 과정, 웹 검색이 그대로 유지돼요. 같은 파일을 다시 가져오면 한 벌이 더 생겨요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每個對話會成為這個工作區裡的一則對話，保留原本的標題、時間、思考過程和網路搜尋。再次匯入同一個檔案會多出一份。"
+          }
+        }
+      }
+    },
     "每周" : {
       "localizations" : {
         "en" : {
@@ -66194,6 +67085,40 @@
         }
       }
     },
+    "没有导入任何会话" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No conversations imported"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se importó ninguna conversación"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会話は読み込まれませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가져온 대화가 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒有匯入任何對話"
+          }
+        }
+      }
+    },
     "没有已结束的任务" : {
       "localizations" : {
         "en" : {
@@ -66734,6 +67659,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "沒能在群組裡發言"
+          }
+        }
+      }
+    },
+    "没能开启 DeepSeek 会话导入插件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't turn on the DeepSeek chat import plugin"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo activar el complemento de importación de chats de DeepSeek"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek チャット読み込みプラグインをオンにできませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek 대화 가져오기 플러그인을 켜지 못했어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無法開啟 DeepSeek 對話匯入外掛"
           }
         }
       }
@@ -82202,6 +83161,40 @@
         }
       }
     },
+    "读不到这个文件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't read this file"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede leer este archivo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このファイルを読み込めません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 파일을 읽을 수 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "讀不到這個檔案"
+          }
+        }
+      }
+    },
     "读你复制的内容。每次读取 iOS 都会提示你" : {
       "localizations" : {
         "en" : {
@@ -85806,6 +86799,40 @@
         }
       }
     },
+    "这个文件不是能读取的 ZIP 压缩包" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This file isn't a readable ZIP archive"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este archivo no es un ZIP legible"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このファイルは読み取れる ZIP アーカイブではありません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 파일은 읽을 수 있는 ZIP 압축 파일이 아니에요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這個檔案不是可讀取的 ZIP 壓縮檔"
+          }
+        }
+      }
+    },
     "这个文件在这里读不出来" : {
       "localizations" : {
         "en" : {
@@ -86312,6 +87339,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "這個版本的 Bot 外掛不支援這個操作"
+          }
+        }
+      }
+    },
+    "这个版本的引擎里没有 DeepSeek 会话导入插件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This engine version doesn't include the DeepSeek chat import plugin"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta versión del motor no incluye el complemento de importación de chats de DeepSeek"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このバージョンのエンジンには DeepSeek チャット読み込みプラグインがありません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 버전의 엔진에는 DeepSeek 대화 가져오기 플러그인이 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這個版本的引擎沒有 DeepSeek 對話匯入外掛"
           }
         }
       }
@@ -93436,6 +94497,40 @@
         }
       }
     },
+    "不支持这个导出格式版本" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This export format version isn't supported"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta versión del formato de exportación no es compatible"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この書き出し形式のバージョンには対応していません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 내보내기 형식 버전은 지원하지 않아요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不支援這個匯出格式版本"
+          }
+        }
+      }
+    },
     "不确定会话是否已创建，请先看看会话列表，避免重复创建。%@" : {
       "localizations" : {
         "en" : {
@@ -94118,6 +95213,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "先回應 AI 代理的請求"
+          }
+        }
+      }
+    },
+    "先在 DeepSeek 官网的设置里导出全部对话，得到一个 deepseek_data 开头的 ZIP 文件，存到「文件」里。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First export all chats in the settings of the DeepSeek website. You get a ZIP file whose name starts with deepseek_data; save it in Files."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primero exporta todos los chats desde los ajustes del sitio web de DeepSeek. Obtendrás un archivo ZIP cuyo nombre empieza por deepseek_data; guárdalo en Archivos."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まず DeepSeek の Web サイトの設定ですべてのチャットを書き出します。deepseek_data で始まる ZIP ファイルができるので、「ファイル」に保存してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "먼저 DeepSeek 웹사이트의 설정에서 모든 대화를 내보내세요. 이름이 deepseek_data로 시작하는 ZIP 파일이 생기면 '파일' 앱에 저장하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "先在 DeepSeek 官網的設定裡匯出全部對話，會得到一個 deepseek_data 開頭的 ZIP 檔案，存到「檔案」裡。"
           }
         }
       }
@@ -95682,6 +96811,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "檔案較大，只顯示開頭的 1 MB。"
+          }
+        }
+      }
+    },
+    "文件过大，最多 %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "File too large. The limit is %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivo demasiado grande. El límite es %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルが大きすぎます。上限は %@ です"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일이 너무 커요. 최대 %@까지예요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檔案過大，最多 %@"
+          }
+        }
+      }
+    },
+    "文件过大：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "File too large: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivo demasiado grande: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルが大きすぎます：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일이 너무 커요: %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檔案過大：%@"
           }
         }
       }
@@ -98170,6 +99367,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "這不是 Agents Anywhere 的登入 QR Code。"
+          }
+        }
+      }
+    },
+    "这不是 DeepSeek 导出的文件：缺少 manifest.json" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This isn't a DeepSeek export: manifest.json is missing"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto no es una exportación de DeepSeek: falta manifest.json"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek から書き出したファイルではありません：manifest.json がありません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek에서 내보낸 파일이 아니에요: manifest.json이 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這不是 DeepSeek 匯出的檔案：缺少 manifest.json"
+          }
+        }
+      }
+    },
+    "这不是 DeepSeek 导出的文件：缺少会话索引，或它无法读取" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This isn't a DeepSeek export: the chat index is missing or unreadable"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto no es una exportación de DeepSeek: falta el índice de chats o no se puede leer"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek から書き出したファイルではありません：チャットの索引がないか、読み取れません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek에서 내보낸 파일이 아니에요: 대화 색인이 없거나 읽을 수 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這不是 DeepSeek 匯出的檔案：缺少對話索引，或無法讀取"
           }
         }
       }

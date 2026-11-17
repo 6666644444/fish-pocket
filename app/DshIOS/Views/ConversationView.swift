@@ -31,6 +31,7 @@ struct ConversationView: View {
     /// Interactions swiped away; they stay answerable from the 「等你允许」 line.
     @State private var deferred: Set<String> = []
     @State private var showNewWorkspace = false
+    @State private var showDeepSeekImport = false
     @State private var jobs = JobsModel()
     @State private var headerSheet: SessionHeaderSheet?
     /// 「分享为图片」, from the title's menu (every round) or a reply's (its round).
@@ -424,6 +425,7 @@ struct ConversationView: View {
         .task(id: app.questionRequests[sessionId]?.map(\.eventId)) { model.syncQuestionWaits() }
         .sheet(item: interactionBinding(model)) { sheet(for: $0, model) }
         .sheet(isPresented: $showNewWorkspace) { NewWorkspaceView() }
+        .sheet(isPresented: $showDeepSeekImport) { DeepSeekImportSheet(workspaceId: app.workspace(of: sessionId)?.id) }
         .sheet(item: $headerSheet) { sheet in
             Group {
                 switch sheet {
@@ -586,9 +588,9 @@ struct ConversationView: View {
             HStack(spacing: 8) {
                 Button {
                     Haptics.tap()
-                    app.pluginStoreRequest = UUID()
+                    showDeepSeekImport = true
                 } label: {
-                    Label("发现插件", systemImage: "puzzlepiece.extension")
+                    Label("导入 DeepSeek 会话", systemImage: "square.and.arrow.down")
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(Palette.onInk)
                         .padding(.horizontal, 14)
