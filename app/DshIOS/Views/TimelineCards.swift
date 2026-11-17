@@ -135,6 +135,17 @@ struct TriggerNotice: View {
     @State private var exchange: BotExchangePair?
 
     var body: some View {
+        if trigger.receipt {
+            Label(trigger.title, systemImage: trigger.symbol)
+                .font(.footnote)
+                .foregroundStyle(Palette.secondary)
+                .frame(maxWidth: .infinity, alignment: .center)
+        } else {
+            notice
+        }
+    }
+
+    private var notice: some View {
         FoldRow {
             HStack(spacing: 8) {
                 Image(systemName: trigger.symbol).frame(width: 18).foregroundStyle(Palette.secondary)

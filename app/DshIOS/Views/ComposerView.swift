@@ -327,7 +327,7 @@ struct ComposerView: View {
         .sheet(isPresented: $showModels) { ModelSearchSheet(model: model, context: context) }
         .sheet(isPresented: $voiceSetup) {
             NavigationStack {
-                VoiceSettingsPage { voiceSetup = false }
+                VoiceInputSettingsPage { voiceSetup = false }
                 .closeButton { voiceSetup = false }
             }
         }
@@ -454,6 +454,7 @@ struct ComposerView: View {
             .font(.body)
             .lineLimit(1...5)
             .focused($focused)
+            .pastesImages(focused: focused, into: composer)
             .tint(Palette.ink)
             .padding(.trailing, tall ? 30 : 0)
             .onGeometryChange(for: Bool.self) { $0.size.height > threeLines } action: { tall = $0 }
@@ -942,6 +943,7 @@ private struct DraftEditor: View {
                     .font(.body)
                     .tint(Palette.ink)
                     .focused($focused)
+                    .pastesImages(focused: focused, into: composer)
                     .padding(.horizontal, 12)
                     .scrollContentBackground(.hidden)
             }

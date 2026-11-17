@@ -13,6 +13,7 @@ struct ConversationView: View {
     var switchWorkspace: (Workspace) -> Void = { _ in }
     /// A Bot's chat or a group chat: its own title in the bar and its cards above the composer.
     var bot: BotChrome?
+    @Environment(\.botTimeline) private var botTimeline
     /// The global automation page (the reminders sheet leads there).
     @Environment(AppModel.self) private var app
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -30,6 +31,7 @@ struct ConversationView: View {
     /// Interactions swiped away; they stay answerable from the 「等你允许」 line.
     @State private var deferred: Set<String> = []
     @State private var showNewWorkspace = false
+    @State private var showDeepSeekImport = false
     @State private var jobs = JobsModel()
     @State private var headerSheet: SessionHeaderSheet?
     /// 「分享为图片」, from the title's menu (every round) or a reply's (its round).
@@ -99,6 +101,9 @@ struct ConversationView: View {
         .task {
             switch UserDefaults.standard.string(forKey: "dshOpen") {
             case "workbench": workbenchOpen = true
+            case "filesearch":
+                workbenchTab = .files
+                workbenchOpen = true
             case "approval": demoApproval = PendingApproval(id: "demo", toolName: "bash", callId: nil, reason: "允许本次操作使用 danger-full-access 权限：当前处于 workspace-write 模式，写不到工作区以外。这条命令会删除 build/ 下约 1.4 GB 的文件，再重新下载依赖，失败时不会自动恢复，需要手动重新构建一次才能继续。")
             case "question":
                 // `-dshDelay <s>` leaves time to focus the composer first.
@@ -197,6 +202,9 @@ struct ConversationView: View {
                 if case .user? = model.items.last { atBottom = true; scrollToBottom(proxy) }
             }
             .onChange(of: model.running) { _, running in if running, atBottom { scrollToBottom(proxy) } }
+            // A group round's replies are rows of the group's book (ds-bot 0.3.8), not events of this
+            // session, whose own turn ends at once: follow them as a running turn is followed.
+            .onChange(of: botTimeline?.room == true ? app.botTeam.relayRowCount : 0) { _, _ in if atBottom { scrollToBottom(proxy) } }
             .overlay(alignment: .bottomTrailing) {
                 // Animated here, not on the scroll view: its rows must not animate with the buttons.
                 ZStack {
@@ -420,6 +428,7 @@ struct ConversationView: View {
         .task(id: app.questionRequests[sessionId]?.map(\.eventId)) { model.syncQuestionWaits() }
         .sheet(item: interactionBinding(model)) { sheet(for: $0, model) }
         .sheet(isPresented: $showNewWorkspace) { NewWorkspaceView() }
+        .sheet(isPresented: $showDeepSeekImport) { DeepSeekImportSheet(workspaceId: app.workspace(of: sessionId)?.id) }
         .sheet(item: $headerSheet) { sheet in
             Group {
                 switch sheet {
@@ -580,6 +589,18 @@ struct ConversationView: View {
     private func suggestions(_ model: SessionModel) -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
+                Button {
+                    Haptics.tap()
+                    showDeepSeekImport = true
+                } label: {
+                    Label("导入 DeepSeek 会话", systemImage: "square.and.arrow.down")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(Palette.onInk)
+                        .padding(.horizontal, 14)
+                        .frame(minHeight: 40)
+                        .background(Palette.ink, in: Capsule())
+                        .hitTarget()
+                }
                 ForEach(Self.suggestions, id: \.self) { text in
                     Button {
                         Haptics.tap()
@@ -1027,11 +1048,18 @@ private struct TimelineRow: View, Equatable {
             UserBubble(text: text, attachments: attachments, model: model, via: IMPlatform.via(requestId), arrives: arrives)
         case .assistant(let turn, let blocks, let started, let ended):
             AssistantTurnView(blocks: blocks, turn: turn, inProgress: inProgress, startedAt: started, endedAt: ended, regeneratePrompt: inProgress ? nil : prompt, info: info)
-        case .notice(_, let text, let isError):
-            Label(text, systemImage: isError ? "exclamationmark.triangle" : "info.circle")
-                .font(.footnote)
-                .foregroundStyle(isError ? Palette.removed : Palette.secondary)
-                .frame(maxWidth: .infinity, alignment: .center)
+        case .notice(let seq, let text, let isError):
+            VStack(spacing: 10) {
+                Label(text, systemImage: isError ? "exclamationmark.triangle" : "info.circle")
+                    .font(.footnote)
+                    .foregroundStyle(isError ? Palette.removed : Palette.secondary)
+                // The web's send button turns into 继续生成 here; on a phone that button is the microphone.
+                if isError, model.canContinue(after: seq) {
+                    Button("继续生成") { Haptics.tap(); Task { await model.continueGeneration() } }
+                        .buttonStyle(.capsule(.outline, height: 44, fill: false))
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .center)
         case .maxTokens:
             MaxTokensNotice(model: model)
         case .credential(_, let problem):

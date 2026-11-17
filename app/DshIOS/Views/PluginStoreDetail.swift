@@ -119,7 +119,9 @@ struct StoreEntryDetail: View {
         let installed = entry.json["installation"]["installedVersion"].string ?? app.plugins.package(entry.name)?.version ?? ""
         app.pluginInstall.updateTo(
             name: entry.name, title: entry.displayName, from: installed,
-            to: version["version"].string ?? "", registry: version["install"]["registry"].string
+            to: version["version"].string ?? "", registry: version["install"]["registry"].string,
+            // A `github:` install updates from that spec; a registry one must not send it.
+            spec: version["install"]["spec"].string
         )
     }
 

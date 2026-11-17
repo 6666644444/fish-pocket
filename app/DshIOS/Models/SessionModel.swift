@@ -403,9 +403,7 @@ final class SessionModel {
         if let subagentAddress {
             try await client.call("subagents/prompt", ["request": [
                 "requestId": .string(requestId),
-                "parentSessionId": subagentAddress["parentSessionId"],
                 "childSessionId": subagentAddress["childSessionId"],
-                "mode": "continuable",
                 "delivery": .string(steer ? "steer" : "queue"),
                 "content": .array(content),
                 "clientTimeZone": .string(TimeZone.current.identifier),
@@ -421,15 +419,32 @@ final class SessionModel {
         ]])
     }
 
+    /// Whether the Host would run the failed turn that ended at `seq` again (`conversationContinuation`
+    /// names its `turn/end` after a rate limit, a server or transport failure, a timeout, an empty or
+    /// cut-off answer), and nothing else is on its way in.
+    func canContinue(after seq: Int) -> Bool {
+        composer.projection("conversationContinuation").int == seq && !running && subagentAddress == nil
+            && composer.isEmpty && composer.pending.isEmpty && queued.isEmpty
+    }
+
+    /// 继续生成: a prompt with no content, which the Host records as a retry of that turn.
+    func continueGeneration() async {
+        do {
+            try await prompt(content: [], steer: false, requestId: UUID().uuidString.lowercased())
+        } catch {
+            self.error = error.localizedDescription
+        }
+    }
+
     func toast(_ text: String, duration: Double = 4) { app.showToast(text, duration: duration) }
 
     func cancel() async {
         do {
             if let subagentAddress {
-                try await client.call("subagents/interruptByParent", [
+                // 0.2.2-rc.3 replaced interruptByParent: the Gateway authorizes on the child Session,
+                // so the parent address is no longer part of the request.
+                try await client.call("subagents/interruptByUser", [
                     "childSessionId": subagentAddress["childSessionId"],
-                    "parentSessionId": subagentAddress["parentSessionId"],
-                    "mode": "continuable",
                 ])
             } else {
                 try await client.call("session/cancel", ["request": ["sessionId": .string(sessionId)]])

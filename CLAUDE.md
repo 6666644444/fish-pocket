@@ -83,6 +83,27 @@
 - **GitHub 的编译检查**在合进 `main` 或 `release` 的 PR 上跑，合进 `main` 后再跑一次；推到 `release` 不跑，因为推上去的都是检查过的提交。
 - **GitHub 的编译检查用 Xcode 27.2**（`.github/workflows/ios-build.yml`，运行器是 `xcode-27`），和本机、Xcode Cloud 是同一代。它停在旧版本时出过一次事：本机和 Xcode Cloud 都能编的代码，旧编译器报「无法在合理时间内完成类型检查」。本机升级 Xcode 后，把工作流里的版本一起改；README「快速开始」里写的最低 Xcode 版本也跟着它走，因为没有别的地方验证更老的版本。
 
+## 引擎或插件升级后的回归
+
+**只要动了 `@deepseek-ai/dsh` 或 ds-bot 的版本，就必须在模拟器上把主体流程走一遍**，不能只跑单测和编译。它们的改动会从引擎接口、客户端槽位、插件装配一路影响到原生页面，单测和编译都看不出来：升到 0.2.2-rc.3 和 ds-bot 0.3.8 那次，单测全绿、编译通过，群聊里成员的回复却整轮不显示。
+
+动手前先读上游自己写的变更：
+
+- DSH 随包带升级指南，`engine/node_modules/@deepseek-ai/dsh/docs/upgrade-guide/`，每个版本一个目录。从旧版本到新版本之间的每一条都对一遍：配置行改名的对 `engine/ios.patch.yml`，设置字段改名的对原生设置页，接口改形的对 Swift 调用点。
+- **官方网页版这段版本之间新暴露给用户的功能，原生要逐项对齐，这是升级的一部分，不是事后的遗留。**对比两版 `dsh-web-app/cordis.patch.yml` 默认启用的 `client-ui` 包、各包界面文案（`locale/` 或 `src/client/locales.ts`）的增删，列出新增和改动的功能，再对着 `docs/webui/parity.md` 逐项做。指南的分节不能直接当作这次的变更范围，有些条目旧版本里已经有了，要拿旧版的包核对。项目已定不移植的整块（变更请求与工作树、共享会话、桌面专属）除外。
+- ds-bot 没有指南，只能对两版源码：原生调用的每个接口（`BotModel.call` 的调用点）返回的形状，以及它新增的默认开启的行为（`config.<名字> !== false` 这类开关）。新行为要不要在 iOS 上开，在 `ios.patch.yml` 的 `bot` 配置里定。Bot 和群聊做不做某个功能以它的网页版为准：它有的原生做，它拿掉或挪走的原生跟着拿掉或挪走，不按旧版行为补回去（它的网页端打包在 `client.js`，按 `// src/client/<文件>` 的注释定位，只读来确认有没有、在哪）。
+
+然后按顺序：
+
+1. `scripts/build-engine.sh` 收紧，`cd engine && node --test test/*.test.mjs` 全绿（macOS 上先跑 `scripts/build-git-addon.sh`，否则 git 那项会报不存在）。`test/ios-patch.test.mjs` 会查 `ios.patch.yml` 里的每个 id 在新版本里还在不在：补丁对不上的条目运行时只是被跳过，不报错。`ios.patch.yml` 整个关掉的官方插件（如 `harness-dev-context`，它告诉模型用户在网页版里），官方往里新加的东西也会一起被关掉，所以 `test/harness-dev-context.test.mjs` 记下了它现在注册的全部内容，一变就报错：先看新加了什么，再决定继续关着还是只去掉误导的那段，最后更新测试里的清单。
+2. **先装旧版，造数据，再覆盖安装新版。**一台自己新建的模拟器装上升级前的包，建一条带工具调用的会话、一条起过子智能体的会话、两个 Bot、一个群并各说几句，然后覆盖安装新包：老会话读得出来、能接着聊，子智能体能追问和中断，Bot 记得之前的话，群里新发一条消息后成员的回复显示出来。老用户都是这么升上来的，只测全新安装测不到这条路。
+3. `scripts/smoke-sim.sh` 把 `-dshOpen` 能到的每个页面截图，并断言包里的 DSH / ds-bot 版本和仓库里钉的一致、所有插件行无错、`/api/bot` 有响应、会话列表可读。`scripts/smoke-matrix.sh <UDID…>` 在几台模拟器上并行跑同一份。要覆盖的是：最新 iOS 的 iPhone 和 iPad、iPhone Duo、iOS 18 和 iOS 26 各一台（分栏和 Tab 布局三代不一样）。旧 runtime 的模拟器启动后截不了图时，`simctl shutdown` 再 `boot` 一次；还不行就新建一台。
+4. **截图要自己逐张看**，脚本只保证页面起得来、数据没报错，看不出一页是不是它该是的那一页。重点看：会话首页、插件页（实验性插件列表里新版本带来的条目）、插件商店、设置、计划任务、连接器、本机能力、小工具，以及 iPad / Duo 上的分栏和 Tab 布局。
+5. 真跑一条会话链路：新建会话发一句「用 bash 运行 node -e "console.log(6*7)"，然后一句话告诉我结果」，确认工具卡片、流式回复、自动标题都正常。再看一眼发给模型的工具和技能有没有多出 iOS 上用不了的（会话事件里的 `request/header`）。
+6. 打开 Bot 聊天和群聊各发一条消息，看回复在原生界面里显示出来，而不只是接口有响应。
+
+发消息、读会话、调 Bot 接口都可以不点界面，直接走引擎的 HTTP 接口（信封格式见 `EngineClient.swift`，地址和令牌在 App 数据目录的 `.ios/web-url`）；界面上的结果用截图确认。脚本覆盖不到、要人工点的：输入框打字与发送、分享扩展、手表。
+
 ## 内置 skill：iOS 环境说明
 
 `engine/skills/ios-environment/` 随 App 打包，App 里的 Agent 靠它判断这台「iOS 沙盒」里能做什么、不能做什么。它写错了，Agent 就会去试不存在的命令，或者放弃本来能做的事。
@@ -173,6 +194,8 @@ Bot 功能的后台是内置的 ds-bot 插件，版本锁定在 `engine/plugins/
 - 只调用它的接口（`/api/bot`、`/api/bot/feed`），不使用、不移植它的前端代码（`client.js` 和它的界面组件）。
 - 它网页版的设计只作参考借鉴。原生界面要自己设计，交互做得比它更好，不照搬它的布局和流程。
 - ds-bot 网页版能做的事，都要用原生界面做。网页版入口可以保留，但只作为次要的备用入口，不能让用户依赖它完成主要操作。
+- 群聊每一轮的回复不在 `group_relay` 的工具结果里：0.3.8 起结果只给出这一轮在群聊账本里的位置（`{from, anchor}`），回复用 `group-rows` 读（`BotModel.loadRows`），群自己的会话这一轮随即结束，成员是否还在干活看 `group-rows` 返回的 `active`。升级前的轮次结果里仍带着 `replies`，两种都要认。
+- 它的 peer 依赖全是 `*`，而 npm 上 `@deepseek-ai/dsh-llm`、`dsh-scope`、`dsh-tools`、`dsh-web`、`dsh-typert-protocol` 的 `latest` 标签还停在 `0.0.1-rc.x` 占位版。所以 `engine/package.json` 用 `overrides` 把它们钉成引擎自己的 DSH 版本；升级 `@deepseek-ai/dsh` 时这几行要一起改，否则会装出一棵顶层是占位版的树。
 
 ## Bot 的内置形象
 
