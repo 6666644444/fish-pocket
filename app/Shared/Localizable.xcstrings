@@ -38,6 +38,46 @@
         }
       }
     },
+    "%@\n已经安装的插件不受影响。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@\nPlugins you’ve already installed aren’t affected."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@\nLos complementos que ya instalaste no se ven afectados."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@\nインストール済みのプラグインには影響しません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@\n이미 설치한 플러그인에는 영향이 없어요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@\n已经安装的插件不受影响。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@\n已經安裝的外掛不受影響。"
+          }
+        }
+      }
+    },
     "%@ (%@)" : {
       "localizations" : {
         "zh-Hans" : {
@@ -10549,6 +10589,40 @@
         }
       }
     },
+    "没有启用插件市场" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Plugin Market Turned On"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay ningún mercado de complementos activado"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プラグインマーケットが有効になっていません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "켜 둔 플러그인 마켓이 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒有啟用外掛市集"
+          }
+        }
+      }
+    },
     "没有麦克风权限，请在系统设置里打开" : {
       "localizations" : {
         "en" : {
@@ -11878,6 +11952,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "連不上火山引擎：%@"
+          }
+        }
+      }
+    },
+    "连不上索引服务器，检查网络后再试。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can’t reach the index server. Check your network and try again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede conectar con el servidor del índice. Revisa tu conexión e inténtalo de nuevo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "インデックスのサーバーに接続できません。ネットワークを確認してもう一度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "인덱스 서버에 연결할 수 없어요. 네트워크를 확인하고 다시 시도해 주세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連不上索引伺服器，請檢查網路後再試。"
           }
         }
       }
@@ -13251,6 +13359,40 @@
     },
     "Fish Pocket" : {
       "shouldTranslate" : false
+    },
+    "Fish Pocket 不提供插件市场。你可以自行启用第三方索引源浏览插件，也可以从 npm、Git 仓库直接安装。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket doesn’t provide a plugin market. You can turn on a third-party index source yourself to browse plugins, or install straight from npm or a Git repository."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket no ofrece ningún mercado de complementos. Puedes activar por tu cuenta una fuente de índice de terceros para explorar complementos, o instalarlos directamente desde npm o un repositorio Git."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket はプラグインマーケットを提供していません。サードパーティのインデックスソースをご自身で有効にしてプラグインを探すか、npm や Git リポジトリから直接インストールできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket은 플러그인 마켓을 제공하지 않아요. 타사 인덱스 소스를 직접 켜서 플러그인을 둘러보거나, npm이나 Git 저장소에서 바로 설치할 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket 不提供外掛市集。你可以自行啟用第三方索引來源瀏覽外掛，也可以從 npm、Git 儲存庫直接安裝。"
+          }
+        }
+      }
     },
     "Fish Pocket 分享海报，带二维码" : {
       "localizations" : {
@@ -14758,6 +14900,46 @@
         }
       }
     },
+    "「%@」（%@）是第三方运营的插件索引，这里只作为示例列出。Fish Pocket 不提供、不运营这个索引，也不审核或担保其中的插件。\n\n插件安装后会以你的权限在本机运行，可能读写文件、联网或执行命令。请仔细甄别插件的来源、作者和说明，只安装你信任的插件。安装和使用第三方插件的风险需由你自行承担，感谢理解。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%1$@” (%2$@) is a plugin index run by a third party and is listed here only as an example. Fish Pocket doesn’t provide or run this index, and doesn’t review or vouch for the plugins in it.\n\nOnce installed, a plugin runs on this device with your permissions and may read and write files, access the network or run commands. Please check each plugin’s source, author and description carefully, and install only plugins you trust. You take on the risks of installing and using third-party plugins. Thank you for understanding."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "«%1$@» (%2$@) es un índice de complementos gestionado por un tercero y solo aparece aquí como ejemplo. Fish Pocket no ofrece ni gestiona este índice, ni revisa o avala los complementos que contiene.\n\nUna vez instalado, un complemento se ejecuta en este dispositivo con tus permisos y puede leer y escribir archivos, acceder a la red o ejecutar comandos. Comprueba con cuidado el origen, el autor y la descripción de cada complemento, e instala solo los que te merezcan confianza. Los riesgos de instalar y usar complementos de terceros corren por tu cuenta. Gracias por tu comprensión."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%1$@」（%2$@）は第三者が運営するプラグインインデックスで、ここでは例として掲載しているだけです。Fish Pocket はこのインデックスを提供・運営しておらず、掲載されているプラグインの審査や保証も行っていません。\n\nインストールしたプラグインは、このデバイス上であなたの権限で実行され、ファイルの読み書き、ネットワークへのアクセス、コマンドの実行を行う場合があります。プラグインの提供元、作者、説明をよく確認し、信頼できるものだけをインストールしてください。サードパーティ製プラグインのインストールと使用に伴うリスクは、ご自身の責任となります。ご理解のほどよろしくお願いします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‘%1$@’(%2$@)은 제3자가 운영하는 플러그인 인덱스로, 여기에는 예시로만 보여 드려요. Fish Pocket은 이 인덱스를 제공하거나 운영하지 않으며, 그 안의 플러그인을 검토하거나 보증하지 않아요.\n\n설치한 플러그인은 이 기기에서 사용자의 권한으로 실행되며 파일을 읽고 쓰거나, 네트워크에 접속하거나, 명령을 실행할 수 있어요. 플러그인의 출처, 작성자, 설명을 꼼꼼히 확인하고 신뢰하는 플러그인만 설치하세요. 타사 플러그인을 설치하고 사용하는 데 따르는 위험은 사용자 본인이 부담해요. 양해 부탁드려요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%1$@」（%2$@）是第三方运营的插件索引，这里只作为示例列出。Fish Pocket 不提供、不运营这个索引，也不审核或担保其中的插件。\n\n插件安装后会以你的权限在本机运行，可能读写文件、联网或执行命令。请仔细甄别插件的来源、作者和说明，只安装你信任的插件。安装和使用第三方插件的风险需由你自行承担，感谢理解。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%1$@」（%2$@）是第三方經營的外掛索引，這裡只作為範例列出。Fish Pocket 不提供、不經營這個索引，也不審查或擔保其中的外掛。\n\n外掛安裝後會以你的權限在本機執行，可能讀寫檔案、連網或執行指令。請仔細辨別外掛的來源、作者和說明，只安裝你信任的外掛。安裝和使用第三方外掛的風險需由你自行承擔，感謝理解。"
+          }
+        }
+      }
+    },
     "一句话说明它做什么" : {
       "localizations" : {
         "en" : {
@@ -16154,6 +16336,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "以下是 App 記錄的外掛和安裝資訊："
+          }
+        }
+      }
+    },
+    "下面是之前读到的列表。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Below is the list read earlier."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abajo está la lista leída anteriormente."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以下は前に読み込んだ一覧です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아래는 이전에 읽은 목록이에요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下面是之前讀到的列表。"
+          }
+        }
+      }
+    },
+    "下面是上次读到的列表，可能不是最新的。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Below is the list from the last read, which may be out of date."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abajo está la lista de la última lectura; puede no estar actualizada."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以下は前回読み込んだ一覧で、最新ではない可能性があります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아래는 지난번에 읽은 목록이라 최신이 아닐 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下面是上次讀到的列表，可能不是最新的。"
           }
         }
       }
@@ -24766,6 +25016,74 @@
         }
       }
     },
+    "示例索引源" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Example Index Sources"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fuentes de índice de ejemplo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "インデックスソースの例"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "예시 인덱스 소스"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "範例索引來源"
+          }
+        }
+      }
+    },
+    "Fish Pocket 不提供插件市场。下面的示例索引由第三方独立运营，我们不运营、不审核，也不对其中的插件作任何担保。是否启用、安装哪些插件，请你自行判断：仔细甄别插件的来源和作者，留意它能做什么，只安装你信任的插件。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket doesn’t provide a plugin market. The example indexes below are run independently by third parties; we don’t run or review them, and we make no guarantees about the plugins in them. Whether to turn one on and which plugins to install is your call: check each plugin’s source and author carefully, pay attention to what it can do, and install only plugins you trust."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket no ofrece ningún mercado de complementos. Los índices de ejemplo de abajo los gestionan terceros de forma independiente; no los gestionamos ni los revisamos, y no ofrecemos ninguna garantía sobre sus complementos. Decidir si activarlos y qué complementos instalar depende de ti: comprueba con cuidado el origen y el autor de cada complemento, fíjate en lo que puede hacer e instala solo los que te merezcan confianza."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket はプラグインマーケットを提供していません。以下のインデックスの例は第三者が独自に運営しているもので、私たちは運営も審査もしておらず、掲載されているプラグインについて一切保証しません。有効にするかどうか、どのプラグインをインストールするかはご自身で判断してください。プラグインの提供元と作者をよく確認し、何ができるのかに注意して、信頼できるものだけをインストールしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket은 플러그인 마켓을 제공하지 않아요. 아래 예시 인덱스는 제3자가 독립적으로 운영하며, 저희는 이를 운영하거나 검토하지 않고 그 안의 플러그인에 대해 어떠한 보증도 하지 않아요. 켤지, 어떤 플러그인을 설치할지는 직접 판단해 주세요. 플러그인의 출처와 작성자를 꼼꼼히 확인하고, 무엇을 할 수 있는지 살펴본 뒤 신뢰하는 플러그인만 설치하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket 不提供外掛市集。下面的範例索引由第三方獨立經營，我們不經營、不審查，也不對其中的外掛作任何擔保。是否啟用、安裝哪些外掛，請你自行判斷：仔細辨別外掛的來源和作者，留意它能做什麼，只安裝你信任的外掛。"
+          }
+        }
+      }
+    },
     "冒充与侵权" : {
       "localizations" : {
         "en" : {
@@ -29592,7 +29910,8 @@
             "value" : "探索、安裝和管理外掛"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "发现插件" : {
       "localizations" : {
@@ -31092,6 +31411,7 @@
       }
     },
     "可以关闭此页，安装会在后台继续，结果会提示你。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -32413,6 +32733,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "啟用完全權限？"
+          }
+        }
+      }
+    },
+    "启用第三方索引源？" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn On a Third-Party Index Source?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Activar una fuente de índice de terceros?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サードパーティのインデックスソースを有効にしますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "타사 인덱스 소스를 켤까요?"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要啟用第三方索引來源嗎？"
           }
         }
       }
@@ -34050,6 +34404,7 @@
       }
     },
     "在后台继续" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -37324,7 +37679,8 @@
             "value" : "它的開關在「設定 → 外掛 → 實驗性外掛」"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "它的私聊、记忆和定时任务都会删掉，它也会退出所有群聊。" : {
       "localizations" : {
@@ -37458,6 +37814,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "安裝「%@」？"
+          }
+        }
+      }
+    },
+    "安装和管理插件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Install and manage plugins"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Instala y gestiona complementos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プラグインのインストールと管理"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "플러그인 설치 및 관리"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "安裝和管理外掛"
           }
         }
       }
@@ -40519,6 +40909,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "左滑可以移出成員。一個群組至少兩個、最多十二個 Bot。"
+          }
+        }
+      }
+    },
+    "左滑可移除。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swipe left to remove one."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desliza hacia la izquierda para eliminar una."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左にスワイプすると削除できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "왼쪽으로 쓸어 넘기면 삭제할 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "向左滑動可移除。"
           }
         }
       }
@@ -47168,7 +47592,8 @@
             "value" : "還原內建市集"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "恢复预置市场，或添加其他索引。" : {
       "localizations" : {
@@ -47202,7 +47627,8 @@
             "value" : "還原內建市集，或新增其他索引。"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "恢复默认" : {
       "localizations" : {
@@ -47608,6 +48034,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "我安裝外掛「%@」失敗了。幫我找出原因，能修好就直接修，修不好就告訴我該怎麼辦。"
+          }
+        }
+      }
+    },
+    "我已了解，启用" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I Understand, Turn On"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entendido, activar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "理解しました。有効にする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이해했어요, 켜기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我已了解，啟用"
           }
         }
       }
@@ -48258,6 +48718,40 @@
         }
       }
     },
+    "打开「发现」时，App 会访问启用的索引源。索引由第三方提供，只添加你信任的来源：其中的插件安装后以你的权限运行。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When you open Discover, the app visits the index sources that are on. Indexes come from third parties. Add only sources you trust: plugins from them run with your permissions once installed."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando abres «Descubrir», la app visita las fuentes de índice activadas. Los índices los proporcionan terceros. Agrega solo fuentes en las que confíes: los complementos que provienen de ellas se ejecutan con tus permisos una vez instalados."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「見つける」を開くと、App は有効なインデックスソースにアクセスします。インデックスは第三者が提供しています。信頼できるソースだけを追加してください：インストールしたプラグインはあなたの権限で実行されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‘둘러보기’를 열면 앱이 켜 둔 인덱스 소스에 접속해요. 인덱스는 제3자가 제공해요. 신뢰하는 소스만 추가하세요. 설치한 플러그인은 사용자의 권한으로 실행돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開啟「探索」時，App 會存取已啟用的索引來源。索引由第三方提供，只新增你信任的來源：其中的外掛安裝後以你的權限執行。"
+          }
+        }
+      }
+    },
     "打开「发现」时，App 会访问这里列出的地址。左滑可移除。" : {
       "localizations" : {
         "en" : {
@@ -48290,7 +48784,8 @@
             "value" : "開啟「探索」時，App 會存取這裡列出的網址。向左滑動可移除。"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "打开一个小工具。在快捷指令里把它添加到主屏幕，就是这个小工具的图标。" : {
       "localizations" : {
@@ -52285,7 +52780,8 @@
             "value" : "外掛市集已關閉"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "插件状态更新" : {
       "localizations" : {
@@ -62365,7 +62861,8 @@
             "value" : "來自 %@。外掛由社群作者發布，Fish Pocket 不審查。"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "来自%@" : {
       "localizations" : {
@@ -62397,6 +62894,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "來自%@"
+          }
+        }
+      }
+    },
+    "来自第三方索引「%@」。Fish Pocket 不提供也不审核这些插件，请仔细甄别，只安装你信任的插件。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From the third-party index “%@”. Fish Pocket doesn’t provide or review these plugins. Please check them carefully and install only plugins you trust."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Del índice de terceros «%@». Fish Pocket no ofrece ni revisa estos complementos. Compruébalos con cuidado e instala solo los que te merezcan confianza."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サードパーティのインデックス「%@」より。Fish Pocket はこれらのプラグインを提供も審査もしていません。よく確認のうえ、信頼できるプラグインだけをインストールしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "타사 인덱스 ‘%@’에서 가져왔어요. Fish Pocket은 이 플러그인들을 제공하거나 검토하지 않아요. 꼼꼼히 확인하고 신뢰하는 플러그인만 설치하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "來自第三方索引「%@」。Fish Pocket 不提供也不審查這些外掛，請仔細辨別，只安裝你信任的外掛。"
           }
         }
       }
@@ -74143,6 +74674,74 @@
         }
       }
     },
+    "社区维护的 DSH 插件目录，发布在 GitHub 上，通过 jsDelivr 访问。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A community-maintained DSH plugin directory, published on GitHub and fetched through jsDelivr."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un directorio de complementos de DSH mantenido por la comunidad, publicado en GitHub y al que se accede a través de jsDelivr."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コミュニティが管理する DSH プラグインディレクトリ。GitHub で公開され、jsDelivr 経由でアクセスします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "커뮤니티가 관리하는 DSH 플러그인 디렉터리로, GitHub에 게시되고 jsDelivr를 통해 접속해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "社群維護的 DSH 外掛目錄，發布在 GitHub 上，透過 jsDelivr 存取。"
+          }
+        }
+      }
+    },
+    "社区维护的 DSH 插件目录，由 dshfind.com 提供。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A community-maintained DSH plugin directory, provided by dshfind.com."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un directorio de complementos de DSH mantenido por la comunidad, proporcionado por dshfind.com."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コミュニティが管理する DSH プラグインディレクトリ。dshfind.com が提供しています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "커뮤니티가 관리하는 DSH 플러그인 디렉터리로, dshfind.com에서 제공해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "社群維護的 DSH 外掛目錄，由 dshfind.com 提供。"
+          }
+        }
+      }
+    },
     "禁用条件" : {
       "localizations" : {
         "en" : {
@@ -75347,6 +75946,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "第一次傳訊息的人要你允許後，Bot 才會回覆。"
+          }
+        }
+      }
+    },
+    "第三方" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Third-party"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De terceros"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サードパーティ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "타사"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "第三方"
           }
         }
       }
@@ -76666,6 +77299,80 @@
         }
       }
     },
+    "索引服务器返回了错误（%@）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The index server returned an error (%@)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El servidor del índice devolvió un error (%@)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "インデックスのサーバーがエラーを返しました（%@）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "인덱스 서버가 오류를 반환했어요(%@)"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "索引服务器返回了错误（%@）"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "索引伺服器回傳了錯誤（%@）"
+          }
+        }
+      }
+    },
+    "索引文件太大，无法读取" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The index file is too large to read"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El archivo del índice es demasiado grande para leerlo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "インデックスファイルが大きすぎて読み込めません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "인덱스 파일이 너무 커서 읽을 수 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "索引檔案太大，無法讀取"
+          }
+        }
+      }
+    },
     "索引源" : {
       "localizations" : {
         "en" : {
@@ -76766,7 +77473,8 @@
             "value" : "索引由第三方提供。只新增你信任的來源：其中的外掛安裝後以你的權限執行。"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "约%lld个月" : {
       "localizations" : {
@@ -80488,6 +81196,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "自訂連接器"
+          }
+        }
+      }
+    },
+    "自己添加的" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Added by You"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agregadas por ti"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自分で追加"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "직접 추가한 소스"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自行新增的"
           }
         }
       }
@@ -85955,6 +86697,40 @@
         }
       }
     },
+    "读取超时：网络较慢，或这个索引的服务器在你所在的地区访问不畅。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Timed out: the network is slow, or this index’s server is hard to reach from your region."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se agotó el tiempo: la red es lenta o el servidor de este índice es de difícil acceso desde tu región."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タイムアウトしました。ネットワークが遅いか、このインデックスのサーバーにお住まいの地域からつながりにくい可能性があります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시간이 초과됐어요. 네트워크가 느리거나, 이 인덱스의 서버가 지금 계신 지역에서 접속이 원활하지 않아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "讀取逾時：網路較慢，或這個索引的伺服器在你所在的地區連線不順暢。"
+          }
+        }
+      }
+    },
     "谁先回复" : {
       "localizations" : {
         "en" : {
@@ -88467,6 +89243,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "這不是有效的外掛套件"
+          }
+        }
+      }
+    },
+    "列在这里只为方便你添加，默认不启用，不代表 Fish Pocket 推荐其中的内容。同一时间只能启用一个索引源，启用另一个会替换当前的。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listed here only to make adding them easier. They’re off by default, and listing them doesn’t mean Fish Pocket recommends what they contain. Only one index source can be on at a time; turning on another replaces the current one."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se muestran aquí solo para que te resulte más fácil agregarlas. Están desactivadas de forma predeterminada, y que aparezcan no significa que Fish Pocket recomiende su contenido. Solo puede haber una fuente de índice activada a la vez; al activar otra, sustituye a la actual."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加しやすいようにここに載せているだけです。初期状態では無効で、Fish Pocket が掲載内容を推奨しているわけではありません。同時に有効にできるインデックスソースは 1 つだけで、別のものを有効にすると現在のものと置き換わります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "추가하기 쉽도록 여기에 보여 줄 뿐이에요. 기본적으로 꺼져 있으며, Fish Pocket이 그 안의 내용을 추천한다는 뜻은 아니에요. 인덱스 소스는 한 번에 하나만 켤 수 있으며, 다른 소스를 켜면 현재 소스를 대체해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列在這裡只為方便你新增，預設不啟用，不代表 Fish Pocket 推薦其中的內容。同一時間只能啟用一個索引來源，啟用另一個會取代目前的。"
           }
         }
       }
@@ -92450,6 +93260,40 @@
         }
       }
     },
+    "选择索引源" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose Index Sources"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elegir fuentes de índice"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "インデックスソースを選ぶ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "인덱스 소스 선택"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選擇索引來源"
+          }
+        }
+      }
+    },
     "选择要添加的模型" : {
       "localizations" : {
         "en" : {
@@ -95481,7 +96325,8 @@
             "value" : "內建"
           }
         }
-      }
+      },
+      "extractionState" : "stale"
     },
     "预设中启用" : {
       "localizations" : {
@@ -104621,6 +105466,7 @@
       }
     },
     "可以关闭此页，更新会在后台继续，结果会提示你。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
