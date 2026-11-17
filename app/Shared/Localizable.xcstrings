@@ -70225,36 +70225,36 @@
         }
       }
     },
-    "用对话定制 DSH：让 Agent 编写插件，添加新功能或界面；也能组合工具和提示词，创建自己的模式。" : {
+    "用对话定制 DSH：让 Agent 编写插件，添加新工具、接入外部服务；也能组合工具和提示词，创建自己的模式。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Customize DSH through conversation. Let the agent write plugins that add features or UI, or combine tools and prompts to create your own mode."
+            "value" : "Customize DSH through conversation. Let the agent write plugins that add new tools or connect outside services, or combine tools and prompts to create your own mode."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Personaliza DSH con la conversación: deja que el agente escriba complementos, agregue funciones o interfaces nuevas; también puedes combinar herramientas y prompts para crear tus propios modos."
+            "value" : "Personaliza DSH con la conversación: deja que el agente escriba complementos que agreguen herramientas nuevas o conecten servicios externos; también puedes combinar herramientas y prompts para crear tus propios modos."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "会話を通じて DSH をカスタマイズします。機能や UI を追加するプラグインをエージェントに書かせたり、ツールとプロンプトを組み合わせて独自のモードを作成したりできます。"
+            "value" : "会話を通じて DSH をカスタマイズします。新しいツールの追加や外部サービスとの連携を行うプラグインをエージェントに書かせたり、ツールとプロンプトを組み合わせて独自のモードを作成したりできます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "대화로 DSH를 맞춤 설정하세요. 에이전트에게 플러그인을 작성하게 해 기능이나 UI를 추가하거나, 도구와 프롬프트를 조합해 나만의 모드를 만들 수 있어요."
+            "value" : "대화로 DSH를 맞춤 설정하세요. 에이전트에게 플러그인을 작성하게 해 새 도구를 추가하거나 외부 서비스를 연결하고, 도구와 프롬프트를 조합해 나만의 모드를 만들 수도 있어요."
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "用對話客製化 DSH：讓 Agent 編寫外掛，加入新功能或介面；也能組合工具和提示詞，建立自己的模式。"
+            "value" : "用對話客製化 DSH：讓 Agent 編寫外掛，加入新工具、串接外部服務；也能組合工具和提示詞，建立自己的模式。"
           }
         }
       }
