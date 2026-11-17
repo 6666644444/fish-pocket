@@ -259,7 +259,7 @@ App 免费，代码以 MIT 协议开源，商用需要先取得授权，见[许�
   <img src="docs/assets/wechat-group.png" width="260" alt="Fish Pocket 微信交流群二维码">
 </p>
 
-<p align="center">微信扫码加入 Fish Pocket 交流群。二维码过期了的话，欢迎<a href="https://github.com/imsai-sh/fish-pocket/issues">提 issue</a> 提醒我们更新。</p>
+<p align="center">微信扫码加入 Fish Pocket 交流群。</p>
 
 ## 参与贡献
 
