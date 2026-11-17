@@ -18,7 +18,7 @@
   <b>Three more big features: <a href="#phone-control">Phone control</a>, where the agent taps through other apps for you; <a href="#bot-mode">Bot mode</a>, a standing team of Bots with a native interface; and <a href="#remote-control">Remote control</a>, for the Codex, Claude Code and DSH sessions on your computers and servers.</b>
 </p>
 
-<p align="center">Want an agent in your pocket too? <a href="https://testflight.apple.com/join/2SCftb2M"><b>Join the TestFlight beta</b></a> (recommended, available worldwide) or <a href="https://apps.apple.com/app/id6830703602">get it on the App Store</a> (outside mainland China), and a ⭐ helps.</p>
+<p align="center">Want an agent in your pocket too? <a href="https://apps.apple.com/app/id6830703602"><b>Download on the App Store</b></a>, and a ⭐ helps. To try new versions first, <a href="https://testflight.apple.com/join/2SCftb2M">join the TestFlight beta</a>.</p>
 
 <p align="center"><a href="https://fish.deepseek1024.com/en/">Website</a> · <a href="README.md">中文</a></p>
 
@@ -127,8 +127,8 @@ The features match the official DSH Web UI: what it can do, this can do, with th
 
 To install it, you need iOS 17 or later:
 
-- **TestFlight (recommended, available worldwide)**: open the [TestFlight beta link](https://testflight.apple.com/join/2SCftb2M) on your iPhone or iPad. New versions land here first and stay in step with this repository.
-- **App Store (outside mainland China)**: [download on the App Store](https://apps.apple.com/app/id6830703602). It is currently available outside mainland China only. Every App Store version has to wait for Apple's review, so it lags behind TestFlight and this repository.
+- **App Store (recommended)**: [download on the App Store](https://apps.apple.com/app/id6830703602). Every App Store version has to wait for Apple's review, so it lags behind TestFlight and this repository.
+- **TestFlight (new versions first)**: open the [TestFlight beta link](https://testflight.apple.com/join/2SCftb2M) on your iPhone or iPad. It is available worldwide; new versions land here first and stay in step with this repository.
 
 To build it yourself, you need macOS, Xcode 27 or later, Node 24 and `xcodegen`, plus `cmake` or `uv` to build libgit2. Filling the screen on iPhone Duo takes Xcode 27.1 or later: a build from an earlier Xcode runs there at the size of an ordinary iPhone.
 
@@ -203,7 +203,7 @@ Yes. The app is free and the code is open source under the MIT license; commerci
 
 ### Where is it available?
 
-The TestFlight beta is available worldwide, including mainland China. The App Store version is available outside mainland China.
+Fish Pocket is on the App Store. If you want new versions first, the TestFlight beta is also available.
 
 ### Are my conversations and code uploaded?
 
