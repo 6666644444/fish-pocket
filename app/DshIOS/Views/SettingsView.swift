@@ -77,8 +77,11 @@ struct SettingsView: View {
 
                 Section {
                     NavigationLink { ModelProvidersPage() } label: { row("模型", "cpu", defaultModel ?? "") }
-                    NavigationLink { VoiceSettingsPage() } label: {
-                        row("语音", "mic", VoicePreferences.shared.source == .volcengine && !VolcSpeech.shared.configured ? String(localized: "未设置") : VoicePreferences.shared.source.title)
+                    NavigationLink { VoiceInputSettingsPage() } label: {
+                        row("语音输入", "mic", VoicePreferences.shared.source == .volcengine && !VolcSpeech.shared.configured ? String(localized: "未设置") : VoicePreferences.shared.source.title)
+                    }
+                    NavigationLink { ReadAloudSettingsPage() } label: {
+                        row("朗读", "speaker.wave.2", VoicePreferences.shared.readingVoice.title)
                     }
                     if mirror.serves("permission") { permissionPicker }
                 }

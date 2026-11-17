@@ -327,7 +327,7 @@ struct ComposerView: View {
         .sheet(isPresented: $showModels) { ModelSearchSheet(model: model, context: context) }
         .sheet(isPresented: $voiceSetup) {
             NavigationStack {
-                VoiceSettingsPage { voiceSetup = false }
+                VoiceInputSettingsPage { voiceSetup = false }
                 .closeButton { voiceSetup = false }
             }
         }
