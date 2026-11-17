@@ -48,14 +48,10 @@ struct DeepSeekImportSheet: View {
         .tint(Palette.ink)
         .interactiveDismissDisabled(importer?.running == true)
         .fileImporter(isPresented: $picking, allowedContentTypes: [.zip]) { picked($0) }
-        .sheet(isPresented: $showNewWorkspace) { NewWorkspaceView() }
+        .sheet(isPresented: $showNewWorkspace) { NewWorkspaceView { workspaceId = $0 } }
         .onAppear {
             if importer == nil { importer = DeepSeekImport(app: app) }
             if !app.workspaces.contains(where: { $0.id == workspaceId }) { workspaceId = app.workspaces.first?.id ?? "" }
-        }
-        // A workspace added here is the one the user meant.
-        .onChange(of: app.workspaces.map(\.id)) { old, new in
-            if let added = new.first(where: { !old.contains($0) }) { workspaceId = added }
         }
         .onDisappear {
             importer?.cancel()
@@ -124,7 +120,19 @@ struct DeepSeekImportSheet: View {
             } header: {
                 Text("导入到")
             } footer: {
-                Text("每个对话成为这个工作区里的一个会话，保留原来的标题、时间、思考过程和联网搜索。再次导入同一份文件会多出一份。")
+                Text("每个对话成为这个工作区里的一个会话。")
+            }
+
+            Section {
+                ForEach(Self.notes, id: \.text) { note in
+                    Label {
+                        Text(note.text).font(.footnote).foregroundStyle(Palette.ink)
+                    } icon: {
+                        Image(systemName: note.icon).font(.footnote).foregroundStyle(Palette.secondary)
+                    }
+                }
+            } header: {
+                Text("导入说明")
             }
 
             Section {
@@ -140,6 +148,17 @@ struct DeepSeekImportSheet: View {
                 .disabled(file == nil || copying || workspaceId.isEmpty)
             }
         }
+    }
+
+    /// What the official plugin keeps, drops and limits (its README), in the reader's terms.
+    private static var notes: [(icon: String, text: String)] {
+        [
+            ("checkmark.circle", String(localized: "保留你当时停留的那条对话分支，以及原标题、时间、思考过程、联网搜索和图片。")),
+            ("exclamationmark.bubble", String(localized: "被撤回、失败或模板回答的回复显示为错误行，不会发给模型；提问全部被撤回的对话会跳过。")),
+            ("doc", String(localized: "图片以外的附件只保留文件名和大小，打不开，模型也读不到内容。")),
+            ("square.stack.3d.up", String(localized: "一次最多导入最近的 1000 个对话，压缩包最大 512 MB。同一个文件导入两次会得到两份。")),
+            ("gauge.with.dots.needle.33percent", String(localized: "接着聊时，整段历史都会发给模型，按正常用量消耗额度或 API 费用；很长的对话第一次回复会比较慢。")),
+        ]
     }
 
     private func picked(_ result: Result<URL, Error>) {
