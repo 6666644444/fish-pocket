@@ -419,6 +419,23 @@ final class SessionModel {
         ]])
     }
 
+    /// Whether the Host would run the failed turn that ended at `seq` again (`conversationContinuation`
+    /// names its `turn/end` after a rate limit, a server or transport failure, a timeout, an empty or
+    /// cut-off answer), and nothing else is on its way in.
+    func canContinue(after seq: Int) -> Bool {
+        composer.projection("conversationContinuation").int == seq && !running && subagentAddress == nil
+            && composer.isEmpty && composer.pending.isEmpty && queued.isEmpty
+    }
+
+    /// 继续生成: a prompt with no content, which the Host records as a retry of that turn.
+    func continueGeneration() async {
+        do {
+            try await prompt(content: [], steer: false, requestId: UUID().uuidString.lowercased())
+        } catch {
+            self.error = error.localizedDescription
+        }
+    }
+
     func toast(_ text: String, duration: Double = 4) { app.showToast(text, duration: duration) }
 
     func cancel() async {

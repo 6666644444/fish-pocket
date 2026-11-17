@@ -163,6 +163,8 @@ final class ComposerModel {
     private(set) var planSwitching = false
     /// `/compact` on its way.
     private(set) var compacting = false
+    /// `agentTeams/setEnabled` on its way.
+    private(set) var teamSwitching = false
     /// A queued message loaded into the input to edit, and the draft it set aside.
     private(set) var editingQueue: (id: String, setAside: String)?
     private(set) var savingQueueEdit = false
@@ -212,6 +214,13 @@ final class ComposerModel {
         return (plan["pending"].bool ?? false) ? !active : active
     }
 
+    /// Agent teamwork is this session's own choice, off in a new one (`agentTeam`:
+    /// `{enabled, tasks, failure?}`); nil from a Host that has none.
+    var teamEnabled: Bool? { projection("agentTeam")["enabled"].bool }
+
+    /// Once the session has asked a model, turning teamwork off costs it its cached prefix: the web confirms first.
+    var teamDisableNeedsConfirmation: Bool { !projection("modelSelection")["lastUsed"].isNull }
+
     var goal: GoalInfo? {
         let goal = projection("goal")["goal"]
         guard let id = goal["id"].string else { return nil }
@@ -234,9 +243,13 @@ final class ComposerModel {
         goal.phase == "paused" || (goal.phase != "blocked" && armed(goal) == false)
     }
 
+    /// A goal the user paused is 已暂停; an active one that will not go on by itself is 待继续.
     func goalPhaseName(_ goal: GoalInfo) -> String {
-        if goal.phase == "blocked" { return String(localized: "受阻的目标") }
-        return goalPaused(goal) ? String(localized: "已暂停的目标") : String(localized: "进行中的目标")
+        switch goal.phase {
+        case "blocked": return String(localized: "受阻的目标")
+        case "paused": return String(localized: "已暂停的目标")
+        default: return armed(goal) == false ? String(localized: "待继续的目标") : String(localized: "进行中的目标")
+        }
     }
 
     /// `contextPressure`: used = projected ?? pressure tokens, over the route's window.
@@ -501,6 +514,21 @@ final class ComposerModel {
                 session.refreshProjections()
             } catch {
                 app.showToast(failure + "：" + errorText(error))
+            }
+        }
+    }
+
+    /// The switch shows the saved value, not the tap: the projection answers once the Host has it.
+    func setTeam(_ on: Bool) {
+        guard !teamSwitching, let session else { return }
+        teamSwitching = true
+        Task {
+            defer { teamSwitching = false }
+            do {
+                try await app.client.call("agentTeams/setEnabled", ["agentId": .string(sessionId), "enabled": .bool(on)])
+                session.refreshProjections()
+            } catch {
+                app.showToast(String(localized: "智能体团队协作的设置没有保存，请重试：\(errorText(error))"))
             }
         }
     }

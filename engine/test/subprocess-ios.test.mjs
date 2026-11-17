@@ -168,6 +168,14 @@ test('rg accepts the argv templates of dsh-tool-fs-search', async () => {
   const listing = await run(['--files', '--sort=path', '--null', '--path-separator=/', '--hidden', '--no-ignore', '--glob=!**/.git']);
   assert.equal(listing.code, 0, listing.err);
   assert.deepEqual(listing.out.split('\0').filter(Boolean), ['src/new.ts', 'src/old.ts']);
+  // Its excluded paths are plain names (any depth) and root paths; each takes its directory with it.
+  for (const file of ['build/a.ts', 'src/build/b.ts', 'src/deep/dist/c.ts', 'vendor/kit/d.ts', 'src/vendor/kit/e.ts', 'src/Thumbs.db']) {
+    fs.mkdirSync(path.join(dir, path.dirname(file)), { recursive: true });
+    fs.writeFileSync(path.join(dir, file), 'x\n');
+  }
+  const pruned = await run(['--files', '--sort=path', '--null', '--path-separator=/', '--hidden', '--no-ignore', '--glob=!.git', '--glob=!build', '--glob=!dist', '--glob=!Thumbs.db', '--glob=!/vendor/kit']);
+  assert.equal(pruned.code, 0, pruned.err);
+  assert.deepEqual(pruned.out.split('\0').filter(Boolean), ['src/new.ts', 'src/old.ts', 'src/vendor/kit/e.ts']);
 });
 
 test('rg takes Claude Code Grep argv: --max-columns, ripgrep case rules', async () => {

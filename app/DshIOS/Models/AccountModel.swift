@@ -56,8 +56,13 @@ final class AccountModel {
     @ObservationIgnored private var watchTask: Task<Void, Never>?
     @ObservationIgnored private var detailsGeneration = 0
     @ObservationIgnored private var initializedAttempt: String?
-    /// Notifications already reported, so a re-read does not show them again.
+    /// Cards already reported as displayed, so one is not reported twice.
     @ObservationIgnored private var reported: Set<String> = []
+    /// Cards the user closed: a read that still lists one does not bring it back.
+    @ObservationIgnored private var dismissed: Set<String> = []
+    @ObservationIgnored private var pollTask: Task<Void, Never>?
+    /// Seconds between reads (`nextPollAfterSeconds`); the web starts from ten minutes.
+    @ObservationIgnored private var pollInterval: Double = 600
 
     init(client: EngineClient, mux: StreamMux) {
         self.client = client
@@ -145,12 +150,14 @@ final class AccountModel {
             profile = nil
             balance = nil
             notifications = []
+            reported = []
+            dismissed = []
+            pollTask?.cancel()
+            pollTask = nil
             quotaPrompt = false
             return
         }
-        if !wasSignedIn {
-            Task { await loadNotifications() }
-        }
+        if !wasSignedIn { pollNotifications() }
         // First frame of a finished sign-in: pick the account's default model, as the web client does.
         if phase == "succeeded", let id = attempt?["id"].string, initializedAttempt != id {
             initializedAttempt = id
@@ -173,7 +180,7 @@ final class AccountModel {
         balance = nextBalance
     }
 
-    /// Opening settings re-reads everything shown there, bonus notices included.
+    /// Opening settings re-reads everything shown there, the notification cards included.
     func refresh() async {
         guard signedIn else { return }
         async let details: Void = refreshDetails()
@@ -189,15 +196,17 @@ final class AccountModel {
 
     // MARK: Platform notifications
 
-    /// 0.2.2-rc.3 replaced the bonus RPCs with `account/getNotifications`: one
-    /// read returns the unconsumed cards, their buttons and the next poll delay.
+    /// `account/getNotifications`: the unconsumed cards, their buttons, and when to ask again.
+    /// The card the user has already been shown stays in front until it is closed or runs out,
+    /// whatever a later read lists; the rest follow in the server's order.
     private func loadNotifications() async {
         guard let batch = try? await client.call("account/getNotifications", ["client": clientInfo]), !batch.isNull else { return }
+        if let seconds = batch["nextPollAfterSeconds"].double, seconds > 0 { pollInterval = seconds }
         let iso = ISO8601DateFormatter()
         iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         let plain = ISO8601DateFormatter()
-        notifications = batch["notifications"].array.compactMap { item in
-            guard let id = item["id"].string, !reported.contains(id) else { return nil }
+        let offered: [AccountNotification] = batch["notifications"].array.compactMap { item in
+            guard let id = item["id"].string, !dismissed.contains(id) else { return nil }
             let until = item["displayUntil"].string.flatMap { $0.isEmpty ? nil : (iso.date(from: $0) ?? plain.date(from: $0)) }
             let actions = item["actions"].array.compactMap { action -> AccountNotification.Action? in
                 guard let label = action["label"].string, let target = action["target"]["type"].string else { return nil }
@@ -217,46 +226,56 @@ final class AccountModel {
             )
             return notice.expired ? nil : notice
         }
+        let front = notifications.first.flatMap { shown in
+            reported.contains(shown.id) && !shown.expired ? offered.first { $0.id == shown.id } ?? shown : nil
+        }
+        let next = front.map { front in [front] + offered.filter { $0.id != front.id } } ?? offered
+        reported.formIntersection(next.map(\.id))
+        if next != notifications { notifications = next }
     }
 
-    /// A card counts as shown once on screen: report it once, retrying failures with backoff.
+    /// Ask again while signed in: every ten minutes until the server names its own interval.
+    private func pollNotifications() {
+        pollTask?.cancel()
+        pollTask = Task { [weak self] in
+            while !Task.isCancelled {
+                guard let self, self.signedIn else { return }
+                await self.loadNotifications()
+                try? await Task.sleep(for: .seconds(self.pollInterval))
+            }
+        }
+    }
+
+    /// A card counts as shown once on screen. Like the other two events it is reported once
+    /// and not again: the server decides what a report it never got means.
     func markShown(_ notice: AccountNotification) {
-        guard !reported.contains(notice.id) else { return }
-        reported.insert(notice.id)
+        guard reported.insert(notice.id).inserted else { return }
         report(notice.id, "displayed")
     }
 
     func dismiss(_ notice: AccountNotification) {
+        dismissed.insert(notice.id)
         report(notice.id, "dismissed")
         notifications.removeAll { $0.id == notice.id }
     }
 
-    /// A button on the card: report the click, drop the card, and answer with the
-    /// page to open (an `app_route` card points at the account page).
+    /// A button on the card. One that closes it is a dismissal; any other is reported as a
+    /// click and leaves the card, answering with the page to open (`app_route` is the account page).
     func act(_ notice: AccountNotification, _ action: AccountNotification.Action) -> URL? {
-        // A `dismiss` button closes the card like ✕ does; `cta_clicked` is for the others.
-        report(notice.id, action.target == "dismiss" ? "dismissed" : "cta_clicked")
-        notifications.removeAll { $0.id == notice.id }
-        if action.target == "dismiss" { return nil }
-        if action.route == "account" { return accountInfoURL ?? usageURL }
-        return nil
+        if action.target == "dismiss" {
+            dismiss(notice)
+            return nil
+        }
+        report(notice.id, "cta_clicked")
+        return action.route == "account" ? accountInfoURL ?? usageURL : nil
     }
 
     private func report(_ id: String, _ event: String) {
         let client = self.client, info = clientInfo
         Task {
-            var delay = 1.0
-            while !Task.isCancelled {
-                do {
-                    _ = try await client.call("account/reportNotificationEvent", [
-                        "id": .string(id), "event": .string(event), "client": info,
-                    ])
-                    return // false means the grant changed: do not retry either.
-                } catch {
-                    try? await Task.sleep(for: .seconds(delay))
-                    delay = min(delay * 2, 60)
-                }
-            }
+            _ = try? await client.call("account/reportNotificationEvent", [
+                "id": .string(id), "event": .string(event), "client": info,
+            ])
         }
     }
 

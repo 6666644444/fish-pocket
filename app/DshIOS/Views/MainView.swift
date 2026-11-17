@@ -453,6 +453,8 @@ struct MainView: View {
 
     #if DEBUG
     /// Screenshots and UI checks: `simctl launch … -dshOpen drawer|workbench|approval|question|timeline|settings|plugins|store|schedules|signin|support|share|watch|connectors|whatsnew|capabilities|phonecontrol|remote|start|fishpocket|topup|miniapps`.
+    /// The conversation takes `workbench|filesearch|approval|question|timeline` itself; `filesearch` is the workbench's
+    /// file search, with `-dshQuery <text>` to start it on a search.
     private func openForChecks() {
         switch UserDefaults.standard.string(forKey: "dshOpen") {
         case "drawer": drawerOpen = true
