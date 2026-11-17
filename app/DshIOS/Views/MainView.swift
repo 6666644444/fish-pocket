@@ -183,7 +183,7 @@ struct MainView: View {
                 drawerLayout
             }
         }
-        // The drawer and the new conversation page, which have no way to the store themselves.
+        // The drawer and the Bot pages, which have no way to the store themselves.
         .onChange(of: app.pluginStoreRequest) { _, token in
             guard token != nil, scenePhase != .background else { return }
             app.pluginStoreRequest = nil

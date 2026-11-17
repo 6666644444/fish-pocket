@@ -120,7 +120,7 @@ C-49 `/goal` 气泡 · C-90 原子 chip · C-16 鲸鱼动画与流光 · C-30 �
 | Agent 打开的终端在终端面板里可见、可接管（`terminal/watch`） | 已对齐。终端列表跟着引擎变，Agent 开的终端带「Agent」标记，连上后提示「你一输入就由你接管」。要先在插件页启用实验性的终端插件包 |
 | 新工具 `apply_patch`、`subagent_fork`、`wait_agent` | 卡片标题已对齐（编辑、派生子智能体、等待消息），内容仍是通用卡片 |
 | 插件清单：团队协作不再是实验插件包；新增 Computer Use 包 | 已对齐。实验性插件里去掉团队协作那一项；Computer Use 是桌面专属，不列出，`cuaAccess/*` 的 9 个方法不接 |
-| DeepSeek 会话导入（`deepseekChatImport/limits`） | 不在这一批里，另行处理 |
+| DeepSeek 会话导入（`deepseekChatImport/limits`） | 已对齐。新会话输入框上方的「导入 DeepSeek 会话」：选导出的 ZIP 和工作区，显示上传和写入进度；插件默认关闭，第一次导入时自动开启 |
 | MCP 管理（`mcpManager/probe`、`mcpManager/restart`、`mcpManager/watch`） | 官方网页版这一版没有对应界面，不做 |
 | 变更请求与工作树新增的 12 个方法（`forgePanel/*`，见 [protocol.md](protocol.md) §0.2） | 不移植；整块「变更请求与工作树」没做（§3.2） |
 | 共享会话的多会话与按插件授权（`liveshareShares/addSessions`，结果里的 `sessionIds` / `viewerPluginAccess` / `viewerPlugins`） | 不移植（§3.2） |
