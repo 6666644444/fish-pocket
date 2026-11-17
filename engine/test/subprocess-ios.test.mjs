@@ -163,6 +163,11 @@ test('rg accepts the argv templates of dsh-tool-fs-search', async () => {
   assert.equal(glob.code, 0, glob.err);
   assert.deepEqual(glob.out.trim().split('\n').map((f) => path.basename(f)), ['old.ts', 'new.ts']);
   assert.equal((await run(['--json', '--regexp=nothing-here', '--', '.'])).code, 1);
+  // dsh-api-workspace-files (0.2.2-rc.3): the web UI's file search. It reads a failed
+  // listing as "no files", so an option rg refused here would only show as an empty result.
+  const listing = await run(['--files', '--sort=path', '--null', '--path-separator=/', '--hidden', '--no-ignore', '--glob=!**/.git']);
+  assert.equal(listing.code, 0, listing.err);
+  assert.deepEqual(listing.out.split('\0').filter(Boolean), ['src/new.ts', 'src/old.ts']);
 });
 
 test('rg takes Claude Code Grep argv: --max-columns, ripgrep case rules', async () => {

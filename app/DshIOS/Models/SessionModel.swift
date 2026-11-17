@@ -403,9 +403,7 @@ final class SessionModel {
         if let subagentAddress {
             try await client.call("subagents/prompt", ["request": [
                 "requestId": .string(requestId),
-                "parentSessionId": subagentAddress["parentSessionId"],
                 "childSessionId": subagentAddress["childSessionId"],
-                "mode": "continuable",
                 "delivery": .string(steer ? "steer" : "queue"),
                 "content": .array(content),
                 "clientTimeZone": .string(TimeZone.current.identifier),
@@ -426,10 +424,10 @@ final class SessionModel {
     func cancel() async {
         do {
             if let subagentAddress {
-                try await client.call("subagents/interruptByParent", [
+                // 0.2.2-rc.3 replaced interruptByParent: the Gateway authorizes on the child Session,
+                // so the parent address is no longer part of the request.
+                try await client.call("subagents/interruptByUser", [
                     "childSessionId": subagentAddress["childSessionId"],
-                    "parentSessionId": subagentAddress["parentSessionId"],
-                    "mode": "continuable",
                 ])
             } else {
                 try await client.call("session/cancel", ["request": ["sessionId": .string(sessionId)]])

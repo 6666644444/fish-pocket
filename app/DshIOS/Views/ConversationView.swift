@@ -13,6 +13,7 @@ struct ConversationView: View {
     var switchWorkspace: (Workspace) -> Void = { _ in }
     /// A Bot's chat or a group chat: its own title in the bar and its cards above the composer.
     var bot: BotChrome?
+    @Environment(\.botTimeline) private var botTimeline
     /// The global automation page (the reminders sheet leads there).
     @Environment(AppModel.self) private var app
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -197,6 +198,9 @@ struct ConversationView: View {
                 if case .user? = model.items.last { atBottom = true; scrollToBottom(proxy) }
             }
             .onChange(of: model.running) { _, running in if running, atBottom { scrollToBottom(proxy) } }
+            // A group round's replies are rows of the group's book (ds-bot 0.3.8), not events of this
+            // session, whose own turn ends at once: follow them as a running turn is followed.
+            .onChange(of: botTimeline?.room == true ? app.botTeam.relayRowCount : 0) { _, _ in if atBottom { scrollToBottom(proxy) } }
             .overlay(alignment: .bottomTrailing) {
                 // Animated here, not on the scroll view: its rows must not animate with the buttons.
                 ZStack {

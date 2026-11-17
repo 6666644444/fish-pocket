@@ -2,16 +2,26 @@ import Foundation
 import Observation
 import SwiftUI
 
-/// A bonus the Platform has credited but the user has not been shown yet.
-struct BonusNotice: Identifiable, Hashable {
-    let accountId: String
-    let orderId: String
-    let title: String
-    let message: String
-    let expiresAt: Date?
-    var id: String { orderId }
+/// A Platform notification the user has not been shown yet (a credited bonus,
+/// an announcement). 0.2.2-rc.3 replaced `account/getUnnotifiedBonuses` with
+/// `account/getNotifications`, which carries the same card plus its buttons.
+struct AccountNotification: Identifiable, Hashable {
+    /// One button of the card. `target` is `app_route` (with `route`) or `dismiss`.
+    struct Action: Identifiable, Hashable {
+        let label: String
+        let style: String
+        let target: String
+        let route: String?
+        var id: String { "\(label)|\(target)|\(route ?? "")" }
+    }
 
-    var expired: Bool { expiresAt.map { $0 <= Date() } ?? false }
+    let id: String
+    let title: String
+    let body: String
+    let displayUntil: Date?
+    let actions: [Action]
+
+    var expired: Bool { displayUntil.map { $0 <= Date() } ?? false }
 }
 
 /// The DeepSeek account the way the official web client tracks it
@@ -26,7 +36,7 @@ struct BonusNotice: Identifiable, Hashable {
 @Observable
 final class AccountModel {
     /// The engine build this client speaks for; account methods require it in `client`.
-    static let clientVersion = "0.2.2-rc.1"
+    static let clientVersion = "0.2.2-rc.3"
 
     @ObservationIgnored private let client: EngineClient
     @ObservationIgnored private let mux: StreamMux
@@ -37,7 +47,8 @@ final class AccountModel {
     /// `nil` while loading; then `{status:"ready", value}` or `{status:"failed"}`.
     private(set) var profile: JSON?
     private(set) var balance: JSON?
-    private(set) var bonuses: [BonusNotice] = []
+    /// Unread Platform notifications, newest first; one card shows at a time.
+    private(set) var notifications: [AccountNotification] = []
     /// One-shot shell notices: a toast line, or the no-balance prompt.
     var toast: String?
     var quotaPrompt = false
@@ -45,7 +56,8 @@ final class AccountModel {
     @ObservationIgnored private var watchTask: Task<Void, Never>?
     @ObservationIgnored private var detailsGeneration = 0
     @ObservationIgnored private var initializedAttempt: String?
-    @ObservationIgnored private var acked: Set<String> = []
+    /// Notifications already reported, so a re-read does not show them again.
+    @ObservationIgnored private var reported: Set<String> = []
 
     init(client: EngineClient, mux: StreamMux) {
         self.client = client
@@ -112,7 +124,9 @@ final class AccountModel {
                 do {
                     for try await frame in mux.open("account/watch", [:]) {
                         streamFailed = false
-                        apply(frame)
+                        // 0.2.2-rc.3 sends `{type, state}` (type: snapshot | credentials-changed).
+                        let state = frame["state"]
+                        apply(state.object.isEmpty ? frame : state)
                     }
                 } catch {
                     if Task.isCancelled { return }
@@ -130,12 +144,12 @@ final class AccountModel {
             detailsGeneration += 1
             profile = nil
             balance = nil
-            bonuses = []
+            notifications = []
             quotaPrompt = false
             return
         }
         if !wasSignedIn {
-            Task { await loadBonuses() }
+            Task { await loadNotifications() }
         }
         // First frame of a finished sign-in: pick the account's default model, as the web client does.
         if phase == "succeeded", let id = attempt?["id"].string, initializedAttempt != id {
@@ -163,7 +177,7 @@ final class AccountModel {
     func refresh() async {
         guard signedIn else { return }
         async let details: Void = refreshDetails()
-        async let notices: Void = loadBonuses()
+        async let notices: Void = loadNotifications()
         _ = await (details, notices)
     }
 
@@ -173,50 +187,77 @@ final class AccountModel {
         return value
     }
 
-    // MARK: Bonus notices
+    // MARK: Platform notifications
 
-    private func loadBonuses() async {
-        guard let batch = try? await client.call("account/getUnnotifiedBonuses", ["client": clientInfo]), !batch.isNull else { return }
-        let accountId = batch["accountId"].string ?? ""
+    /// 0.2.2-rc.3 replaced the bonus RPCs with `account/getNotifications`: one
+    /// read returns the unconsumed cards, their buttons and the next poll delay.
+    private func loadNotifications() async {
+        guard let batch = try? await client.call("account/getNotifications", ["client": clientInfo]), !batch.isNull else { return }
         let iso = ISO8601DateFormatter()
         iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         let plain = ISO8601DateFormatter()
-        bonuses = batch["bonuses"].array.compactMap { bonus in
-            guard let orderId = bonus["orderId"].string, !acked.contains(orderId) else { return nil }
-            let expires = bonus["expiresAt"].string.flatMap { $0.isEmpty ? nil : (iso.date(from: $0) ?? plain.date(from: $0)) }
-            let notice = BonusNotice(
-                accountId: accountId,
-                orderId: orderId,
-                title: bonus["title"].string ?? String(localized: "赠金已到账"),
-                message: bonus["message"].string ?? "",
-                expiresAt: expires
+        notifications = batch["notifications"].array.compactMap { item in
+            guard let id = item["id"].string, !reported.contains(id) else { return nil }
+            let until = item["displayUntil"].string.flatMap { $0.isEmpty ? nil : (iso.date(from: $0) ?? plain.date(from: $0)) }
+            let actions = item["actions"].array.compactMap { action -> AccountNotification.Action? in
+                guard let label = action["label"].string, let target = action["target"]["type"].string else { return nil }
+                return AccountNotification.Action(
+                    label: label,
+                    style: action["style"].string ?? "secondary",
+                    target: target,
+                    route: action["target"]["name"].string
+                )
+            }
+            let notice = AccountNotification(
+                id: id,
+                title: item["title"].string ?? String(localized: "赠金已到账"),
+                body: item["body"].string ?? "",
+                displayUntil: until,
+                actions: actions
             )
             return notice.expired ? nil : notice
         }
     }
 
-    /// A notice counts as shown once on screen: acknowledge it once, retrying failures with backoff.
-    func markShown(_ notice: BonusNotice) {
-        guard !acked.contains(notice.orderId) else { return }
-        acked.insert(notice.orderId)
+    /// A card counts as shown once on screen: report it once, retrying failures with backoff.
+    func markShown(_ notice: AccountNotification) {
+        guard !reported.contains(notice.id) else { return }
+        reported.insert(notice.id)
+        report(notice.id, "displayed")
+    }
+
+    func dismiss(_ notice: AccountNotification) {
+        report(notice.id, "dismissed")
+        notifications.removeAll { $0.id == notice.id }
+    }
+
+    /// A button on the card: report the click, drop the card, and answer with the
+    /// page to open (an `app_route` card points at the account page).
+    func act(_ notice: AccountNotification, _ action: AccountNotification.Action) -> URL? {
+        // A `dismiss` button closes the card like ✕ does; `cta_clicked` is for the others.
+        report(notice.id, action.target == "dismiss" ? "dismissed" : "cta_clicked")
+        notifications.removeAll { $0.id == notice.id }
+        if action.target == "dismiss" { return nil }
+        if action.route == "account" { return accountInfoURL ?? usageURL }
+        return nil
+    }
+
+    private func report(_ id: String, _ event: String) {
         let client = self.client, info = clientInfo
         Task {
             var delay = 1.0
             while !Task.isCancelled {
                 do {
-                    _ = try await client.call("account/ackBonusNotified", ["accountId": .string(notice.accountId), "orderId": .string(notice.orderId), "client": info])
-                    return // false means Platform will not take it: do not retry either.
+                    _ = try await client.call("account/reportNotificationEvent", [
+                        "id": .string(id), "event": .string(event), "client": info,
+                    ])
+                    return // false means the grant changed: do not retry either.
                 } catch {
                     try? await Task.sleep(for: .seconds(delay))
                     delay = min(delay * 2, 60)
                 }
             }
         }
-    }
-
-    func dismiss(_ notice: BonusNotice) {
-        markShown(notice)
-        bonuses.removeAll { $0.id == notice.id }
     }
 
     // MARK: Actions

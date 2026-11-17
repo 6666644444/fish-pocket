@@ -42,13 +42,15 @@ function nodeLikeCommand(name, script) {
  * shims/ripgrep.mjs): just-bash's rg plus what it lacks — `--no-config`
  * (it reads no config anyway), `--` before the search paths, `--sort=modified`
  * for `--files` (oldest first, like ripgrep), root-level matches for globs
- * that start with a double-star directory, and `--max-columns` (Claude Code's
- * Grep passes it). Its default is smart case; ripgrep's is case-sensitive.
+ * that start with a double-star directory, `--max-columns` (Claude Code's
+ * Grep passes it), and `--path-separator=/` (dsh-api-workspace-files passes it
+ * for the web UI's file search; paths here use no other separator). Its default
+ * is smart case; ripgrep's is case-sensitive.
  */
 function rgCommand() {
   return defineCommand('rg', async (args, ctx) => {
     const end = args.indexOf('--');
-    let options = (end >= 0 ? args.slice(0, end) : args).filter((a) => a !== '--no-config');
+    let options = (end >= 0 ? args.slice(0, end) : args).filter((a) => a !== '--no-config' && a !== '--path-separator=/');
     // A path after `--` may start with '-'; './' keeps it a path without the marker.
     const paths = end >= 0 ? args.slice(end + 1).map((p) => (p.startsWith('-') ? `./${p}` : p)) : [];
     let maxColumns = 0;

@@ -471,7 +471,7 @@ final class AppModel {
         scheduleRefresh()
     }
 
-    /// Per-session projections for every visible session: a baseline, then single-key replacements.
+    /// Per-session projections for every visible session: a baseline, then the keys each event changed.
     private func followControl() {
         controlTask?.cancel()
         controlTask = Task {
@@ -484,8 +484,11 @@ final class AppModel {
                             for (id, projection) in frame["value"]["projections"].object { next[id] = projection["values"].object }
                             control = next
                         case "projection":
-                            if let id = frame["sessionId"].string, let key = frame["key"].string {
-                                control[id, default: [:]][key] = frame["value"]
+                            // One frame per committed event, with every key it changed: `changes: [{key, val}]`.
+                            if let id = frame["sessionId"].string {
+                                for change in frame["changes"].array {
+                                    if let key = change["key"].string { control[id, default: [:]][key] = change["val"] }
+                                }
                             }
                         default:
                             break
