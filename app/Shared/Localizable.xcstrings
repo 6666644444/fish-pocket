@@ -7094,6 +7094,40 @@
         }
       }
     },
+    "扫码前往 App Store" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scan to open the App Store"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escanea para abrir el App Store"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スキャンして App Store へ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스캔하여 App Store로 이동"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "掃描 QR Code 前往 App Store"
+          }
+        }
+      }
+    },
     "扫码加群" : {
       "localizations" : {
         "en" : {
@@ -12913,6 +12947,7 @@
       }
     },
     "Fish Pocket 分享海报，带链接" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -33749,6 +33784,7 @@
       }
     },
     "在浏览器打开，了解和下载" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -43572,6 +43608,7 @@
       }
     },
     "开源项目\nApp Store 与 TestFlight 均可安装" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -43605,7 +43642,42 @@
         }
       }
     },
+    "开源项目\n免费下载" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open source\nFree to download"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Código abierto\nDescarga gratuita"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オープンソース\n無料でダウンロード"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오픈 소스\n무료 다운로드"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開源專案\n免費下載"
+          }
+        }
+      }
+    },
     "开源项目 · App Store 与 TestFlight 均可安装" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -47881,6 +47953,7 @@
       }
     },
     "扫码了解和下载" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -91596,6 +91669,7 @@
       }
     },
     "链接海报" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

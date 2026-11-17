@@ -71,9 +71,11 @@ enum SupportPrompt {
 /// The app's links, and the message that passes them on.
 enum AppLinks {
     static let repository = URL(string: "https://github.com/\(UpdateChecker.repository)")!
-    /// The website, which sends each reader on to the App Store or the public beta. The share
-    /// poster's QR code is a picture of this link: scripts/make-share-qr.swift redraws it.
+    /// The website, which sends each reader on to the App Store or the public beta.
     static let site = URL(string: "https://fish.deepseek1024.com")!
+    /// The app's App Store page, with no storefront so each reader lands in their own. The share
+    /// poster's QR code is a picture of this link: scripts/make-share-qr.swift redraws it.
+    static let appStore = URL(string: "https://apps.apple.com/app/id6830703602")!
     /// The WeChat group's QR code at the bottom of 设置. It expires every 7 days; the website swaps
     /// the picture at this same path, so the app always shows the current one without an update.
     static let wechatGroupCode = site.appending(path: "wechat-group.png")
@@ -97,7 +99,7 @@ enum AppLinks {
         return site.appending(path: "add-to-home/")
     }
     /// The App Store's 「撰写评论」 page for the app.
-    static let writeReview = URL(string: "https://apps.apple.com/app/id6830703602?action=write-review")!
+    static let writeReview = URL(string: "\(appStore.absoluteString)?action=write-review")!
 
     /// What 「链接」 on the share page sends.
     static var shareText: String {
