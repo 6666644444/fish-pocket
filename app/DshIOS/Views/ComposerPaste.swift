@@ -54,10 +54,19 @@ enum ImagePaste {
             }
             item.setNoResult()
             let add = self.add
+            weak let view = textPasteConfigurationSupporting as? UITextView
             // An image that cannot be read pastes nothing: another 拷贝 is the only remedy anyway.
             _ = provider.loadDataRepresentation(forTypeIdentifier: type.identifier) { data, _ in
                 guard let data else { return }
-                DispatchQueue.main.async { add(data) }
+                DispatchQueue.main.async {
+                    add(data)
+                    // The text did not change, so the keyboard would keep offering the paste
+                    // it just made (iOS 27's 粘贴自… suggestion): told the document changed, it
+                    // refreshes its suggestions.
+                    guard let view, view.isFirstResponder else { return }
+                    view.inputDelegate?.textWillChange(view)
+                    view.inputDelegate?.textDidChange(view)
+                }
             }
         }
     }
