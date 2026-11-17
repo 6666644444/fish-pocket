@@ -4,7 +4,7 @@
 >
 > 功能 ID 引用自同目录三份清单：`C-` → [conversation.md](conversation.md)，`S-` → [shell.md](shell.md)，`G-/A-/M-/I-/AP-/O-/P-/PC-/F-/MK-/MS-` → [settings-plugins.md](settings-plugins.md)（其中设置外壳的 `S-01…S-07` 写作 `设置 S-0x`，与 shell.md 的 `S-xx` 区分）。那三份清单里的 ☐/☑ 状态已过时，**以本文为准**。
 >
-> 更新于 2026-11-06（引擎从 `0.2.1-rc.4` 升到 `0.2.2-rc.1`，新增 §3.2）。状态变化时同步更新本文。
+> 更新于 2026-11-17（引擎从 `0.2.2-rc.1` 升到 `0.2.2-rc.3`，新增 §3.3）。状态变化时同步更新本文。
 
 ## 1. 现状
 
@@ -102,7 +102,24 @@ C-49 `/goal` 气泡 · C-90 原子 chip · C-16 鲸鱼动画与流光 · C-30 �
 
 引擎侧的变化不需要原生改动：最低 Node 提到 24.9（内嵌 nodejs-mobile 是 24.20.0，满足）、Cordis 升到 4.1.0、pi-ai 升到 1.3.0、Search 给模型更长的摘要、远程连接默认开启 WebSocket 压缩（客户端协商，不开就不压）、Web 静态资源支持 ETag。「Git 工作树」插件已并入「变更请求与工作树」，本项目没有在 `dsh.profile.bundles` 里启用过它，不受影响。
 
-## 3.3 本项目自有扩展（官方 Web 没有）
+## 3.3 上游 `0.2.2-rc.3` 新增（尚未移植）
+
+引擎 2026-11-17 从 `0.2.2-rc.1` 升到 `0.2.2-rc.3`。协议层的删除、改形和新增方法见 [protocol.md](protocol.md) §0.2。原生已经跟上了三处按新形状改的接口：`account/watch`（结果改成 `{type, state}` 信封）、`subagents/prompt`（去掉 `parentSessionId` 和 `mode`）、`subagents/interruptByUser`（取代 `interruptByParent`）。下面是上游新增、原生还没有的能力。
+
+| 上游新增 | 原生现状 |
+|---|---|
+| 账户通知（`account/getNotifications`、`account/getNotificationContent`、`account/reportNotificationEvent`，取代赠金卡片） | 没有 |
+| 智能体团队开关（`agentTeams/setEnabled`） | 没有 |
+| 终端输出订阅（`terminal/watch`） | 没有 |
+| 文件搜索（`workspaceFiles/search`） | 没有（文件搜索只筛当前文件夹，见 §3 S-77） |
+| 模型提供商列表（`web/listProviders`） | 没有 |
+| MCP 管理（`mcpManager/probe`、`mcpManager/restart`、`mcpManager/watch`） | 没有 |
+| DeepSeek 会话导入（`deepseekChatImport/limits`；导入是浏览器端按钮，原生无法执行） | 没有 |
+| 变更请求与工作树新增的 12 个方法（`forgePanel/*`，见 [protocol.md](protocol.md) §0.2） | 不移植；整块「变更请求与工作树」没做（§3.2） |
+| 共享会话的多会话与按插件授权（`liveshareShares/addSessions`，结果里的 `sessionIds` / `viewerPluginAccess` / `viewerPlugins`） | 不移植（§3.2） |
+| cua 的 9 个方法（`cuaAccess/*`） | 没有 |
+
+## 3.4 本项目自有扩展（官方 Web 没有）
 
 **本机能力**（`docs/native-services.md`）：把 iOS 的系统框架以工具的形式交给智能体——设备状态、本地通知、朗读、日历、提醒事项、地图、图像识别、剪贴板、位置、文本分析。官方 Web 没有对应物，因为浏览器够不到这些东西。
 
