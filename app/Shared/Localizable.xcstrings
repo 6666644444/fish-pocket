@@ -5972,6 +5972,40 @@
         }
       }
     },
+    "保留你当时停留的那条对话分支，以及原标题、时间、思考过程、联网搜索和图片。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keeps the branch you were last on, along with the original title, times, thinking, web searches and images."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conserva la rama en la que estabas, junto con el título original, las horas, el razonamiento, las búsquedas web y las imágenes."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最後に見ていた分岐と、元のタイトル、日時、思考過程、Web 検索、画像が残ります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마지막으로 보던 분기와 원래 제목, 시간, 생각 과정, 웹 검색, 이미지가 유지돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保留你當時停留的那條對話分支，以及原標題、時間、思考過程、網路搜尋和圖片。"
+          }
+        }
+      }
+    },
     "停止服务" : {
       "localizations" : {
         "en" : {
@@ -33300,6 +33334,40 @@
         }
       }
     },
+    "图片以外的附件只保留文件名和大小，打不开，模型也读不到内容。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Attachments other than images keep only their name and size. They can't be opened, and the model can't read them."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los adjuntos que no son imágenes solo conservan el nombre y el tamaño. No se pueden abrir y el modelo no puede leerlos."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像以外の添付ファイルは名前とサイズだけが残ります。開くことはできず、モデルも内容を読めません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지 외의 첨부 파일은 이름과 크기만 남아요. 열 수 없고 모델도 내용을 읽을 수 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "圖片以外的附件只保留檔名和大小，無法打開，模型也讀不到內容。"
+          }
+        }
+      }
+    },
     "图片分辨率过大，请压缩后重试" : {
       "localizations" : {
         "en" : {
@@ -38816,6 +38884,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "匯入沒有完成"
+          }
+        }
+      }
+    },
+    "导入说明" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About Importing"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre la importación"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み込みについて"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가져오기 안내"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "匯入說明"
           }
         }
       }
@@ -50842,6 +50944,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "接續上一段對話"
+          }
+        }
+      }
+    },
+    "接着聊时，整段历史都会发给模型，按正常用量消耗额度或 API 费用；很长的对话第一次回复会比较慢。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When you continue a chat, its whole history is sent to the model and uses your credits or API spend as usual. The first reply in a very long chat can be slow."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al continuar un chat, todo su historial se envía al modelo y consume tus créditos o tu gasto de API como de costumbre. La primera respuesta en un chat muy largo puede tardar."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "続きを話すと履歴全体がモデルに送られ、通常どおりクレジットや API 料金を消費します。とても長いチャットでは最初の返答に時間がかかることがあります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화를 이어 가면 전체 기록이 모델에 전송되어 평소처럼 크레딧이나 API 비용을 사용해요. 아주 긴 대화는 첫 답변이 느릴 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接著聊時，整段紀錄都會傳給模型，按一般用量消耗額度或 API 費用；很長的對話第一次回覆會比較慢。"
           }
         }
       }
@@ -67527,7 +67663,42 @@
         }
       }
     },
+    "每个对话成为这个工作区里的一个会话。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each chat becomes a conversation in this workspace."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada chat se convierte en una conversación de este espacio de trabajo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "各チャットはこのワークスペースの会話になります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "각 대화는 이 작업 공간의 대화가 돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每個對話會成為這個工作區裡的一則對話。"
+          }
+        }
+      }
+    },
     "每个对话成为这个工作区里的一个会话，保留原来的标题、时间、思考过程和联网搜索。再次导入同一份文件会多出一份。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -71959,36 +72130,36 @@
         }
       }
     },
-    "用对话定制 DSH：让 Agent 编写插件，添加新功能或界面；也能组合工具和提示词，创建自己的模式。" : {
+    "用对话定制 DSH：让 Agent 编写插件，添加新工具、接入外部服务；也能组合工具和提示词，创建自己的模式。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Customize DSH through conversation. Let the agent write plugins that add features or UI, or combine tools and prompts to create your own mode."
+            "value" : "Customize DSH through conversation. Let the agent write plugins that add new tools or connect outside services, or combine tools and prompts to create your own mode."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Personaliza DSH con la conversación: deja que el agente escriba complementos, agregue funciones o interfaces nuevas; también puedes combinar herramientas y prompts para crear tus propios modos."
+            "value" : "Personaliza DSH con la conversación: deja que el agente escriba complementos que agreguen herramientas nuevas o conecten servicios externos; también puedes combinar herramientas y prompts para crear tus propios modos."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "会話を通じて DSH をカスタマイズします。機能や UI を追加するプラグインをエージェントに書かせたり、ツールとプロンプトを組み合わせて独自のモードを作成したりできます。"
+            "value" : "会話を通じて DSH をカスタマイズします。新しいツールの追加や外部サービスとの連携を行うプラグインをエージェントに書かせたり、ツールとプロンプトを組み合わせて独自のモードを作成したりできます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "대화로 DSH를 맞춤 설정하세요. 에이전트에게 플러그인을 작성하게 해 기능이나 UI를 추가하거나, 도구와 프롬프트를 조합해 나만의 모드를 만들 수 있어요."
+            "value" : "대화로 DSH를 맞춤 설정하세요. 에이전트에게 플러그인을 작성하게 해 새 도구를 추가하거나 외부 서비스를 연결하고, 도구와 프롬프트를 조합해 나만의 모드를 만들 수도 있어요."
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "用對話客製化 DSH：讓 Agent 編寫外掛，加入新功能或介面；也能組合工具和提示詞，建立自己的模式。"
+            "value" : "用對話客製化 DSH：讓 Agent 編寫外掛，加入新工具、串接外部服務；也能組合工具和提示詞，建立自己的模式。"
           }
         }
       }
@@ -80788,6 +80959,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "被相依任務阻擋"
+          }
+        }
+      }
+    },
+    "被撤回、失败或模板回答的回复显示为错误行，不会发给模型；提问全部被撤回的对话会跳过。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replies that were withdrawn, failed or templated show as error rows and aren't sent to the model. Chats whose questions were all withdrawn are skipped."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las respuestas retiradas, fallidas o de plantilla se muestran como filas de error y no se envían al modelo. Se omiten los chats con todas sus preguntas retiradas."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取り消された回答、失敗した回答、定型の回答はエラー行として表示され、モデルには送られません。質問がすべて取り消されたチャットはスキップされます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "철회되었거나 실패했거나 템플릿으로 된 답변은 오류 행으로 표시되고 모델에 보내지지 않아요. 질문이 모두 철회된 대화는 건너뛰어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "被撤回、失敗或範本回答的回覆會顯示為錯誤列，不會傳給模型；提問全部被撤回的對話會略過。"
           }
         }
       }
@@ -96601,6 +96806,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "一次最多傳送 %lld 個附件"
+          }
+        }
+      }
+    },
+    "一次最多导入最近的 1000 个对话，压缩包最大 512 MB。同一个文件导入两次会得到两份。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Up to the 1,000 most recent chats per import, from an archive of up to 512 MB. Importing the same file twice gives you two copies."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hasta los 1000 chats más recientes por importación, desde un archivo de hasta 512 MB. Importar el mismo archivo dos veces crea dos copias."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 回の読み込みは最新の 1,000 件まで、アーカイブは最大 512 MB です。同じファイルを 2 回読み込むと 2 組になります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "한 번에 최근 대화 최대 1,000개, 압축 파일은 최대 512MB까지 가져올 수 있어요. 같은 파일을 두 번 가져오면 두 벌이 생겨요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一次最多匯入最近的 1000 則對話，壓縮檔最大 512 MB。同一個檔案匯入兩次會得到兩份。"
           }
         }
       }

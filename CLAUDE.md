@@ -95,7 +95,7 @@
 
 然后按顺序：
 
-1. `scripts/build-engine.sh` 收紧，`cd engine && node --test test/*.test.mjs` 全绿（macOS 上先跑 `scripts/build-git-addon.sh`，否则 git 那项会报不存在）。`test/ios-patch.test.mjs` 会查 `ios.patch.yml` 里的每个 id 在新版本里还在不在：补丁对不上的条目运行时只是被跳过，不报错。
+1. `scripts/build-engine.sh` 收紧，`cd engine && node --test test/*.test.mjs` 全绿（macOS 上先跑 `scripts/build-git-addon.sh`，否则 git 那项会报不存在）。`test/ios-patch.test.mjs` 会查 `ios.patch.yml` 里的每个 id 在新版本里还在不在：补丁对不上的条目运行时只是被跳过，不报错。`ios.patch.yml` 整个关掉的官方插件（如 `harness-dev-context`，它告诉模型用户在网页版里），官方往里新加的东西也会一起被关掉，所以 `test/harness-dev-context.test.mjs` 记下了它现在注册的全部内容，一变就报错：先看新加了什么，再决定继续关着还是只去掉误导的那段，最后更新测试里的清单。
 2. **先装旧版，造数据，再覆盖安装新版。**一台自己新建的模拟器装上升级前的包，建一条带工具调用的会话、一条起过子智能体的会话、两个 Bot、一个群并各说几句，然后覆盖安装新包：老会话读得出来、能接着聊，子智能体能追问和中断，Bot 记得之前的话，群里新发一条消息后成员的回复显示出来。老用户都是这么升上来的，只测全新安装测不到这条路。
 3. `scripts/smoke-sim.sh` 把 `-dshOpen` 能到的每个页面截图，并断言包里的 DSH / ds-bot 版本和仓库里钉的一致、所有插件行无错、`/api/bot` 有响应、会话列表可读。`scripts/smoke-matrix.sh <UDID…>` 在几台模拟器上并行跑同一份。要覆盖的是：最新 iOS 的 iPhone 和 iPad、iPhone Duo、iOS 18 和 iOS 26 各一台（分栏和 Tab 布局三代不一样）。旧 runtime 的模拟器启动后截不了图时，`simctl shutdown` 再 `boot` 一次；还不行就新建一台。
 4. **截图要自己逐张看**，脚本只保证页面起得来、数据没报错，看不出一页是不是它该是的那一页。重点看：会话首页、插件页（实验性插件列表里新版本带来的条目）、插件商店、设置、计划任务、连接器、本机能力、小工具，以及 iPad / Duo 上的分栏和 Tab 布局。
