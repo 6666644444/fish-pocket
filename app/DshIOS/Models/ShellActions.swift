@@ -48,6 +48,14 @@ extension AppModel {
         }
     }
 
+    /// A session's shared task board (`agentTeam.tasks`, without the deleted ones) and the Host's
+    /// complaint about its records, while Agent teamwork is on there; nothing while it is off.
+    func teamBoard(of id: String) -> (tasks: [JSON], failure: String?) {
+        let team = control[id]?["agentTeam"] ?? projectionCache[id]?["agentTeam"] ?? sessions[id]?.projections["agentTeam"] ?? .null
+        guard team["enabled"].bool == true else { return ([], nil) }
+        return (team["tasks"].array.filter { $0["status"].string != "deleted" }, team["failure"].string)
+    }
+
     /// Children running now (the row's 「N 个子智能体运行中」).
     func runningSubagentCount(of parent: String) -> Int {
         subagentEntries(of: parent).filter { sessions[$0["id"].string ?? ""]?.running == true }.count

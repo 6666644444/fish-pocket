@@ -101,6 +101,9 @@ struct ConversationView: View {
         .task {
             switch UserDefaults.standard.string(forKey: "dshOpen") {
             case "workbench": workbenchOpen = true
+            case "filesearch":
+                workbenchTab = .files
+                workbenchOpen = true
             case "approval": demoApproval = PendingApproval(id: "demo", toolName: "bash", callId: nil, reason: "允许本次操作使用 danger-full-access 权限：当前处于 workspace-write 模式，写不到工作区以外。这条命令会删除 build/ 下约 1.4 GB 的文件，再重新下载依赖，失败时不会自动恢复，需要手动重新构建一次才能继续。")
             case "question":
                 // `-dshDelay <s>` leaves time to focus the composer first.
@@ -1045,11 +1048,18 @@ private struct TimelineRow: View, Equatable {
             UserBubble(text: text, attachments: attachments, model: model, via: IMPlatform.via(requestId), arrives: arrives)
         case .assistant(let turn, let blocks, let started, let ended):
             AssistantTurnView(blocks: blocks, turn: turn, inProgress: inProgress, startedAt: started, endedAt: ended, regeneratePrompt: inProgress ? nil : prompt, info: info)
-        case .notice(_, let text, let isError):
-            Label(text, systemImage: isError ? "exclamationmark.triangle" : "info.circle")
-                .font(.footnote)
-                .foregroundStyle(isError ? Palette.removed : Palette.secondary)
-                .frame(maxWidth: .infinity, alignment: .center)
+        case .notice(let seq, let text, let isError):
+            VStack(spacing: 10) {
+                Label(text, systemImage: isError ? "exclamationmark.triangle" : "info.circle")
+                    .font(.footnote)
+                    .foregroundStyle(isError ? Palette.removed : Palette.secondary)
+                // The web's send button turns into 继续生成 here; on a phone that button is the microphone.
+                if isError, model.canContinue(after: seq) {
+                    Button("继续生成") { Haptics.tap(); Task { await model.continueGeneration() } }
+                        .buttonStyle(.capsule(.outline, height: 44, fill: false))
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .center)
         case .maxTokens:
             MaxTokensNotice(model: model)
         case .credential(_, let problem):
