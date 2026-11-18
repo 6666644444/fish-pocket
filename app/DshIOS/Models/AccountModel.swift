@@ -36,7 +36,7 @@ struct AccountNotification: Identifiable, Hashable {
 @Observable
 final class AccountModel {
     /// The engine build this client speaks for; account methods require it in `client`.
-    static let clientVersion = "0.2.2-rc.3"
+    static let clientVersion = "0.2.2-rc.4"
 
     @ObservationIgnored private let client: EngineClient
     @ObservationIgnored private let mux: StreamMux
@@ -380,6 +380,12 @@ struct TurnFailure {
             message = raw.contains("Fish Pocket") ? String(localized: "Fish Pocket 余额不足，请充值后继续。") : String(localized: "当前请求的额度已用尽")
         case "AUTH":
             message = raw.contains("Fish Pocket") ? String(localized: "Fish Pocket 登录已失效，请重新登录。") : String(localized: "API 密钥无效")
+        // DeepSeek's safety review stopped the answer: "… content safety review: <DeepSeek's reason, if any>".
+        case "CONTENT_REFUSED":
+            let reason = raw.range(of: "safety review:").map { raw[$0.upperBound...].trimmingCharacters(in: .whitespaces) } ?? ""
+            message = reason.isEmpty
+                ? String(localized: "内容没有通过 DeepSeek 的安全审核，模型拒绝回答。")
+                : String(localized: "内容没有通过 DeepSeek 的安全审核，模型拒绝回答：\(reason)")
         default: message = raw.isEmpty ? String(localized: "本轮运行失败") : raw
         }
     }
