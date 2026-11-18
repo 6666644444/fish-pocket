@@ -67,13 +67,14 @@ Pipes, redirects, `&&`, `||`, variables, arrays, functions, loops, here-document
 - `~/apps` holds the user's mini apps (小工具), one folder each, which the app opens full screen. Load the `mini-apps` skill before creating or changing anything there.
 - `/` is the app's own tree: `home`, `tmp`, `opt`, plus anything you create. Writing to `/abc` or `/usr/local` works and stays inside the app.
 - `/etc`, `/usr/share` and `/System` are the real system and read-only. `/opt/dsh` is the app itself and read-only.
-- `/bin` and `/usr/bin` exist only in the shell, for its commands. A Node script does not see them.
+- `/bin` and `/usr/bin` exist only in the shell, for its commands. A Node script sees just one file there: `/usr/bin/node`, a placeholder so programs that look `node` up on `PATH` before spawning it find it.
 
 ## Node
 
 Node 24 runs in jitless mode: pure JavaScript is several times slower than on a desktop, and most work is unaffected.
 
 - `child_process` works, but it reaches this same emulated shell. Only the commands on this page can be spawned.
+- `process.execPath` is the app, not a binary named `node`. Spawning it, `node` or `/usr/bin/node` starts a Node child, which runs as a worker thread in the same process (its `process.pid` is the app's).
 - `http.createServer` works, and dev servers listen on `127.0.0.1`.
 - WebAssembly works but runs interpreted, so wasm tools are slow.
 - A plain `node` script can use the filesystem, network, `node:sqlite` and worker threads, and `node file.ts` runs TypeScript.

@@ -15,6 +15,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Worker } from 'node:worker_threads';
 import { PRELOAD } from './runtime/real-paths.mjs';
+import { placeNodeEntry } from './runtime/node-entry.mjs';
 import { disableThirdParty } from './runtime/safe-mode.mjs';
 
 const data = process.env.DSH_IOS_DATA;
@@ -25,6 +26,8 @@ const dirs = home
   ? { DSH_HOME: path.join(home, '.dsh'), HOME: home, TMPDIR: '/tmp', workspace: path.join(home, 'workspace') }
   : { DSH_HOME: path.join(data, 'dsh'), HOME: path.join(data, 'home'), TMPDIR: path.join(data, 'tmp'), workspace: path.join(data, 'workspace') };
 for (const dir of Object.values(dirs)) fs.mkdirSync(dir, { recursive: true });
+// Only inside the app's filesystem view: on a desktop run / is the real disk.
+if (home) placeNodeEntry();
 
 // The engine's environment, not this thread's: that one is the process's, and
 // the system frameworks in the process read HOME and TMPDIR, which stay real.
