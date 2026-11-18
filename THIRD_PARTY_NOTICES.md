@@ -8,7 +8,7 @@
 
 | 组件 | 版本 | 许可证 | 版权方 | 用途 |
 |---|---|---|---|---|
-| [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（`@deepseek-ai/dsh` 及其插件包） | 0.2.2-rc.3 | MIT | Copyright (c) 2026 DeepSeek | 引擎 |
+| [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（`@deepseek-ai/dsh` 及其插件包） | 0.2.2-rc.4 | MIT | Copyright (c) 2026 DeepSeek | 引擎 |
 | [nodejs-mobile](https://github.com/digidem/nodejs-mobile)（digidem 分支，上游为 [nodejs-mobile/nodejs-mobile](https://github.com/nodejs-mobile/nodejs-mobile)） | 24.20.0-0 | Node.js 许可证（MIT 及其捆绑组件的各自许可证） | Node.js 贡献者等 | 内嵌 Node 运行时，以预编译的 `NodeMobile.xcframework` 下载 |
 | [just-bash](https://github.com/vercel-labs/just-bash) | 3.6.0 | Apache-2.0 | Copyright 2025 Vercel Inc. | bash 解释器和内置命令 |
 | [CPython](https://github.com/python/cpython)（python.org 的 iOS 构建） | 3.15.2 | PSF 许可证第 2 版（及其捆绑组件的各自许可证） | Copyright (c) 2001 Python Software Foundation 等 | 内嵌 Python 运行时，以预编译的 `Python.xcframework` 下载，含标准库和 `ensurepip` 自带的 pip |

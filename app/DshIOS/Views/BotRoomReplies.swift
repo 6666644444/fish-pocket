@@ -135,6 +135,7 @@ struct RoomRelayView: View {
         case "ACCOUNT_SIGN_IN_REQUIRED", "ACCOUNT_SIGNED_OUT", "ACCOUNT_TOKEN_INVALID": String(localized: "DeepSeek 账号需要重新登录")
         case "RATE_LIMIT", "RATE_LIMITED": String(localized: "请求太频繁")
         case "NETWORK", "TIMEOUT": String(localized: "网络不通")
+        case "CONTENT_REFUSED": String(localized: "内容没有通过 DeepSeek 的安全审核")
         default: text.flatMap { $0.isEmpty ? nil : String($0.prefix(120)) } ?? String(localized: "运行出错了（\(code ?? "?")）")
         }
     }

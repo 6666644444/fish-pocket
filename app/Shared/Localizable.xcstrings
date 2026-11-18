@@ -25288,6 +25288,108 @@
         }
       }
     },
+    "内容没有通过 DeepSeek 的安全审核" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "its content didn't pass DeepSeek's safety review"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "el contenido no pasó la revisión de seguridad de DeepSeek"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内容が DeepSeek の安全審査を通過しませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내용이 DeepSeek의 안전 심사를 통과하지 못했어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "內容沒有通過 DeepSeek 的安全審查"
+          }
+        }
+      }
+    },
+    "内容没有通过 DeepSeek 的安全审核，模型拒绝回答。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The content didn't pass DeepSeek's safety review, so the model declined to answer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El contenido no pasó la revisión de seguridad de DeepSeek y el modelo se negó a responder."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内容が DeepSeek の安全審査を通過しなかったため、モデルは回答を拒否しました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내용이 DeepSeek의 안전 심사를 통과하지 못해 모델이 답변을 거부했어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "內容沒有通過 DeepSeek 的安全審查，模型拒絕回答。"
+          }
+        }
+      }
+    },
+    "内容没有通过 DeepSeek 的安全审核，模型拒绝回答：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The content didn't pass DeepSeek's safety review, so the model declined to answer: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El contenido no pasó la revisión de seguridad de DeepSeek y el modelo se negó a responder: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内容が DeepSeek の安全審査を通過しなかったため、モデルは回答を拒否しました：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내용이 DeepSeek의 안전 심사를 통과하지 못해 모델이 답변을 거부했어요: %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "內容沒有通過 DeepSeek 的安全審查，模型拒絕回答：%@"
+          }
+        }
+      }
+    },
     "内容由 AI 生成" : {
       "localizations" : {
         "en" : {
