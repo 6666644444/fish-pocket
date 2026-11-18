@@ -174,7 +174,7 @@ private struct RemoteScanSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .closeButton(dismiss)
         }
-        .tint(Palette.ink)
+        .inkTint()
         .task {
             switch AVCaptureDevice.authorizationStatus(for: .video) {
             case .denied, .restricted: cameraDenied = true
@@ -320,7 +320,7 @@ private struct RemotePasswordSheet: View {
                 }
             }
         }
-        .tint(Palette.ink)
+        .inkTint()
         // Over the remote control sheet on iPad a half-height sheet hangs off its lower edge: a full one there.
         .presentationDetents(UIDevice.current.userInterfaceIdiom == .pad ? [.large] : [.medium, .large])
         .interactiveDismissDisabled(busy)

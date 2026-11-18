@@ -812,7 +812,7 @@ struct StoreSourcesSheet: View {
                 Text("「\(index.name)」（\(index.host)）是第三方运营的插件索引，这里只作为示例列出。Fish Pocket 不提供、不运营这个索引，也不审核或担保其中的插件。\n\n插件安装后会以你的权限在本机运行，可能读写文件、联网或执行命令。请仔细甄别插件的来源、作者和说明，只安装你信任的插件。安装和使用第三方插件的风险需由你自行承担，感谢理解。")
             }
         }
-        .tint(Palette.ink)
+        .inkTint()
     }
 
     /// Before any switch: these are not ours, and what they list is for the user to judge.

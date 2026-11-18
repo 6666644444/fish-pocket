@@ -372,7 +372,7 @@ private struct TerminalKeyBar<Menu: View>: View {
                     .labelStyle(.titleOnly)
                     .buttonBorderShape(.capsule)
                     .controlSize(.large)
-                    .tint(Palette.ink)
+                    .inkTint()
                 }
                 .padding(.horizontal, 10)
             }
@@ -530,7 +530,7 @@ private struct FileDiffPage: View {
                     Spacer()
                     Toggle(isOn: $wrap) { Label("自动换行", systemImage: "arrow.turn.down.left") }
                         .toggleStyle(.button)
-                        .tint(Palette.ink)
+                        .inkTint()
                 }
             }
         }
@@ -618,7 +618,7 @@ private struct WorkbenchContext: View {
                     VStack(alignment: .leading, spacing: 14) {
                         Text(ratio, format: .percent.precision(.fractionLength(0)))
                             .font(.system(size: 48, weight: .semibold)).monospacedDigit().kerning(-1)
-                        ProgressView(value: ratio).tint(Palette.ink)
+                        ProgressView(value: ratio).inkTint()
                         Text("上下文已用 \(Self.compact(used)) / \(Self.compact(window)) tokens").font(.subheadline).foregroundStyle(Palette.secondary)
                     }
                     .accessibilityElement(children: .combine)

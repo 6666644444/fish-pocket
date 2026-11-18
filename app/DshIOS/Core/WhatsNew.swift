@@ -40,7 +40,7 @@ enum WhatsNew {
         return [
             Feature(symbol: "sparkles",
                     title: "Fish Pocket 账号",
-                    detail: "不需要 DeepSeek 账号，也不需要 API Key：用 Apple 或手机号登录 Fish Pocket 账号，就能用账号里的额度对话，按用量扣积分。额度在 App Store 版本里购买，买了不会过期。入口在设置 → 连接方式。"),
+                    detail: "不需要 DeepSeek 账号，也不需要 API Key：登录 Fish Pocket 账号，就能用账号里的额度对话，按用量扣积分。额度在 App Store 版本里购买，买了不会过期。入口在设置 → 连接方式。"),
         ]
     }
 

@@ -505,7 +505,7 @@ struct StoreInstallConfirm: View {
         .frame(maxHeight: .infinity, alignment: .top)
         .background(Palette.background)
         .presentationDetents([.height(height)])
-        .tint(Palette.ink)
+        .inkTint()
     }
 
     private func line(_ title: LocalizedStringKey, _ value: Text) -> some View {

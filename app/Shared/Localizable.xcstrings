@@ -71058,46 +71058,6 @@
         }
       }
     },
-    "测试版不开放 Fish Pocket 账号登录，请在 App Store 版里登录。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fish Pocket accounts can’t sign in to the beta. Please sign in with the App Store version."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las cuentas de Fish Pocket no pueden iniciar sesión en la versión beta. Inicia sesión en la versión de la App Store."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "テスト版では Fish Pocket アカウントにログインできません。App Store 版でログインしてください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "테스트 버전에서는 Fish Pocket 계정으로 로그인할 수 없어요. App Store 버전에서 로그인해 주세요."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "测试版不开放 Fish Pocket 账号登录，请在 App Store 版里登录。"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "測試版不開放 Fish Pocket 帳號登入，請在 App Store 版登入。"
-          }
-        }
-      }
-    },
     "浏览、安装社区插件，手机上直接启用" : {
       "localizations" : {
         "en" : {
@@ -78959,40 +78919,6 @@
         }
       }
     },
-    "给个 Star" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Star on GitHub"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dale una estrella"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Star を付ける"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Star 주기"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "給個 Star"
-          }
-        }
-      }
-    },
     "给个评分" : {
       "localizations" : {
         "en" : {
@@ -82529,36 +82455,36 @@
         }
       }
     },
-    "觉得好用的话，去 GitHub 仓库页点一下 Star ⭐️，这是对项目最大的支持。" : {
+    "觉得好用的话，去 App Store 给个评分 ⭐️，这是对项目最大的支持。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "If you find it useful, give the GitHub repository a Star ⭐️. It’s the best way to support the project."
+            "value" : "If you find it useful, rate it on the App Store ⭐️. It’s the best way to support the project."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si te resulta útil, dale una estrella ⭐️ en la página del repositorio en GitHub. Es la mejor manera de apoyar el proyecto."
+            "value" : "Si te resulta útil, califícala en la App Store ⭐️. Es la mejor manera de apoyar el proyecto."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "気に入ったら、GitHubリポジトリでStar ⭐️を付けてください。それがプロジェクトへの一番の応援です。"
+            "value" : "気に入ったら、App Store で評価してください ⭐️。それがプロジェクトへの一番の応援です。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "유용하다면 GitHub 저장소에서 Star ⭐️를 눌러 주세요. 프로젝트에 가장 큰 응원이 돼요."
+            "value" : "유용하다면 App Store에서 평가해 주세요 ⭐️. 프로젝트에 가장 큰 응원이 돼요."
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "覺得好用的話，去 GitHub 儲存庫頁面點一下 Star ⭐️，這是對專案最大的支持。"
+            "value" : "覺得好用的話，去 App Store 給個評分 ⭐️，這是對專案最大的支持。"
           }
         }
       }
@@ -89217,36 +89143,70 @@
         }
       }
     },
-    "还没有可用的模型。先在「设置 › 账号与余额」登录 DeepSeek 或填入 API Key。" : {
+    "还没有可用的模型。登录 DeepSeek 或 Fish Pocket 账号，或者添加 API Key。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No model is available yet. Sign in to DeepSeek or add an API key in Settings › Account."
+            "value" : "No model is available yet. Sign in to your DeepSeek or Fish Pocket account, or add an API key."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no hay modelos. Inicia sesión en DeepSeek o añade una clave de API en Ajustes › Cuenta y saldo."
+            "value" : "Aún no hay ningún modelo disponible. Inicia sesión en tu cuenta de DeepSeek o de Fish Pocket, o agrega una clave API."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "利用できるモデルがまだありません。「設定 › アカウントと残高」でDeepSeekにサインインするか、API Keyを入力してください。"
+            "value" : "利用できるモデルがまだありません。DeepSeek または Fish Pocket アカウントにサインインするか、API Key を追加してください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "아직 사용할 수 있는 모델이 없어요. '설정 › 계정 및 잔액'에서 DeepSeek에 로그인하거나 API Key를 입력하세요."
+            "value" : "아직 사용할 수 있는 모델이 없어요. DeepSeek 또는 Fish Pocket 계정에 로그인하거나 API Key를 추가하세요."
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "還沒有可用的模型。先在「設定 › 帳號與餘額」登入 DeepSeek 或填入 API Key。"
+            "value" : "還沒有可用的模型。登入 DeepSeek 或 Fish Pocket 帳號，或者新增 API Key。"
+          }
+        }
+      }
+    },
+    "还没有可用的模型。登录 DeepSeek 账号，或者添加 API Key。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No model is available yet. Sign in to your DeepSeek account or add an API key."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no hay ningún modelo disponible. Inicia sesión en tu cuenta de DeepSeek o agrega una clave API."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "利用できるモデルがまだありません。DeepSeek アカウントにサインインするか、API Key を追加してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 사용할 수 있는 모델이 없어요. DeepSeek 계정에 로그인하거나 API Key를 추가하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "還沒有可用的模型。登入 DeepSeek 帳號，或者新增 API Key。"
           }
         }
       }
@@ -106660,36 +106620,36 @@
         }
       }
     },
-    "Apple 或手机号登录，在 App 内购买额度，按用量扣费。" : {
+    "在 App 内购买额度，按用量扣费。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sign in with Apple or your phone, buy credits in the app, and pay only for what you use."
+            "value" : "Buy credits in the app and pay only for what you use."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inicia sesión con Apple o tu teléfono, compra créditos en la app y paga solo lo que uses."
+            "value" : "Compra créditos en la app y paga solo lo que uses."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apple または電話番号でサインインし、App 内でクレジットを購入。使った分だけ消費されます。"
+            "value" : "App 内でクレジットを購入。使った分だけ消費されます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apple 또는 전화번호로 로그인하고 앱에서 크레딧을 구매해요. 사용한 만큼만 차감돼요."
+            "value" : "앱에서 크레딧을 구매하고, 사용한 만큼만 차감돼요."
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apple 或手機號碼登入，在 App 內購買額度，依用量扣費。"
+            "value" : "在 App 內購買額度，依用量扣費。"
           }
         }
       }
@@ -108706,36 +108666,36 @@
         }
       }
     },
-    "不需要 DeepSeek 账号，也不需要 API Key：用 Apple 或手机号登录 Fish Pocket 账号，就能用账号里的额度对话，按用量扣积分。额度在 App Store 版本里购买，买了不会过期。入口在设置 → 连接方式。" : {
+    "不需要 DeepSeek 账号，也不需要 API Key：登录 Fish Pocket 账号，就能用账号里的额度对话，按用量扣积分。额度在 App Store 版本里购买，买了不会过期。入口在设置 → 连接方式。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No DeepSeek account or API key needed: sign in to a Fish Pocket account with Apple or a phone number and chat on its credits, deducted by usage. Credits are bought in the App Store version and never expire. Find it under Settings → Ways to Connect."
+            "value" : "No DeepSeek account or API key needed: sign in to a Fish Pocket account and chat on its credits, deducted by usage. Credits are bought in the App Store version and never expire. Find it under Settings → Ways to Connect."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No necesitas una cuenta de DeepSeek ni una clave API: inicia sesión en una cuenta de Fish Pocket con Apple o con tu número de teléfono y chatea con sus créditos, que se descuentan según el uso. Los créditos se compran en la versión del App Store y no caducan. Lo encontrarás en Configuración → Formas de conexión."
+            "value" : "No necesitas una cuenta de DeepSeek ni una clave API: inicia sesión en una cuenta de Fish Pocket y chatea con sus créditos, que se descuentan según el uso. Los créditos se compran en la versión del App Store y no caducan. Lo encontrarás en Configuración → Formas de conexión."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "DeepSeek アカウントも API Key も不要です。Apple または電話番号で Fish Pocket アカウントにサインインすれば、アカウントのクレジットで会話でき、使った分だけ消費されます。クレジットは App Store 版で購入でき、期限はありません。設定 → 接続方法 から利用できます。"
+            "value" : "DeepSeek アカウントも API Key も不要です。Fish Pocket アカウントにサインインすれば、アカウントのクレジットで会話でき、使った分だけ消費されます。クレジットは App Store 版で購入でき、期限はありません。設定 → 接続方法 から利用できます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "DeepSeek 계정도 API Key도 필요 없어요. Apple이나 전화번호로 Fish Pocket 계정에 로그인하면 계정의 크레딧으로 대화할 수 있고, 사용한 만큼만 차감돼요. 크레딧은 App Store 버전에서 구매하며 만료되지 않아요. 설정 → 연결 방식에서 찾을 수 있어요."
+            "value" : "DeepSeek 계정도 API Key도 필요 없어요. Fish Pocket 계정에 로그인하면 계정의 크레딧으로 대화할 수 있고, 사용한 만큼만 차감돼요. 크레딧은 App Store 버전에서 구매하며 만료되지 않아요. 설정 → 연결 방식에서 찾을 수 있어요."
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "不需要 DeepSeek 帳號，也不需要 API Key：用 Apple 或手機號碼登入 Fish Pocket 帳號，就能用帳號裡的額度對話，依用量扣積分。額度在 App Store 版本裡購買，買了不會過期。入口在設定 → 連線方式。"
+            "value" : "不需要 DeepSeek 帳號，也不需要 API Key：登入 Fish Pocket 帳號，就能用帳號裡的額度對話，依用量扣積分。額度在 App Store 版本裡購買，買了不會過期。入口在設定 → 連線方式。"
           }
         }
       }

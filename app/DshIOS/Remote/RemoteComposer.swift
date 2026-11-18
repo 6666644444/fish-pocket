@@ -48,7 +48,7 @@ struct RemoteComposer: View {
                         .font(.callout)
                         .lineLimit(1...5)
                         .focused($focused)
-                        .tint(Palette.ink)
+                        .inkTint()
                         .padding(.vertical, 11)
                     mainButton
                 }

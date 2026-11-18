@@ -208,7 +208,7 @@ struct MemoryHistoryPage: View {
                 }
                 .swipeActions {
                     if row["restored"].bool != true {
-                        Button("撤销") { Task { await restore(row) } }.tint(Palette.ink)
+                        Button("撤销") { Task { await restore(row) } }.inkTint()
                     }
                 }
                 .groupedRow()
