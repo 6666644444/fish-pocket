@@ -4,8 +4,10 @@ import SwiftUI
 /// The root. From iOS 18 the system's adaptable tab bar in every width: 会话, Bot, 应用, 探索 and 设置,
 /// at the bottom on a phone, at the top or as a sidebar where there is room (iPad, iPhone Duo open).
 /// The 会话 tab pushes a conversation over its list where it is narrow and keeps one beside it where it
-/// is wide. Before iOS 18 the session list is the split view's sidebar beside a conversation, always
-/// (with nothing selected a blank session opens), and on a phone a drawer that slides in from the left.
+/// is wide. On an iPhone before iOS 18 the same tabs, on the tab bar of that time (always at the
+/// bottom). On an iPad before iOS 18 the session list is the split view's sidebar beside a
+/// conversation, always (with nothing selected a blank session opens), and where the window is
+/// narrow a drawer that slides in from the left.
 struct MainView: View {
     /// The phone's tabs.
     enum HomeTab: Hashable { case sessions, bot, apps, explore, settings }
@@ -177,6 +179,8 @@ struct MainView: View {
         Group {
             if #available(iOS 18.0, *) {
                 tabLayout
+            } else if usesTabs {
+                phoneTabLayout
             } else if layoutWidth == .regular {
                 split
             } else {
@@ -413,9 +417,11 @@ struct MainView: View {
         usesTabs && tab != .sessions ? nil : selection
     }
 
-    /// The tab bar is the layout (`layout`), in every width.
+    /// The tab bar is the layout (`layout`): in every width from iOS 18, and on an iPhone before
+    /// it. An iPad before iOS 18 keeps the sidebar: the tab bar of that time stays at the bottom
+    /// however wide the window is.
     private var usesTabs: Bool {
-        if #available(iOS 18.0, *) { true } else { false }
+        if #available(iOS 18.0, *) { true } else { UIDevice.current.userInterfaceIdiom == .phone }
     }
 
     /// Where there is room for the session list beside the conversation, on the tab bar's 会话 tab.
@@ -425,7 +431,7 @@ struct MainView: View {
     private func settle(_ size: UserInterfaceSizeClass?) {
         guard size != layoutWidth else { return }
         settledWidth = size
-        // Before iOS 18, a window narrowed past the sidebar has no place beside it for the store.
+        // On an iPad before iOS 18, a window narrowed past the sidebar has no place beside it for the store.
         // The tab bar keeps its tabs in every width.
         if !usesTabs, size != .regular, storeOpen {
             storeOpen = false
@@ -848,8 +854,33 @@ struct MainView: View {
         .id(ThisDevice.isDuo ? layoutWidth : nil)
     }
 
+    /// The iPhone's layout before iOS 18: the same tabs, on the tab bar of that time. Its `Tab`
+    /// and `.sidebarAdaptable` came with iOS 18; this one is at the bottom in every width, and
+    /// a phone held sideways (the big ones are wide then) keeps the 会话 tab's list beside the
+    /// conversation, as it is from iOS 18.
+    private var phoneTabLayout: some View {
+        TabView(selection: $tab) {
+            Group { if sessionsSideBySide { sessionsSplit } else { sessionsStack } }
+                .tabItem { tabLabel(Text(DrawerView.sessionsTitle), "bubble.left.and.bubble.right", .sessions) }
+                .tag(HomeTab.sessions)
+                .badge(waitingCount)
+            botStack(openDrawer: nil)
+                .tabItem { tabLabel(Text(verbatim: "Bot"), "face.smiling", .bot, filled: "face.smiling.inverse") }
+                .tag(HomeTab.bot)
+                .badge(botPendingCount)
+            NavigationStack { MiniAppsPage(asTab: true) }
+                .tabItem { tabLabel(Text(MiniAppsPage.tabTitle), "square.grid.2x2", .apps) }
+                .tag(HomeTab.apps)
+            ExploreTabView(path: $explorePath)
+                .tabItem { tabLabel(Text("探索"), "safari", .explore) }
+                .tag(HomeTab.explore)
+            SettingsView(asTab: true)
+                .tabItem { tabLabel(Text("设置"), "gearshape", .settings) }
+                .tag(HomeTab.settings)
+        }
+    }
+
     /// The 会话 tab where it is narrow: the list, with the conversation pushed over it.
-    @available(iOS 18.0, *)
     private var sessionsStack: some View {
         NavigationStack(path: $sessionsPath) {
             drawer(.sessions)
@@ -864,7 +895,6 @@ struct MainView: View {
 
     /// The 会话 tab where it is wide: the list beside the conversation, which is always there, as the
     /// split view's: with none selected (at launch, after archiving) a blank one opens.
-    @available(iOS 18.0, *)
     private var sessionsSplit: some View {
         NavigationSplitView(columnVisibility: $sessionsColumns) {
             drawer(.sessions)
@@ -877,11 +907,13 @@ struct MainView: View {
                 // Widths as the split view's (`split`): a width that follows the fold hangs it.
                 .navigationSplitViewColumnWidth(min: 280, ideal: 320, max: 360)
                 .modifier(SidebarToggle(system: systemSidebarButton))
+                .modifier(BelowFloatingTabBar())
         } detail: {
             NavigationStack {
                 if let selection { pushedConversation(selection) } else { conversation(openDrawer: nil) }
             }
             .modifier(PastTheFold())
+            .modifier(BelowFloatingTabBar())
             // The list's button where the system's cannot be counted on (`systemSidebarButton`), and
             // room for the workbench.
             .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomInSessions, toggle: sessionsListToggle))
@@ -1112,6 +1144,65 @@ private struct SidebarToggle: ViewModifier {
 
     func body(content: Content) -> some View {
         if system { content } else { content.toolbar(removing: .sidebarToggle) }
+    }
+}
+
+/// iPadOS 18 floats the tab bar at the top of the window, over the bars below it. A bar the
+/// width of the window keeps its items clear of it (it grows, and its title goes to a second row);
+/// the bars of a split view's columns do not: the conversation's title, centred in its column, sat
+/// under the tab bar (a new conversation's model picker could not be read or tapped), and so did
+/// the buttons near it. While the tab bar is there, the 会话 tab's split view starts under it, as
+/// it does from iOS 26, where the system does this itself. A phone's tab bar is at the bottom.
+private struct BelowFloatingTabBar: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, *) {
+            content
+        } else if #available(iOS 18.0, *), UIDevice.current.userInterfaceIdiom == .pad {
+            content.background(SplitBelowTabBar())
+        } else {
+            content
+        }
+    }
+}
+
+/// The split view's bars are UIKit's, laid out from its safe area: what SwiftUI insets or pads
+/// inside a column does not move them. So the split view controller's own safe area is pushed down
+/// by one bar, and back up once the tab bar is away (turned into the sidebar, or hidden). It is
+/// in both columns: the sidebar can take the tab bar's place without the conversation's column
+/// changing size, and then the list is what goes or comes back.
+@available(iOS 18.0, *)
+private struct SplitBelowTabBar: UIViewRepresentable {
+    func makeUIView(context: Context) -> Adjuster { Adjuster() }
+    func updateUIView(_ view: Adjuster, context: Context) { view.setNeedsLayout() }
+
+    final class Adjuster: UIView {
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+            adjust()
+            // Shown or hidden with the sidebar: what it says is settled once that has happened.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in self?.adjust() }
+        }
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            adjust()
+        }
+
+        private func adjust() {
+            var split: UISplitViewController?
+            var tabs: UITabBarController?
+            var responder: UIResponder? = self
+            while let next = responder {
+                if split == nil, let found = next as? UISplitViewController { split = found }
+                if let found = next as? UITabBarController { tabs = found; break }
+                responder = next.next
+            }
+            guard let split, let tabs else { return }
+            let floating = !tabs.isTabBarHidden && tabs.sidebar.isHidden
+                && tabs.traitCollection.horizontalSizeClass == .regular
+            let top: CGFloat = floating ? 50 : 0
+            if split.additionalSafeAreaInsets.top != top { split.additionalSafeAreaInsets.top = top }
+        }
     }
 }
 

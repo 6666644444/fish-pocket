@@ -147,7 +147,7 @@ Agent 用的 `browser` 工具有哪些动作、各要什么参数、给模型看
 - **开发版和发布版**：Agent 写的文件是开发版；用户打开的是发布版，即应用文件夹里的 `.build`：所有文件的完整快照，JSX、TS 已经编译好，打开时不编译、不依赖系统会清理的缓存。发布在 Agent 一轮结束（会话列表里不再有运行中的会话）、读应用列表、第一次打开时进行（`MiniAppPublisher.swift`），按文件的路径、大小、修改时间判断是否过期；有 Agent 在跑时，打开的是上一次发布的版本，不会打开改到一半的应用。上一版留在 `.build-previous`。
 - **加载**：`app/DshIOS/MiniApps/MiniAppServer.swift` 用自定义协议 `fishapp://<id>/` 提供文件，只给本应用文件夹里的东西；用户那边提供发布版，Agent 浏览器那边提供开发版、返回时用 Sucrase（JavaScriptCore 里跑，没有 JIT，所以只在创作时编译）编译；页面开头注入 import map（`react` 等指向内置的 React）和错误上报脚本。
 - **隔离**：每个应用一个独立的 `WKWebsiteDataStore`（按 id 派生），删应用时一起删；能联网，但用内容规则拦掉 localhost、127.x 等本机地址；不开放相机、麦克风等本机能力。
-- **入口**：「小工具」Tab（iOS 18 起 iPhone、iPad 都有；iOS 17 的侧边栏是「小工具」一行）、聊天里单独一行的 `[名字](fishapp://<id>)` 链接会显示成卡片、`dsh://app/<id>` 链接、「小工具」小组件（`app/LiveActivity/MiniAppsWidget.swift`）、快捷指令里的「打开小工具」。界面上一律叫「小工具」，不叫「应用」，免得用户以为是我们提供的应用。
+- **入口**：「小工具」Tab（iPhone 都有，iPad 从 iOS 18 起有；iOS 17 的 iPad 侧边栏是「小工具」一行）、聊天里单独一行的 `[名字](fishapp://<id>)` 链接会显示成卡片、`dsh://app/<id>` 链接、「小工具」小组件（`app/LiveActivity/MiniAppsWidget.swift`）、快捷指令里的「打开小工具」。界面上一律叫「小工具」，不叫「应用」，免得用户以为是我们提供的应用。
 - **示例**：自带的几个示例（`MiniAppExamples`）在页面上单独放在「示例」一节，和用户自己做的分开；哪些是示例记在 UserDefaults 里，不写进应用文件夹。小组件和快捷指令读 App Group 里的 `mini-apps.json`，主 App 每次读应用列表时写它。
 - **Agent 的浏览器**也能打开 `fishapp://<id>/`，看到的是开发版（现编译、结果放缓存），Agent 用它截图自查；那里的存储是浏览器的，不是用户那份。
 - **运行时**：`app/DshIOS/MiniApps/Runtime` 是 `scripts/build-mini-app-runtime.sh` 打出来的 React 18 和 Sucrase，提交进仓库，平时不用跑。升级版本时改脚本里的版本号重跑，并更新 `THIRD_PARTY_NOTICES.md`。
@@ -208,21 +208,22 @@ Bot 没有照片时显示的角色是 App 自己画的，形状和动作都写�
 
 ## 首页布局：系统的自适应 Tab
 
-iOS 18 起，iPhone、iPhone Duo、iPad 共用一套系统 `TabView`，样式是 `sidebarAdaptable`（`MainView.tabLayout`）：「会话 · Bot · 小工具 · 探索 · 设置」五个 Tab，窄屏在底部，宽屏由系统放到顶部或换成侧边栏，Duo 展开时是右侧的竖条。宽窄切换（Duo 开合、iPad 拖窗口）不换布局，Tab 保持不变。iOS 17 仍是旧布局：iPhone 抽屉、iPad 常驻侧边栏（`DrawerView` 的 `sidebar` 样式，`MainView.split` / `drawerLayout`）。
+iOS 18 起，iPhone、iPhone Duo、iPad 共用一套系统 `TabView`，样式是 `sidebarAdaptable`（`MainView.tabLayout`）：「会话 · Bot · 小工具 · 探索 · 设置」五个 Tab，窄屏在底部，宽屏由系统放到顶部或换成侧边栏，Duo 展开时是右侧的竖条。宽窄切换（Duo 开合、iPad 拖窗口）不换布局，Tab 保持不变。iOS 17 的 iPhone 用同样五个 Tab，只是换成旧写法（`TabView` 加 `.tabItem`，`MainView.phoneTabLayout`），Tab 栏始终在底部，页面和行为与 iOS 18 起的一致。iOS 17 的 iPad 仍是旧布局：常驻侧边栏，窄窗口是抽屉（`DrawerView` 的 `sidebar` 样式，`MainView.split` / `drawerLayout`）；旧写法的 Tab 栏在 iPad 上也只能放底部，所以没改。iPhone Duo 只有 iOS 27，不涉及旧版本。
 
 - **会话 Tab**：窄屏是列表，点开会话推入新页面；宽屏是列表和会话并排的分栏（`sessionsSplit`），没有选中时自动开一个空白会话，和旧分栏一样。这层分栏照旧分栏的规矩：列宽固定、从 27.1 起保留系统侧栏按钮（`systemSidebarButton`，否则 Duo 会卡死）、Duo 半开时避开折痕（`PastTheFold`）。
-- **新增一个全局入口**（像插件、连接器、本机能力、操控手机、远程控制、网页版这类），要同时加到 `ExploreTabView` 和 `DrawerView` 侧边栏的那几行里：后者是 iOS 17 的入口，漏了 iOS 17 的用户就找不到。
-- **文案和给模型的说明里写入口位置时**，写成「探索 → …（iOS 17 上在侧边栏）」。原生拒绝消息（`native/ios-native`）和 ios-environment skill 里用的是英文 "the app's Explore tab (in the sidebar before iOS 18)"。
+- **新增一个全局入口**（像插件、连接器、本机能力、操控手机、远程控制、网页版这类），要同时加到 `ExploreTabView` 和 `DrawerView` 侧边栏的那几行里：后者是 iOS 17 上 iPad 的入口，漏了 iOS 17 的 iPad 用户就找不到。
+- **文案和给模型的说明里写入口位置时**，写成「探索 → …（iOS 17 的 iPad 上在侧边栏）」。原生拒绝消息（`native/ios-native`）和 ios-environment skill 里用的是英文 "the app's Explore tab (in the sidebar on an iPad before iOS 18)"。
 - **iPhone Duo 开合时 Tab 界面按尺寸重建**（`tabLayout` 上的 `.id(ThisDevice.isDuo ? sizeClass : nil)`）。Duo 展开后，右侧那一列同时放 Tab 栏和导航栏按钮，系统只在 Tab 界面创建时安排这一列：合着启动、再展开，会话一侧的新会话和工作台按钮会丢。重建不丢状态，因为 Tab、各 Tab 的导航路径和当前会话都存在外层。
+- **iPadOS 18 的顶部 Tab 栏会盖住分栏的导航栏**：全宽页面系统会自己把标题挪到第二行，分栏（会话 Tab 的列表和对话）不会，标题、模型选择器、左上角按钮都被挡住。所以 iOS 18–25 的 iPad 上，Tab 栏浮在顶部时会话分栏整体下移一行（`MainView` 的 `BelowFloatingTabBar`，改的是 UIKit 分栏控制器的安全区，SwiftUI 的 inset、padding 挪不动这层导航栏），切成侧边栏时再收回。iOS 26 起系统自己处理。以后在 Tab 里再放分栏，也要套上它。
 - 窄屏时会话、Bot 聊天、群聊推入后都隐藏 Tab 栏，把底部让给输入框；新的全屏聊天页也照此处理。宽屏的 Tab 栏在顶部或侧边，不用隐藏。
 
 ## 连接器对谁生效
 
-连接器的入口在「探索」页（iOS 17 上在侧边栏「插件」下面那一行），是全 App 的通用入口，Bot 团队设置里也留了同一个页面。原因是 ds-bot 把连上的服务挂成引擎级的 MCP 插件：普通会话和 Bot 都能用它的工具（`mcp__<id>__*`），「哪些 Bot 可以用」的开关只限制 Bot，管不到普通会话。连接服务、登录都走 ds-bot 的接口，Bot 插件没就绪时只有「本机能力」那一类能用。
+连接器的入口在「探索」页（iOS 17 的 iPad 上在侧边栏「插件」下面那一行），是全 App 的通用入口，Bot 团队设置里也留了同一个页面。原因是 ds-bot 把连上的服务挂成引擎级的 MCP 插件：普通会话和 Bot 都能用它的工具（`mcp__<id>__*`），「哪些 Bot 可以用」的开关只限制 Bot，管不到普通会话。连接服务、登录都走 ds-bot 的接口，Bot 插件没就绪时只有「本机能力」那一类能用。
 
 **以后增加连接器，或者增加类似的共享能力时，务必先判断它是否对 DS Bot 和普通会话同时生效：**
 
-- 同时生效的，入口放在「探索」页（iOS 17 上是侧边栏）这类通用位置，页面文案要说清两边都能用，不能只藏在 Bot 的页面里。
+- 同时生效的，入口放在「探索」页（iOS 17 的 iPad 上是侧边栏）这类通用位置，页面文案要说清两边都能用，不能只藏在 Bot 的页面里。
 - 只对 Bot 生效的，才只放在 Bot 的页面里。
 - 判断依据是它在引擎里怎么挂载：挂在引擎上的（像连接器）对所有会话生效；只注入 Bot 会话的（像给某个 Bot 的能力）只对 Bot 生效。拿不准就实测：在普通会话和 Bot 聊天里各让 Agent 列一次可用工具。
 

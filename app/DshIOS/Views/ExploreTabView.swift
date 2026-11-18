@@ -3,8 +3,8 @@ import WatchConnectivity
 
 /// The 探索 tab: what the agent can be given beyond a conversation of its own — plugins,
 /// connectors, this device's capabilities, phone control — then the other devices (the computers
-/// of remote control, Apple Watch), the web version and sharing the app. Before iOS 18 these are
-/// rows of the sidebar, and Apple Watch and sharing stay in 设置.
+/// of remote control, Apple Watch), the web version and sharing the app. On an iPad before iOS 18
+/// these are rows of the sidebar, and Apple Watch and sharing stay in 设置.
 struct ExploreTabView: View {
     enum Route: Hashable { case plugins, connectors, capabilities, phoneControl, remote, watch, share }
 

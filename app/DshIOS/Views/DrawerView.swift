@@ -23,7 +23,7 @@ struct DrawerView: View {
         }
     }
 
-    /// What it is drawn as: the sidebar before iOS 18 (iPad, and the phone's drawer), or on the tab
+    /// What it is drawn as: the sidebar on an iPad before iOS 18 (a drawer where the window is narrow), or on the tab
     /// bar the 会话 tab's list (search included) and the archive pushed on it.
     enum Style { case sidebar, sessions, archived }
 
