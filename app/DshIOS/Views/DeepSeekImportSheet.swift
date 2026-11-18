@@ -45,7 +45,7 @@ struct DeepSeekImportSheet: View {
                 }
             }
         }
-        .tint(Palette.ink)
+        .inkTint()
         .interactiveDismissDisabled(importer?.running == true)
         .fileImporter(isPresented: $picking, allowedContentTypes: [.zip]) { picked($0) }
         .sheet(isPresented: $showNewWorkspace) { NewWorkspaceView { workspaceId = $0 } }

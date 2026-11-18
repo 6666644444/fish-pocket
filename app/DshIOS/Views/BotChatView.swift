@@ -236,7 +236,28 @@ private struct BotModelPicker: View {
         BotCard {
             Text("\(bot.name)还没有模型，选一个它就会开口").font(.subheadline.weight(.semibold))
             if models.isEmpty {
-                Text("还没有可用的模型。先在「设置 › 账号与余额」登录 DeepSeek 或填入 API Key。").font(.footnote).foregroundStyle(Palette.secondary)
+                Text(app.fishPocket.available
+                    ? "还没有可用的模型。登录 DeepSeek 或 Fish Pocket 账号，或者添加 API Key。"
+                    : "还没有可用的模型。登录 DeepSeek 账号，或者添加 API Key。")
+                    .font(.footnote).foregroundStyle(Palette.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                // The same ways in as a conversation's notice (`CredentialNotice`). A longer translation
+                // shrinks to stay on the one line of its capsule.
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(spacing: 8) {
+                        Button("添加 API Key") { app.requestCredentials(.officialKey) }
+                            .buttonStyle(.capsule(.outline, height: 40))
+                        Button("登录 DeepSeek") { app.requestCredentials(.signIn) }
+                            .buttonStyle(.capsule(.outline, height: 40))
+                    }
+                    if app.fishPocket.available {
+                        Button("登录 Fish Pocket") { app.requestCredentials(.fishPocket) }
+                            .buttonStyle(.capsule(.outline, height: 40))
+                    }
+                }
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .padding(.top, 2)
             }
             ForEach(models.compactMap { model in model["ref"].string.map { ($0, model["name"].string ?? $0) } }, id: \.0) { ref, name in
                 Button {
@@ -264,6 +285,10 @@ private struct BotModelPicker: View {
                 .buttonStyle(.plain)
                 .disabled(saving)
             }
+        }
+        // Signing in or adding a key anywhere brings the models here.
+        .task(id: "\(app.revision("llm/adapters-updated", "credentials/reference-updated", "credentials/record-updated"))-\(app.account.signedIn)-\(app.fishPocket.signedIn)") {
+            if models.isEmpty { await app.botTeam.refreshState() }
         }
     }
 }

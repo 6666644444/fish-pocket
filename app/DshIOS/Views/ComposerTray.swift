@@ -87,7 +87,7 @@ struct ComposerTray: View {
             .groupedList()
             .toolbar(.hidden, for: .navigationBar)
         }
-        .tint(Palette.ink)
+        .inkTint()
         .permissionConfirmation($confirmingPermission, confirm: setPermission)
         .alert("确认停用智能体团队协作？", isPresented: $confirmingTeamOff) {
             Button("取消", role: .cancel) {}
@@ -107,7 +107,6 @@ struct ComposerTray: View {
                 Toggle(isOn: Binding(get: { composer.planActive }, set: { on in Haptics.select(); composer.setPlan(on) })) {
                     Label("计划模式", systemImage: "list.bullet.clipboard")
                 }
-                .toggleStyle(.mono)
                 .disabled(composer.planSwitching)
             }
             if let thinking = context.thinking(model) {
@@ -117,7 +116,6 @@ struct ComposerTray: View {
                 })) {
                     Label("思考", systemImage: "lightbulb")
                 }
-                .toggleStyle(.mono)
             }
             // A child is a member of its root's team, not a team of its own.
             if let team = composer.teamEnabled, model.subagentAddress == nil {
@@ -133,7 +131,6 @@ struct ComposerTray: View {
                         Image(systemName: "person.3").imageScale(.small)
                     }
                 }
-                .toggleStyle(.mono)
                 .disabled(composer.teamSwitching || composer.projection("modelSelection").isNull)
             }
             if !context.permissionOptions.isEmpty, model.permission != nil {

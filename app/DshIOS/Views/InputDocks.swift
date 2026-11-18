@@ -283,7 +283,6 @@ struct ComposerStatusSheet: View {
                 }
                 if composer.planActive {
                     Toggle("计划模式", isOn: Binding(get: { composer.planActive }, set: { on in Haptics.select(); composer.setPlan(on) }))
-                        .toggleStyle(.mono)
                         .disabled(composer.planSwitching)
                 }
             }
@@ -481,7 +480,7 @@ private struct QueueSection: View {
         .swipeActions(edge: .leading) {
             if model.running {
                 Button { act(row.id, .steer) } label: { Label("插话", systemImage: "bolt") }
-                    .tint(Palette.ink)
+                    .inkTint()
             }
         }
         .contextMenu {

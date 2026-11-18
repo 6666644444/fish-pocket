@@ -730,7 +730,7 @@ private struct MarketInstallConfirm: View {
         .padding(20)
         .background(Palette.background)
         .presentationDetents([.medium])
-        .tint(Palette.ink)
+        .inkTint()
     }
 }
 
@@ -788,7 +788,7 @@ private struct MarketSourcesSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .closeButton(dismiss)
         }
-        .tint(Palette.ink)
+        .inkTint()
     }
 
     private var failureText: String? {

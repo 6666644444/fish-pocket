@@ -94,7 +94,7 @@
 - **iPad 和 iPhone Duo 适配：** 系统的自适应 Tab（顶部 Tab 栏或侧边栏）、会话列表和对话并排、右侧工作台、多窗口、拖放文件，外接键盘支持常用快捷键。iPhone Duo 合上用外屏、展开铺满内屏，会话不中断。
 - **更私密：** 会话和工作区留在设备上。
 
-模型调用仍然需要联网，用 DeepSeek 账号或 API Key 都可以。都没有的话，可以用 Apple 或手机号登录 Fish Pocket 账号，用 App 内购买的额度对话，按用量扣积分，买了不会过期（仅 App Store 和 TestFlight 版本）。
+模型调用仍然需要联网，用 DeepSeek 账号或 API Key 都可以。都没有的话，可以登录 Fish Pocket 账号，用 App 内购买的额度对话，按用量扣积分，买了不会过期（仅 App Store 和 TestFlight 版本）。
 
 ## 本机能力
 

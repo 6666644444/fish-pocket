@@ -130,7 +130,7 @@ struct RemoteNewSessionSheet: View {
                 }
             }
         }
-        .tint(Palette.ink)
+        .inkTint()
         .interactiveDismissDisabled(creating)
         .onAppear(perform: seed)
         .onChange(of: deviceId) { deviceChanged() }

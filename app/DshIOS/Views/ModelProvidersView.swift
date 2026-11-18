@@ -528,7 +528,7 @@ private struct ProviderEditor: View {
                 withAnimation { proxy.scrollTo(failedAt == .key ? Self.keyAnchor : Self.failureAnchor, anchor: .center) }
             }
         }
-        .tint(Palette.ink)
+        .inkTint()
         .groupedList()
         .scrollDismissesKeyboard(.interactively)
         .modifier(EditorChrome(adding: adding, dirty: dirty, canSave: canSave, canContinue: canContinue, busy: busy, next: { choosingModels = true }, save: { Task { await apply() } }))
@@ -567,7 +567,7 @@ private struct ProviderEditor: View {
             catalogSection(autoFetch: true)
             modelProblemSection
         }
-        .tint(Palette.ink)
+        .inkTint()
         .groupedList()
         .navigationTitle("选择模型")
         .navigationBarTitleDisplayMode(.inline)
@@ -688,7 +688,7 @@ private struct ProviderEditor: View {
             .groupedRow()
             retrySection
         }
-        .tint(Palette.ink)
+        .inkTint()
         .groupedList()
         .navigationTitle("高级")
         .navigationBarTitleDisplayMode(.inline)
@@ -1074,7 +1074,7 @@ private struct RetryPolicyPage: View {
             .groupedRow()
             if let branch { fieldSections(branch) }
         }
-        .tint(Palette.ink)
+        .inkTint()
         .groupedList()
         .disabled(disabled)
         .navigationTitle("重试策略")
@@ -1171,7 +1171,6 @@ private struct RetryPolicyPage: View {
                 Toggle(retryCodeLabel(code), isOn: Binding(get: { isOn }, set: { on in
                     selectCodes(path, choices.filter { $0 == code ? on : selected.contains($0) }, inherited)
                 }))
-                .toggleStyle(.mono)
                 // A policy retries at least one code.
                 .disabled(selected.count == 1 && isOn)
             }
@@ -1442,7 +1441,7 @@ private struct ModelRowEditor: View {
             }
             .groupedRow()
         }
-        .tint(Palette.ink)
+        .inkTint()
         .groupedList()
         .disabled(disabled)
         .navigationTitle(String(localized: "模型 \(position)"))
@@ -1477,7 +1476,6 @@ private struct ModelRowEditor: View {
                     }
                     write(row)
                 }))
-                .toggleStyle(.mono)
                 .disabled(selected.count == 1 && isOn)
             }
         }
@@ -1515,7 +1513,6 @@ private struct ReasoningEditor: View {
                 let initial = ["off", "low", "medium", "high"].filter(levels.contains)
                 set(on ? Dictionary(uniqueKeysWithValues: initial.map { ($0, defaultValue($0)) }) : nil)
             }))
-            .toggleStyle(.mono)
             if let entries {
                 // Levels the protocol does not offer share one rank, so their names order them.
                 let used = entries.keys.sorted { (order($0), $0) < (order($1), $1) }
@@ -1650,7 +1647,7 @@ private struct ModelPickerSheet: View {
                 picked = Set(candidates.compactMap { $0["id"].string }.filter { !known.contains($0) })
             }
         }
-        .tint(Palette.ink)
+        .inkTint()
     }
 }
 
@@ -1707,7 +1704,7 @@ private struct AddProviderSheet: View {
                 ToolbarItem(placement: .cancellationAction) { Button("取消") { dismiss() } }
             }
         }
-        .tint(Palette.ink)
+        .inkTint()
         .sheetNotices()
         .onAppear {
             if addable == nil { addable = model.rows.filter { !$0.configured && app.settings.serves($0.settingsNs) } }
@@ -1805,7 +1802,7 @@ private struct CustomProviderForm: View {
             }
             .groupedRow()
         }
-        .tint(Palette.ink)
+        .inkTint()
         .groupedList()
         .scrollDismissesKeyboard(.interactively)
         .interactiveDismissDisabled(dirty)
@@ -1844,7 +1841,7 @@ private struct CustomProviderForm: View {
             }
             .groupedRow()
         }
-        .tint(Palette.ink)
+        .inkTint()
         .groupedList()
         .navigationTitle("高级")
         .navigationBarTitleDisplayMode(.inline)
@@ -1882,7 +1879,7 @@ private struct CustomProviderForm: View {
                 Section { Text(modelProblem).font(.footnote).foregroundStyle(Palette.waiting) }.groupedRow()
             }
         }
-        .tint(Palette.ink)
+        .inkTint()
         .groupedList()
         .navigationTitle("选择模型")
         .navigationBarTitleDisplayMode(.inline)

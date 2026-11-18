@@ -107,84 +107,46 @@ extension ButtonStyle where Self == CapsuleButtonStyle {
 }
 
 extension EnvironmentValues {
-    /// 设置 and the pages under it wear the system's own list look: its background, separators
-    /// and switch. Set on the settings stack and on the sheets that open one of its pages directly;
-    /// every other screen keeps the monochrome look.
+    /// 设置 and the pages under it wear the system's own list look: its background and separators.
+    /// Set on the settings stack and on the sheets that open one of its pages directly; every other
+    /// screen keeps the monochrome look.
     @Entry var systemLists = false
 }
 
-/// The monochrome switch: ink track with a page-coloured knob when on, so it
-/// reads in both appearances (the system knob is always white). Under 设置 it is the system's.
-struct MonoToggleStyle: ToggleStyle {
+/// Every switch in the app: the system's, in its green. Left to the page's ink tint, the track is
+/// black, and in the dark white under the white knob: one white block, on or off hard to tell.
+/// Set on the window, so a plain `Toggle` gets it; but under an explicit `.tint(…)` the window's
+/// style no longer reaches the switch, so the ink is always set with `inkTint()`, which sets this
+/// style again with it. A new switch, not `Toggle(configuration)`: that one keeps the page's tint.
+/// In a menu the toggle stays a checkmark.
+struct AppSwitchStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
-        Row(configuration: configuration)
-    }
-
-    private struct Row: View {
-        @Environment(\.systemLists) private var system
-        let configuration: Configuration
-
-        var body: some View {
-            if system {
-                // The ink tint of the page would paint the track black, and white in the dark.
-                Toggle(isOn: configuration.$isOn) { configuration.label }
-                    .toggleStyle(.switch)
-                    .tint(.green)
-            } else {
-                HStack(spacing: 16) {
-                    configuration.label
-                    Spacer(minLength: 0)
-                    MonoSwitch(isOn: configuration.$isOn)
-                }
-                .accessibilityElement(children: .combine)
-                .accessibilityAddTraits(.isToggle)
-                .accessibilityValue(configuration.isOn ? Text("开") : Text("关"))
-                .accessibilityAction { configuration.isOn.toggle() }
-            }
-        }
+        Toggle(isOn: configuration.$isOn) { configuration.label }
+            .toggleStyle(.switch)
+            .tint(.green)
     }
 }
 
+extension ToggleStyle where Self == AppSwitchStyle {
+    static var appSwitch: AppSwitchStyle { AppSwitchStyle() }
+}
+
+extension View {
+    /// The app's ink for what can be tapped, keeping the switches green (`AppSwitchStyle`).
+    func inkTint() -> some View { tint(Palette.ink).toggleStyle(.appSwitch) }
+}
+
 /// The switch alone, for rows that lay out their own label (plugins).
-struct MonoSwitch: View {
-    @Environment(\.systemLists) private var system
+struct AppSwitch: View {
     @Binding var isOn: Bool
     var label: Text?
 
     var body: some View {
-        if system {
-            Toggle(isOn: $isOn) { label ?? Text("") }
-                .labelsHidden()
-                .toggleStyle(.switch)
-                .tint(.green)
-        } else {
-            mono
-        }
+        Toggle(isOn: $isOn) { label ?? Text("") }
+            .labelsHidden()
+            .toggleStyle(.switch)
+            .tint(.green)
     }
-
-    private var mono: some View {
-        Capsule()
-            .fill(isOn ? Palette.ink : Palette.control)
-            .frame(width: 48, height: 28)
-            .overlay(alignment: isOn ? .trailing : .leading) {
-                Circle()
-                    .fill(isOn ? Palette.background : Palette.faint)
-                    .frame(width: 22, height: 22)
-                    .padding(3)
-            }
-            .animation(.snappy(duration: 0.2), value: isOn)
-            .contentShape(Capsule())
-            .onTapGesture { isOn.toggle(); Haptics.select() }
-            .accessibilityElement()
-            .accessibilityLabel(label ?? Text(""))
-            .accessibilityAddTraits(.isToggle)
-            .accessibilityValue(isOn ? Text("开") : Text("关"))
-            .accessibilityAction { isOn.toggle() }
-    }
-}
-
-extension ToggleStyle where Self == MonoToggleStyle {
-    static var mono: MonoToggleStyle { MonoToggleStyle() }
 }
 
 /// Running / waiting indicator: the only colour besides diffs.
@@ -246,10 +208,10 @@ extension View {
     func groupedList() -> some View { modifier(GroupedListStyle()) }
 
     /// A settings page and everything pushed or presented from it, as 设置 is drawn: the system's
-    /// grouped lists, separators and switches, with the app's ink for what can be tapped. Goes on
-    /// the navigation stack (or the sheet's content), so the pages inside inherit it.
+    /// grouped lists and separators, with the app's ink for what can be tapped. Goes on the
+    /// navigation stack (or the sheet's content), so the pages inside inherit it.
     func settingsStyle() -> some View {
-        environment(\.systemLists, true).toggleStyle(.mono).tint(Palette.ink)
+        environment(\.systemLists, true).inkTint()
     }
 
     /// A picker's value in the grey of the other rows' values; the page's ink tint would paint it black.

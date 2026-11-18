@@ -531,7 +531,7 @@ struct PluginDetailView: View {
                 if manager.isBusy(package) {
                     ProgressView()
                 } else if !package.switchLocked {
-                    MonoSwitch(isOn: Binding(get: { package.enabled }, set: { on in Task { await manager.setEnabled(package, on) } }), label: Text("启用 \(package.title)"))
+                    AppSwitch(isOn: Binding(get: { package.enabled }, set: { on in Task { await manager.setEnabled(package, on) } }), label: Text("启用 \(package.title)"))
                 }
             }
             .padding(.vertical, 3)
@@ -712,7 +712,7 @@ private struct PluginRowView: View {
                     if app.plugins.isBusy(row) {
                         ProgressView().controlSize(.small)
                     } else {
-                        MonoSwitch(isOn: Binding(get: { row.enabled }, set: { on in Task { await app.plugins.setRowEnabled(row, on) } }), label: Text("启用组件 \(row.title)"))
+                        AppSwitch(isOn: Binding(get: { row.enabled }, set: { on in Task { await app.plugins.setRowEnabled(row, on) } }), label: Text("启用组件 \(row.title)"))
                             .disabled(row.locked)
                             .opacity(row.locked ? 0.4 : 1)
                     }

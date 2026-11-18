@@ -301,7 +301,7 @@ private struct SubagentRow: View {
         .swipeActions {
             if !facts.external {
                 Button { open(facts.id) } label: { Label("打开会话", systemImage: "bubble.left") }
-                    .tint(Palette.ink)
+                    .inkTint()
             }
         }
         .contextMenu {

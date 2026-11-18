@@ -135,7 +135,7 @@ private struct RenameWorkspaceSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .saveToolbar(canSave: canSave, saving: busy, cancel: { dismiss() }, save: { Task { await save() } })
         }
-        .tint(Palette.ink)
+        .inkTint()
         .presentationDetents([.medium])
         .interactiveDismissDisabled(busy)
         .onAppear {

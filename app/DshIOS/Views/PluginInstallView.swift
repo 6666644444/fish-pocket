@@ -81,7 +81,7 @@ struct PluginInstallSheet: View {
             }
             .pageBackground()
         }
-        .tint(Palette.ink)
+        .inkTint()
         .overlay(alignment: .top) { ShellNotices() }
         // A lost answer is asked about again on every reconnect.
         .task(id: app.generation) { await task.reconcile() }

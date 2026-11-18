@@ -100,8 +100,6 @@ enum AppLinks {
         #endif
         return site.appending(path: "add-to-home/")
     }
-    /// The App Store's 「撰写评论」 page for the app.
-    static let writeReview = URL(string: "\(appStore.absoluteString)?action=write-review")!
 
     /// What 「链接」 on the share page sends.
     static var shareText: String {

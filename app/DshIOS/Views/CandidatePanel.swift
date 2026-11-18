@@ -394,7 +394,7 @@ struct AttachmentRail: View {
                     }
                 }
                 .progressViewStyle(.linear)
-                .tint(Palette.ink)
+                .inkTint()
                 .padding(.horizontal, 10)
                 .padding(.bottom, 4)
             }

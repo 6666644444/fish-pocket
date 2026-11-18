@@ -43,7 +43,7 @@ struct SignInChoice: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Group {
-                    if busy { ProgressView().tint(Palette.ink) }
+                    if busy { ProgressView().inkTint() }
                     else { Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).opacity(0.5) }
                 }
                 .frame(height: 40)
@@ -182,7 +182,7 @@ struct SignInSheet: View {
                 SignInChoice(
                     icon: "sparkles",
                     title: "Fish Pocket 账号",
-                    detail: "Apple 或手机号登录，在 App 内购买额度，按用量扣费。"
+                    detail: "在 App 内购买额度，按用量扣费。"
                 ) { dismiss(); useFishPocket() }
             }
             SignInChoice(

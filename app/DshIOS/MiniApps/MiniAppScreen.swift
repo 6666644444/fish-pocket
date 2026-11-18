@@ -131,7 +131,7 @@ struct MiniAppScreen: View {
                 Label("让 Agent 修复", systemImage: "wand.and.stars").font(.subheadline.weight(.medium)).frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
-            .tint(Palette.ink)
+            .inkTint()
             .foregroundStyle(Palette.onInk)
         }
         .padding(14)

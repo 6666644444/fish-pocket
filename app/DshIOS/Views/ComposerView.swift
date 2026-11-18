@@ -455,7 +455,7 @@ struct ComposerView: View {
             .lineLimit(1...5)
             .focused($focused)
             .pastesImages(focused: focused, into: composer)
-            .tint(Palette.ink)
+            .inkTint()
             .padding(.trailing, tall ? 30 : 0)
             .onGeometryChange(for: Bool.self) { $0.size.height > threeLines } action: { tall = $0 }
             .overlay(alignment: .topTrailing) {
@@ -941,7 +941,7 @@ private struct DraftEditor: View {
                 }
                 TextEditor(text: $composer.text)
                     .font(.body)
-                    .tint(Palette.ink)
+                    .inkTint()
                     .focused($focused)
                     .pastesImages(focused: focused, into: composer)
                     .padding(.horizontal, 12)

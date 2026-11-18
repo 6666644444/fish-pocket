@@ -21,6 +21,7 @@ struct DshIOSApp: App {
         WindowGroup(id: Self.window, for: SessionWindow.self) { $window in
             RootView(session: window?.session)
                 .environmentObject(engine)
+                .toggleStyle(.appSwitch)
                 .onAppear { engine.start() }
         }
         .commands { ShellCommands() }
