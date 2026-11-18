@@ -54,7 +54,7 @@ struct MainView: View {
     @State private var keyEditorRef: String?
     /// 「Fish Pocket 账号」 was chosen in the sign-in sheet: its page follows once that sheet is gone.
     @State private var fishPocketAfterOnboarding = false
-    /// The ask for a Star or a share (`SupportPrompt`'s `.support`).
+    /// The ask for a rating or a share (`SupportPrompt`'s `.support`).
     @State private var supportDialog = false
     /// 「新功能」 after an update (`WhatsNew`).
     @State private var whatsNew: WhatsNew.Release?
@@ -536,8 +536,10 @@ struct MainView: View {
         .overlay {
             if supportDialog {
                 SupportDialog(
-                    star: { settleSupport { openURL(AppLinks.repository) } },
+                    rate: { settleSupport { openURL(AppLinks.appStoreReview) } },
                     share: { settleSupport { sheet = .share } },
+                    // The card stays up: they may come back to rate.
+                    repository: { Haptics.tap(); openURL(AppLinks.repository) },
                     later: { supportDialog = false }
                 )
                 .transition(.opacity.combined(with: .scale(scale: 0.94)))

@@ -19502,6 +19502,40 @@
         }
       }
     },
+    "代码完全开源" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fully open source"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Código totalmente abierto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "コードは完全オープンソース"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "코드는 완전히 오픈 소스"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "程式碼完全開源"
+          }
+        }
+      }
+    },
     "代码工具" : {
       "localizations" : {
         "en" : {
@@ -30015,6 +30049,40 @@
         }
       }
     },
+    "去 App Store 评分" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rate on the App Store"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Valorar en App Store"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store で評価"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store에서 평가하기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "去 App Store 評分"
+          }
+        }
+      }
+    },
     "去充值" : {
       "localizations" : {
         "en" : {
@@ -34676,40 +34744,6 @@
         }
       }
     },
-    "在 GitHub 点 Star" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Star on GitHub"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dar una estrella en GitHub"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "GitHub で Star する"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "GitHub에서 Star 누르기"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在 GitHub 點 Star"
-          }
-        }
-      }
-    },
     "在 iPhone 和 iPad 上本机运行\n不连电脑，不连服务器" : {
       "localizations" : {
         "en" : {
@@ -38188,40 +38222,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "它改檔案、跑指令都不再先問你，包括排程任務到點時。只在信任它要做的事時使用。"
-          }
-        }
-      }
-    },
-    "它是一个开源项目。点个 Star 或分享给朋友，能让更多人发现它。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "It’s an open-source project. Starring it or sharing it with friends helps more people find it."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Es un proyecto de código abierto. Darle una estrella o compartirlo con amigos ayuda a que más personas lo descubran."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "オープンソースのプロジェクトです。Star を付けたり友だちにシェアしたりすると、より多くの人に知ってもらえます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "오픈 소스 프로젝트예요. Star를 누르거나 친구에게 공유하면 더 많은 사람이 알게 돼요."
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "它是一個開源專案。點個 Star 或分享給朋友，能讓更多人發現它。"
           }
         }
       }
@@ -82553,6 +82553,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "檢視選項"
+          }
+        }
+      }
+    },
+    "觉得好用的话，去 App Store 给个评分，或者分享给朋友，能让更多人发现它。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you like it, rate it on the App Store or share it with friends to help more people find it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si te gusta, valórala en la App Store o compártela con tus amigos para que más personas la descubran."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "気に入ったら、App Store で評価したり友だちにシェアしたりして、より多くの人に届けてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마음에 드셨다면 App Store에서 평가하거나 친구에게 공유해 주세요. 더 많은 사람이 알게 돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "覺得好用的話，去 App Store 給個評分，或者分享給朋友，能讓更多人發現它。"
           }
         }
       }
