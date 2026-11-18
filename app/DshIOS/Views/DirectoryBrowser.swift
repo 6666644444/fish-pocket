@@ -33,7 +33,7 @@ struct NewWorkspaceView: View {
                     level(path, title: (path as NSString).lastPathComponent)
                 }
         }
-        .tint(Palette.ink)
+        .inkTint()
         .interactiveDismissDisabled(busy)
         .sheetNotices()
         .alert("新建文件夹", isPresented: $creating) {

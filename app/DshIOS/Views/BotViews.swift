@@ -281,6 +281,8 @@ extension BotModel {
 struct BotHomeView: View {
     @Environment(AppModel.self) private var app
     let openDrawer: (() -> Void)?
+    /// The chat beside the list, where they are side by side; nil where a row pushes its chat.
+    var selection: Binding<BotRoute?>?
     @State private var creating: CreateKind?
     @State private var settingsOpen = false
     @State private var showHidden = false
@@ -411,104 +413,110 @@ struct BotHomeView: View {
     }
 
     private var list: some View {
-        let team = app.botTeam
-        let hiddenCount = team.bots.filter(\.hidden).count + team.rooms.filter(\.hidden).count
-        return List {
-            if let reason = team.readOnly {
-                Section {
-                    Label("另一个 DSH 正在管理这支团队，这里暂时只能看。", systemImage: "lock")
-                        .font(.footnote).foregroundStyle(Palette.waiting)
-                        .accessibilityHint(reason)
-                }
-            }
-            if !bots.isEmpty { Section {
-                ForEach(bots) { bot in
-                    NavigationLink(value: BotRoute.bot(bot.id)) {
-                        HStack(spacing: 12) {
-                            BotAvatar(bot: bot, size: 44, live: true)
-                            BotRowText(title: bot.name, line: team.rowLine(for: bot), tag: team.isMain(bot) ? String(localized: "主 Bot") : nil)
-                            if bot.pinned { Image(systemName: "pin.fill").font(.caption2).foregroundStyle(Palette.faint) }
-                            trailing(sessionId: bot.sessionId)
-                        }
-                        .padding(.vertical, 4)
-                        .opacity(bot.hidden ? 0.5 : 1)
-                    }
-                    // Only a left swipe: a right swipe is the one that opens the sidebar.
-                    .swipeActions(edge: .trailing) {
-                        if !team.isMain(bot) { hideButton(bot.id, hidden: bot.hidden) }
-                        pinButton(bot.id, pinned: bot.pinned)
-                    }
-                    .contextMenu {
-                        pinButton(bot.id, pinned: bot.pinned)
-                        // A main Bot takes the user's work, so it stays in sight.
-                        if !team.isMain(bot) { hideButton(bot.id, hidden: bot.hidden) }
-                        sessionButtons(bot.sessionId)
-                    }
-                }
-            } header: { Text("Bot") } }
-            if !rooms.isEmpty {
-                Section {
-                    ForEach(rooms) { room in
-                        NavigationLink(value: BotRoute.room(room.id)) {
-                            HStack(spacing: 12) {
-                                RoomAvatar(room: room, size: 44)
-                                BotRowText(title: team.name(of: room), line: room.preview.map { .text($0) } ?? .none)
-                                if room.pinned { Image(systemName: "pin.fill").font(.caption2).foregroundStyle(Palette.faint) }
-                                trailing(sessionId: room.sessionId)
-                            }
-                            .padding(.vertical, 4)
-                            .opacity(room.hidden ? 0.5 : 1)
-                        }
-                        .swipeActions(edge: .trailing) {
-                            hideButton(room.id, hidden: room.hidden)
-                            pinButton(room.id, pinned: room.pinned)
-                        }
-                        .contextMenu {
-                            pinButton(room.id, pinned: room.pinned)
-                            hideButton(room.id, hidden: room.hidden)
-                            sessionButtons(room.sessionId)
-                        }
-                    }
-                } header: { Text("群聊") }
-            }
-            if !hits.isEmpty {
-                Section("私聊里说过的") {
-                    ForEach(hits) { hit in
-                        NavigationLink(value: BotRoute.bot(hit.botId)) {
-                            HStack(alignment: .top, spacing: 10) {
-                                BotAvatar(bot: team.bot(hit.botId), size: 28)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    HStack(spacing: 6) {
-                                        Text(team.bot(hit.botId)?.name ?? "").font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
-                                        if hit.mine { Text("你说的").font(.caption2).foregroundStyle(Palette.faint) }
-                                        Spacer(minLength: 0)
-                                        if hit.time > 0 {
-                                            Text(Date(timeIntervalSince1970: hit.time / 1000), format: .dateTime.month().day().hour().minute()).font(.caption2).foregroundStyle(Palette.faint)
-                                        }
-                                    }
-                                    Text(hit.snippet).font(.footnote).foregroundStyle(Palette.secondary).lineLimit(2)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if !needle.isEmpty && bots.isEmpty && rooms.isEmpty && hits.isEmpty {
-                Section { Text("没有找到「\(query)」").font(.footnote).foregroundStyle(Palette.secondary) }
-            }
-            if hiddenCount > 0 && needle.isEmpty {
-                Section {
-                    Button(showHidden ? String(localized: "收起已隐藏的") : String(localized: "显示 \(hiddenCount) 个已隐藏的")) {
-                        withAnimation(.snappy) { showHidden.toggle() }
-                    }
-                    .font(.footnote)
-                    .foregroundStyle(Palette.secondary)
-                }
-            }
+        Group {
+            // Beside the chat (`selection`), a row picks what the chat column shows; on its own, it pushes.
+            if let selection { List(selection: selection) { rows } } else { List { rows } }
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .searchable(text: $query, prompt: "搜索 Bot、群聊和私聊记录")
+    }
+
+    @ViewBuilder
+    private var rows: some View {
+        let team = app.botTeam
+        let hiddenCount = team.bots.filter(\.hidden).count + team.rooms.filter(\.hidden).count
+        if let reason = team.readOnly {
+            Section {
+                Label("另一个 DSH 正在管理这支团队，这里暂时只能看。", systemImage: "lock")
+                    .font(.footnote).foregroundStyle(Palette.waiting)
+                    .accessibilityHint(reason)
+            }
+        }
+        if !bots.isEmpty { Section {
+            ForEach(bots) { bot in
+                NavigationLink(value: BotRoute.bot(bot.id)) {
+                    HStack(spacing: 12) {
+                        BotAvatar(bot: bot, size: 44, live: true)
+                        BotRowText(title: bot.name, line: team.rowLine(for: bot), tag: team.isMain(bot) ? String(localized: "主 Bot") : nil)
+                        if bot.pinned { Image(systemName: "pin.fill").font(.caption2).foregroundStyle(Palette.faint) }
+                        trailing(sessionId: bot.sessionId)
+                    }
+                    .padding(.vertical, 4)
+                    .opacity(bot.hidden ? 0.5 : 1)
+                }
+                // Only a left swipe: a right swipe is the one that opens the sidebar.
+                .swipeActions(edge: .trailing) {
+                    if !team.isMain(bot) { hideButton(bot.id, hidden: bot.hidden) }
+                    pinButton(bot.id, pinned: bot.pinned)
+                }
+                .contextMenu {
+                    pinButton(bot.id, pinned: bot.pinned)
+                    // A main Bot takes the user's work, so it stays in sight.
+                    if !team.isMain(bot) { hideButton(bot.id, hidden: bot.hidden) }
+                    sessionButtons(bot.sessionId)
+                }
+            }
+        } header: { Text("Bot") } }
+        if !rooms.isEmpty {
+            Section {
+                ForEach(rooms) { room in
+                    NavigationLink(value: BotRoute.room(room.id)) {
+                        HStack(spacing: 12) {
+                            RoomAvatar(room: room, size: 44)
+                            BotRowText(title: team.name(of: room), line: room.preview.map { .text($0) } ?? .none)
+                            if room.pinned { Image(systemName: "pin.fill").font(.caption2).foregroundStyle(Palette.faint) }
+                            trailing(sessionId: room.sessionId)
+                        }
+                        .padding(.vertical, 4)
+                        .opacity(room.hidden ? 0.5 : 1)
+                    }
+                    .swipeActions(edge: .trailing) {
+                        hideButton(room.id, hidden: room.hidden)
+                        pinButton(room.id, pinned: room.pinned)
+                    }
+                    .contextMenu {
+                        pinButton(room.id, pinned: room.pinned)
+                        hideButton(room.id, hidden: room.hidden)
+                        sessionButtons(room.sessionId)
+                    }
+                }
+            } header: { Text("群聊") }
+        }
+        if !hits.isEmpty {
+            Section("私聊里说过的") {
+                ForEach(hits) { hit in
+                    NavigationLink(value: BotRoute.bot(hit.botId)) {
+                        HStack(alignment: .top, spacing: 10) {
+                            BotAvatar(bot: team.bot(hit.botId), size: 28)
+                            VStack(alignment: .leading, spacing: 2) {
+                                HStack(spacing: 6) {
+                                    Text(team.bot(hit.botId)?.name ?? "").font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
+                                    if hit.mine { Text("你说的").font(.caption2).foregroundStyle(Palette.faint) }
+                                    Spacer(minLength: 0)
+                                    if hit.time > 0 {
+                                        Text(Date(timeIntervalSince1970: hit.time / 1000), format: .dateTime.month().day().hour().minute()).font(.caption2).foregroundStyle(Palette.faint)
+                                    }
+                                }
+                                Text(hit.snippet).font(.footnote).foregroundStyle(Palette.secondary).lineLimit(2)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if !needle.isEmpty && bots.isEmpty && rooms.isEmpty && hits.isEmpty {
+            Section { Text("没有找到「\(query)」").font(.footnote).foregroundStyle(Palette.secondary) }
+        }
+        if hiddenCount > 0 && needle.isEmpty {
+            Section {
+                Button(showHidden ? String(localized: "收起已隐藏的") : String(localized: "显示 \(hiddenCount) 个已隐藏的")) {
+                    withAnimation(.snappy) { showHidden.toggle() }
+                }
+                .font(.footnote)
+                .foregroundStyle(Palette.secondary)
+            }
+        }
     }
 
     @ViewBuilder
@@ -523,7 +531,7 @@ struct BotHomeView: View {
         Button { Task { await app.botTeam.setFlags(id, pinned: !pinned) } } label: {
             Label(pinned ? "取消置顶" : "置顶", systemImage: pinned ? "pin.slash" : "pin")
         }
-        .tint(Palette.ink)
+        .inkTint()
     }
 
     private func hideButton(_ id: String, hidden: Bool) -> some View {

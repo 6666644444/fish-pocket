@@ -40,13 +40,30 @@ enum WhatsNew {
         return [
             Feature(symbol: "sparkles",
                     title: "Fish Pocket 账号",
-                    detail: "不需要 DeepSeek 账号，也不需要 API Key：用 Apple 或手机号登录 Fish Pocket 账号，就能用账号里的额度对话，按用量扣积分。额度在 App Store 版本里购买，买了不会过期。入口在设置 → 连接方式。"),
+                    detail: "不需要 DeepSeek 账号，也不需要 API Key：登录 Fish Pocket 账号，就能用账号里的额度对话，按用量扣积分。额度在 App Store 版本里购买，买了不会过期。入口在设置 → 连接方式。"),
         ]
     }
 
     /// Newest first. Until the app reaches an entry's version (and build, when it names one),
     /// the entry is not shown. Entries of one version are shown together, newest first.
     static let releases: [Release] = [
+        Release(version: "1.2.1", build: 114, features: [
+            Feature(symbol: "tray.and.arrow.down",
+                    title: "把 DeepSeek 的聊天记录搬过来",
+                    detail: "在 DeepSeek 官网导出聊天记录，新会话页点「导入 DeepSeek 会话」选中压缩包，以前的对话连同思考过程和图片都会出现在会话列表里，点开就能接着聊。"),
+            Feature(symbol: "person.3",
+                    title: "几个智能体分工协作",
+                    detail: "在输入框的「+」里打开「智能体团队协作」，复杂的任务会拆给多个智能体，用一张共享任务板分工推进。效果更好，token 也用得更多。"),
+            Feature(symbol: "hammer",
+                    title: "用对话定制 Fish Pocket",
+                    detail: "新会话选「创造模式」，让 Agent 替你写插件：加新工具、接入外部服务，或者把工具和提示词组合成一个自己的模式。"),
+            Feature(symbol: "doc.on.clipboard",
+                    title: "直接粘贴图片",
+                    detail: "在照片或别的 App 里拷贝一张图，回到输入框长按选「粘贴」，图片就放进附件里，和从相册选的一样。"),
+            Feature(symbol: "plus.app",
+                    title: "网页版也能放到主屏幕",
+                    detail: "在网页版右上角的「···」里选「添加到主屏幕」，以后点这个图标就进 Fish Pocket，直接打开网页版。"),
+        ]),
         Release(version: "1.2.1", build: 112, features: [
             Feature(symbol: "globe",
                     title: "看懂模型的思考过程",

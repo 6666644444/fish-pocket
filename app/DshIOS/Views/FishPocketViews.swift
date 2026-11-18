@@ -25,7 +25,7 @@ struct FishPocketPage: View {
     @Environment(AppModel.self) private var app
     @Environment(\.systemLists) private var systemLists
     @State private var selected: String?
-    @State private var phoneSignIn = false
+    @State private var phoneSheet = false
     @State private var confirmingSignOut = false
     @State private var confirmingDelete = false
     @State private var failure: String?
@@ -67,8 +67,9 @@ struct FishPocketPage: View {
         .navigationBarTitleDisplayMode(.inline)
         .task { await account.refresh() }
         .task { if account.packs.isEmpty { await account.loadPacks() } }
+        .task(id: account.signedIn) { if !account.signedIn { await account.loadSignInOptions() } }
         .refreshable { await account.refresh() }
-        .sheet(isPresented: $phoneSignIn) { PhoneSignInSheet().environment(app) }
+        .sheet(isPresented: $phoneSheet) { PhoneSignInSheet().environment(app) }
         .alert("退出登录", isPresented: $confirmingSignOut) {
             Button("取消", role: .cancel) {}
             Button("退出登录", role: .destructive) { Task { await account.signOut() } }
@@ -162,18 +163,20 @@ struct FishPocketPage: View {
                 Text(failure).font(.footnote).foregroundStyle(Palette.removed).multilineTextAlignment(.center)
             }
             AppleSignInButton { failure = $0 }
-            Button { phoneSignIn = true } label: {
-                Label("手机号登录", systemImage: "iphone")
-                    .font(.system(size: 19, weight: .medium))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-                    .padding(.horizontal, 16)
-                    .foregroundStyle(Palette.ink)
-                    .frame(maxWidth: .infinity, minHeight: 50)
-                    .background(Capsule().strokeBorder(Palette.stroke))
-                    .contentShape(Capsule())
+            if account.phoneSignIn {
+                Button { phoneSheet = true } label: {
+                    Label("手机号登录", systemImage: "iphone")
+                        .font(.system(size: 19, weight: .medium))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                        .padding(.horizontal, 16)
+                        .foregroundStyle(Palette.ink)
+                        .frame(maxWidth: .infinity, minHeight: 50)
+                        .background(Capsule().strokeBorder(Palette.stroke))
+                        .contentShape(Capsule())
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         }
     }
 

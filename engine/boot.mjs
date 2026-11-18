@@ -82,6 +82,19 @@ try {
   console.error('[dsh-ios] permission default not set', error);
 }
 
+// A minute for reading a plugin index instead of 15 s (runtime/market-timeout.mjs).
+try {
+  const { seedMarketTimeout } = await import('./runtime/market-timeout.mjs');
+  const outcome = await seedMarketTimeout({
+    home: process.env.DSH_HOME,
+    marker: path.join(process.env.DSH_HOME, '.ios-market-timeout'),
+    installAnchor: path.join(here, 'node_modules/@deepseek-ai/dsh/package.json'),
+  });
+  if (outcome !== 'done') console.log(`[dsh-ios] market timeout: ${outcome}`);
+} catch (error) {
+  console.error('[dsh-ios] market timeout not set', error);
+}
+
 process.argv = [
   process.execPath,
   path.join(here, 'node_modules/@deepseek-ai/dsh/lib/bin.js'),

@@ -53,16 +53,5 @@ struct SupportDialog: View {
         }
     }
 
-    private var icon: some View {
-        Group {
-            if let image = UIImage(named: "AppIcon") {
-                Image(uiImage: image).resizable()
-            } else {
-                Image("LaunchMark").resizable().scaledToFit()
-            }
-        }
-        .frame(width: 68, height: 68)
-        .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
-        .accessibilityHidden(true)
-    }
+    private var icon: some View { AppIconMark(size: 68) }
 }

@@ -102,11 +102,9 @@ struct SettingsView: View {
                     })) {
                         Label("静音音频", systemImage: "speaker.slash")
                     }
-                    .toggleStyle(.mono)
                     // The system's continued-processing task exists from iOS 26 only.
                     if #available(iOS 26.0, *) {
                         Toggle(isOn: $continuedProcessing) { Label("任务续跑", systemImage: "hourglass") }
-                            .toggleStyle(.mono)
                     }
                 } header: {
                     Text("后台运行")
@@ -124,7 +122,6 @@ struct SettingsView: View {
 
                 Section {
                     Toggle(isOn: $widgetTitles) { Label("显示会话标题", systemImage: "eye") }
-                        .toggleStyle(.mono)
                 } header: {
                     Text("小组件")
                 } footer: {
@@ -169,20 +166,18 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    linkRow("给个 Star", "star", "GitHub", Self.repositoryURL)
+                    // The App Store page, from any install: rating it there is what helps most now.
+                    linkRow("给个评分", "star", "App Store", AppLinks.appStore)
                         .environment(\.openURL, OpenURLAction { _ in SupportPrompt.settle(); return .systemAction })
-                    // Only an App Store install can be reviewed there.
-                    if AppDistribution.channel == .appStore {
-                        linkRow("给个评分", "heart", "App Store", AppLinks.writeReview)
-                    }
                     linkRow("官网", "safari", AppLinks.site.host() ?? "", AppLinks.site)
+                    linkRow("加入公测", "paperplane","TestFlight", AppLinks.testFlight)
                     linkRow("开源仓库", "chevron.left.forwardslash.chevron.right", UpdateChecker.repository, Self.repositoryURL)
                     linkRow("问题反馈", "exclamationmark.bubble", "GitHub Issues", Self.issuesURL)
                     // The site's picture is swapped in place when the 7-day code expires: always the current one.
                     linkRow("微信交流群", "bubble.left.and.bubble.right", String(localized: "扫码加群"), AppLinks.wechatGroupCode)
                     linkRow("作者", "at", "sai · imsai.cc", Self.authorURL)
                 } footer: {
-                    Text("觉得好用的话，去 GitHub 仓库页点一下 Star ⭐️，这是对项目最大的支持。")
+                    Text("觉得好用的话，去 App Store 给个评分 ⭐️，这是对项目最大的支持。")
                 }
 
             }
@@ -207,7 +202,7 @@ struct SettingsView: View {
         }
         // 设置 and every page pushed or presented from it: the system's lists, not the monochrome ones.
         .environment(\.systemLists, true)
-        .tint(Palette.ink)
+        .inkTint()
     }
 
     private var aboutValue: String {
@@ -658,16 +653,7 @@ private struct EngineLogView: View {
 private struct ShareAppRow: View {
     var body: some View {
         HStack(spacing: 12) {
-            Group {
-                if let image = UIImage(named: "AppIcon") {
-                    Image(uiImage: image).resizable()
-                } else {
-                    Image("LaunchMark").resizable().scaledToFit()
-                }
-            }
-            .frame(width: 40, height: 40)
-            .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
-            .accessibilityHidden(true)
+            AppIconMark(size: 40)
             VStack(alignment: .leading, spacing: 2) {
                 Text("分享 Fish Pocket")
                 Text("海报、二维码或链接").font(.footnote).foregroundStyle(.secondary)

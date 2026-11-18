@@ -261,7 +261,7 @@ struct DrawerView: View {
             .searchFieldAtBottom()
             .modifier(SearchPageClose(action: closeSearch))
         }
-        .tint(Palette.ink)
+        .inkTint()
         .opacity(searchShown ? 1 : 0)
         .presentationBackground(.clear)
         .onAppear { withAnimation(.easeOut(duration: 0.2)) { searchShown = true } }
@@ -378,7 +378,6 @@ struct DrawerView: View {
                 Image(systemName: "puzzlepiece.extension").font(.callout).foregroundStyle(Palette.ink).frame(width: 22)
                 Text("插件").font(.subheadline.weight(pluginsSelected ? .medium : .regular)).foregroundStyle(Palette.ink)
                 Spacer()
-                if !pluginsSelected { Text("发现").font(.footnote).foregroundStyle(Palette.secondary) }
             }
             .padding(.horizontal, 12)
             .frame(minHeight: 46)
@@ -1177,7 +1176,7 @@ struct DrawerView: View {
             } label: {
                 Label(archived ? "取消归档" : "归档", systemImage: archived ? "tray.and.arrow.up" : "archivebox")
             }
-            .tint(Palette.ink)
+            .inkTint()
         }
         .contextMenu { menu(for: session) }
         .reportsFrame(session.id, to: rowFrames)
@@ -1250,7 +1249,7 @@ struct DrawerView: View {
             } label: {
                 Label(session.archived ? "取消归档" : "归档", systemImage: session.archived ? "tray.and.arrow.up" : "archivebox")
             }
-            .tint(Palette.ink)
+            .inkTint()
         }
         .contextMenu {
             if let openInWindow, !session.archived {

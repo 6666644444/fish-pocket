@@ -75,13 +75,13 @@ struct PluginInstallSheet: View {
                 } else {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button { task.close() } label: { Image(systemName: "xmark") }
-                            .accessibilityLabel(task.pending ? "在后台继续" : "关闭")
+                            .accessibilityLabel("关闭")
                     }
                 }
             }
             .pageBackground()
         }
-        .tint(Palette.ink)
+        .inkTint()
         .overlay(alignment: .top) { ShellNotices() }
         // A lost answer is asked about again on every reconnect.
         .task(id: app.generation) { await task.reconcile() }
@@ -514,8 +514,6 @@ private struct InstallProgress: View {
                 Text(attempt).font(.footnote).foregroundStyle(Palette.waiting)
             }
             InstallDetails()
-            Text(task.update != nil ? "可以关闭此页，更新会在后台继续，结果会提示你。" : "可以关闭此页，安装会在后台继续，结果会提示你。")
-                .font(.caption).foregroundStyle(Palette.faint)
         }
     }
 

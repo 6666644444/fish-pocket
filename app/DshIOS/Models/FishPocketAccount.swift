@@ -164,11 +164,6 @@ final class FishPocketAccount {
         FishPocketKeychain.write(Stored.session, session)
         FishPocketKeychain.write(Stored.refresh, refreshToken)
         do {
-            if try await testFlightRefuses() {
-                // Turned away: the new session is revoked rather than left on the server.
-                await signOut()
-                throw FishPocketError(status: 0, code: "testflight_closed", message: Self.testFlightClosed)
-            }
             try await issueRuntimeKey()
         } catch {
             // Without a runtime key the account is of no use here: do not half sign in.
@@ -230,27 +225,12 @@ final class FishPocketAccount {
         user = User(reply["user"])
         balance = reply["balance"]["total"].int
         sandboxPurchases = reply["sandboxPurchases"].bool ?? false
-        // Signed in before TestFlight builds were closed to other accounts.
-        if AppDistribution.channel == .testFlight, !sandboxPurchases {
-            await signOut()
-            toast = Self.testFlightClosed
-        }
-    }
-
-    /// A TestFlight build signs in only the accounts the service credits sandbox purchases to:
-    /// App Review's demo account (staging credits everyone). App Review's builds are sandbox
-    /// installs too, so the app cannot tell the two apart; the service's list is what decides.
-    private func testFlightRefuses() async throws -> Bool {
-        guard AppDistribution.channel == .testFlight else { return false }
-        return try await authorized("GET", "v1/me")["sandboxPurchases"].bool != true
-    }
-
-    private static var testFlightClosed: String {
-        String(localized: "测试版不开放 Fish Pocket 账号登录，请在 App Store 版里登录。")
     }
 
     /// A purchase in a TestFlight build is a sandbox one. The service credits those only to
-    /// the accounts it names, so packs are sold there to them alone.
+    /// the accounts it names (App Review's, which buys in the sandbox too), so packs are sold
+    /// there to them alone. Signing in is open to everyone: credits bought in the App Store
+    /// version are spent here as well.
     var canPurchase: Bool { AppDistribution.channel != .testFlight || sandboxPurchases }
 
     /// Sign out this device: the server revokes its session and runtime key, the engine forgets the key.
@@ -340,6 +320,18 @@ final class FishPocketAccount {
     private func signedOutRemotely() async {
         await forget()
         toast = String(localized: "Fish Pocket 登录已失效，请重新登录")
+    }
+
+    // MARK: Sign-in options
+
+    /// Whether phone sign-in is offered beside Sign in with Apple. The service decides, so it can
+    /// be closed and opened again without an update; until it says so (or when it cannot be
+    /// reached) there is none. Closed, it still lets App Review's demo number through.
+    private(set) var phoneSignIn = false
+
+    func loadSignInOptions() async {
+        guard let http, let reply = try? await http.send("GET", "v1/auth/options") else { return }
+        phoneSignIn = reply["phone"].bool ?? false
     }
 
     // MARK: Credit packs

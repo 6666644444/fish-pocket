@@ -42,6 +42,8 @@ struct MainView: View {
     @State private var explorePath: [ExploreTabView.Route] = []
     /// The 会话 tab's own split view, where it is wide: the list can make way for the workbench.
     @State private var sessionsColumns = NavigationSplitViewVisibility.all
+    /// The Bot tab's, as the 会话 tab's: the Bot list beside the chat.
+    @State private var botColumns = NavigationSplitViewVisibility.all
     @State private var drag: CGFloat = 0
     /// The way a drag on the shell set off, fixed by its first move; nil between drags.
     /// A plain reference filled by the drawer's rows.
@@ -284,7 +286,7 @@ struct MainView: View {
     /// the compiler type-checks in the time it allows itself (Xcode 26 gives up on it).
     private var shell: some View {
         layout
-        .tint(Palette.ink)
+        .inkTint()
         .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { windowWidth = $0 }
         .focusedSceneValue(\.windowCommands, windowCommands)
         .task(id: app.workspaces.map(\.id)) { launched() }
@@ -424,7 +426,8 @@ struct MainView: View {
         if #available(iOS 18.0, *) { true } else { UIDevice.current.userInterfaceIdiom == .phone }
     }
 
-    /// Where there is room for the session list beside the conversation, on the tab bar's 会话 tab.
+    /// Where there is room for the session list beside the conversation, on the tab bar's 会话 tab,
+    /// and for the Bot list beside the chat on its Bot tab.
     private var sessionsSideBySide: Bool { usesTabs && layoutWidth == .regular }
 
     /// The window's width changed on screen (an iPad window resized, iPhone Duo folded or opened).
@@ -439,7 +442,10 @@ struct MainView: View {
         }
         // Wide again: the system put the 会话 tab's list away on the way down, before the
         // conversation was pushed over it. It comes back.
-        if usesTabs, size == .regular { sessionsColumns = .all }
+        if usesTabs, size == .regular {
+            sessionsColumns = .all
+            botColumns = .all
+        }
     }
 
     /// `selection` on the tab bar: a session is pushed on the 会话 tab, in front; none, it is popped.
@@ -682,9 +688,10 @@ struct MainView: View {
     }
 
     private func toggleSidebar() {
-        // On the tab bar the 会话 tab's list, where it is beside the conversation.
+        // On the tab bar the 会话 tab's list, or the Bot tab's, where it is beside the chat.
         if usesTabs {
             if sessionsSideBySide, tab == .sessions { toggleSessionsList() }
+            if sessionsSideBySide, tab == .bot { toggleBotList() }
             return
         }
         if layoutWidth == .regular {
@@ -824,7 +831,7 @@ struct MainView: View {
             }
             .badge(waitingCount)
             Tab(value: HomeTab.bot) {
-                botStack(openDrawer: nil)
+                if sessionsSideBySide { botSplit } else { botStack(openDrawer: nil) }
             } label: {
                 tabLabel(Text(verbatim: "Bot"), "face.smiling", .bot, filled: "face.smiling.inverse")
             }
@@ -856,15 +863,15 @@ struct MainView: View {
 
     /// The iPhone's layout before iOS 18: the same tabs, on the tab bar of that time. Its `Tab`
     /// and `.sidebarAdaptable` came with iOS 18; this one is at the bottom in every width, and
-    /// a phone held sideways (the big ones are wide then) keeps the 会话 tab's list beside the
-    /// conversation, as it is from iOS 18.
+    /// a phone held sideways (the big ones are wide then) keeps the 会话 and Bot tabs' lists beside
+    /// the chat, as it is from iOS 18.
     private var phoneTabLayout: some View {
         TabView(selection: $tab) {
             Group { if sessionsSideBySide { sessionsSplit } else { sessionsStack } }
                 .tabItem { tabLabel(Text(DrawerView.sessionsTitle), "bubble.left.and.bubble.right", .sessions) }
                 .tag(HomeTab.sessions)
                 .badge(waitingCount)
-            botStack(openDrawer: nil)
+            Group { if sessionsSideBySide { botSplit } else { botStack(openDrawer: nil) } }
                 .tabItem { tabLabel(Text(verbatim: "Bot"), "face.smiling", .bot, filled: "face.smiling.inverse") }
                 .tag(HomeTab.bot)
                 .badge(botPendingCount)
@@ -998,21 +1005,69 @@ struct MainView: View {
         NavigationStack(path: $botPath) {
             BotHomeView(openDrawer: openDrawer)
                 .navigationDestination(for: BotRoute.self) { route in
-                    Group {
-                        switch route {
-                        case .bot(let id): BotChatView(botId: id)
-                        case .room(let id): BotRoomView(roomId: id)
-                        }
-                    }
-                    // Set here as well: what the split view sets does not reach a pushed page. A pushed
-                    // chat has a back button where the conversation has its sidebar button, so the
-                    // sidebar's goes beside it.
-                    .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomForWorkbench, toggle: layoutWidth == .regular ? hideSidebar : nil))
-                    // iPhone Duo open: no inspector on a pushed chat (see `workbenchInSheet`).
-                    .environment(\.workbenchInSheet, usesTabs && ThisDevice.isDuo)
-                    // Its input takes the bar's place where the bar is at the bottom.
-                    .toolbar(usesTabs && layoutWidth != .regular ? .hidden : .automatic, for: .tabBar)
+                    botPage(route)
+                        // Set here as well: what the split view sets does not reach a pushed page. A pushed
+                        // chat has a back button where the conversation has its sidebar button, so the
+                        // sidebar's goes beside it. On the tab bar there is no sidebar: no button for one.
+                        .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomForWorkbench, toggle: !usesTabs && layoutWidth == .regular ? hideSidebar : nil))
+                        // iPhone Duo open: no inspector on a pushed chat (see `workbenchInSheet`).
+                        .environment(\.workbenchInSheet, usesTabs && ThisDevice.isDuo)
+                        // Its input takes the bar's place where the bar is at the bottom.
+                        .toolbar(usesTabs && layoutWidth != .regular ? .hidden : .automatic, for: .tabBar)
                 }
+        }
+    }
+
+    /// The Bot tab where it is wide, as the 会话 tab: the list beside the chat. The first route on
+    /// `botPath` is the one picked in the list; what a link pushes from there goes over it.
+    private var botSplit: some View {
+        NavigationSplitView(columnVisibility: $botColumns) {
+            BotHomeView(openDrawer: nil, selection: Binding(get: { botPath.first }, set: { route in botPath = route.map { [$0] } ?? [] }))
+                // Widths as the split view's (`split`): a width that follows the fold hangs it.
+                .navigationSplitViewColumnWidth(min: 280, ideal: 320, max: 360)
+                .modifier(SidebarToggle(system: systemSidebarButton))
+                .modifier(BelowFloatingTabBar())
+        } detail: {
+            NavigationStack(path: Binding(get: { Array(botPath.dropFirst()) }, set: { botPath = Array(botPath.prefix(1)) + $0 })) {
+                Group {
+                    if let route = botPath.first {
+                        botPage(route).id(route)
+                    } else {
+                        Text("选一个 Bot 或群聊")
+                            .font(.subheadline)
+                            .foregroundStyle(Palette.secondary)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .background(Palette.background)
+                    }
+                }
+                .navigationDestination(for: BotRoute.self) { route in
+                    // Pushed over the picked chat: no inspector on iPhone Duo (see `workbenchInSheet`).
+                    botPage(route).environment(\.workbenchInSheet, ThisDevice.isDuo)
+                }
+            }
+            .modifier(PastTheFold())
+            .modifier(BelowFloatingTabBar())
+            // The list's button where the system's cannot be counted on (`systemSidebarButton`), and
+            // room for the workbench.
+            .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomInBots, toggle: systemSidebarButton ? nil : toggleBotList))
+        }
+        .navigationSplitViewStyle(.balanced)
+    }
+
+    private func toggleBotList() {
+        withAnimation { botColumns = botColumns == .detailOnly ? .all : .detailOnly }
+    }
+
+    /// As the 会话 tab's (`makeRoomInSessions`).
+    private func makeRoomInBots() {
+        if windowWidth < 1100 { withAnimation { botColumns = .detailOnly } }
+    }
+
+    @ViewBuilder
+    private func botPage(_ route: BotRoute) -> some View {
+        switch route {
+        case .bot(let id): BotChatView(botId: id)
+        case .room(let id): BotRoomView(roomId: id)
         }
     }
 
@@ -1065,6 +1120,8 @@ struct MainView: View {
             if let shared { await receive(shared) }
         case .app(let id):
             MiniAppPresenter.open(id)
+        case .web:
+            webOpen = true
         }
     }
 
@@ -1151,7 +1208,7 @@ private struct SidebarToggle: ViewModifier {
 /// width of the window keeps its items clear of it (it grows, and its title goes to a second row);
 /// the bars of a split view's columns do not: the conversation's title, centred in its column, sat
 /// under the tab bar (a new conversation's model picker could not be read or tapped), and so did
-/// the buttons near it. While the tab bar is there, the 会话 tab's split view starts under it, as
+/// the buttons near it. While the tab bar is there, the 会话 and Bot tabs' split views start under it, as
 /// it does from iOS 26, where the system does this itself. A phone's tab bar is at the bottom.
 private struct BelowFloatingTabBar: ViewModifier {
     func body(content: Content) -> some View {

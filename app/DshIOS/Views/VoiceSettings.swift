@@ -108,7 +108,7 @@ struct VoiceInputSettingsPage: View {
                     }
                     .labelStyle(.iconOnly)
                     .buttonBorderShape(.capsule)
-                    .tint(Palette.ink)
+                    .inkTint()
                 }
             }
             Picker("计费方式", selection: $speech.resource) {

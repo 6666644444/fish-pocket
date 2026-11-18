@@ -184,7 +184,7 @@ private struct AgentPresetSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .closeButton(dismiss)
         }
-        .tint(Palette.ink)
+        .inkTint()
         .presentationDetents([.medium, .large])
         .sheetNotices()
     }

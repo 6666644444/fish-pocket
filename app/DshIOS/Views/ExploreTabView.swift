@@ -18,7 +18,7 @@ struct ExploreTabView: View {
         NavigationStack(path: $path) {
             List {
                 Section {
-                    row(.plugins, "插件", "puzzlepiece.extension", "发现、安装和管理插件")
+                    row(.plugins, "插件", "puzzlepiece.extension", "安装和管理插件")
                     row(.connectors, "连接器", "point.3.connected.trianglepath.dotted", "接入 GitHub、Notion 等外部服务", status: connectorStatus)
                     row(.capabilities, "本机能力", "iphone", "日历、健康、照片等本机数据和功能")
                     row(.phoneControl, "操控手机", "hand.tap", "让智能体点按其他 App", status: phoneControl.state == .running ? String(localized: "运行中") : nil,

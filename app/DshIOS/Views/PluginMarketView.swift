@@ -28,12 +28,17 @@ final class PluginMarketModel {
     }
     private(set) var loading = false
     private(set) var loadingMore = false
+    /// The first page's read failed: what the list shows is the last one read, or nothing.
     private(set) var failure: String?
+    /// 显示更多 failed, at the bottom where it was asked for.
+    private(set) var moreFailure: String?
     private(set) var saving = false
     private(set) var sourceFailure: SourceFailure?
     /// What is listed came from `PluginStoreCache` and the engine has not answered for it yet: its
     /// installation states may be out of date, so nothing is installed from it.
     private(set) var fromCache = false
+    /// The source `result` was read from.
+    private var shownURL: String?
     private var generation = 0
 
     private let pageSize = 50
@@ -55,19 +60,27 @@ final class PluginMarketModel {
         indexes = cached
         result = listing
         fetched = listing["entries"].array
+        shownURL = first
         fromCache = true
     }
 
     func loadIndexes(_ app: AppModel) async {
+        if await listIndexes(app) { await reload(app) }
+    }
+
+    /// The source list alone; reading the first of them (`reload`) is what takes the time.
+    @discardableResult
+    func listIndexes(_ app: AppModel) async -> Bool {
         indexesFailed = false
         do {
             let fresh = try await app.client.call("pluginMarket/listIndexes").array
             indexes = Self.keepingTitles(fresh, from: indexes ?? [])
             PluginStoreCache.saveIndexes(indexes ?? [])
             if let selected, !(indexes ?? []).contains(where: { $0["url"].string == selected }) { self.selected = nil }
-            await reload(app)
+            return true
         } catch {
             indexesFailed = indexes == nil
+            return false
         }
     }
 
@@ -116,22 +129,54 @@ final class PluginMarketModel {
     }
 
     private func failureText(_ error: Error) -> String {
-        (error as? EngineError)?.code == "plugin-market/invalid-index" ? String(localized: "此索引的格式无效") : String(localized: "无法读取此索引")
+        let engine = error as? EngineError
+        return Self.indexProblem(code: engine?.code, message: engine?.message ?? "")
     }
 
-    /// First page of the current query; the last list stays on screen until it answers.
+    /// What went wrong reading an index, in the user's words. The engine's message is English and
+    /// names the URL; the index's `error` in `listIndexes` is the same message without the code.
+    static func indexProblem(code: String? = nil, message: String) -> String {
+        let text = message.lowercased()
+        if code == "plugin-market/invalid-index" { return String(localized: "此索引的格式无效") }
+        if text.contains("timeout") || text.contains("timed out") {
+            return String(localized: "读取超时：网络较慢，或这个索引的服务器在你所在的地区访问不畅。")
+        }
+        if let range = message.range(of: #"HTTP \d+"#, options: .regularExpression) {
+            return String(localized: "索引服务器返回了错误（\(String(message[range]))）")
+        }
+        if text.contains("body exceeds") { return String(localized: "索引文件太大，无法读取") }
+        if code == "plugin-market/fetch-failed" || text.contains("could not fetch") {
+            return String(localized: "连不上索引服务器，检查网络后再试。")
+        }
+        return String(localized: "无法读取此索引")
+    }
+
+    /// First page of the current query. Within one source the last list stays on screen until it
+    /// answers; another source's list goes at once, with the filters only that index declared, so
+    /// the page shows it reading rather than the old plugins under the new name.
     func reload(_ app: AppModel, refresh: Bool = false, limit: Int? = nil) async {
         guard let url else {
             result = nil
             fetched = []
+            shownURL = nil
             fromCache = false
             return
+        }
+        if url != shownURL {
+            result = nil
+            fetched = []
+            shownURL = url
+            fromCache = false
+            failure = nil
+            let blank = query.text.trimmingCharacters(in: .whitespaces).isEmpty
+            query = Query(text: query.text, sort: blank ? ["kind": "index"] : ["kind": "relevance"])
         }
         generation += 1
         let current = generation
         let plain = query == Query()
         loading = true
         failure = nil
+        moreFailure = nil
         PluginReports.shared.loadTakedowns()
         do {
             let value = try await app.client.call("pluginMarket/search", searchArgs(url: url, offset: 0, limit: limit ?? pageSize, fetchedAt: nil, refresh: refresh))
@@ -153,20 +198,21 @@ final class PluginMarketModel {
     func loadMore(_ app: AppModel, retried: Bool = false) async {
         guard let url, let result, !result["nextOffset"].isNull, !loadingMore else { return }
         loadingMore = true
+        moreFailure = nil
         defer { loadingMore = false }
         let current = generation
         do {
             let value = try await app.client.call("pluginMarket/search", searchArgs(url: url, offset: fetched.count, limit: pageSize, fetchedAt: result["fetchedAt"], refresh: false))
             guard current == generation else { return }
             if value["fetchedAt"] != result["fetchedAt"] {
-                if retried { failure = String(localized: "此索引在加载过程中发生了变化"); return }
+                if retried { moreFailure = String(localized: "此索引在加载过程中发生了变化"); return }
                 await reload(app, limit: fetched.count + pageSize)
                 return
             }
             fetched += value["entries"].array
             self.result = value
         } catch {
-            failure = failureText(error)
+            moreFailure = failureText(error)
         }
     }
 
@@ -188,7 +234,8 @@ final class PluginMarketModel {
         query.text = text
     }
 
-    /// `setIndexes`: replace the source list. Returns whether it saved.
+    /// `setIndexes`: replace the source list. Returns whether it saved. Saving ends once the new list
+    /// is back; the index itself (thousands of entries) is read after that, with its own spinner.
     func saveSources(_ urls: [String], adding: Bool, _ app: AppModel) async -> Bool {
         saving = true
         sourceFailure = nil
@@ -196,7 +243,9 @@ final class PluginMarketModel {
         do {
             try await app.client.call("pluginMarket/setIndexes", ["urls": .array(urls.map(JSON.string))])
             if adding { selected = urls.last }
-            await loadIndexes(app)
+            let listed = await listIndexes(app)
+            saving = false
+            if listed { await reload(app) }
             return true
         } catch let error as EngineError {
             switch error.code {
@@ -298,6 +347,9 @@ struct PluginMarketPage: View {
                             HStack { Spacer(); Text(model.loadingMore ? "正在读取索引" : "显示更多").foregroundStyle(Palette.ink); Spacer() }
                         }
                         .disabled(model.loadingMore)
+                    }
+                    if let failure = model.moreFailure {
+                        Text(failure).font(.footnote).foregroundStyle(Palette.removed)
                     }
                 }
                 .groupedRow()
@@ -678,7 +730,7 @@ private struct MarketInstallConfirm: View {
         .padding(20)
         .background(Palette.background)
         .presentationDetents([.medium])
-        .tint(Palette.ink)
+        .inkTint()
     }
 }
 
@@ -699,7 +751,7 @@ private struct MarketSourcesSheet: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(model.label(index)).foregroundStyle(Palette.ink)
                             Text(index["url"].string ?? "").font(.caption).foregroundStyle(Palette.secondary).lineLimit(1)
-                            if let error = index["error"].string { Text(error).font(.caption).foregroundStyle(Palette.removed) }
+                            if let error = index["error"].string { Text(PluginMarketModel.indexProblem(message: error)).font(.caption).foregroundStyle(Palette.removed) }
                         }
                     }
                     .onDelete { offsets in
@@ -736,7 +788,7 @@ private struct MarketSourcesSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .closeButton(dismiss)
         }
-        .tint(Palette.ink)
+        .inkTint()
     }
 
     private var failureText: String? {

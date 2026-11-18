@@ -242,7 +242,7 @@ private struct OfficialForm<Content: View>: View {
                 withAnimation { proxy.scrollTo(failedField ?? Self.failure, anchor: .center) }
             }
         }
-        .tint(Palette.ink)
+        .inkTint()
         .groupedList()
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
@@ -374,7 +374,6 @@ private struct SubagentSettingsPage: View {
                         conflicted = false
                         failed = false
                     }))
-                    .toggleStyle(.mono)
                     .id(Self.modelSelectionRow)
                     if conflicted { Text("设置已在其他位置更新。请放弃修改后重试。").font(.caption).foregroundStyle(Palette.removed) }
                 } header: {
@@ -439,7 +438,6 @@ private struct SubagentSettingsPage: View {
             conflicted = false
             failed = false
         }))
-        .toggleStyle(.mono)
     }
 
     private func beginDraft() {

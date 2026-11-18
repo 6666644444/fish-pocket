@@ -370,7 +370,6 @@ struct RemoteNoticeSheet: View {
                 .background(Palette.field, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
         case .toggle:
             Toggle(isOn: Binding(get: { value.wrappedValue?.bool ?? false }, set: { value.wrappedValue = .bool($0) })) { EmptyView() }
-                .toggleStyle(.mono)
         case .choice(let options):
             optionList(options, selected: { value.wrappedValue == $0 }, multiple: false) { value.wrappedValue = $0 }
         case .choices(let options):

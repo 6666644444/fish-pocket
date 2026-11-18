@@ -64,7 +64,7 @@ struct RemoteOptionsSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .closeButton(dismiss)
         }
-        .tint(Palette.ink)
+        .inkTint()
         .presentationDetents([.medium, .large])
         .task { await model.loadCatalog(force: true) }
     }
@@ -152,7 +152,7 @@ struct RemoteInfoSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .closeButton(dismiss)
         }
-        .tint(Palette.ink)
+        .inkTint()
         .presentationDetents([.medium, .large])
         .task { await model.loadCatalog() }
     }
@@ -204,7 +204,7 @@ struct RemoteChangesSheet: View {
                 .navigationBarTitleDisplayMode(.inline)
             }
         }
-        .tint(Palette.ink)
+        .inkTint()
     }
 }
 
@@ -230,7 +230,7 @@ struct RemoteFilesSheet: View {
                     }
                 }
         }
-        .tint(Palette.ink)
+        .inkTint()
     }
 }
 
