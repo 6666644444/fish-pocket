@@ -5,7 +5,7 @@ description: Make or change an app for 小工具 (Tools) - a small tool or game 
 
 # Mini apps (小工具)
 
-The user can keep small web apps in this iOS app: tools, trackers, games. Each one is a folder under `~/apps`. The app lists them under 小工具 (Tools), a tab of its own (a 小工具 row in the sidebar before iOS 18), opens each full screen in a web view of its own, and lets the user put it on the home screen. Opening one does not start you or the engine: it is plain front-end code running in WebKit.
+The user can keep small web apps in this iOS app: tools, trackers, games. Each one is a folder under `~/apps`. The app lists them under 小工具 (Tools), a tab of its own (a 小工具 row in the sidebar on an iPad before iOS 18), opens each full screen in a web view of its own, and lets the user put it on the home screen. Opening one does not start you or the engine: it is plain front-end code running in WebKit.
 
 ## Where and what
 

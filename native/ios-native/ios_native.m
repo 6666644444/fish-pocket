@@ -488,7 +488,7 @@ static napi_value invoke(napi_env env, napi_callback_info info) {
            [NSString stringWithFormat:
             @"the user has not switched '%@' on for this app yet. Nothing was read or changed. Tell "
              "them they can turn it on themselves under Device capabilities on the app's Explore "
-             "tab (in the sidebar before iOS 18) — only they can do it.", capabilityName]);
+             "tab (in the sidebar on an iPad before iOS 18) — only they can do it.", capabilityName]);
     return promise;
   }
 

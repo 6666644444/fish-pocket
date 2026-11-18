@@ -35,7 +35,7 @@ NSString *DshISO8601(NSDate *date) {
 static NSString *const kNotEnabledMessage =
     @"the user has not switched this capability on for this app yet. Nothing was read or changed. "
      "Tell them they can turn it on themselves under Device capabilities on the app's Explore "
-     "tab (in the sidebar before iOS 18) — only they can grant it, and iOS asks once per app, so the app will not ask on its own.";
+     "tab (in the sidebar on an iPad before iOS 18) — only they can grant it, and iOS asks once per app, so the app will not ask on its own.";
 
 /// Shared tail of both entry points: iOS answered, so turn that answer into
 /// either a go-ahead or a sentence the agent can read out.
