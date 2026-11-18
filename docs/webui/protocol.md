@@ -1,6 +1,6 @@
 # DSH Web 客户端 ↔ 引擎：传输与数据协议
 
-> 适用版本：引擎已升级到 `@deepseek-ai/dsh@0.2.2-rc.3`（Host 发布标识 `{"version":"0.2.2-rc.3"}`）。**正文与附录 A 仍是 `0.2.1-rc.4`（`commit: ec17a2c`）的旧快照**：`0.2.2-rc.1` 的相对变化见 §0.1，`0.2.2-rc.3` 相对 `0.2.2-rc.1` 的变化见 §0.2；其余描述还没有重新复核。
+> 适用版本：引擎已升级到 `@deepseek-ai/dsh@0.2.2-rc.4`（Host 发布标识 `{"version":"0.2.2-rc.4"}`）。**正文与附录 A 仍是 `0.2.1-rc.4`（`commit: ec17a2c`）的旧快照**：`0.2.2-rc.1` 的相对变化见 §0.1，`0.2.2-rc.3` 相对 `0.2.2-rc.1` 的变化见 §0.2；`0.2.2-rc.4` 的方法表与 `0.2.2-rc.3` 相同（39 个包的 `typert.remote-client.js` 逐个比对，除版本号外没有差异）；其余描述还没有重新复核。
 > 来源：`engine/node_modules/@deepseek-ai/*` 的未压缩 JS / `.d.ts` / README（MIT），以及 2026-11-03 在 Mac 上实跑引擎（`DSH_IOS_PORT=3095`，无模型 Key）抓到的真实报文。
 > 本文目标：只看这一份文档就能写出与官方 Web 前端行为一致的 Swift 客户端。
 > 配套文件：[`rpc-methods.json`](rpc-methods.json)：`0.2.1-rc.4` 全部 144 个 Remote 方法的机器可读描述，含 wire 参数名、JSON Schema、结果 Schema、是否 stream，可直接拿来做 Swift Codable 代码生成。`0.2.2-rc.3` 共 224 个方法，这份文件还没有重新导出，差异见 §0.2。
