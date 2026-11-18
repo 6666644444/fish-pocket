@@ -27,3 +27,13 @@ test('a built-in plugin resolves from the engine for code outside it, other pack
   assert.match(sub, /\/engine\/node_modules\/ds-bot\/web-search\.js$/);
   assert.throws(other, { code: 'ERR_MODULE_NOT_FOUND' });
 });
+
+test("DSH's own packages resolve from the engine once the profile has no copy of them", async () => {
+  installModuleRedirects();
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'dsh-ios-profile-'));
+  const probe = path.join(dir, 'probe.mjs');
+  fs.writeFileSync(probe, "export const storage = import.meta.resolve('@deepseek-ai/dsh-storage-domain');\nexport function library() { return import.meta.resolve('@deepseek-ai/schemastery'); }\n");
+  const { storage, library } = await import(probe);
+  assert.match(storage, /\/engine\/node_modules\/@deepseek-ai\/dsh-storage-domain\//);
+  assert.throws(library, { code: 'ERR_MODULE_NOT_FOUND' });
+});

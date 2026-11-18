@@ -67,6 +67,22 @@ if (process.env.DSH_IOS_DEBUG === '1') {
 process.on('uncaughtException', (error) => console.error('[dsh-ios] uncaught', error));
 process.on('unhandledRejection', (error) => console.error('[dsh-ios] unhandled rejection', error));
 
+// Old copies of DSH's own packages that plugins left in the profile, before DSH reads it:
+// after an app update they shadow the shipped ones and keep sessions from coming up
+// (runtime/stale-official.mjs). Every start, since a plugin install can bring one back.
+try {
+  const { removeStaleOfficial } = await import('./runtime/stale-official.mjs');
+  const removed = await removeStaleOfficial({
+    profile: path.join(process.env.DSH_HOME, 'profiles', 'web'),
+    engineModules: path.join(here, 'node_modules'),
+  });
+  if (removed.length > 0) {
+    console.log(`[dsh-ios] removed old DSH packages from the profile: ${removed.map(({ name, found, shipped }) => `${name}@${found} (app ships ${shipped})`).join(', ')}`);
+  }
+} catch (error) {
+  console.error('[dsh-ios] old DSH packages not checked', error);
+}
+
 // Full access for new sessions, as a default the user can change (runtime/permission-default.mjs).
 // Once per install; a failure only leaves the stock default.
 // Imported here, after the redirects above, like the engine itself.
