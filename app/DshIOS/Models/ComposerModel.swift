@@ -194,7 +194,7 @@ final class ComposerModel {
         let draft = Self.loadDraft(session.sessionId)
         text = draft.text
         quotes = draft.quotes
-        mentions = Self.loadMentions(session.sessionId)
+        mentions = draft.mentions
     }
 
     // MARK: Projections
@@ -308,9 +308,6 @@ final class ComposerModel {
 
     // MARK: Draft (C-92)
 
-    /// Same key and shape as the web's `dsh.conversation.<sid>` store: `{draft: {text, references}}`.
-    private static func storageKey(_ sessionId: String) -> String { "dsh.conversation.\(sessionId)" }
-
     /// What a reference shows in the field, against what the engine reads: `@标题`, not `@[标题](dsh-session:…)`.
     private var mentions: [String: String] = [:]
 
@@ -324,29 +321,24 @@ final class ComposerModel {
         mentions.keys.sorted { $0.count > $1.count }.reduce(text) { $0.replacingOccurrences(of: $1, with: mentions[$1] ?? $1) }
     }
 
-    private static func loadMentions(_ sessionId: String) -> [String: String] {
-        guard let raw = UserDefaults.standard.string(forKey: storageKey(sessionId)),
-              let stored = try? JSONDecoder().decode(JSON.self, from: Data(raw.utf8)) else { return [:] }
-        return stored["draft"]["mentions"].object.compactMapValues(\.string)
-    }
-
-    private static func loadDraft(_ sessionId: String) -> (text: String, quotes: [String]) {
-        guard let raw = UserDefaults.standard.string(forKey: storageKey(sessionId)),
-              let stored = try? JSONDecoder().decode(JSON.self, from: Data(raw.utf8)) else { return ("", []) }
+    /// The stored draft, in the shape of the web's `dsh.conversation.<sid>` store:
+    /// `{draft: {text, references, mentions, quotes}}`. It is kept by `DraftStore`.
+    private static func loadDraft(_ sessionId: String) -> (text: String, quotes: [String], mentions: [String: String]) {
+        guard let data = DraftStore.shared.read(sessionId),
+              let stored = try? JSONDecoder().decode(JSON.self, from: data) else { return ("", [], [:]) }
         let text = stored["draft"]["text"].string ?? stored["draft"].string ?? ""
         let restored = DraftQuotes.restore(text: text, quotes: stored["draft"]["quotes"].array)
-        return (restored.text, restored.quotes)
+        return (restored.text, restored.quotes, stored["draft"]["mentions"].object.compactMapValues(\.string))
     }
 
     private func persistDraft() {
         // A queued message in the input is not the draft: the draft waits in `setAside`.
         guard editingQueue == nil else { return }
-        let key = Self.storageKey(sessionId)
-        guard !text.isEmpty || !quotes.isEmpty else { UserDefaults.standard.removeObject(forKey: key); return }
+        guard !text.isEmpty || !quotes.isEmpty else { DraftStore.shared.write(nil, for: sessionId); return }
         let draft = DraftQuotes.store(quotes: quotes, text: text)
         var fields: [String: JSON] = ["text": .string(draft.text), "references": [], "mentions": .object(mentions.mapValues { .string($0) })]
         if !draft.quotes.isEmpty { fields["quotes"] = .array(draft.quotes) }
-        if let data = try? JSONEncoder().encode(JSON.object(["draft": .object(fields)])) { UserDefaults.standard.set(String(decoding: data, as: UTF8.self), forKey: key) }
+        if let data = try? JSONEncoder().encode(JSON.object(["draft": .object(fields)])) { DraftStore.shared.write(data, for: sessionId) }
     }
 
     // MARK: Quotes
