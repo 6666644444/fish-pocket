@@ -87,6 +87,7 @@ Python 3.15 is built into the app: `python`, `python3`, `python3.15`, `pip`, `pi
 - `python3 -m venv .venv` works, and so does `source .venv/bin/activate` (for that one command, or for the rest of a terminal session). Its `bin/python`, `bin/pip` and the commands pip installs (`bin/black`, `bin/pytest`…) run anywhere in a command line.
 - **Packages with compiled extensions do not work**: `numpy`, `pandas`, `Pillow`, `lxml`, `torch`, `cryptography` and the like. pip fails to build them, or they fail to import. Say so instead of retrying, and look for a pure-Python alternative.
 - **`subprocess` runs only Python.** From Python, `subprocess.run([sys.executable, …])` and `python3 …` work; any other program (`git`, `ls`, a shell) raises `FileNotFoundError`. So does `multiprocessing`. Use Python's own modules (`shutil`, `pathlib`, `glob`) instead of shelling out.
+- **Do not use `ctypes` to call system libraries.** Python runs inside the app's own process, so one wrong type or release crashes the whole app, not just the script.
 - **No interactive Python.** `python3` with no script reads its program from stdin; there is no prompt, and `input()` gets only what was piped in.
 - `uv`, `poetry` and `conda` are native programs and do not exist: use `pip` and `venv`.
 
