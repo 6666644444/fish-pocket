@@ -333,9 +333,28 @@ final class ReadAloud {
     }
 
     func resume() {
-        guard speaking, paused else { return }
+        guard speaking, paused, let player else { return }
         paused = false
-        player?.resume()
+        // A call, Siri or a route change may have stopped the engine meanwhile, and the session
+        // with it: both start again before the player does.
+        Task {
+            do {
+                try await Self.activateSession()
+                guard self.player === player, !paused else { return }
+                try player.resume()
+            } catch {
+                guard self.player === player else { return }
+                onError?(error.localizedDescription)
+                stop()
+            }
+        }
+    }
+
+    /// The system took the audio away mid-read: it holds where it was, as if paused, for 继续.
+    private func halted() {
+        guard speaking, !paused else { return }
+        paused = true
+        player?.pause()
     }
 
     func stop() {
@@ -387,6 +406,7 @@ final class ReadAloud {
             try await Self.activateSession()
             try Task.checkCancellation()
             let player = try PCMPlayer()
+            player.onHalt = { [weak self] in self?.halted() }
             self.player = player
             if paused { player.pause() }
             while true {
@@ -478,12 +498,25 @@ private final class PCMPlayer {
     /// A byte left over from a piece that split a sample.
     private var carry: UInt8?
     private var stopped = false
+    /// The system stopped the engine: an interruption (a call, Siri, an alarm) or a route change.
+    var onHalt: (() -> Void)?
+    private var observers: [NSObjectProtocol] = []
 
     init() throws {
         engine.attach(node)
         engine.connect(node, to: engine.mainMixerNode, format: format)
         try engine.start()
         node.play()
+        let center = NotificationCenter.default
+        observers = [
+            center.addObserver(forName: AVAudioSession.interruptionNotification, object: nil, queue: .main) { [weak self] note in
+                let began = (note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt) == AVAudioSession.InterruptionType.began.rawValue
+                if began { MainActor.assumeIsolated { self?.onHalt?() } }
+            },
+            center.addObserver(forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated { self?.onHalt?() }
+            },
+        ]
     }
 
     func schedule(_ pcm: Data) {
@@ -507,7 +540,12 @@ private final class PCMPlayer {
 
     func pause() { if !stopped { node.pause() } }
 
-    func resume() { if !stopped { node.play() } }
+    /// Playing on a stopped engine raises (iOS 17), so the engine starts again first.
+    func resume() throws {
+        guard !stopped else { return }
+        if !engine.isRunning { try engine.start() }
+        node.play()
+    }
 
     /// Returns once everything queued has been heard, or the player stops.
     func drained() async {
@@ -518,6 +556,8 @@ private final class PCMPlayer {
     func stop() {
         guard !stopped else { return }
         stopped = true
+        observers.forEach(NotificationCenter.default.removeObserver)
+        observers = []
         node.stop()
         engine.stop()
         release()
