@@ -301,6 +301,9 @@ const calendar = defineTool({
   },
 });
 
+/** The addon's page size (kMaxReminders in caps_reminders.m). */
+const MAX_REMINDERS_PAGE = 200;
+
 const reminders = defineTool({
   name: 'reminders',
   description:
@@ -321,6 +324,44 @@ const reminders = defineTool({
     includeCompleted: {
       type: 'boolean',
       description: 'list: include the ones already done; by default only the unfinished ones',
+    },
+    sort: {
+      type: 'string',
+      enum: ['due', 'completed'],
+      description: 'list: what to order by, the due date (the default) or when they were finished. '
+        + '`completed` lists only finished ones, whatever includeCompleted says',
+    },
+    order: {
+      type: 'string',
+      enum: ['asc', 'desc'],
+      description: 'list: earliest first (asc, the default) or latest first (desc), by the date `sort` names. '
+        + 'Ones without that date come last either way',
+    },
+    from: {
+      type: 'string',
+      description: 'list: only ones due at or after this, YYYY-MM-DD or a full ISO timestamp. '
+        + 'With from or to, undated ones are left out',
+    },
+    to: {
+      type: 'string',
+      description: 'list: only ones due before this, YYYY-MM-DD or a full ISO timestamp',
+    },
+    completedFrom: {
+      type: 'string',
+      description: 'list: only ones finished at or after this, YYYY-MM-DD or a full ISO timestamp. '
+        + 'With completedFrom or completedTo, only finished ones are listed',
+    },
+    completedTo: {
+      type: 'string',
+      description: 'list: only ones finished before this, YYYY-MM-DD or a full ISO timestamp',
+    },
+    limit: {
+      type: 'number',
+      description: `list: how many to return, at most ${MAX_REMINDERS_PAGE} (the default)`,
+    },
+    offset: {
+      type: 'number',
+      description: 'list: how many to skip; pass the `nextOffset` a truncated list returned to read on',
     },
     title: { type: 'string', description: 'create: what the reminder says; required' },
     due: {
@@ -346,10 +387,19 @@ const reminders = defineTool({
         return text(value.deleted ? 'They confirmed; the reminder is deleted.' : 'They declined. It is still there.');
       }
       const list = value.reminders ?? [];
-      if (list.length === 0) return text('Nothing on their reminders.');
+      if (list.length === 0) {
+        // Past the last page is not the same as an empty list.
+        // Nor is an empty filter: "none due in August" must not read as "they have none".
+        const filtered = ['from', 'to', 'completedFrom', 'completedTo'].some((key) => args[key] !== undefined);
+        if (value.total > 0) return text(`Nothing from offset ${value.offset ?? 0}: there are ${value.total} in all.`);
+        return text(filtered ? 'No reminders match that.' : 'Nothing on their reminders.');
+      }
       const lines = list.map((item) => {
         const when = item.due ? `${dayOf(item.due)} ${timeOf(item.due)}` : 'no due date';
-        const parts = [`${item.completed ? '[done] ' : ''}${when}`, item.title || '(no title)'];
+        const done = item.completed
+          ? `[done${item.completedAt ? ` ${dayOf(item.completedAt)} ${timeOf(item.completedAt)}` : ''}] `
+          : '';
+        const parts = [`${done}${when}`, item.title || '(no title)'];
         if (item.list) parts.push(`[${item.list}]`);
         // complete and delete take this id; a title is not one.
         if (item.id) parts.push(`id ${item.id}`);
@@ -357,15 +407,39 @@ const reminders = defineTool({
         return item.notes ? `${line}\n    ${item.notes.replace(/\n+/g, ' ')}` : line;
       });
       if (value.truncated) {
-        lines.push(`… showing the first ${list.length} of ${value.total}.`);
+        const first = (value.offset ?? 0) + 1;
+        lines.push(`… showing ${first}–${first + list.length - 1} of ${value.total}; `
+          + `pass offset ${value.nextOffset ?? first - 1 + list.length} for the next page.`);
       }
       return text(lines.join('\n'));
     },
   },
   execute: async (args) => {
     if (args.action === 'list') {
+      const from = toEpochSeconds(args.from);
+      const to = toEpochSeconds(args.to);
+      if (from !== undefined && to !== undefined && to <= from) throw new Error("reminders: 'to' must be after 'from'");
+      const completedFrom = toEpochSeconds(args.completedFrom);
+      const completedTo = toEpochSeconds(args.completedTo);
+      if (completedFrom !== undefined && completedTo !== undefined && completedTo <= completedFrom) {
+        throw new Error("reminders: 'completedTo' must be after 'completedFrom'");
+      }
+      if (args.limit !== undefined && !(Number.isInteger(args.limit) && args.limit >= 1)) {
+        throw new Error('reminders: `limit` must be a whole number of at least 1');
+      }
+      if (args.offset !== undefined && !(Number.isInteger(args.offset) && args.offset >= 0)) {
+        throw new Error('reminders: `offset` must be a whole number, 0 or more');
+      }
       return invoke('reminders', 'list', {
         ...(args.includeCompleted === undefined ? {} : { includeCompleted: args.includeCompleted }),
+        ...(args.sort === undefined ? {} : { sort: args.sort }),
+        ...(args.order === undefined ? {} : { order: args.order }),
+        ...(from === undefined ? {} : { from }),
+        ...(to === undefined ? {} : { to }),
+        ...(completedFrom === undefined ? {} : { completedFrom }),
+        ...(completedTo === undefined ? {} : { completedTo }),
+        ...(args.limit === undefined ? {} : { limit: Math.min(args.limit, MAX_REMINDERS_PAGE) }),
+        ...(args.offset === undefined ? {} : { offset: args.offset }),
       });
     }
     if (args.action === 'create') {
