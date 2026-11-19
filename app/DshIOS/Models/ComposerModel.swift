@@ -4,8 +4,8 @@ import Observation
 import UIKit
 import UniformTypeIdentifiers
 
-/// A message sent but not yet seen in the session (C-20): it shows as 「发送中…」
-/// until the durable message, or the queue row, carrying its request id arrives.
+/// A message sent but not yet seen in the session (C-20): it shows as its bubble or as
+/// 「发送中…」 until the durable message, or the queue row, carrying its request id arrives.
 struct PendingSubmission: Identifiable, Equatable {
     enum Placement { case transcript, queued, steering }
     /// The request id (`source.rpcId` on the durable message).
@@ -14,13 +14,22 @@ struct PendingSubmission: Identifiable, Equatable {
     var attachments: [String]
     /// Where the web shows the echo: idle → the transcript, busy → the queue or a steering bubble.
     var placement: Placement
+
+    /// On screen at once as its bubble, in the row its durable message takes over: sent into an
+    /// idle conversation, with text only. An attachment shows as the Host stored it, so a message
+    /// with one waits for the durable message.
+    var showsBubble: Bool { placement == .transcript && attachments.isEmpty }
 }
 
-/// One attachment waiting in the composer (C-104…C-106). Images ride the prompt
-/// as base64; other files upload as soon as they are added and send their receipt.
+/// One attachment waiting in the composer (C-104…C-106). A file or an image uploads as
+/// soon as it is added and the prompt cites its receipt, the way the web sends them: the
+/// Host checks, scales down and stores an image as it arrives, and the app keeps only a
+/// preview in memory. Where the Host stages no image uploads (a subagent continuation, a
+/// command) an image's bytes ride the request as base64, read from its file then.
 struct DraftAttachment: Identifiable {
     enum Kind {
-        case image(mediaType: String, data: String, preview: UIImage)
+        /// The bytes to send wait in a file of their own under `tmp/uploads`.
+        case image(mediaType: String, file: URL, preview: UIImage)
         case file(url: URL)
         /// A video still coming out of the photo library: it becomes `.file` when it arrives.
         case reading
@@ -180,6 +189,9 @@ final class ComposerModel {
     private(set) var quotes: [String] = [] { didSet { if quotes != oldValue { persistDraft() } } }
     private(set) var attachments: [DraftAttachment] = []
     private(set) var pending: [PendingSubmission] = []
+    /// Request ids of the messages shown as bubbles before the Host had them (`showsBubble`):
+    /// their durable messages keep those rows (`SessionModel.rowId`).
+    private(set) var bubbleIds: Set<String> = []
     /// A command line being executed: sending waits for it (C-87).
     private(set) var executing = false
     /// The live goal activation (`goals/get`): whether the goal will continue on its own.
@@ -319,10 +331,14 @@ final class ComposerModel {
     }
 
     /// Local echoes still waiting: queued ones until the queue row arrives, the others until their message.
+    /// One that is on screen as its bubble has nothing left to say here.
     var visiblePending: [PendingSubmission] {
         let queued = Set(projection("inbox")["next-turn"].array.compactMap { $0["source"]["rpcId"].string })
-        return pending.filter { !queued.contains($0.id) || $0.placement == .transcript }
+        return pending.filter { !$0.showsBubble && (!queued.contains($0.id) || $0.placement == .transcript) }
     }
+
+    /// The messages just sent that the timeline shows already.
+    var bubbles: [PendingSubmission] { pending.filter(\.showsBubble) }
 
     var uploadsPending: Bool { attachments.contains { if case .ready = $0.upload { false } else { $0.upload != nil } } }
     var isEmpty: Bool { text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && attachments.isEmpty && quotes.isEmpty }
@@ -441,10 +457,15 @@ final class ComposerModel {
         let shown = MessageQuotes.compose(quotes: sentQuotes, text: draft)
         let sent = attachments
         let requestId = UUID().uuidString.lowercased()
-        pending.append(PendingSubmission(
+        let submission = PendingSubmission(
             id: requestId, text: shown, attachments: sent.map(\.name),
             placement: running ? (steer ? .steering : .queued) : .transcript
-        ))
+        )
+        if submission.showsBubble {
+            bubbleIds.insert(requestId)
+            app.bubbleRises()
+        }
+        pending.append(submission)
         // Sending the restored text consumes the failures it held.
         if restoredText != nil { failedDrafts.removeAll(); restoredText = nil; restoredQuotes = [] }
         sendSeq += 1

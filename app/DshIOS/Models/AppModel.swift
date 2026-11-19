@@ -280,6 +280,20 @@ final class AppModel {
         !(approvals[id] ?? []).isEmpty || !(questionRequests[id] ?? []).isEmpty || control[id]?["userQuestions"]?["active"].array.isEmpty == false
     }
 
+    /// When the bubble of a message just sent has risen into place.
+    @ObservationIgnored private var bubbleLands: ContinuousClock.Instant?
+
+    /// A message was sent and shows already (`PendingSubmission.showsBubble`): its bubble is rising.
+    func bubbleRises() { bubbleLands = .now + .milliseconds(350) }
+
+    /// Returns once that bubble is in place. The engine answers a send within the rise, in a burst
+    /// of frames (the session's events, a projection for each, its status), and every one of them
+    /// redraws most of the app: the rise would stall on each. The streams wait here before a frame.
+    func bubbleLanded() async {
+        guard let bubbleLands, bubbleLands > .now else { return }
+        try? await Task.sleep(until: bubbleLands, clock: .continuous)
+    }
+
     /// Changes whenever any of `events` is emitted or the connection is re-established:
     /// `.task(id: app.revision("schedule/changed")) { reload() }` re-reads on both.
     func revision(_ events: String...) -> Int {
@@ -478,6 +492,7 @@ final class AppModel {
             while !Task.isCancelled {
                 do {
                     for try await frame in mux.open("session/control", [:]) {
+                        await bubbleLanded()
                         switch frame["type"].string {
                         case "baseline":
                             var next: [String: [String: JSON]] = [:]
@@ -514,6 +529,7 @@ final class AppModel {
                 do {
                     for try await frame in mux.open("$events", [:]) {
                         if frame["type"].string == "ready" { attempt = 0 }
+                        await bubbleLanded()
                         await handleRemoteEvent(frame)
                     }
                 } catch {
