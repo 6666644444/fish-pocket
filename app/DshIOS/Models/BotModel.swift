@@ -402,6 +402,8 @@ final class BotModel {
         if let key = team["modelsKey"].string { payload["models"] = .string(key) }
         do {
             let value = try await call("state", .object(payload))
+            // A reply fading into the chat on screen is not stalled by what its turn's end changed here.
+            await app.arrivalLanded()
             // Each write tells every view that reads it, so only a change is written.
             if !reachable { reachable = true }
             if value["unchanged"].bool != true, team != value { team = value }

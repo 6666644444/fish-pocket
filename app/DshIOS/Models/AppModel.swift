@@ -118,8 +118,17 @@ final class AppModel {
     private(set) var pinned: [String] = []
     private(set) var archived: Set<String> = []
     private(set) var sessions: [String: SessionSummary] = [:]
-    /// Live per-session projections from `session/control` (title, todos, inbox…).
-    private(set) var control: [String: [String: JSON]] = [:]
+    /// `sessions` as the session lists read it (`sessions(in:)`). The lists are rebuilt whole from
+    /// it, so it is kept apart: a session starting or stopping reaches it with the next read of the
+    /// list (`refreshSessions`), a moment later, not with the status event, which lands among a
+    /// turn's first frames as the message just sent settles. Every other change to `sessions` is
+    /// followed by `syncListed()`.
+    private(set) var listed: [String: SessionSummary] = [:]
+    /// Live per-session projections from `session/control` (title, todos, inbox…), read through
+    /// `control(_:_:)`. Each value is observed by itself: the Host sends a frame for every event
+    /// it commits, a dozen in a turn's first second, and as one dictionary each of them redrew
+    /// every view that reads any session's projection (the list, the conversation, the composer).
+    @ObservationIgnored private var controlValues: [String: [String: Tracked<JSON?>]] = [:]
     /// Tool calls waiting for permission, by session (agent) id.
     private(set) var approvals: [String: [PendingApproval]] = [:]
     /// `user-questions/request` waterfalls this client holds, by session id: while one
@@ -181,8 +190,9 @@ final class AppModel {
     /// Bumped on every `ready`: a new connection generation, after which every
     /// view re-reads its baseline (emits missed while offline are not replayed).
     private(set) var generation = 0
-    /// Count of `emit`s seen per event name; read through `revision(_:)`.
-    private(set) var eventCounts: [String: Int] = [:]
+    /// Count of `emit`s seen per event name; read through `revision(_:)`. One observed value
+    /// per name, so that an event redraws only the views waiting on it.
+    @ObservationIgnored private var eventCounts: [String: Tracked<Int>] = [:]
 
     @ObservationIgnored private var workspaceTask: Task<Void, Never>?
     @ObservationIgnored private var refreshTask: Task<Void, Never>?
@@ -238,10 +248,10 @@ final class AppModel {
     func sessions(in workspace: Workspace?, includeArchived: Bool = false) -> [SessionSummary] {
         let members: [SessionSummary]
         if let workspace {
-            members = workspace.sessionIds.compactMap { sessions[$0] }
+            members = workspace.sessionIds.compactMap { listed[$0] }
         } else {
             let grouped = Set(workspaces.flatMap(\.sessionIds))
-            members = sessions.values.filter { !grouped.contains($0.id) }
+            members = listed.values.filter { !grouped.contains($0.id) }
         }
         // The Bot team's sessions (its Bots' chats, the groups and their members' hidden
         // sessions) live on the Bot pages.
@@ -258,7 +268,7 @@ final class AppModel {
     }
 
     func title(of id: String) -> String {
-        if let title = control[id]?["title"]?.string, !title.isEmpty { return title }
+        if let title = control(id, "title")?.string, !title.isEmpty { return title }
         return sessions[id]?.displayTitle ?? String(localized: "新会话")
     }
 
@@ -277,27 +287,57 @@ final class AppModel {
 
     /// Waiting on the user: a tool approval or an open question.
     func isWaiting(_ id: String) -> Bool {
-        !(approvals[id] ?? []).isEmpty || !(questionRequests[id] ?? []).isEmpty || control[id]?["userQuestions"]?["active"].array.isEmpty == false
+        !(approvals[id] ?? []).isEmpty || !(questionRequests[id] ?? []).isEmpty || control(id, "userQuestions")?["active"].array.isEmpty == false
     }
 
-    /// When the bubble of a message just sent has risen into place.
-    @ObservationIgnored private var bubbleLands: ContinuousClock.Instant?
+    /// When what is animating into a conversation (a message just sent, a Bot's reply) is in place.
+    @ObservationIgnored private var arrivalEnds: ContinuousClock.Instant?
 
     /// A message was sent and shows already (`PendingSubmission.showsBubble`): its bubble is rising.
-    func bubbleRises() { bubbleLands = .now + .milliseconds(350) }
+    func bubbleRises() { arrives(for: .milliseconds(350)) }
 
-    /// Returns once that bubble is in place. The engine answers a send within the rise, in a burst
-    /// of frames (the session's events, a projection for each, its status), and every one of them
-    /// redraws most of the app: the rise would stall on each. The streams wait here before a frame.
-    func bubbleLanded() async {
-        guard let bubbleLands, bubbleLands > .now else { return }
-        try? await Task.sleep(until: bubbleLands, clock: .continuous)
+    /// A Bot's reply, held back while it was written, fades into its chat (`AssistantTurnView`):
+    /// the length of that animation and a little more, for it to settle.
+    func replyArrives() { arrives(for: .milliseconds(350)) }
+
+    private func arrives(for duration: Duration) {
+        let end = ContinuousClock.now + duration
+        if arrivalEnds.map({ $0 < end }) ?? true { arrivalEnds = end }
+    }
+
+    /// Returns once that is in place. The engine answers a send within the bubble's rise, and ends a
+    /// turn as the reply fades in, with a burst of frames (the session's events, a projection for each,
+    /// its status, the Bots' state), and every one of them redraws most of the app: the animation would
+    /// stall on each. The streams wait here before a frame.
+    func arrivalLanded() async {
+        guard let arrivalEnds, arrivalEnds > .now else { return }
+        try? await Task.sleep(until: arrivalEnds, clock: .continuous)
+    }
+
+    /// The live value of one projection key of a session; nil until the Host has sent it.
+    func control(_ id: String, _ key: String) -> JSON? {
+        if let held = controlValues[id]?[key] { return held.value }
+        // Read before the Host sent it: the reader waits on this value, not on the others.
+        let held = Tracked<JSON?>(nil)
+        controlValues[id, default: [:]][key] = held
+        return held.value
+    }
+
+    private func setControl(_ id: String, _ key: String, _ value: JSON?) {
+        if let held = controlValues[id]?[key] { held.value = value } else { controlValues[id, default: [:]][key] = Tracked(value) }
+    }
+
+    private func eventCount(_ event: String) -> Tracked<Int> {
+        if let held = eventCounts[event] { return held }
+        let held = Tracked(0)
+        eventCounts[event] = held
+        return held
     }
 
     /// Changes whenever any of `events` is emitted or the connection is re-established:
     /// `.task(id: app.revision("schedule/changed")) { reload() }` re-reads on both.
     func revision(_ events: String...) -> Int {
-        events.reduce(generation * 100_000) { $0 + (eventCounts[$1] ?? 0) }
+        events.reduce(generation * 100_000) { $0 + eventCount($1).value }
     }
 
     /// Every `emit` from `$events`, for views that need the arguments (install logs…).
@@ -348,7 +388,9 @@ final class AppModel {
                 if let old = sessions[summary.id] { observeRunning(summary.id, from: old.running, to: summary.running) }
                 next[summary.id] = summary
             }
-            completionUnread.formIntersection(next.keys)
+            // Assigned, not changed in place: an equal value assigned redraws nothing, and this
+            // runs after each event of a turn.
+            completionUnread = completionUnread.intersection(next.keys)
             sessions = next
             childSessions = Dictionary(grouping: next.values.filter { $0.isSubagent && $0.parentId != nil }, by: { $0.parentId ?? "" })
                 .mapValues { $0.sorted { $0.updatedAt < $1.updatedAt }.map(\.id) }
@@ -359,7 +401,12 @@ final class AppModel {
         } catch {
             showToast(error.localizedDescription, tone: .warning)
         }
+        syncListed()
         await loadMissingTitles()
+    }
+
+    private func syncListed() {
+        if listed != sessions { listed = sessions }
     }
 
     /// Read one session's projections; no Agent is resumed.
@@ -417,7 +464,7 @@ final class AppModel {
 
     /// Rows without cached projections carry no title; read them once (no agent is resumed).
     private func loadMissingTitles() async {
-        let missing = sessions.values.filter { $0.title == nil && !$0.blank && !$0.isSubagent && control[$0.id]?["title"] == nil }.map(\.id)
+        let missing = sessions.values.filter { $0.title == nil && !$0.blank && !$0.isSubagent && control($0.id, "title") == nil }.map(\.id)
         guard !missing.isEmpty else { return }
         let client = self.client
         let titles = await withTaskGroup(of: (String, String?).self) { group in
@@ -432,6 +479,7 @@ final class AppModel {
             return result
         }
         for (id, title) in titles { sessions[id]?.title = title }
+        syncListed()
     }
 
     /// Session rows change with every turn; coalesce refreshes requested in bursts.
@@ -439,6 +487,8 @@ final class AppModel {
         refreshTask?.cancel()
         refreshTask = Task {
             try? await Task.sleep(for: .milliseconds(400))
+            // A turn's end asks for this as its reply fades in: the list waits for it too.
+            await arrivalLanded()
             guard !Task.isCancelled else { return }
             await refreshSessions()
         }
@@ -492,17 +542,22 @@ final class AppModel {
             while !Task.isCancelled {
                 do {
                     for try await frame in mux.open("session/control", [:]) {
-                        await bubbleLanded()
+                        await arrivalLanded()
                         switch frame["type"].string {
                         case "baseline":
-                            var next: [String: [String: JSON]] = [:]
-                            for (id, projection) in frame["value"]["projections"].object { next[id] = projection["values"].object }
-                            control = next
+                            let projections = frame["value"]["projections"].object.mapValues { $0["values"].object }
+                            // What the baseline no longer has goes back to unknown.
+                            for (id, held) in controlValues {
+                                for key in held.keys where projections[id]?[key] == nil { setControl(id, key, nil) }
+                            }
+                            for (id, values) in projections {
+                                for (key, value) in values { setControl(id, key, value) }
+                            }
                         case "projection":
                             // One frame per committed event, with every key it changed: `changes: [{key, val}]`.
                             if let id = frame["sessionId"].string {
                                 for change in frame["changes"].array {
-                                    if let key = change["key"].string { control[id, default: [:]][key] = change["val"] }
+                                    if let key = change["key"].string { setControl(id, key, change["val"]) }
                                 }
                             }
                         default:
@@ -529,7 +584,7 @@ final class AppModel {
                 do {
                     for try await frame in mux.open("$events", [:]) {
                         if frame["type"].string == "ready" { attempt = 0 }
-                        await bubbleLanded()
+                        await arrivalLanded()
                         await handleRemoteEvent(frame)
                     }
                 } catch {
@@ -575,7 +630,7 @@ final class AppModel {
                 await respond(eventId, outcome: ["kind": "next"])
             }
         case "emit" where frame["event"].string == "api-session/status":
-            eventCounts["api-session/status", default: 0] += 1
+            eventCount("api-session/status").value += 1
             let args = frame["args"].array
             guard let id = args.first?.string, let running = args.dropFirst().first?.bool else { return }
             runningStatus[id] = running
@@ -583,13 +638,15 @@ final class AppModel {
                 observeRunning(id, from: old, to: running)
                 sessions[id]?.running = running
                 reportRunning()
+                // The lists hear of it with the read this asks for (`listed`).
+                scheduleRefresh()
             }
             if sessions[id] == nil { scheduleRefresh() }
         case "emit" where frame["event"].string?.hasPrefix("deepseek-account/") == true:
             account.handle(event: frame["event"].string ?? "")
         case "emit":
             let event = frame["event"].string ?? ""
-            eventCounts[event, default: 0] += 1
+            eventCount(event).value += 1
             let args = frame["args"].array
             for listener in listeners.values { listener(event, args) }
         case "cancel":
@@ -664,4 +721,13 @@ final class AppModel {
             return false
         }
     }
+}
+
+/// A value observed by itself, for state that is kept per key: the views that read one key are
+/// redrawn when it changes, and no others. Equatable, so that writing an equal value redraws
+/// nothing (the observation macro compares before it notifies).
+@Observable
+final class Tracked<Value: Equatable> {
+    var value: Value
+    init(_ value: Value) { self.value = value }
 }
