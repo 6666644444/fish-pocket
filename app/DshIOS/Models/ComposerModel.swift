@@ -11,14 +11,18 @@ struct PendingSubmission: Identifiable, Equatable {
     /// The request id (`source.rpcId` on the durable message).
     let id: String
     var text: String
+    /// The attachments by name, for the queue and 「发送中…」.
     var attachments: [String]
+    /// The attachments as the Host stored them, the blocks the durable message will carry; nil
+    /// when one of them was not uploaded ahead (an image in a subagent's conversation).
+    var stored: [Attachment]?
     /// Where the web shows the echo: idle → the transcript, busy → the queue or a steering bubble.
     var placement: Placement
 
     /// On screen at once as its bubble, in the row its durable message takes over: sent into an
-    /// idle conversation, with text only. An attachment shows as the Host stored it, so a message
-    /// with one waits for the durable message.
-    var showsBubble: Bool { placement == .transcript && attachments.isEmpty }
+    /// idle conversation, with everything it carries already stored. A message with an image
+    /// that goes with the request waits for the durable message.
+    var showsBubble: Bool { placement == .transcript && stored != nil }
 }
 
 /// One attachment waiting in the composer (C-104…C-106). A file or an image uploads as
@@ -46,6 +50,8 @@ struct DraftAttachment: Identifiable {
     var bytes: Int
     var kind: Kind
     var upload: Upload?
+    /// What the Host stored for it, from the reply to its upload: the block its message will carry.
+    var stored: Attachment?
 
     var isImage: Bool { if case .image = kind { true } else { false } }
 
@@ -242,8 +248,8 @@ final class ComposerModel {
 
     /// The live value from `session/control`, else the session's latest snapshot.
     func projection(_ key: String) -> JSON {
-        if let live = app.control[sessionId]?[key] { return live }
-        return session?.projectionValues[key] ?? .null
+        if let live = app.control(sessionId, key) { return live }
+        return session?.projectionValue(key) ?? .null
     }
 
     var imageLimits: ImageLimits { ImageLimits(projection("imageLimits")) }
@@ -471,12 +477,18 @@ final class ComposerModel {
         let shown = MessageQuotes.compose(quotes: sentQuotes, text: draft)
         let sent = attachments
         let requestId = UUID().uuidString.lowercased()
+        let stored = sent.compactMap(\.stored)
         let submission = PendingSubmission(
             id: requestId, text: shown, attachments: sent.map(\.name),
+            stored: stored.count == sent.count ? stored : nil,
             placement: running ? (steer ? .steering : .queued) : .transcript
         )
         if submission.showsBubble {
             bubbleIds.insert(requestId)
+            // Its images show as they were picked until the stored copies are read.
+            for attachment in sent {
+                if case .image(_, _, let preview) = attachment.kind, let id = attachment.stored?.attachmentId { session?.keepPreview(preview, for: id) }
+            }
             app.bubbleRises()
         }
         pending.append(submission)
@@ -485,7 +497,9 @@ final class ComposerModel {
         sendSeq += 1
         let seq = sendSeq
         text = ""
-        attachments = []
+        // Written only when there is something to clear: an attachment is not comparable, so even an
+        // empty list written over an empty one redraws everything that reads it.
+        if !attachments.isEmpty { attachments = [] }
         if !sentQuotes.isEmpty { quotes = [] }
         Task {
             do {
@@ -956,15 +970,17 @@ final class ComposerModel {
             activeUploads += 1
             uploadTasks[id] = Task {
                 var outcome: DraftAttachment.Upload?
+                var stored: Attachment?
                 do {
-                    let receipt = try await upload(url, name: attachment.name, mediaType: mediaType) { [weak self] sent, total in
+                    let reply = try await upload(url, name: attachment.name, mediaType: mediaType) { [weak self] sent, total in
                         Task { @MainActor in
                             guard let self, let index = self.attachments.firstIndex(where: { $0.id == id }),
                                   case .uploading = self.attachments[index].upload else { return }
                             self.attachments[index].upload = .uploading(loaded: sent, total: total > 0 ? total : nil)
                         }
                     }
-                    outcome = .ready(receiptId: receipt)
+                    outcome = .ready(receiptId: reply.receipt)
+                    stored = reply.stored
                 } catch let error as EngineError where mediaType != nil && error.code == "session/attachment-invalid" && !Task.isCancelled {
                     // The Host looked at the image and will not have it (too large, not an image it
                     // reads…): the same bytes cannot go through again, so it leaves with the reason.
@@ -976,6 +992,7 @@ final class ComposerModel {
                 }
                 if !Task.isCancelled, let outcome, let index = attachments.firstIndex(where: { $0.id == id }) {
                     attachments[index].upload = outcome
+                    attachments[index].stored = stored
                 }
                 uploadTasks[id] = nil
                 activeUploads -= 1
@@ -987,8 +1004,9 @@ final class ComposerModel {
     /// `POST /api/session/uploadFileBinary?sessionId=&name=` with the raw bytes (the web's
     /// primary upload path); the reply is a bare `{ok, value: {receiptId, file}}` without the RPC envelope.
     /// With `mediaType` the Host takes the bytes as a prompt image: it validates, scales down
-    /// and stores it then, and the reply's value carries `image` in place of `file`.
-    private func upload(_ file: URL, name: String, mediaType: String?, progress: @escaping @Sendable (Int64, Int64) -> Void) async throws -> String {
+    /// and stores it then, and the reply's value carries `image` in place of `file`. Either is
+    /// the reference the message will carry, returned with the receipt.
+    private func upload(_ file: URL, name: String, mediaType: String?, progress: @escaping @Sendable (Int64, Int64) -> Void) async throws -> (receipt: String, stored: Attachment?) {
         let client = app.client
         var components = URLComponents(url: client.origin.appendingPathComponent("api/session/uploadFileBinary"), resolvingAgainstBaseURL: false)!
         components.queryItems = [URLQueryItem(name: "sessionId", value: sessionId), URLQueryItem(name: "name", value: name)]
@@ -1003,7 +1021,17 @@ final class ComposerModel {
         guard status == 200, let reply = try? JSONDecoder().decode(JSON.self, from: data) else {
             throw EngineError(code: "HTTP_\(status)", message: String(localized: "上传失败（HTTP \(status)）"), detail: .null)
         }
-        if reply["ok"].bool == true, let receipt = reply["value"]["receiptId"].string { return receipt }
+        if reply["ok"].bool == true, let receipt = reply["value"]["receiptId"].string {
+            let value = reply["value"]
+            let stored: Attachment? = if !value["image"].isNull {
+                Attachment(block: ["type": "image", "attachment": value["image"]])
+            } else if !value["file"].isNull {
+                Attachment(block: ["type": "file", "attachment": value["file"]])
+            } else {
+                nil
+            }
+            return (receipt, stored)
+        }
         throw EngineError(code: reply["error"]["code"].string, message: reply["error"]["message"].string ?? String(localized: "上传失败"), detail: reply["error"])
     }
 }

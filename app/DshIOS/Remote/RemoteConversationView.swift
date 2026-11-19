@@ -15,6 +15,8 @@ struct RemoteConversationView: View {
     @State private var atBottom = true
     @State private var timelineTop: CGFloat = 0
     @State private var detail: TimelineDetail?
+    @State private var actionsBox = ConversationActions.Box()
+    @State private var scrollBox = TimelineScroll.Box()
     /// Requests swiped away; they stay answerable from the line above the composer.
     @State private var deferred: Set<String> = []
     @State private var panel: Panel?
@@ -66,15 +68,15 @@ struct RemoteConversationView: View {
                     .modifier(LinkOpening())
                 Color.clear.frame(height: 1).id(Self.bottomId)
             }
-            .environment(\.timelineScroll, TimelineScroll(keep: { id in
+            .environment(\.timelineScroll, TimelineScroll(scrollBox, top: timelineTop) { id in
                 Task { @MainActor in
                     try? await Task.sleep(for: .milliseconds(60))
                     proxy.scrollTo(id, anchor: .top)
                 }
-            }, top: timelineTop))
+            })
             .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).minY } action: { timelineTop = $0 }
             .modifier(TimelineAnchor())
-            .modifier(BottomFollow(atBottom: $atBottom) { scrollToBottom(proxy, animated: false) })
+            .modifier(BottomFollow(atBottom: $atBottom) { scrollToBottom(proxy, animated: $0) })
             .scrollDismissesKeyboard(.immediately)
             .scrollBounceBehavior(.always)
             .simultaneousGesture(TapGesture().onEnded { dismissKeyboard() })
@@ -129,14 +131,14 @@ struct RemoteConversationView: View {
             ToolbarItem(placement: .principal) { RemoteTitleMenu(model: model) }
             ToolbarItem(placement: .topBarTrailing) { moreMenu(model) }
         }
-        .environment(\.conversationActions, ConversationActions(
+        .environment(\.conversationActions, ConversationActions(actionsBox, .init(
             openChanges: { panel = .changes },
             quote: quoteAction(model),
             present: { item in
                 deferred.formUnion(interactions(model).map(\.id))
                 detail = item
             }
-        ))
+        )))
         .onChange(of: presented(model)?.id) { _, id in if id != nil { dismissKeyboard() } }
         .onChange(of: waiting(model)?.id) { old, new in if let new, new != old { Haptics.warning() } }
         .onChange(of: model.optionsRequest) { panel = .options }
