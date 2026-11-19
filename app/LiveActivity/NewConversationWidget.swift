@@ -44,9 +44,8 @@ private struct NewConversationView: View {
                 Spacer()
                 Image(systemName: "plus")
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(WidgetPalette.onInk)
                     .frame(width: 44, height: 44)
-                    .background(WidgetPalette.ink, in: Circle())
+                    .widgetFill(WidgetPalette.ink, in: Circle(), content: WidgetPalette.onInk)
             }
             Spacer(minLength: 4)
             Text("新对话").font(.title3.weight(.bold))
@@ -69,14 +68,13 @@ private struct NewConversationView: View {
                 Spacer(minLength: 0)
                 Image(systemName: "arrow.up")
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(WidgetPalette.onInk)
                     .frame(width: 40, height: 40)
-                    .background(WidgetPalette.ink, in: Circle())
+                    .widgetFill(WidgetPalette.ink, in: Circle(), content: WidgetPalette.onInk)
             }
             .padding(.leading, 18)
             .padding(.trailing, 6)
             .frame(height: 52)
-            .background(WidgetPalette.field, in: Capsule())
+            .widgetFill(WidgetPalette.field, in: Capsule())
             Spacer(minLength: 6)
             Text(workspace).font(.footnote).foregroundStyle(WidgetPalette.secondary).lineLimit(1)
         }
