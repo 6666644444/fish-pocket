@@ -354,12 +354,38 @@ struct AttachmentRail: View {
     private func item(_ attachment: DraftAttachment) -> some View {
         switch attachment.kind {
         case .image(_, _, let preview):
-            Image(uiImage: preview).resizable().scaledToFill()
-                .frame(width: 56, height: 56).clipShape(RoundedRectangle(cornerRadius: 12))
-                .accessibilityLabel(Text("图片 \(attachment.name)"))
+            imageTile(attachment, preview: preview)
         case .file, .reading:
             fileCard(attachment)
         }
+    }
+
+    /// The thumbnail, under a spinner while the image goes to the Host; a failed one retries on tap.
+    private func imageTile(_ attachment: DraftAttachment, preview: UIImage) -> some View {
+        let failed: Bool = if case .failed = attachment.upload { true } else { false }
+        return Button { composer.retryUpload(attachment.id) } label: {
+            Image(uiImage: preview).resizable().scaledToFill()
+                .frame(width: 56, height: 56)
+                .overlay {
+                    switch attachment.upload {
+                    case .uploading:
+                        Color.black.opacity(0.35)
+                        ProgressView().controlSize(.small).tint(.white)
+                    case .failed:
+                        Color.black.opacity(0.35)
+                        Image(systemName: "arrow.clockwise").font(.footnote.weight(.semibold)).foregroundStyle(.white)
+                    default:
+                        EmptyView()
+                    }
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(failed ? Palette.removed : .clear, lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+        // Not `disabled`: that washes the picture out.
+        .allowsHitTesting(failed)
+        .accessibilityLabel(Text("图片 \(attachment.name)"))
+        .accessibilityHint(failed ? Text("轻点重试上传") : Text(""))
     }
 
     private func fileCard(_ attachment: DraftAttachment) -> some View {

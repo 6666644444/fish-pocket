@@ -106,7 +106,10 @@ final class SessionModel {
                             "turnWindow": ["minMessages": 50, "minTurns": 2],
                         ],
                     ])
-                    for try await frame in stream { self.apply(frame) }
+                    for try await frame in stream {
+                        await self.app.bubbleLanded()
+                        self.apply(frame)
+                    }
                 } catch {
                     if Task.isCancelled { return }
                     // The engine refusing the stream is worth saying. A dropped connection is not: the
@@ -133,6 +136,9 @@ final class SessionModel {
         switch frame["type"].string {
         case "snapshot":
             events = frame["records"].array.map { $0["event"] }
+            // A message sent as the stream dropped comes back in the snapshot, not as an event:
+            // its echo is done with here, or its bubble would show twice.
+            if !composer.pending.isEmpty { for event in events { composer.observe(event) } }
             hasMoreHistory = frame["hasMore"].bool ?? false
             // A long turn's start can lie before the window: the session list still knows it runs.
             refold(running: app.sessions[sessionId]?.running ?? false)
@@ -279,9 +285,19 @@ final class SessionModel {
         let index = items.firstIndex { if case .assistant(let turn, _, _, _) = $0 { return turn == entry.turn }; return false }
         guard let index else { return nil }
         // Start at its prompt.
-        if index > 0, case .user = items[index - 1] { return items[index - 1].id }
-        return items[index].id
+        if index > 0, case .user = items[index - 1] { return rowId(items[index - 1]) }
+        return rowId(items[index])
     }
+
+    /// The timeline row an item sits in, which is also what the timeline scrolls to. A message
+    /// that showed as a bubble the moment it was sent keeps that row when its durable message
+    /// arrives: the bubble is neither built nor animated a second time.
+    func rowId(_ item: TimelineItem) -> String {
+        if case .user(_, _, _, let requestId?) = item, composer.bubbleIds.contains(requestId) { return Self.bubbleRow(requestId) }
+        return item.id
+    }
+
+    static func bubbleRow(_ requestId: String) -> String { "e\(requestId)" }
 
     #if DEBUG
     /// `-dshOpen timeline`: show synthetic events instead of the session's, to look at every card.

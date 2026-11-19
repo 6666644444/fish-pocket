@@ -1629,7 +1629,8 @@ const files = defineTool({
     + '`types` narrows what they can tap, as uniform type identifiers (`public.image`, '
     + '`com.adobe.pdf`, `public.plain-text`) or filename extensions (`pdf`, `csv`). A string iOS '
     + 'does not recognise is refused rather than guessed at; leave `types` out and any file can be '
-    + 'picked, which is the right default when you are not sure.',
+    + 'picked, which is the right default when you are not sure. Folders cannot be picked, so a '
+    + 'folder type (`public.folder`) is refused too.',
   parameters: {
     action: {
       type: 'string',
