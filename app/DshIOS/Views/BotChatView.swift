@@ -76,9 +76,11 @@ private struct BotTitle: View {
             VStack(alignment: .leading, spacing: 0) {
                 Text(bot.name).font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
                 if let doing = team.doingText(bot.id) {
-                    Text(doing).font(.caption2).foregroundStyle(team.isWorking(bot.id) ? Palette.running : Palette.waiting).lineLimit(1)
+                    AILabelledSubtitle { Text(doing).font(.caption2).foregroundStyle(team.isWorking(bot.id) ? Palette.running : Palette.waiting) }
                 } else if !bot.role.isEmpty {
-                    Text(bot.role).font(.caption2).foregroundStyle(Palette.secondary).lineLimit(1)
+                    AILabelledSubtitle { Text(bot.role).font(.caption2).foregroundStyle(Palette.secondary) }
+                } else {
+                    AIContentLabel()
                 }
             }
         }

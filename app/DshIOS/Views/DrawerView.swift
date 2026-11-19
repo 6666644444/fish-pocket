@@ -147,54 +147,42 @@ struct DrawerView: View {
             .navigationDestination(for: Route.self) { _ in archivedPage }
         }
         .onChange(of: searchRequest) { openSearch() }
-        .fullScreenCover(isPresented: $searchOpen) { searchPage }
+        .fullScreenCover(isPresented: $searchOpen, onDismiss: { search = "" }) { searchPage }
     }
 
     // MARK: On the tab bar
 
-    /// The 会话 tab: the sessions alone, under the system's large title and search field. What the
-    /// sidebar also holds has tabs of its own (Bot, 工具); a new conversation and the view menu are
-    /// in the bar. While searching, the matches take the list's place. The stack around it is the
-    /// shell's, which pushes the conversation.
+    /// The 会话 tab: the sessions alone, under a small title. What the sidebar also holds has tabs
+    /// of its own (Bot, 工具); search, the view menu and a new conversation are in the bar. Search
+    /// is not often wanted, so it is a button, and the search page of the sidebar opens from it.
+    /// The stack around it is the shell's, which pushes the conversation.
     private var sessionsTab: some View {
-        let query = search.trimmingCharacters(in: .whitespaces)
-        return List {
-            if searchActive || !query.isEmpty {
-                if !query.isEmpty { searchResults }
-            } else {
-                if let engineStatus {
-                    Text(engineStatus).font(.footnote).foregroundStyle(Palette.secondary).padding(.horizontal, 12).plainRow()
-                }
-                if app.remote.expired { remoteExpiredRow }
-                if grouping == .time { timeList } else { groupList }
-                archivedEntry
+        List {
+            if let engineStatus {
+                Text(engineStatus).font(.footnote).foregroundStyle(Palette.secondary).padding(.horizontal, 12).plainRow()
             }
+            if app.remote.expired { remoteExpiredRow }
+            if grouping == .time { timeList } else { groupList }
+            archivedEntry
         }
         .sessionList()
-        .overlay(alignment: .top) {
-            if searchActive, query.isEmpty {
-                Text("搜索会话标题和消息内容")
-                    .font(.subheadline)
-                    .foregroundStyle(Palette.secondary)
-                    .padding(.top, 48)
-                    .allowsHitTesting(false)
-            }
-        }
         .refreshable {
             await app.refreshSessions()
             await app.remote.refresh()
         }
         .background(Palette.background)
+        .tabBarEdgeSoftened()
         .navigationTitle(Self.sessionsTitle)
-        .navigationBarTitleDisplayMode(.large)
-        // Always in view, by choice: from iOS 27 the large title then starts folded into the bar
-        // (pulling down unfolds it). The other placement keeps the large title but hides the field.
-        .searchable(text: $search, isPresented: $searchActive, placement: .navigationBarDrawer(displayMode: .always), prompt: "搜索会话")
-        .textInputAutocapitalization(.never)
-        .autocorrectionDisabled()
-        // ⌘F and the like: the field of this tab.
-        .onChange(of: searchRequest) { searchActive = true }
+        // A small title, as every tab's: a large one only takes room.
+        .navigationBarTitleDisplayMode(.inline)
+        // ⌘F and the like.
+        .onChange(of: searchRequest) { openSearch() }
+        .fullScreenCover(isPresented: $searchOpen, onDismiss: { search = "" }) { searchPage }
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button { Haptics.tap(); openSearch() } label: { Image(systemName: "magnifyingglass") }
+                    .accessibilityLabel("搜索会话")
+            }
             ToolbarItem(placement: .topBarTrailing) { viewMenu(compact: true) }
             ToolbarItem(placement: .topBarTrailing) {
                 newConversationControl {
@@ -1343,7 +1331,7 @@ struct MachineTag: View {
 
 /// The way out of the search page on iPad from iOS 26: there the system puts the field in the
 /// bar, and it has no ✕ of its own to leave by as the phone's has (before iOS 26 it has 取消).
-private struct SearchPageClose: ViewModifier {
+struct SearchPageClose: ViewModifier {
     @Environment(\.horizontalSizeClass) private var sizeClass
     let action: () -> Void
 
@@ -1463,15 +1451,6 @@ private extension View {
         }
     }
 
-    /// From iOS 26 the search field sits at the bottom, by the keyboard, as the system's own apps have it.
-    @ViewBuilder
-    func searchFieldAtBottom() -> some View {
-        if #available(iOS 26.0, *) {
-            toolbar { DefaultToolbarItem(kind: .search, placement: .bottomBar) }
-        } else {
-            self
-        }
-    }
 
     /// A list row with no fill, separator or selection inset (headers, notes).
     func plainRow() -> some View {
@@ -1492,5 +1471,17 @@ private extension View {
         onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { frames.set($0, of: id) }
             .onAppear { frames.setShown(id, true) }
             .onDisappear { frames.setShown(id, false) }
+    }
+}
+
+extension View {
+    /// From iOS 26 the search field sits at the bottom, by the keyboard, as the system's own apps have it.
+    @ViewBuilder
+    func searchFieldAtBottom() -> some View {
+        if #available(iOS 26.0, *) {
+            toolbar { DefaultToolbarItem(kind: .search, placement: .bottomBar) }
+        } else {
+            self
+        }
     }
 }

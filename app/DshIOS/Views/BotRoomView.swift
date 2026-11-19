@@ -167,7 +167,7 @@ struct BotRoomView: View {
                         RoomAvatar(room: room, size: 28)
                         VStack(alignment: .leading, spacing: 0) {
                             Text(team.name(of: room)).font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink).lineLimit(1)
-                            Text("\(room.members.count) 个 Bot").font(.caption2).foregroundStyle(Palette.secondary)
+                            AILabelledSubtitle { Text("\(room.members.count) 个 Bot").font(.caption2).foregroundStyle(Palette.secondary) }
                         }
                     }
                     .modifier(BotTitleCapsule())

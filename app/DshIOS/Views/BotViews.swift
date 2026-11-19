@@ -283,10 +283,16 @@ struct BotHomeView: View {
     let openDrawer: (() -> Void)?
     /// The chat beside the list, where they are side by side; nil where a row pushes its chat.
     var selection: Binding<BotRoute?>?
+    /// Opens a chat or a group from the search page, which is over the list and not in its stack.
+    var open: (BotRoute) -> Void = { _ in }
     @State private var creating: CreateKind?
     @State private var settingsOpen = false
     @State private var showHidden = false
     @State private var query = ""
+    /// The search page is up; `searchShown` fades it, `searchActive` is the system field's focus.
+    @State private var searchOpen = false
+    @State private var searchShown = false
+    @State private var searchActive = false
     /// What was said in the Bots' own chats that holds the search words, newest first.
     @State private var hits: [ChatHit] = []
     /// The chat pages read for this search, by Bot: read once while the search field is in use.
@@ -318,6 +324,10 @@ struct BotHomeView: View {
             if let openDrawer { ToolbarItem(placement: .topBarLeading) { DrawerButton(action: openDrawer) } }
             if team.status == .ready {
                 ToolbarItem(placement: .topBarTrailing) {
+                    Button { Haptics.tap(); openSearch() } label: { Image(systemName: "magnifyingglass") }
+                        .accessibilityLabel("搜索 Bot、群聊和私聊记录")
+                }
+                ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button { creating = .bot } label: { Label("新建 Bot", systemImage: "person.badge.plus") }
                         Button { creating = .room } label: { Label("新建群聊", systemImage: "person.2") }
@@ -341,6 +351,8 @@ struct BotHomeView: View {
         // Its own sheet, as 设置 is: the pages inside are the system's lists.
         .sheet(isPresented: $settingsOpen) { SheetStack { BotTeamSettingsView() }.settingsStyle() }
         .refreshable { await team.refreshState() }
+        // The field writes what it held back as the page goes: cleared again once it has gone.
+        .fullScreenCover(isPresented: $searchOpen, onDismiss: { query = "" }) { searchPage }
         .task(id: query) { await searchMessages() }
         // A key or a provider set in 设置 changes the models a Bot can run on; nothing on the
         // feed says so, so the list is read again when DSH says they changed.
@@ -394,17 +406,16 @@ struct BotHomeView: View {
         hits = Array(found.sorted { $0.time > $1.time }.prefix(30))
     }
 
-    /// Pinned first, then the main Bots in their order, then the most recently active.
-    private var bots: [BotInfo] {
+    /// Pinned first, then the main Bots in their order, then the most recently active. The list
+    /// passes no words: what is typed on the search page filters that page only.
+    private func bots(matching needle: String = "") -> [BotInfo] {
         let team = app.botTeam
-        let needle = needle
         return team.bots.filter { (showHidden || !$0.hidden || !needle.isEmpty) && (needle.isEmpty || $0.name.lowercased().contains(needle) || $0.role.lowercased().contains(needle)) }
             .sorted(by: team.listOrder)
     }
 
-    private var rooms: [RoomInfo] {
+    private func rooms(matching needle: String = "") -> [RoomInfo] {
         let team = app.botTeam
-        let needle = needle
         return team.rooms.filter { room in
             (showHidden || !room.hidden || !needle.isEmpty)
                 && (needle.isEmpty || team.name(of: room).lowercased().contains(needle) || (room.preview ?? "").lowercased().contains(needle)
@@ -416,13 +427,115 @@ struct BotHomeView: View {
         List { rows }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .searchable(text: $query, prompt: "搜索 Bot、群聊和私聊记录")
+        .tabBarEdgeSoftened()
+    }
+
+    // MARK: Search
+
+    /// Search is a page of its own over the list, as the 会话 tab's is: the system's search field
+    /// (in glass at the bottom from iOS 26, in the bar before) and the matches. It fades in.
+    private var searchPage: some View {
+        NavigationStack {
+            List {
+                if !needle.isEmpty { searchRows }
+            }
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .overlay(alignment: .top) {
+                if needle.isEmpty {
+                    VStack(spacing: 10) {
+                        Image(systemName: "magnifyingglass").font(.title2).foregroundStyle(Palette.ink)
+                        Text("搜索 Bot、群聊和私聊记录").font(.subheadline).foregroundStyle(Palette.secondary)
+                    }
+                    .padding(.top, 96)
+                    .accessibilityElement(children: .combine)
+                }
+            }
+            .background(Palette.background)
+            .navigationBarTitleDisplayMode(.inline)
+            .searchable(text: $query, isPresented: $searchActive, prompt: "搜索 Bot、群聊和私聊记录")
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled()
+            .searchFieldAtBottom()
+            .modifier(SearchPageClose(action: closeSearch))
+        }
+        .inkTint()
+        .opacity(searchShown ? 1 : 0)
+        .presentationBackground(.clear)
+        .onAppear { withAnimation(.easeOut(duration: 0.2)) { searchShown = true } }
+        // The field's own ✕ (取消 before iOS 26) is the way out.
+        .onChange(of: searchActive) { if !searchActive { closeSearch() } }
+    }
+
+    /// What matches: Bots and groups by name, then what was said in the Bots' own chats.
+    @ViewBuilder
+    private var searchRows: some View {
+        let team = app.botTeam
+        let botList = bots(matching: needle)
+        let roomList = rooms(matching: needle)
+        if !botList.isEmpty {
+            Section("Bot") {
+                ForEach(botList) { bot in
+                    Button { pick(.bot(bot.id)) } label: { botRow(bot) }.buttonStyle(.plain)
+                }
+            }
+        }
+        if !roomList.isEmpty {
+            Section("群聊") {
+                ForEach(roomList) { room in
+                    Button { pick(.room(room.id)) } label: { roomRow(room) }.buttonStyle(.plain)
+                }
+            }
+        }
+        if !hits.isEmpty {
+            Section("私聊里说过的") {
+                ForEach(hits) { hit in
+                    Button { pick(.bot(hit.botId)) } label: { hitRow(hit, team: team) }.buttonStyle(.plain)
+                }
+            }
+        }
+        if botList.isEmpty && roomList.isEmpty && hits.isEmpty {
+            Section { Text("没有找到「\(query)」").font(.footnote).foregroundStyle(Palette.secondary) }
+        }
+    }
+
+    private func openSearch() {
+        guard !searchOpen else { return }
+        searchActive = true
+        withoutAnimation { searchOpen = true }
+    }
+
+    private func closeSearch() {
+        guard searchOpen, searchShown else { return }
+        searchActive = false
+        withAnimation(.easeIn(duration: 0.15)) { searchShown = false } completion: {
+            query = ""
+            withoutAnimation { searchOpen = false }
+        }
+    }
+
+    /// A match picked: the page goes at once, and the chat opens under it.
+    private func pick(_ route: BotRoute) {
+        query = ""
+        searchShown = false
+        searchActive = false
+        withoutAnimation { searchOpen = false }
+        if let selection { selection.wrappedValue = route } else { open(route) }
+    }
+
+    /// The cover's own slide is not wanted: the page fades.
+    private func withoutAnimation(_ change: () -> Void) {
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction, change)
     }
 
     @ViewBuilder
     private var rows: some View {
         let team = app.botTeam
         let hiddenCount = team.bots.filter(\.hidden).count + team.rooms.filter(\.hidden).count
+        let botList = bots()
+        let roomList = rooms()
         if let reason = team.readOnly {
             Section {
                 Label("另一个 DSH 正在管理这支团队，这里暂时只能看。", systemImage: "lock")
@@ -430,18 +543,9 @@ struct BotHomeView: View {
                     .accessibilityHint(reason)
             }
         }
-        if !bots.isEmpty { Section {
-            ForEach(bots) { bot in
-                row(.bot(bot.id)) {
-                    HStack(spacing: 12) {
-                        BotAvatar(bot: bot, size: 44, live: true)
-                        BotRowText(title: bot.name, line: team.rowLine(for: bot), tag: team.isMain(bot) ? String(localized: "主 Bot") : nil)
-                        if bot.pinned { Image(systemName: "pin.fill").font(.caption2).foregroundStyle(Palette.faint) }
-                        trailing(sessionId: bot.sessionId)
-                    }
-                    .padding(.vertical, 4)
-                    .opacity(bot.hidden ? 0.5 : 1)
-                }
+        if !botList.isEmpty { Section {
+            ForEach(botList) { bot in
+                row(.bot(bot.id)) { botRow(bot) }
                 // Only a left swipe: a right swipe is the one that opens the sidebar.
                 .swipeActions(edge: .trailing) {
                     if !team.isMain(bot) { hideButton(bot.id, hidden: bot.hidden) }
@@ -456,19 +560,10 @@ struct BotHomeView: View {
                 .listRowBackground(pickedFill(.bot(bot.id)))
             }
         } header: { Text("Bot") } }
-        if !rooms.isEmpty {
+        if !roomList.isEmpty {
             Section {
-                ForEach(rooms) { room in
-                    row(.room(room.id)) {
-                        HStack(spacing: 12) {
-                            RoomAvatar(room: room, size: 44)
-                            BotRowText(title: team.name(of: room), line: room.preview.map { .text($0) } ?? .none)
-                            if room.pinned { Image(systemName: "pin.fill").font(.caption2).foregroundStyle(Palette.faint) }
-                            trailing(sessionId: room.sessionId)
-                        }
-                        .padding(.vertical, 4)
-                        .opacity(room.hidden ? 0.5 : 1)
-                    }
+                ForEach(roomList) { room in
+                    row(.room(room.id)) { roomRow(room) }
                     .swipeActions(edge: .trailing) {
                         hideButton(room.id, hidden: room.hidden)
                         pinButton(room.id, pinned: room.pinned)
@@ -482,33 +577,7 @@ struct BotHomeView: View {
                 }
             } header: { Text("群聊") }
         }
-        if !hits.isEmpty {
-            Section("私聊里说过的") {
-                ForEach(hits) { hit in
-                    row(.bot(hit.botId)) {
-                        HStack(alignment: .top, spacing: 10) {
-                            BotAvatar(bot: team.bot(hit.botId), size: 28)
-                            VStack(alignment: .leading, spacing: 2) {
-                                HStack(spacing: 6) {
-                                    Text(team.bot(hit.botId)?.name ?? "").font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
-                                    if hit.mine { Text("你说的").font(.caption2).foregroundStyle(Palette.faint) }
-                                    Spacer(minLength: 0)
-                                    if hit.time > 0 {
-                                        Text(Date(timeIntervalSince1970: hit.time / 1000), format: .dateTime.month().day().hour().minute()).font(.caption2).foregroundStyle(Palette.faint)
-                                    }
-                                }
-                                Text(hit.snippet).font(.footnote).foregroundStyle(Palette.secondary).lineLimit(2)
-                            }
-                        }
-                    }
-                    .listRowBackground(pickedFill(.bot(hit.botId)))
-                }
-            }
-        }
-        if !needle.isEmpty && bots.isEmpty && rooms.isEmpty && hits.isEmpty {
-            Section { Text("没有找到「\(query)」").font(.footnote).foregroundStyle(Palette.secondary) }
-        }
-        if hiddenCount > 0 && needle.isEmpty {
+        if hiddenCount > 0 {
             Section {
                 Button(showHidden ? String(localized: "收起已隐藏的") : String(localized: "显示 \(hiddenCount) 个已隐藏的")) {
                     withAnimation(.snappy) { showHidden.toggle() }
@@ -517,6 +586,49 @@ struct BotHomeView: View {
                 .foregroundStyle(Palette.secondary)
             }
         }
+    }
+
+    private func botRow(_ bot: BotInfo) -> some View {
+        let team = app.botTeam
+        return HStack(spacing: 12) {
+            BotAvatar(bot: bot, size: 44, live: true)
+            BotRowText(title: bot.name, line: team.rowLine(for: bot), tag: team.isMain(bot) ? String(localized: "主 Bot") : nil)
+            if bot.pinned { Image(systemName: "pin.fill").font(.caption2).foregroundStyle(Palette.faint) }
+            trailing(sessionId: bot.sessionId)
+        }
+        .padding(.vertical, 4)
+        .opacity(bot.hidden ? 0.5 : 1)
+        .contentShape(Rectangle())
+    }
+
+    private func roomRow(_ room: RoomInfo) -> some View {
+        HStack(spacing: 12) {
+            RoomAvatar(room: room, size: 44)
+            BotRowText(title: app.botTeam.name(of: room), line: room.preview.map { .text($0) } ?? .none)
+            if room.pinned { Image(systemName: "pin.fill").font(.caption2).foregroundStyle(Palette.faint) }
+            trailing(sessionId: room.sessionId)
+        }
+        .padding(.vertical, 4)
+        .opacity(room.hidden ? 0.5 : 1)
+        .contentShape(Rectangle())
+    }
+
+    private func hitRow(_ hit: ChatHit, team: BotModel) -> some View {
+        HStack(alignment: .top, spacing: 10) {
+            BotAvatar(bot: team.bot(hit.botId), size: 28)
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 6) {
+                    Text(team.bot(hit.botId)?.name ?? "").font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
+                    if hit.mine { Text("你说的").font(.caption2).foregroundStyle(Palette.faint) }
+                    Spacer(minLength: 0)
+                    if hit.time > 0 {
+                        Text(Date(timeIntervalSince1970: hit.time / 1000), format: .dateTime.month().day().hour().minute()).font(.caption2).foregroundStyle(Palette.faint)
+                    }
+                }
+                Text(hit.snippet).font(.footnote).foregroundStyle(Palette.secondary).lineLimit(2)
+            }
+        }
+        .contentShape(Rectangle())
     }
 
     /// A row of the list. On its own it pushes its chat. Beside the chat (`selection`) it picks

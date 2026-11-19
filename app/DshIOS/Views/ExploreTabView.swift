@@ -48,7 +48,7 @@ struct ExploreTabView: View {
                 }
             }
             .navigationTitle("探索")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: Route.self) { route in
                 switch route {
                 case .plugins: PluginStoreView()

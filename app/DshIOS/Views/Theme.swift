@@ -221,6 +221,18 @@ extension View {
     /// The background of a page that puts something of its own (tabs, an empty state) around a `groupedList()`.
     func pageBackground() -> some View { modifier(PageBackground()) }
 
+    /// A tab's own list, under the tab bar: from iOS 26 what scrolls under the bar softens, as on
+    /// the system's pages. Left to the system, the 会话 and Bot lists (plain lists on the app's own
+    /// background) kept a sharp edge there while 探索 (a grouped list) softened, so it is said.
+    @ViewBuilder
+    func tabBarEdgeSoftened() -> some View {
+        if #available(iOS 26.0, *) {
+            scrollEdgeEffectStyle(.soft, for: .bottom)
+        } else {
+            self
+        }
+    }
+
     /// A conversation's top bar. From iOS 26 it is the system's see-through bar: the messages
     /// run up under its buttons, sharp, and blur only under the status bar, above them, so the
     /// clock stays readable; the bottom edge, under the composer, softens as before. Before, a
