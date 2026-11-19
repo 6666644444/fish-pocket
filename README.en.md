@@ -269,6 +269,10 @@ More answers on the [website](https://fish.deepseek1024.com/en/#faq).
 - [x] Voice: hold to talk, and have replies read aloud
 - [x] Share sheet: tap Share in WeChat, Photos or Safari to send text, links, photos and files to a new conversation, a Bot or a group chat ([#57](https://github.com/imsai-sh/fish-pocket/issues/57))
 
+## Community
+
+Join us on [Discord](https://discord.gg/VSzN4jUwWm).
+
 ## Contributing
 
 Issues and PRs are welcome. Have your agent read [CONTRIBUTING.md](CONTRIBUTING.md).

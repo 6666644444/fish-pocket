@@ -241,6 +241,6 @@ iOS 18 起，iPhone、iPhone Duo、iPad 共用一套系统 `TabView`，样式是
 群二维码在 README 和官网上，App 设置页里是一个打开官网图片的链接。它是企业微信的客户群活码，长期有效，群满了自动建新群，平时不用换。图有两份，真要换时一起换：
 
 - 主仓库的 `docs/assets/wechat-group.png`：README 的「交流群」一节引用它。
-- 官网 `fish-pocket-site` 的 `web/public/wechat-group.png`：中文页页脚显示它，合进官网的 `main` 就自动部署。
+- 官网 `fish-pocket-site` 的 `web/public/wechat-group.png`：中文页顶部「微信群」按钮弹出的大图和页脚都用它，合进官网的 `main` 就自动部署。
 
 App 不内置图片，设置页里「微信交流群」一行是个链接，在浏览器里打开官网的 `https://fish.deepseek1024.com/wechat-group.png`（`AppLinks.wechatGroupCode`）。所以换二维码只要更新官网，不用发版；反过来，官网上这个文件的名字和路径不能改，否则已经装好的 App 都会打开一个不存在的页面。
