@@ -39,6 +39,20 @@ struct DraftAttachment: Identifiable {
     var upload: Upload?
 
     var isImage: Bool { if case .image = kind { true } else { false } }
+
+    /// The private copy of its bytes, in a folder of its own under `tmp/uploads`.
+    var file: URL? {
+        switch kind {
+        case .image(_, let file, _): file
+        case .file(let url): url
+        case .reading: nil
+        }
+    }
+
+    /// Drop the private copy: the Host has the bytes, or the attachment is gone.
+    func removeCopy() {
+        if let file { try? FileManager.default.removeItem(at: file.deletingLastPathComponent()) }
+    }
 }
 
 /// A video picked in the photo library, copied out as a file: the library hands over a
@@ -54,11 +68,22 @@ struct PickedMovie: Transferable, Sendable {
 
     /// Copy a file into a folder of its own under `tmp/uploads`, keeping its name.
     static func stage(_ file: URL) throws -> URL {
-        let folder = FileManager.default.temporaryDirectory.appendingPathComponent("uploads/\(UUID().uuidString)", isDirectory: true)
-        let copy = folder.appendingPathComponent(file.lastPathComponent)
-        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let copy = try place(named: file.lastPathComponent)
         try FileManager.default.copyItem(at: file, to: copy)
         return copy
+    }
+
+    /// Write bytes into a folder of their own under `tmp/uploads`, under this name.
+    static func stage(_ data: Data, name: String) throws -> URL {
+        let copy = try place(named: name)
+        try data.write(to: copy)
+        return copy
+    }
+
+    private static func place(named name: String) throws -> URL {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent("uploads/\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        return folder.appendingPathComponent(name)
     }
 }
 
@@ -435,8 +460,8 @@ final class ComposerModel {
                 try await session.prompt(content: content, steer: steer, requestId: requestId)
                 ShareSuggestions.didSend(in: sessionId, app: app)
                 mentions = [:]
-                // Receipts now stand for the files: the private copies are done with.
-                for attachment in sent { if case .file(let url) = attachment.kind { try? FileManager.default.removeItem(at: url.deletingLastPathComponent()) } }
+                // The Host has the bytes now: the private copies are done with.
+                for attachment in sent { attachment.removeCopy() }
                 // A safety net: the message or its queue row normally retires the echo first.
                 try? await Task.sleep(for: .seconds(30))
                 retire(requestId)
@@ -474,7 +499,8 @@ final class ComposerModel {
             defer { executing = false }
             do {
                 guard let session else { return }
-                let value = try await session.executeCommand(line, attachments: Self.content(for: sent))
+                // Commands take file receipts only: an image goes with the line, uploaded or not.
+                let value = try await session.executeCommand(line, attachments: Self.content(for: sent, inlineImages: true))
                 if value.isNull {
                     app.showToast(String(localized: "未知或格式不对的指令：\(line)"))
                     return
@@ -487,6 +513,7 @@ final class ComposerModel {
                 if text == draft { clearField(); text = "" } else if text.hasPrefix(draft) { text = String(text.dropFirst(draft.count)) }
                 let sentIds = Set(sent.map(\.id))
                 attachments.removeAll { sentIds.contains($0.id) }
+                for attachment in sent { attachment.removeCopy() }
             } catch {
                 Haptics.error()
                 app.showToast(errorText(error))
@@ -552,17 +579,19 @@ final class ComposerModel {
         }
     }
 
-    private static func content(for attachments: [DraftAttachment]) throws -> [JSON] {
+    /// The attachments as prompt content. An uploaded image is cited by its receipt, as a file
+    /// is (the receipt of an image upload enters the message as that image); one that was not
+    /// uploaded, and every image when `inlineImages`, sends its bytes.
+    private static func content(for attachments: [DraftAttachment], inlineImages: Bool = false) throws -> [JSON] {
         try attachments.map { attachment in
-            switch attachment.kind {
-            case .image(let mediaType, let data, _):
+            if case .image(let mediaType, let file, _) = attachment.kind, inlineImages || attachment.upload == nil {
+                let data = try Data(contentsOf: file).base64EncodedString()
                 return ["type": "image", "mediaType": .string(mediaType), "data": .string(data), "name": .string(attachment.name)]
-            case .file, .reading:
-                guard case .ready(let receipt) = attachment.upload else {
-                    throw EngineError(code: "session/attachment-invalid", message: String(localized: "文件尚未上传成功，请重新添加后再试"), detail: ["details": ["reason": "FILE_NOT_STAGED"]])
-                }
-                return ["type": "file", "receiptId": .string(receipt)]
             }
+            guard case .ready(let receipt) = attachment.upload else {
+                throw EngineError(code: "session/attachment-invalid", message: String(localized: "文件尚未上传成功，请重新添加后再试"), detail: ["details": ["reason": "FILE_NOT_STAGED"]])
+            }
+            return ["type": "file", "receiptId": .string(receipt)]
         }
     }
 
@@ -740,6 +769,8 @@ final class ComposerModel {
 
     /// Add a picked image by its file bytes: sent as they are when the session accepts them,
     /// re-encoded only when the type (HEIC…) or a limit requires it (`DraftImage.prepare`).
+    /// The bytes go to a file and from there to the Host at once, which scales the image down
+    /// and stores it (the web's `uploadImage`); what stays in memory is the preview.
     /// Returns the refusal to show, if any.
     @discardableResult
     func addImage(data: Data, name: String? = nil) -> String? {
@@ -757,8 +788,20 @@ final class ComposerModel {
         if images.reduce(0, { $0 + $1.bytes }) + image.data.count > limits.maxMessageImageBytes {
             return String(localized: "图片总大小超过 \(ImageLimits.sizeText(limits.maxMessageImageBytes))，请移除部分图片")
         }
+        let file: URL
+        do {
+            file = try PickedMovie.stage(image.data, name: image.name)
+        } catch {
+            return error.localizedDescription
+        }
         let preview = DraftImage.preview(image.data).map { UIImage(cgImage: $0) } ?? UIImage()
-        attachments.append(DraftAttachment(name: image.name, bytes: image.data.count, kind: .image(mediaType: image.mediaType, data: image.data.base64EncodedString(), preview: preview)))
+        // Only an ordinary session stages image uploads (the web's rule): a subagent
+        // continuation's images travel with the prompt.
+        let uploads = session?.subagentAddress == nil
+        let attachment = DraftAttachment(name: image.name, bytes: image.data.count, kind: .image(mediaType: image.mediaType, file: file, preview: preview),
+                                         upload: uploads ? .uploading(loaded: 0, total: Int64(image.data.count)) : nil)
+        attachments.append(attachment)
+        if uploads { enqueueUpload(attachment.id) }
         return nil
     }
 
@@ -845,9 +888,7 @@ final class ComposerModel {
         uploadTasks[id]?.cancel()
         uploadTasks[id] = nil
         uploadQueue.removeAll { $0 == id }
-        if let attachment = attachments.first(where: { $0.id == id }), case .file(let url) = attachment.kind {
-            try? FileManager.default.removeItem(at: url.deletingLastPathComponent())
-        }
+        attachments.first { $0.id == id }?.removeCopy()
         attachments.removeAll { $0.id == id }
     }
 
@@ -866,12 +907,13 @@ final class ComposerModel {
     private func pumpUploads() {
         while activeUploads < Self.maxConcurrentFileUploads, !uploadQueue.isEmpty {
             let id = uploadQueue.removeFirst()
-            guard let attachment = attachments.first(where: { $0.id == id }), case .file(let url) = attachment.kind else { continue }
+            guard let attachment = attachments.first(where: { $0.id == id }), let url = attachment.file else { continue }
+            let mediaType: String? = if case .image(let mediaType, _, _) = attachment.kind { mediaType } else { nil }
             activeUploads += 1
             uploadTasks[id] = Task {
-                let outcome: DraftAttachment.Upload
+                var outcome: DraftAttachment.Upload?
                 do {
-                    let receipt = try await upload(url, name: attachment.name) { [weak self] sent, total in
+                    let receipt = try await upload(url, name: attachment.name, mediaType: mediaType) { [weak self] sent, total in
                         Task { @MainActor in
                             guard let self, let index = self.attachments.firstIndex(where: { $0.id == id }),
                                   case .uploading = self.attachments[index].upload else { return }
@@ -879,10 +921,16 @@ final class ComposerModel {
                         }
                     }
                     outcome = .ready(receiptId: receipt)
+                } catch let error as EngineError where mediaType != nil && error.code == "session/attachment-invalid" && !Task.isCancelled {
+                    // The Host looked at the image and will not have it (too large, not an image it
+                    // reads…): the same bytes cannot go through again, so it leaves with the reason.
+                    uploadTasks[id] = nil
+                    removeAttachment(id)
+                    app.showToast(errorText(error))
                 } catch {
                     outcome = .failed(error.localizedDescription)
                 }
-                if !Task.isCancelled, let index = attachments.firstIndex(where: { $0.id == id }) {
+                if !Task.isCancelled, let outcome, let index = attachments.firstIndex(where: { $0.id == id }) {
                     attachments[index].upload = outcome
                 }
                 uploadTasks[id] = nil
@@ -894,10 +942,13 @@ final class ComposerModel {
 
     /// `POST /api/session/uploadFileBinary?sessionId=&name=` with the raw bytes (the web's
     /// primary upload path); the reply is a bare `{ok, value: {receiptId, file}}` without the RPC envelope.
-    private func upload(_ file: URL, name: String, progress: @escaping @Sendable (Int64, Int64) -> Void) async throws -> String {
+    /// With `mediaType` the Host takes the bytes as a prompt image: it validates, scales down
+    /// and stores it then, and the reply's value carries `image` in place of `file`.
+    private func upload(_ file: URL, name: String, mediaType: String?, progress: @escaping @Sendable (Int64, Int64) -> Void) async throws -> String {
         let client = app.client
         var components = URLComponents(url: client.origin.appendingPathComponent("api/session/uploadFileBinary"), resolvingAgainstBaseURL: false)!
         components.queryItems = [URLQueryItem(name: "sessionId", value: sessionId), URLQueryItem(name: "name", value: name)]
+        if let mediaType { components.queryItems?.append(URLQueryItem(name: "mediaType", value: mediaType)) }
         // URLSearchParams reads `+` as a space.
         components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
         var request = client.request(components.url!)

@@ -65,6 +65,13 @@
   config:
     documentsDirectory: !!js process.env.DSH_IOS_DOCUMENTS
 
+# An image is decoded whole to be checked and again to be scaled down, and the
+# engine lives inside the app's memory limit: a 48 MP photo holds several
+# hundred MB while that happens. One at a time, instead of the default two.
+- id: attachment-local
+  config:
+    imageCompressionConcurrency: 1
+
 # DS Bot is pinned to the version the app is tested with (plugins/ios-host/
 # pins.json), so its own updater is off: no update button, no DSH update offer.
 # The main Bot the plugin creates on a team's first start is named for the app
