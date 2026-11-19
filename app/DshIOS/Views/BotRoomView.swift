@@ -190,8 +190,8 @@ struct BotRoomView: View {
                 team.scheduleRequest = nil
                 Task { try? await Task.sleep(for: .milliseconds(350)); detailOpen = true }
             }
-            .onAppear { app.clearUnread(room.sessionId); team.visibleChat = room.id }
-            .onDisappear { app.clearUnread(room.sessionId); if team.visibleChat == room.id { team.visibleChat = nil } }
+            .onAppear { app.clearUnread(room.sessionId) }
+            .onDisappear { app.clearUnread(room.sessionId) }
         } else if team.status == .unknown {
             ConversationLoading().background(Palette.background)
         } else {
