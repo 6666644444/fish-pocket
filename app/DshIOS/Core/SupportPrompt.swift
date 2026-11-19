@@ -84,6 +84,8 @@ enum AppLinks {
     /// The WeChat group's QR code at the bottom of 设置. It expires every 7 days; the website swaps
     /// the picture at this same path, so the app always shows the current one without an update.
     static let wechatGroupCode = site.appending(path: "wechat-group.png")
+    /// The community's Discord server, at the foot of 设置 next to the WeChat group.
+    static let discord = URL(string: "https://discord.gg/VSzN4jUwWm")!
     /// 本机能力 → 操控其他 App: installing iCTRL (SideStore, iLoader, Developer Mode) and its FAQ.
     /// The page lives on the website so it can follow those tools' releases without an app update.
     /// Chinese at /phone-control/, the site's other languages under their prefix; English for the rest.
