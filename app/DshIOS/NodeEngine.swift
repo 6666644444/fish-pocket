@@ -12,6 +12,9 @@ final class NodeEngine: ObservableObject {
         case starting
         case running(URL, generation: Int)
         case exited(Int32)
+        /// The processor lacks the instructions the engine's prebuilt code uses (see `cpuRunsEngine`),
+        /// so it is not started: starting it would crash the app on launch.
+        case unsupported
     }
 
     static let shared = NodeEngine()
@@ -61,6 +64,10 @@ final class NodeEngine: ObservableObject {
     func start() {
         guard !started else { return }
         started = true
+        guard Self.cpuRunsEngine else {
+            phase = .unsupported
+            return
+        }
         startedAt = Date()
         // 本机能力的预热（目前是电量监测）。放在引擎起来之前：UIKit 刚打开电量监测时
         // 还报不出电量，而智能体问电量通常只问一次。
@@ -131,6 +138,25 @@ final class NodeEngine: ObservableObject {
             }
             try? await Task.sleep(for: .milliseconds(500))
         }
+    }
+
+    /// Whether this processor has the ARMv8.1 atomics (LSE). nodejs-mobile's builtins are
+    /// generated on a Mac, whose compiler has them, so V8 bakes them in with no fallback
+    /// (`CpuFeaturesFromCompiler` in deps/v8/src/codegen/arm64/assembler-arm64.cc). A10 and
+    /// A10X lack them: iPad (6th and 7th generation) and iPad Pro (2nd generation), where the
+    /// engine dies of SIGILL in `Builtins_AtomicsAdd` on its first `process.chdir`.
+    /// A device that answers neither name is taken to have them, so nothing else is shut out.
+    nonisolated static var cpuRunsEngine: Bool {
+        #if DEBUG
+        // UI checks: `simctl launch … -dshSimulateNoLSE 1` shows the screen such a device gets.
+        if UserDefaults.standard.bool(forKey: "dshSimulateNoLSE") { return false }
+        #endif
+        for name in ["hw.optional.arm.FEAT_LSE", "hw.optional.armv8_1_atomics"] {
+            var value: Int32 = 0
+            var size = MemoryLayout<Int32>.size
+            if sysctlbyname(name, &value, &size, nil, 0) == 0 { return value != 0 }
+        }
+        return true
     }
 
     /// node_start needs argv in one contiguous buffer (libuv rewrites it for the process title).
