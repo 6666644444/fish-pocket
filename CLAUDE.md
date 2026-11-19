@@ -215,7 +215,7 @@ iOS 18 起，iPhone、iPhone Duo、iPad 共用一套系统 `TabView`，样式是
 - **文案和给模型的说明里写入口位置时**，写成「探索 → …（iOS 17 的 iPad 上在侧边栏）」。原生拒绝消息（`native/ios-native`）和 ios-environment skill 里用的是英文 "the app's Explore tab (in the sidebar on an iPad before iOS 18)"。
 - **iPhone Duo 开合时 Tab 界面按尺寸重建**（`tabLayout` 上的 `.id(ThisDevice.isDuo ? sizeClass : nil)`）。Duo 展开后，右侧那一列同时放 Tab 栏和导航栏按钮，系统只在 Tab 界面创建时安排这一列：合着启动、再展开，会话一侧的新会话和工作台按钮会丢。重建不丢状态，因为 Tab、各 Tab 的导航路径和当前会话都存在外层。
 - **iPadOS 18 的顶部 Tab 栏会盖住分栏的导航栏**：全宽页面系统会自己把标题挪到第二行，分栏（会话 Tab 的列表和对话）不会，标题、模型选择器、左上角按钮都被挡住。所以 iOS 18–25 的 iPad 上，Tab 栏浮在顶部时会话和 Bot 的分栏整体下移一行（`MainView` 的 `BelowFloatingTabBar`，改的是 UIKit 分栏控制器的安全区，SwiftUI 的 inset、padding 挪不动这层导航栏），切成侧边栏时再收回。iOS 26 起系统自己处理。以后在 Tab 里再放分栏，也要套上它。
-- 窄屏时会话、Bot 聊天、群聊推入后都隐藏 Tab 栏，把底部让给输入框；新的全屏聊天页也照此处理。宽屏的 Tab 栏在顶部或侧边，不用隐藏。
+- 窄屏时会话、Bot 聊天、群聊推入后 Tab 栏照样显示，输入框在它上面，所以聊天页底部不要再放别的东西（「内容由 AI 生成」放在标题下面，Bot 和群聊接在标题第二行后面，见 `AILabelledSubtitle`）。iPhone 上 Tab 栏只显示图标，文字只给读屏用；iPad 保留文字，因为 iPadOS 顶部的 Tab 栏只显示文字。
 
 ## 连接器对谁生效
 

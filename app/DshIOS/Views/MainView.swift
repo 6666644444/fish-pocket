@@ -830,37 +830,37 @@ struct MainView: View {
     // MARK: Tab bar
 
     /// The layout from iOS 18. Where the bar is at the bottom, a conversation, a Bot's chat or a
-    /// group, pushed, hides it: their input sits where it would be.
+    /// group, pushed, keeps it: the input sits above it.
     @available(iOS 18.0, *)
     private var tabLayout: some View {
         TabView(selection: $tab) {
             Tab(value: HomeTab.sessions) {
                 if sessionsSideBySide { sessionsSplit } else { sessionsStack }
             } label: {
-                tabLabel(Text(DrawerView.sessionsTitle), "fp.message", .sessions, custom: true)
+                tabLabel(Text(DrawerView.sessionsTitle), "fp.message", custom: true)
             }
             .badge(badges.waiting)
             Tab(value: HomeTab.bot) {
                 if sessionsSideBySide { botSplit } else { botStack(openDrawer: nil) }
             } label: {
-                tabLabel(Text(verbatim: "Bot"), "face.smiling", .bot, filled: "face.smiling.inverse")
+                tabLabel(Text(verbatim: "Bot"), "face.smiling")
             }
             .badge(badges.botPending)
             // 我的应用: the user's own tools and games, opened as often as a home screen's.
             Tab(value: HomeTab.apps) {
                 NavigationStack { MiniAppsPage(asTab: true) }
             } label: {
-                tabLabel(Text(MiniAppsPage.tabTitle), "square.on.circle", .apps, filled: "square.fill.on.circle.fill")
+                tabLabel(Text(MiniAppsPage.tabTitle), "square.on.circle")
             }
             Tab(value: HomeTab.explore) {
                 ExploreTabView(path: $explorePath)
             } label: {
-                tabLabel(Text("探索"), "square.grid.2x2", .explore)
+                tabLabel(Text("探索"), "square.grid.2x2")
             }
             Tab(value: HomeTab.settings) {
                 SettingsView(asTab: true)
             } label: {
-                tabLabel(Text("设置"), "gearshape", .settings)
+                tabLabel(Text("设置"), "gearshape")
             }
         }
         .tabViewStyle(.sidebarAdaptable)
@@ -878,21 +878,21 @@ struct MainView: View {
     private var phoneTabLayout: some View {
         TabView(selection: $tab) {
             Group { if sessionsSideBySide { sessionsSplit } else { sessionsStack } }
-                .tabItem { tabLabel(Text(DrawerView.sessionsTitle), "fp.message", .sessions, custom: true) }
+                .tabItem { tabLabel(Text(DrawerView.sessionsTitle), "fp.message", custom: true) }
                 .tag(HomeTab.sessions)
                 .badge(badges.waiting)
             Group { if sessionsSideBySide { botSplit } else { botStack(openDrawer: nil) } }
-                .tabItem { tabLabel(Text(verbatim: "Bot"), "face.smiling", .bot, filled: "face.smiling.inverse") }
+                .tabItem { tabLabel(Text(verbatim: "Bot"), "face.smiling") }
                 .tag(HomeTab.bot)
                 .badge(badges.botPending)
             NavigationStack { MiniAppsPage(asTab: true) }
-                .tabItem { tabLabel(Text(MiniAppsPage.tabTitle), "square.on.circle", .apps, filled: "square.fill.on.circle.fill") }
+                .tabItem { tabLabel(Text(MiniAppsPage.tabTitle), "square.on.circle") }
                 .tag(HomeTab.apps)
             ExploreTabView(path: $explorePath)
-                .tabItem { tabLabel(Text("探索"), "square.grid.2x2", .explore) }
+                .tabItem { tabLabel(Text("探索"), "square.grid.2x2") }
                 .tag(HomeTab.explore)
             SettingsView(asTab: true)
-                .tabItem { tabLabel(Text("设置"), "gearshape", .settings) }
+                .tabItem { tabLabel(Text("设置"), "gearshape") }
                 .tag(HomeTab.settings)
         }
     }
@@ -904,7 +904,7 @@ struct MainView: View {
                 .navigationDestination(for: DrawerView.Route.self) { route in
                     switch route {
                     case .archived: drawer(.archived)
-                    case .session(let id): pushedConversation(id).toolbar(.hidden, for: .tabBar)
+                    case .session(let id): pushedConversation(id)
                     }
                 }
         }
@@ -958,14 +958,23 @@ struct MainView: View {
         if windowWidth < 1100 { withAnimation { sessionsColumns = .detailOnly } }
     }
 
-    /// A tab's name and icon: outlined, and filled while it is the one in front. Left alone the
-    /// system fills every icon that has a filled form, so it is told not to. `custom` is one of our
-    /// own symbols in the asset catalog (Symbols, drawn by `scripts/draw-tab-symbols.swift`), which
-    /// follows weight and size like a system one.
-    private func tabLabel(_ title: Text, _ symbol: String, _ value: HomeTab, filled: String? = nil, custom: Bool = false) -> some View {
-        let name = tab == value ? filled ?? "\(symbol).fill" : symbol
-        return Label { title } icon: { custom ? Image(name) : Image(systemName: name) }
-            .environment(\.symbolVariants, .none)
+    /// A tab's icon, outlined whether or not it is the one in front: left alone the system fills
+    /// every icon that has a filled form, so it is told not to. On a phone the bar shows the icon
+    /// alone, the name only to VoiceOver; an iPad keeps the name, which its tab bar at the top and
+    /// its sidebar show as the tab itself. `custom` is one of our own symbols in the asset catalog
+    /// (Symbols, drawn by `scripts/draw-tab-symbols.swift`), which follows weight and size like a
+    /// system one.
+    @ViewBuilder
+    private func tabLabel(_ title: Text, _ symbol: String, custom: Bool = false) -> some View {
+        let icon = (custom ? Image(symbol) : Image(systemName: symbol))
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            icon
+                .environment(\.symbolVariants, .none)
+                .accessibilityLabel(title)
+        } else {
+            Label { title } icon: { icon }
+                .environment(\.symbolVariants, .none)
+        }
     }
 
     /// A conversation on the 会话 tab's stack. Back is the system's; there is no drawer to open.
@@ -1007,7 +1016,7 @@ struct MainView: View {
     /// The Bot list, with a Bot's chat or a group pushed on it.
     private func botStack(openDrawer: (() -> Void)?) -> some View {
         NavigationStack(path: $botPath) {
-            BotHomeView(openDrawer: openDrawer)
+            BotHomeView(openDrawer: openDrawer, open: { botPath = [$0] })
                 .navigationDestination(for: BotRoute.self) { route in
                     botPage(route)
                         // Set here as well: what the split view sets does not reach a pushed page. A pushed
@@ -1016,8 +1025,6 @@ struct MainView: View {
                         .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomForWorkbench, toggle: !usesTabs && layoutWidth == .regular ? hideSidebar : nil))
                         // iPhone Duo open: no inspector on a pushed chat (see `workbenchInSheet`).
                         .environment(\.workbenchInSheet, usesTabs && ThisDevice.isDuo)
-                        // Its input takes the bar's place where the bar is at the bottom.
-                        .toolbar(usesTabs && layoutWidth != .regular ? .hidden : .automatic, for: .tabBar)
                 }
         }
     }
@@ -1026,7 +1033,7 @@ struct MainView: View {
     /// `botPath` is the one picked in the list; what a link pushes from there goes over it.
     private var botSplit: some View {
         NavigationSplitView(columnVisibility: $botColumns) {
-            BotHomeView(openDrawer: nil, selection: Binding(get: { botPath.first }, set: { route in botPath = route.map { [$0] } ?? [] }))
+            BotHomeView(openDrawer: nil, selection: Binding(get: { botPath.first }, set: { route in botPath = route.map { [$0] } ?? [] }), open: { botPath = [$0] })
                 // Widths as the split view's (`split`): a width that follows the fold hangs it.
                 .navigationSplitViewColumnWidth(min: 280, ideal: 320, max: 360)
                 .modifier(SidebarToggle(system: systemSidebarButton))
