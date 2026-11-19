@@ -279,7 +279,9 @@ struct ComposerView: View {
         .task(id: pendingDraft) {
             guard let pendingDraft else { return }
             // The same draft again (小工具's 开始做 tapped twice before sending) is not added twice.
-            if composer.text.isEmpty {
+            if pendingDraft.utf16.count > ComposerModel.longTextLimit {
+                composer.addLongText(pendingDraft)
+            } else if composer.text.isEmpty {
                 composer.text = pendingDraft
             } else if !composer.text.contains(pendingDraft) {
                 composer.text += "\n" + pendingDraft
@@ -454,7 +456,7 @@ struct ComposerView: View {
             .font(.body)
             .lineLimit(1...5)
             .focused($focused)
-            .pastesImages(focused: focused, into: composer)
+            .pastesAttachments(focused: focused, into: composer)
             .inkTint()
             .padding(.trailing, tall ? 30 : 0)
             .onGeometryChange(for: Bool.self) { $0.size.height > threeLines } action: { tall = $0 }
@@ -943,7 +945,7 @@ private struct DraftEditor: View {
                     .font(.body)
                     .inkTint()
                     .focused($focused)
-                    .pastesImages(focused: focused, into: composer)
+                    .pastesAttachments(focused: focused, into: composer)
                     .padding(.horizontal, 12)
                     .scrollContentBackground(.hidden)
             }
