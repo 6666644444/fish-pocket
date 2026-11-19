@@ -17,6 +17,7 @@ import { writeFileAtomic } from '@deepseek-ai/dsh-atomic-write';
 import { parseDocument } from 'yaml';
 import { pinFor, pinRefusal } from './pins.mjs';
 import { enableBuiltins } from './builtins.mjs';
+import { watchStartup } from './startup.mjs';
 
 /**
  * Debounced restart request: waits `settleMs` so the change's RPC answer
@@ -72,6 +73,8 @@ export default class IosHost {
   static inject = ['pluginManager', 'agents'];
 
   constructor(ctx) {
+    // The launch screen says when only the user's own plugins are left (startup.mjs).
+    ctx.effect(() => watchStartup(ctx), 'ios-host start-up progress');
     ctx.effect(() => {
       const manager = ctx.pluginManager;
       const change = manager.change;

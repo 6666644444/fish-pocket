@@ -162,7 +162,10 @@ final class NodeEngine: ObservableObject {
                Date().timeIntervalSince(startedAt) > Self.stallAfter || recovery?.state == .failed {
                 if !stalled { stalled = true }
             }
-            try? await Task.sleep(for: .milliseconds(500))
+            // The launch screen is up until the URL comes: look often then. Once running,
+            // this only notices an engine restart, which can wait half a second.
+            let starting = if case .starting = phase { true } else { false }
+            try? await Task.sleep(for: .milliseconds(starting ? 100 : 500))
         }
     }
 
@@ -263,6 +266,9 @@ struct RecoveryState: Decodable, Equatable {
     }
 
     let state: Phase
+    /// While starting: the engine is up and only third-party plugins are still loading
+    /// (engine/plugins/ios-host/startup.mjs). Absent from an engine that predates it.
+    let thirdPartyStarting: Bool?
     let action: Action?
     let checkpoint: Checkpoint?
     /// The settings files, relative to `~/.dsh`.

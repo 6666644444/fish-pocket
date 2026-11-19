@@ -111564,6 +111564,40 @@
         }
       }
     },
+    "正在加载第三方插件…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading third-party plugins…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cargando complementos de terceros…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サードパーティ製プラグインを読み込み中…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "서드파티 플러그인을 불러오는 중…"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在載入第三方外掛…"
+          }
+        }
+      }
+    },
     "没有可停用的第三方插件，引擎还是没起来。" : {
       "localizations" : {
         "en" : {
