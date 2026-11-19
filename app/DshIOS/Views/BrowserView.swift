@@ -423,7 +423,10 @@ extension BrowserPage: WKNavigationDelegate, WKUIDelegate {
     func webView(_ webView: WKWebView, navigationResponse: WKNavigationResponse, didBecome download: WKDownload) {
         download.delegate = self
     }
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) { sendEffects() }
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        sendEffects()
+        looksChanged()
+    }
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) { failed(error) }
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) { failed(error) }
 

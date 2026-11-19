@@ -21,6 +21,8 @@ final class BrowserModel {
         fileprivate var savedTitle: String?
         /// When it was last in front or used by the agent, to choose which page to let go.
         fileprivate var used = Date()
+        /// How its page looked when the chat last drew it in small (`BrowserThumbnail.swift`).
+        var thumbnail: UIImage?
 
         fileprivate init(id: String) { self.id = id }
 
@@ -56,6 +58,14 @@ final class BrowserModel {
     @ObservationIgnored private let storageKey: String
     @ObservationIgnored private var restorableSelected = 0
     @ObservationIgnored private var nextId = 1
+    /// The chat's small picture of the tab in front (`BrowserThumbnail.swift`): how many chats show
+    /// it, what takes one every few seconds while they do, the one picture being taken, whether the
+    /// page changed since, and when the last was taken.
+    @ObservationIgnored var thumbnailWatchers = 0
+    @ObservationIgnored var thumbnailTicker: Task<Void, Never>?
+    @ObservationIgnored var thumbnailTask: Task<Void, Never>?
+    @ObservationIgnored var thumbnailDue = false
+    @ObservationIgnored var thumbnailTaken = Date.distantPast
 
     var selected: Tab? { tabs.first { $0.id == selectedId } }
     /// The address of the tab in front.
