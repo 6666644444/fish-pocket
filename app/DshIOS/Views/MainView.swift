@@ -344,6 +344,7 @@ struct MainView: View {
         }
         // Reading aloud belongs to the conversation on screen: moving to another one stops it.
         .onChange(of: onScreen, initial: true) { _, session in ReadAloud.shared.scope = session }
+        .onChange(of: shownBotChat, initial: true) { _, chat in app.botTeam.visibleChat = chat }
         .onChange(of: selection) { _, id in
             app.currentSession = shownSession
             if usesTabs {
@@ -986,6 +987,17 @@ struct MainView: View {
         case .bot(let id): return app.botTeam.bot(id)?.sessionId ?? "bot:\(id)"
         case .room(let id): return app.botTeam.room(id)?.sessionId ?? "room:\(id)"
         case nil: return "bots"
+        }
+    }
+
+    /// The Bot's chat or the group on screen (`BotModel.visibleChat`). Kept from here, as
+    /// `currentSession` is, and not by the pages as they come and go: opening an iPhone Duo
+    /// rebuilds them, and what they kept was lost on the way.
+    private var shownBotChat: String? {
+        guard botOpen else { return nil }
+        switch botPath.last {
+        case .bot(let id)?, .room(let id)?: return id
+        case nil: return nil
         }
     }
 
