@@ -418,9 +418,11 @@ final class AppModel {
     }
 
     /// A turn that ends while its session is not open leaves a completion reminder (`ui-session`).
+    /// A Bot's chat or a group on screen is open too: beside the Bot list, the reminder would
+    /// show on the row of the chat being read.
     private func observeRunning(_ id: String, from old: Bool, to running: Bool) {
         if running { completionUnread.remove(id) }
-        else if old && id != currentSession { completionUnread.insert(id) }
+        else if old && id != currentSession && id != botTeam.visibleSession { completionUnread.insert(id) }
     }
 
     /// One shared `schedule/catalog` read for the drawer and settings counts, the row clock
