@@ -3,10 +3,11 @@ import WatchConnectivity
 
 /// The 探索 tab: what the agent can be given beyond a conversation of its own — plugins,
 /// connectors, this device's capabilities, phone control — then the other devices (the computers
-/// of remote control, Apple Watch), the web version and sharing the app. On an iPad before iOS 18
-/// these are rows of the sidebar, and Apple Watch and sharing stay in 设置.
+/// of remote control, Apple Watch), the web version and sharing the app, and 设置 behind the gear
+/// at its top. On an iPad before iOS 18 these are rows of the sidebar, Apple Watch and sharing
+/// stay in 设置, and 设置 is a sheet.
 struct ExploreTabView: View {
-    enum Route: Hashable { case plugins, connectors, capabilities, phoneControl, remote, watch, share }
+    enum Route: Hashable { case plugins, connectors, capabilities, phoneControl, remote, watch, share, settings }
 
     @Environment(AppModel.self) private var app
     @Environment(\.scenePhase) private var scenePhase
@@ -18,19 +19,19 @@ struct ExploreTabView: View {
         NavigationStack(path: $path) {
             List {
                 Section {
-                    row(.plugins, "插件", "puzzlepiece.extension", "安装和管理插件")
-                    row(.connectors, "连接器", "point.3.connected.trianglepath.dotted", "接入 GitHub、Notion 等外部服务", status: connectorStatus)
-                    row(.capabilities, "本机能力", "iphone", "日历、健康、照片等本机数据和功能")
-                    row(.phoneControl, "操控手机", "hand.tap", "让智能体点按其他 App", status: phoneControl.state == .running ? String(localized: "运行中") : nil,
+                    row(.plugins, "插件", .plugins, "安装和管理插件")
+                    row(.connectors, "连接器", .connectors, "接入 GitHub、Notion 等外部服务", status: connectorStatus)
+                    row(.capabilities, "本机能力", .capabilities, "日历、健康、照片等本机数据和功能")
+                    row(.phoneControl, "操控手机", .phoneControl, "让智能体点按其他 App", status: phoneControl.state == .running ? String(localized: "运行中") : nil,
                         live: phoneControl.state == .running)
                 } header: {
                     Text("扩展智能体")
                 }
                 Section {
-                    row(.remote, "远程控制", "laptopcomputer.and.iphone", "在手机上管电脑里的智能体", status: remoteStatus,
+                    row(.remote, "远程控制", .remote, "在手机上管电脑里的智能体", status: remoteStatus,
                         warns: app.remote.expired)
                     if WCSession.isSupported() {
-                        row(.watch, "Apple Watch", "applewatch", "在手腕上看会话、做确认",
+                        row(.watch, "Apple Watch", .watch, "在手腕上看会话、做确认",
                             status: watch == .installed ? String(localized: "已安装") : nil)
                     }
                 } header: {
@@ -39,16 +40,24 @@ struct ExploreTabView: View {
                 Section {
                     // Opens over everything: the mark of the links that leave the page.
                     Button { Haptics.tap(); app.webRequest = UUID() } label: {
-                        label("网页版", "globe", "插件自带的界面在这里打开") {
+                        label("网页版", .web, "插件自带的界面在这里打开") {
                             Image(systemName: "arrow.up.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary)
                         }
                     }
                     .foregroundStyle(Palette.ink)
-                    row(.share, "分享 Fish Pocket", "square.and.arrow.up", "海报、二维码或链接")
+                    row(.share, "分享 Fish Pocket", .share, "海报、二维码或链接")
                 }
             }
             .navigationTitle("探索")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink(value: Route.settings) {
+                        Image(systemName: "gearshape")
+                    }
+                    .accessibilityLabel("设置")
+                }
+            }
             .navigationDestination(for: Route.self) { route in
                 switch route {
                 case .plugins: PluginStoreView()
@@ -58,6 +67,7 @@ struct ExploreTabView: View {
                 case .remote: RemoteControlPage().environment(\.systemLists, true)
                 case .watch: WatchSetupPage()
                 case .share: ShareAppPage()
+                case .settings: SettingsView(pushed: true)
                 }
             }
             // The rows say whether iCTRL runs and whether the watch has the app; both change while
@@ -70,6 +80,10 @@ struct ExploreTabView: View {
                 Task { await phoneControl.refresh() }
             }
         }
+        // 设置 and the pages pushed from it wear the settings look, which a page takes from the
+        // stack it is in: on while 设置 is what this one shows. The other pages keep their own.
+        .environment(\.systemLists, path.first == .settings)
+        .inkTint()
     }
 
     /// Once signed in: computers online, offline, or the sign-in to renew. Before, the line under
@@ -85,7 +99,7 @@ struct ExploreTabView: View {
         return connected > 0 ? String(localized: "\(connected) 个已连接") : nil
     }
 
-    private func row(_ route: Route, _ title: LocalizedStringKey, _ icon: String, _ detail: LocalizedStringKey,
+    private func row(_ route: Route, _ title: LocalizedStringKey, _ icon: ExploreGlyph.Kind, _ detail: LocalizedStringKey,
                      status: String? = nil, warns: Bool = false, live: Bool = false) -> some View {
         NavigationLink(value: route) {
             label(title, icon, detail) {
@@ -102,16 +116,11 @@ struct ExploreTabView: View {
         }
     }
 
-    /// An icon on an ink tile, the name and a line on what it is for, and what it says on the right.
-    private func label(_ title: LocalizedStringKey, _ icon: String, _ detail: LocalizedStringKey,
+    /// The entry's drawn icon, the name and a line on what it is for, and what it says on the right.
+    private func label(_ title: LocalizedStringKey, _ icon: ExploreGlyph.Kind, _ detail: LocalizedStringKey,
                        @ViewBuilder trailing: () -> some View) -> some View {
         HStack(spacing: 14) {
-            Image(systemName: icon)
-                .font(.system(size: 17, weight: .medium))
-                .foregroundStyle(Palette.onInk)
-                .frame(width: 38, height: 38)
-                .background(Palette.ink, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                .accessibilityHidden(true)
+            ExploreGlyph(kind: icon)
             VStack(alignment: .leading, spacing: 3) {
                 Text(title).font(.body).foregroundStyle(Palette.ink)
                 Text(detail).font(.footnote).foregroundStyle(Palette.secondary).lineLimit(2)

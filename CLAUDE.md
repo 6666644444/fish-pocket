@@ -208,7 +208,7 @@ Bot 没有照片时显示的角色是 App 自己画的，形状和动作都写�
 
 ## 首页布局：系统的自适应 Tab
 
-iOS 18 起，iPhone、iPhone Duo、iPad 共用一套系统 `TabView`，样式是 `sidebarAdaptable`（`MainView.tabLayout`）：「会话 · Bot · 小工具 · 探索 · 设置」五个 Tab，窄屏在底部，宽屏由系统放到顶部或换成侧边栏，Duo 展开时是右侧的竖条。宽窄切换（Duo 开合、iPad 拖窗口）不换布局，Tab 保持不变。iOS 17 的 iPhone 用同样五个 Tab，只是换成旧写法（`TabView` 加 `.tabItem`，`MainView.phoneTabLayout`），Tab 栏始终在底部，页面和行为与 iOS 18 起的一致。iOS 17 的 iPad 仍是旧布局：常驻侧边栏，窄窗口是抽屉（`DrawerView` 的 `sidebar` 样式，`MainView.split` / `drawerLayout`）；旧写法的 Tab 栏在 iPad 上也只能放底部，所以没改。iPhone Duo 只有 iOS 27，不涉及旧版本。
+iOS 18 起，iPhone、iPhone Duo、iPad 共用一套系统 `TabView`，样式是 `sidebarAdaptable`（`MainView.tabLayout`）：「会话 · Bot · 小工具 · 探索」四个 Tab，设置是探索页的一页，从它右上角的齿轮进入（`SettingsView(pushed: true)`），窄屏在底部，宽屏由系统放到顶部或换成侧边栏，Duo 展开时是右侧的竖条。宽窄切换（Duo 开合、iPad 拖窗口）不换布局，Tab 保持不变。iOS 17 的 iPhone 用同样四个 Tab，只是换成旧写法（`TabView` 加 `.tabItem`，`MainView.phoneTabLayout`），Tab 栏始终在底部，页面和行为与 iOS 18 起的一致。iOS 17 的 iPad 仍是旧布局：常驻侧边栏，窄窗口是抽屉（`DrawerView` 的 `sidebar` 样式，`MainView.split` / `drawerLayout`）；旧写法的 Tab 栏在 iPad 上也只能放底部，所以没改。iPhone Duo 只有 iOS 27，不涉及旧版本。
 
 - **会话 Tab**：窄屏是列表，点开会话推入新页面；宽屏是列表和会话并排的分栏（`sessionsSplit`），没有选中时自动开一个空白会话，和旧分栏一样。这层分栏照旧分栏的规矩：列宽固定、从 27.1 起保留系统侧栏按钮（`systemSidebarButton`，否则 Duo 会卡死）、Duo 半开时避开折痕（`PastTheFold`）。
 - **新增一个全局入口**（像插件、连接器、本机能力、操控手机、远程控制、网页版这类），要同时加到 `ExploreTabView` 和 `DrawerView` 侧边栏的那几行里：后者是 iOS 17 上 iPad 的入口，漏了 iOS 17 的 iPad 用户就找不到。
