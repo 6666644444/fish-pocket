@@ -132,6 +132,9 @@ struct RootView: View {
             if engine.stalled {
                 EngineTrouble(headline: String(localized: "引擎还没起来"), since: engine.startedAt, logFile: engine.logFile,
                               repair: engine)
+            } else if engine.recovery?.thirdPartyStarting == true {
+                // The rest of the wait is the user's own plugins, not the app.
+                StartupView(message: String(localized: "正在加载第三方插件…"))
             } else {
                 StartupView(message: String(localized: "正在启动 DSH 引擎…"))
             }

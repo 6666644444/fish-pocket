@@ -72,6 +72,8 @@ const checkpointDir = path.join(data, 'last-good');
 const backupRoot = path.join(data, 'recovery');
 /** `starting` until the URL is out; `failed` once restarting has stopped. */
 let phase = 'starting';
+/** While starting: the engine is up and only third-party plugins are still loading. */
+let thirdPartyStarting = false;
 /** The last recovery request carried out, so the app can tell its own from an old one. */
 let lastAction;
 const log = fs.createWriteStream(path.join(data, 'engine.log'), { flags: 'a', mode: 0o600 });
@@ -126,6 +128,7 @@ function start() {
   fs.rmSync(urlFile, { force: true });
   published = false;
   phase = 'starting';
+  thirdPartyStarting = false;
   void publishState();
   const startedAt = Date.now();
   engine = new Worker(new URL('./boot.mjs', import.meta.url), {
@@ -136,6 +139,12 @@ function start() {
   });
   engine.on('message', (message) => {
     if (message?.type === 'dsh-ios/restart') void restart(message.reason);
+    // plugins/ios-host/startup.mjs: what is left of start-up is the user's own plugins.
+    if (message?.type === 'dsh-ios/plugins-starting' && phase === 'starting' && !published) {
+      console.log(`[dsh-ios] engine up; waiting on third-party plugins: ${message.plugins.join(', ')}`);
+      thirdPartyStarting = true;
+      void publishState();
+    }
   });
   engine.on('error', (error) => console.error('[dsh-ios] engine error', error));
   engine.on('exit', (code) => {
@@ -177,6 +186,7 @@ function publishState() {
       const running = phase === 'running';
       const state = {
         state: phase,
+        thirdPartyStarting: phase === 'starting' && thirdPartyStarting,
         action: lastAction,
         checkpoint: running ? undefined : await checkpointChanges(dirs.DSH_HOME, checkpointDir).catch(() => null),
         files: running ? [] : await settingsFiles(dirs.DSH_HOME).catch(() => []),
