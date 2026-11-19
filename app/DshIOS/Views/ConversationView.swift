@@ -46,6 +46,7 @@ struct ConversationView: View {
     @State private var detail: TimelineDetail?
     @State private var actionsBox = ConversationActions.Box()
     @State private var scrollBox = TimelineScroll.Box()
+    @State private var workbenchCommandsBox = WorkbenchCommands.Box()
     /// Approvals seen since none were waiting, for the 「1/3」 of the sheet.
     @State private var approvalBatch: Set<String> = []
     @State private var keyboardUp = false
@@ -301,9 +302,7 @@ struct ConversationView: View {
         }
         .modifier(ComposerDrop(composer: model.composer, enabled: model.subagentReadOnly(parentAvailable: parentAvailable(model)) == nil))
         // Under the toolbar: what is inside an inspector's main view does not reach the navigation bar.
-        .modifier(WorkbenchBeside(shown: workbenchShown(workbenchBeside), regular: workbenchBeside, inspector: !workbenchInSheet) {
-            workbenchPage(model)
-        })
+        .modifier(WorkbenchBeside(model: model, open: $workbenchOpen, tab: $workbenchTab, regular: workbenchBeside, inspector: !workbenchInSheet))
         // It names the window in the iPad app switcher. Not drawn while the title is the principal
         // item; with the title moved aside for the workbench it would show as a second one.
         .modifier(WindowTitle(sessionId: sessionId, hidden: titleBesideWorkbench))
@@ -389,7 +388,7 @@ struct ConversationView: View {
         )))
         // Over the conversation on a phone, beside it where there is room.
         .sheet(isPresented: workbenchShown(!workbenchBeside)) {
-            workbenchPage(model)
+            WorkbenchView(model: model, tab: $workbenchTab) { workbenchOpen = false }
                 .presentationDetents([.large])
                 .presentationCornerRadius(36)
                 // A pull over the terminal is meant for its scrollback; ✕ closes the sheet.
@@ -399,7 +398,7 @@ struct ConversationView: View {
             if let fullBrowser { FullScreenBrowser(model: fullBrowser) { self.fullBrowser = nil } }
         }
         .onChange(of: workbenchOpen) { _, open in if open, workbenchBeside { splitSidebar.makeRoom() } }
-        .focusedSceneValue(\.workbenchCommands, WorkbenchCommands(available: !blank && hasTools, toggle: toggleWorkbench, open: openWorkbench))
+        .focusedSceneValue(\.workbenchCommands, WorkbenchCommands(workbenchCommandsBox, available: !blank && hasTools, toggle: toggleWorkbench, open: openWorkbench))
         // The sheet leaves the background live, so the composer keeps its focus and the
         // keyboard would stay over the sheet; an answer comes first.
         .onChange(of: presentedInteractionId(model)) { _, id in if id != nil { dismissKeyboard() } }
@@ -491,10 +490,6 @@ struct ConversationView: View {
     /// One state, shown in whichever place the width calls for.
     private func workbenchShown(_ here: Bool) -> Binding<Bool> {
         Binding(get: { here && workbenchOpen }, set: { if !$0 { workbenchOpen = false } })
-    }
-
-    private func workbenchPage(_ model: SessionModel) -> some View {
-        WorkbenchView(model: model, tab: $workbenchTab) { workbenchOpen = false }
     }
 
     /// Quoting puts text in the draft (`MessageQuotes`): not offered where there is no input.
@@ -1913,33 +1908,44 @@ struct SplitSidebar: Equatable {
 
 /// The workbench beside the conversation. From iPadOS 26 on, an inspector. Before that an inspector
 /// on an upright iPad is laid over the conversation, dimmed under it, so there it is a column of its own.
-private struct WorkbenchBeside<Page: View>: ViewModifier {
-    @Binding var shown: Bool
+///
+/// Given the conversation's state and not a page built by it: built there, the page (its
+/// closures) was a new one on every pass of the conversation's body, and the inspector was set
+/// again each time. On iPadOS 26 that makes a sheet up from the list beside the conversation
+/// over again, as a focused value that changes does before it (`WorkbenchCommands.Box`).
+private struct WorkbenchBeside: ViewModifier {
+    let model: SessionModel
+    @Binding var open: Bool
+    @Binding var tab: WorkbenchTab
+    /// There is room for it beside the conversation; where there is not, it is the conversation's sheet.
     let regular: Bool
     /// iOS 26's inspector, unless the page is pushed where one breaks the push (`workbenchInSheet`).
     var inspector = true
-    @ViewBuilder let page: () -> Page
 
     func body(content: Content) -> some View {
         if #available(iOS 26.0, *), inspector {
-            content.inspector(isPresented: $shown) {
+            content.inspector(isPresented: Binding(get: { regular && open }, set: { if !$0 { open = false } })) {
                 // Only where it is shown: on a phone this content stays built while closed, and its
                 // toolbar lands in the conversation's bar.
-                if regular { page().inspectorColumnWidth(min: 320, ideal: 420, max: 640) }
+                if regular { page.inspectorColumnWidth(min: 320, ideal: 420, max: 640) }
             }
         } else {
             HStack(spacing: 0) {
                 content
-                if shown && regular {
+                if open && regular {
                     HStack(spacing: 0) {
                         Divider()
-                        page().frame(width: 420)
+                        page.frame(width: 420)
                     }
                     .transition(.move(edge: .trailing))
                 }
             }
-            .animation(.snappy(duration: 0.3), value: shown && regular)
+            .animation(.snappy(duration: 0.3), value: open && regular)
         }
+    }
+
+    private var page: some View {
+        WorkbenchView(model: model, tab: $tab, beside: true) { open = false }
     }
 }
 

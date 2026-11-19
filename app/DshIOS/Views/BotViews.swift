@@ -424,10 +424,7 @@ struct BotHomeView: View {
     }
 
     private var list: some View {
-        Group {
-            // Beside the chat (`selection`), a row picks what the chat column shows; on its own, it pushes.
-            if let selection { List(selection: selection) { rows } } else { List { rows } }
-        }
+        List { rows }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .tabBarEdgeSoftened()
@@ -548,7 +545,7 @@ struct BotHomeView: View {
         }
         if !botList.isEmpty { Section {
             ForEach(botList) { bot in
-                NavigationLink(value: BotRoute.bot(bot.id)) { botRow(bot) }
+                row(.bot(bot.id)) { botRow(bot) }
                 // Only a left swipe: a right swipe is the one that opens the sidebar.
                 .swipeActions(edge: .trailing) {
                     if !team.isMain(bot) { hideButton(bot.id, hidden: bot.hidden) }
@@ -560,12 +557,13 @@ struct BotHomeView: View {
                     if !team.isMain(bot) { hideButton(bot.id, hidden: bot.hidden) }
                     sessionButtons(bot.sessionId)
                 }
+                .listRowBackground(pickedFill(.bot(bot.id)))
             }
         } header: { Text("Bot") } }
         if !roomList.isEmpty {
             Section {
                 ForEach(roomList) { room in
-                    NavigationLink(value: BotRoute.room(room.id)) { roomRow(room) }
+                    row(.room(room.id)) { roomRow(room) }
                     .swipeActions(edge: .trailing) {
                         hideButton(room.id, hidden: room.hidden)
                         pinButton(room.id, pinned: room.pinned)
@@ -575,6 +573,7 @@ struct BotHomeView: View {
                         hideButton(room.id, hidden: room.hidden)
                         sessionButtons(room.sessionId)
                     }
+                    .listRowBackground(pickedFill(.room(room.id)))
                 }
             } header: { Text("群聊") }
         }
@@ -630,6 +629,29 @@ struct BotHomeView: View {
             }
         }
         .contentShape(Rectangle())
+    }
+
+    /// A row of the list. On its own it pushes its chat. Beside the chat (`selection`) it picks
+    /// what the chat column shows, as a button and not through the list's own selection: the
+    /// list marks its picked row in the tint once it has the focus (the tab come back to), and
+    /// the tint is the ink the names are written in: a white row in the dark, its name gone.
+    @ViewBuilder
+    private func row<Label: View>(_ route: BotRoute, @ViewBuilder label: () -> Label) -> some View {
+        if let selection {
+            Button { selection.wrappedValue = route } label: {
+                label().frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityAddTraits(selection.wrappedValue == route ? .isSelected : [])
+        } else {
+            NavigationLink(value: route, label: label)
+        }
+    }
+
+    /// The fill of the row whose chat is beside the list; the list's own (nil) on the others,
+    /// and where rows push.
+    private func pickedFill(_ route: BotRoute) -> Color? {
+        selection?.wrappedValue == route ? Palette.bubble : nil
     }
 
     @ViewBuilder

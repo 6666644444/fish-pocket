@@ -21,6 +21,11 @@ struct WorkbenchView: View {
     let model: SessionModel
     /// Kept by the conversation, which can also ask for a tab while this is open.
     @Binding var tab: WorkbenchTab
+    /// Beside the conversation, so inside its navigation stack: the pages here push on that
+    /// stack and make none of their own. A stack inside another's page is taken into the outer
+    /// one, its path with it: under the Bot pages' typed path the app then ends the next time
+    /// that path changes (`AnyNavigationPath.Error.comparisonTypeMismatch`).
+    var beside = false
     let close: () -> Void
     @Environment(AppModel.self) private var app
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -60,9 +65,9 @@ struct WorkbenchView: View {
             tabs
             ZStack {
                 page(.terminal) { WorkbenchTerminal(sessionId: model.sessionId) }
-                page(.files) { WorkbenchFiles(model: model) }
+                page(.files) { WorkbenchFiles(model: model, beside: beside) }
                 page(.browser) { if let browser { WorkbenchBrowser(model: browser) } }
-                page(.changes) { WorkbenchChanges(model: model) }
+                page(.changes) { WorkbenchChanges(model: model, beside: beside) }
                 page(.context) { WorkbenchContext(model: model, close: close) }
             }
         }
@@ -401,19 +406,30 @@ private struct TerminalKeyBar<Menu: View>: View {
 
 private struct WorkbenchFiles: View {
     let model: SessionModel
+    /// On the conversation's stack, with no stack of its own (`WorkbenchView.beside`).
+    let beside: Bool
 
     var body: some View {
-        NavigationStack {
-            DirectoryView(
-                sessionId: model.sessionId,
-                path: ".",
+        if beside {
+            // No title of its own: the bar is the conversation's, which shows none beside the workbench.
+            root(title: "")
+        } else {
+            NavigationStack {
                 // This title reaches the sheet's bar; the folder is named by the path under the tabs.
-                title: String(localized: "工作台"),
-                root: model.workingDirectory,
-                modified: Set(FileChange.collect(model.items.allBlocks, root: model.workingDirectory).map(\.path))
-            )
-            .toolbar(.hidden, for: .navigationBar)
+                root(title: String(localized: "工作台"))
+                    .toolbar(.hidden, for: .navigationBar)
+            }
         }
+    }
+
+    private func root(title: String) -> some View {
+        DirectoryView(
+            sessionId: model.sessionId,
+            path: ".",
+            title: title,
+            root: model.workingDirectory,
+            modified: Set(FileChange.collect(model.items.allBlocks, root: model.workingDirectory).map(\.path))
+        )
     }
 }
 
@@ -423,37 +439,44 @@ private struct WorkbenchFiles: View {
 /// whole file is one step further. Built from the tool calls in the timeline.
 private struct WorkbenchChanges: View {
     let model: SessionModel
+    /// On the conversation's stack, with no stack of its own (`WorkbenchView.beside`).
+    let beside: Bool
 
     var body: some View {
+        if beside {
+            list
+        } else {
+            NavigationStack { list.toolbar(.hidden, for: .navigationBar) }
+        }
+    }
+
+    @ViewBuilder
+    private var list: some View {
         let changes = FileChange.collect(model.items.allBlocks, root: model.workingDirectory)
-        NavigationStack {
-            Group {
-                if changes.isEmpty {
-                    ContentUnavailableView("还没有改动", systemImage: "doc.text.magnifyingglass", description: Text("智能体改过的文件会显示在这里。"))
-                } else {
-                    List {
-                        Section {
-                            ForEach(changes) { change in
-                                NavigationLink(value: change.path) { ChangedFileRow(change: change) }
-                                    .contextMenu {
-                                        Button { copyToPasteboard(change.path) } label: { Label("复制路径", systemImage: "doc.on.doc") }
-                                    }
+        if changes.isEmpty {
+            ContentUnavailableView("还没有改动", systemImage: "doc.text.magnifyingglass", description: Text("智能体改过的文件会显示在这里。"))
+        } else {
+            List {
+                Section {
+                    ForEach(changes) { change in
+                        // The page itself, not a value for the stack to look up: beside the
+                        // conversation the stack is the Bot pages', whose path takes only their routes.
+                        NavigationLink { FileDiffPage(model: model, path: change.path) } label: { ChangedFileRow(change: change) }
+                            .contextMenu {
+                                Button { copyToPasteboard(change.path) } label: { Label("复制路径", systemImage: "doc.on.doc") }
                             }
-                        } header: {
-                            HStack(spacing: 8) {
-                                Text("\(changes.count) 个文件")
-                                ChangeCounts(added: changes.reduce(0) { $0 + $1.added }, removed: changes.reduce(0) { $0 + $1.removed })
-                            }
-                            .font(.footnote)
-                            .textCase(nil)
-                        }
-                        .groupedRow()
                     }
-                    .groupedList()
+                } header: {
+                    HStack(spacing: 8) {
+                        Text("\(changes.count) 个文件")
+                        ChangeCounts(added: changes.reduce(0) { $0 + $1.added }, removed: changes.reduce(0) { $0 + $1.removed })
+                    }
+                    .font(.footnote)
+                    .textCase(nil)
                 }
+                .groupedRow()
             }
-            .toolbar(.hidden, for: .navigationBar)
-            .navigationDestination(for: String.self) { path in FileDiffPage(model: model, path: path) }
+            .groupedList()
         }
     }
 }
