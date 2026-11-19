@@ -588,6 +588,7 @@ private struct EngineCard: View {
         case .starting: String(localized: "引擎启动中")
         case .running: String(localized: "引擎运行中")
         case .exited(let code): String(localized: "引擎已退出（\(code)）")
+        case .unsupported: String(localized: "这台设备运行不了引擎")
         }
     }
 

@@ -632,6 +632,7 @@ struct DrawerView: View {
         case .starting: String(localized: "引擎启动中")
         case .running: nil
         case .exited(let code): String(localized: "引擎已退出（\(code)）")
+        case .unsupported: String(localized: "这台设备运行不了引擎")
         }
     }
 

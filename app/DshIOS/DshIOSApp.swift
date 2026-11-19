@@ -147,7 +147,34 @@ struct RootView: View {
             .task(id: current) { await connection.connect(to: url, generation: current) }
         case .exited(let code):
             EngineTrouble(headline: String(localized: "引擎已退出（\(code)）"), since: nil, logFile: engine.logFile)
+        case .unsupported:
+            UnsupportedDevice()
         }
+    }
+}
+
+/// A processor the engine cannot run on (`NodeEngine.cpuRunsEngine`). Everything in the
+/// app goes through the engine, so this is all there is: it says why, rather than the
+/// app closing at once as it did before.
+private struct UnsupportedDevice: View {
+    var body: some View {
+        VStack(spacing: 20) {
+            Image("LaunchMark").accessibilityHidden(true)
+            VStack(spacing: 10) {
+                Text("这台设备暂时用不了 Fish Pocket")
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(Palette.ink)
+                Text("Fish Pocket 的引擎要用到处理器的一组指令，A10 系列芯片的设备没有，比如 iPad（第 6、7 代）和 iPad Pro（第 2 代）。引擎在这类设备上一启动就会闪退，所以这次没有启动它。")
+                Text("我们正在想办法让这类设备也能用，有进展会在后续版本里更新。")
+            }
+            .font(.subheadline)
+            .foregroundStyle(Palette.secondary)
+            .multilineTextAlignment(.center)
+        }
+        .padding(32)
+        .readableWidth()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Palette.background.ignoresSafeArea())
     }
 }
 

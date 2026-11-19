@@ -5631,6 +5631,40 @@
         }
       }
     },
+    "Fish Pocket 的引擎要用到处理器的一组指令，A10 系列芯片的设备没有，比如 iPad（第 6、7 代）和 iPad Pro（第 2 代）。引擎在这类设备上一启动就会闪退，所以这次没有启动它。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket's engine relies on a set of processor instructions that devices with A10-series chips don't have, such as iPad (6th and 7th generation) and iPad Pro (2nd generation). On these devices the engine crashes as soon as it starts, so it wasn't started this time."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El motor de Fish Pocket usa un conjunto de instrucciones del procesador que no tienen los dispositivos con chips de la serie A10, como el iPad (6.ª y 7.ª generación) y el iPad Pro (2.ª generación). En estos dispositivos el motor se cierra en cuanto arranca, así que esta vez no se inició."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket のエンジンは、A10 シリーズのチップを搭載したデバイス（iPad（第6・7世代）や iPad Pro（第2世代）など）にはないプロセッサ命令を使います。こうしたデバイスではエンジンが起動した直後に落ちてしまうため、今回は起動していません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket의 엔진은 A10 시리즈 칩을 탑재한 기기에는 없는 프로세서 명령어를 사용합니다. iPad(6·7세대)와 iPad Pro(2세대) 등이 여기에 해당합니다. 이런 기기에서는 엔진이 시작하자마자 종료되므로 이번에는 엔진을 시작하지 않았습니다."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket 的引擎需要用到處理器的一組指令，搭載 A10 系列晶片的裝置沒有這組指令，例如 iPad（第 6、7 代）和 iPad Pro（第 2 代）。引擎在這類裝置上一啟動就會閃退，所以這次沒有啟動它。"
+          }
+        }
+      }
+    },
     "TestFlight 版" : {
       "localizations" : {
         "en" : {
@@ -7436,6 +7470,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "怎麼安裝"
+          }
+        }
+      }
+    },
+    "我们正在想办法让这类设备也能用，有进展会在后续版本里更新。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We're working on support for these devices and will bring any progress in a future update."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estamos trabajando para que también funcione en estos dispositivos; cualquier avance llegará en una próxima actualización."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "こうしたデバイスでも使えるよう取り組んでいます。進展があれば今後のアップデートでお届けします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이런 기기에서도 사용할 수 있도록 방법을 찾고 있으며, 진전이 있으면 이후 업데이트에 반영하겠습니다."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我們正在想辦法讓這類裝置也能使用，有進展會在之後的版本中更新。"
           }
         }
       }
@@ -11918,6 +11986,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "這個功能要先在手機上安裝好 iCTRL（第三方開源 App，需要開發者模式），本 App 不會幫你安裝。"
+          }
+        }
+      }
+    },
+    "这台设备暂时用不了 Fish Pocket" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket can't run on this device yet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket aún no funciona en este dispositivo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このデバイスではまだ Fish Pocket を使えません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 기기에서는 아직 Fish Pocket을 사용할 수 없습니다"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這台裝置暫時無法使用 Fish Pocket"
+          }
+        }
+      }
+    },
+    "这台设备运行不了引擎" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This device can't run the engine"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este dispositivo no puede ejecutar el motor"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このデバイスではエンジンを実行できません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 기기에서는 엔진을 실행할 수 없습니다"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這台裝置無法執行引擎"
           }
         }
       }
