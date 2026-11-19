@@ -764,8 +764,11 @@ struct StoreSourcesSheet: View {
                 .groupedRow()
                 if !custom.isEmpty {
                     Section {
-                        ForEach(custom, id: \.self) { customRow($0) }
-                            .onDelete { _ in Task { _ = await model.use(nil, app) } }
+                        ForEach(custom, id: \.["url"]) { customRow($0) }
+                            .onDelete { offsets in
+                                let removed = offsets.compactMap { custom[$0]["url"].string }
+                                market.removeSources(removed, app)
+                            }
                     } header: {
                         Text("自己添加的")
                     } footer: {

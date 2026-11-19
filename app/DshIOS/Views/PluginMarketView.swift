@@ -260,6 +260,20 @@ final class PluginMarketModel {
         }
     }
 
+    /// Swipe to delete: the list has already taken the rows out, so they leave `indexes` now, in the
+    /// same update; waiting for the engine leaves the list one row short of its data, and the next
+    /// redraw of a section that still has rows trips UIKit's row count check. A failed save puts back
+    /// what the engine still has.
+    func removeSources(_ removed: [String], _ app: AppModel) {
+        let gone = Set(removed)
+        guard let current = indexes else { return }
+        indexes = current.filter { !gone.contains($0["url"].string ?? "") }
+        let kept = (indexes ?? []).compactMap { $0["url"].string }
+        Task {
+            if !(await saveSources(kept, adding: false, app)) { await listIndexes(app) }
+        }
+    }
+
     func clearSourceFailure() { sourceFailure = nil }
 }
 
@@ -747,7 +761,7 @@ private struct MarketSourcesSheet: View {
         NavigationStack {
             List {
                 Section {
-                    ForEach(model.indexes ?? [], id: \.self) { index in
+                    ForEach(model.indexes ?? [], id: \.["url"]) { index in
                         VStack(alignment: .leading, spacing: 2) {
                             Text(model.label(index)).foregroundStyle(Palette.ink)
                             Text(index["url"].string ?? "").font(.caption).foregroundStyle(Palette.secondary).lineLimit(1)
@@ -755,9 +769,8 @@ private struct MarketSourcesSheet: View {
                         }
                     }
                     .onDelete { offsets in
-                        var next = urls
-                        next.remove(atOffsets: offsets)
-                        Task { _ = await model.saveSources(next, adding: false, app) }
+                        let removed = offsets.compactMap { (model.indexes ?? [])[$0]["url"].string }
+                        model.removeSources(removed, app)
                     }
                 } footer: {
                     Text("插件市场以一个索引文件的 URL 提供，「发现」从这里列出的索引浏览插件")
