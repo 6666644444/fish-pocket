@@ -21,6 +21,8 @@ enum Palette {
     static let stroke = Color("Stroke")
     static let running = Color("StatusRunning")
     static let waiting = Color("StatusWaiting")
+    /// The one color of the drawn icons on 探索: the piece of each that says what it does.
+    static let spot = Color("Spot")
     static let addedBackground = Color("DiffAddBackground")
     static let added = Color("DiffAddText")
     static let removedBackground = Color("DiffDeleteBackground")

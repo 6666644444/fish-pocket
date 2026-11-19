@@ -10,7 +10,7 @@ import SwiftUI
 /// narrow a drawer that slides in from the left.
 struct MainView: View {
     /// The phone's tabs.
-    enum HomeTab: Hashable { case sessions, bot, apps, explore, settings }
+    enum HomeTab: Hashable { case sessions, bot, apps, explore }
 
     enum Sheet: String, Identifiable { case settings, plugins, store, schedules, signIn, cordis, share, watch, capabilities, connectors, phoneControl, remote, fishPocket, miniApps; var id: String { rawValue } }
 
@@ -859,11 +859,6 @@ struct MainView: View {
             } label: {
                 tabLabel(Text("探索"), "square.grid.2x2")
             }
-            Tab(value: HomeTab.settings) {
-                SettingsView(asTab: true)
-            } label: {
-                tabLabel(Text("设置"), "gearshape")
-            }
         }
         .tabViewStyle(.sidebarAdaptable)
         // iPhone Duo open keeps a column at its trailing edge for the bar buttons and the tab bar. The
@@ -893,9 +888,6 @@ struct MainView: View {
             ExploreTabView(path: $explorePath)
                 .tabItem { tabLabel(Text("探索"), "square.grid.2x2") }
                 .tag(HomeTab.explore)
-            SettingsView(asTab: true)
-                .tabItem { tabLabel(Text("设置"), "gearshape") }
-                .tag(HomeTab.settings)
         }
     }
 
