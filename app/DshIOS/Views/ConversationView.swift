@@ -395,7 +395,13 @@ struct ConversationView: View {
                 .interactiveDismissDisabled(workbenchTab == .terminal)
         }
         .fullScreenCover(isPresented: Binding(get: { fullBrowser != nil }, set: { if !$0 { fullBrowser = nil } })) {
-            if let fullBrowser { FullScreenBrowser(model: fullBrowser) { self.fullBrowser = nil } }
+            if let fullBrowser {
+                FullScreenBrowser(model: fullBrowser) {
+                    // The chat's picture of the page is taken while the page is still on screen.
+                    fullBrowser.thumbnailStale(settle: 0)
+                    self.fullBrowser = nil
+                }
+            }
         }
         .onChange(of: workbenchOpen) { _, open in if open, workbenchBeside { splitSidebar.makeRoom() } }
         .focusedSceneValue(\.workbenchCommands, WorkbenchCommands(workbenchCommandsBox, available: !blank && hasTools, toggle: toggleWorkbench, open: openWorkbench))
@@ -997,7 +1003,7 @@ private struct TimelineFoot: View {
     let chips: Bool
 
     var body: some View {
-        Color.clear.frame(height: chips && ConversationActivity.shows(sessionId: sessionId, jobs: jobs, browserShown: browserShown, in: app) ? 48 : 1)
+        Color.clear.frame(height: chips ? max(1, ConversationActivity.room(sessionId: sessionId, jobs: jobs, browserShown: browserShown, in: app)) : 1)
     }
 }
 
