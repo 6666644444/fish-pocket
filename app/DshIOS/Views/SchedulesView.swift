@@ -763,7 +763,7 @@ struct WebFallbackView: View {
     var body: some View {
         NavigationStack {
             EngineWebView(url: app.client.launchURL)
-                .ignoresSafeArea(edges: .bottom)
+                .modifier(FloatingBar())
                 .navigationTitle("网页版")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -778,6 +778,24 @@ struct WebFallbackView: View {
                             .accessibilityLabel("关闭")
                     }
                 }
+        }
+    }
+}
+
+/// From iOS 26 the bar floats as a conversation's does: no title, the buttons on glass, the page
+/// running on under them and under the sides' safe area (a phone on its side, the column iPhone
+/// Duo keeps at its trailing edge for the buttons). WebKit lays the page out inside the safe area
+/// and paints the rest in the page's own background, so no strip of the window's colour frames it.
+/// Before, the bar stays as it was.
+private struct FloatingBar: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26, *) {
+            content
+                .ignoresSafeArea()
+                .toolbar(removing: .title)
+                .toolbarBackgroundVisibility(.hidden, for: .navigationBar)
+        } else {
+            content.ignoresSafeArea(edges: .bottom)
         }
     }
 }
