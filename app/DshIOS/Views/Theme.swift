@@ -478,6 +478,11 @@ struct DrawerButton: View {
 /// A blur under the system status bar alone, fading out above the bar's own buttons: what scrolls
 /// up there stays out of the clock's way, while the messages under the title stay sharp.
 private struct StatusBarSoftening: View {
+    /// The conversation reaches the top of the window, where the status bar is. A column that
+    /// starts lower has none over it (an iPad's, under the floating tab bar; a sheet's): there
+    /// the blur showed as a lighter band of its own, behind the tab bar and beside a list with none.
+    @State private var underStatusBar = false
+
     var body: some View {
         // The window's top inset is the status bar (or the Dynamic Island's band); this view's own
         // inset also holds the navigation bar, which is left clear.
@@ -489,7 +494,10 @@ private struct StatusBarSoftening: View {
                                  startPoint: .top, endPoint: .bottom))
             .frame(height: height + 10)
             .frame(maxWidth: .infinity, alignment: .top)
+            // Read here, inside: outside `ignoresSafeArea` the frame is the safe area's, below the bars.
+            .onGeometryChange(for: Bool.self) { $0.frame(in: .global).minY < 1 } action: { underStatusBar = $0 }
             .ignoresSafeArea(edges: .top)
+            .opacity(underStatusBar ? 1 : 0)
             .allowsHitTesting(false)
             .accessibilityHidden(true)
     }
