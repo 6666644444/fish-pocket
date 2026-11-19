@@ -59,10 +59,10 @@ private struct MiniAppsWidgetView: View {
     }
 
     private func icon(_ app: MiniAppSummary, size: CGFloat) -> some View {
-        RoundedRectangle(cornerRadius: size * 0.225, style: .continuous)
-            .fill(Color(miniApp: app.color).gradient)
+        Text(verbatim: app.icon)
+            .font(.system(size: size * 0.5))
             .frame(width: size, height: size)
-            .overlay { Text(verbatim: app.icon).font(.system(size: size * 0.5)) }
+            .widgetFill(Color(miniApp: app.color).gradient, in: RoundedRectangle(cornerRadius: size * 0.225, style: .continuous))
     }
 
     private func small(_ app: MiniAppSummary) -> some View {
