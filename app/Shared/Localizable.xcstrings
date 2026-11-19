@@ -80857,6 +80857,46 @@
         }
       }
     },
+    "群聊能不能发图片也由默认模型决定：选了不支持图片的模型，群里发图会被拒绝，和成员各自用什么模型无关。改完后重启 App，已有的群聊才会生效。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The default model also decides whether you can send images in group chats: with a model that doesn't support images, images sent to a group are refused, whatever models the members use. After changing it, restart the app for existing group chats to pick it up."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El modelo por defecto también decide si puedes enviar imágenes en los chats de grupo: con un modelo que no admite imágenes, las imágenes enviadas al grupo se rechazan, use el modelo que use cada miembro. Después de cambiarlo, reinicia la app para que se aplique a los chats de grupo que ya existen."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "グループチャットで画像を送れるかどうかもデフォルトモデルで決まります。画像に対応していないモデルを選ぶと、メンバーがどのモデルを使っていても、グループに送った画像は拒否されます。変更後にアプリを再起動すると、既存のグループチャットにも反映されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "그룹 채팅에서 이미지를 보낼 수 있는지도 기본 모델이 정해요. 이미지를 지원하지 않는 모델을 고르면 멤버가 어떤 모델을 쓰든 그룹에 보낸 이미지가 거부돼요. 바꾼 뒤 앱을 다시 시작해야 기존 그룹 채팅에도 적용돼요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "群聊能不能发图片也由默认模型决定：选了不支持图片的模型，群里发图会被拒绝，和成员各自用什么模型无关。改完后重启 App，已有的群聊才会生效。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "群組能不能傳送圖片也由預設模型決定：選了不支援圖片的模型，在群組裡傳送圖片會被拒絕，和成員各自使用什麼模型無關。變更後重新啟動 App，現有的群組才會生效。"
+          }
+        }
+      }
+    },
     "群聊至少要两个 Bot" : {
       "localizations" : {
         "en" : {

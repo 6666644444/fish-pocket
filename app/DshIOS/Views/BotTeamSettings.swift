@@ -47,7 +47,12 @@ struct BotTeamSettingsView: View {
             } header: {
                 Text("偏好")
             } footer: {
-                Text("打开后，Bot 回复的步骤里会带上它的思考和用时。这两项和网页版共用。")
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("打开后，Bot 回复的步骤里会带上它的思考和用时。这两项和网页版共用。")
+                    // Temporary: ds-bot pins every group's own Session to this model and DSH refuses
+                    // images on a text-only one (Fei2411/DS-Bot#1857). Drop once upstream fixes it.
+                    Text("群聊能不能发图片也由默认模型决定：选了不支持图片的模型，群里发图会被拒绝，和成员各自用什么模型无关。改完后重启 App，已有的群聊才会生效。")
+                }
             }
             .groupedRow()
             if !team.privateArchives.isEmpty {
