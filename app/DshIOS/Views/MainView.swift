@@ -171,6 +171,7 @@ struct MainView: View {
     /// out of sight, and whatever a page had presented (a file's preview) would be gone, or on a
     /// device be left standing empty.
     @State private var settledWidth: UserInterfaceSizeClass?
+    @State private var windowCommandsBox = WindowCommands.Box()
     private var layoutWidth: UserInterfaceSizeClass? { settledWidth ?? sizeClass }
 
     /// Announcements are made once, so never under a sheet.
@@ -636,7 +637,7 @@ struct MainView: View {
                 if storeOpen {
                     NavigationStack { PluginStoreView(openSidebar: hideSidebar) }
                 } else if botOpen {
-                    botStack(openDrawer: hideSidebar)
+                    DetailPath(path: $botPath) { botStack(openDrawer: hideSidebar, path: $0) }
                 } else {
                     NavigationStack { conversation(openDrawer: hideSidebar) }
                 }
@@ -668,6 +669,7 @@ struct MainView: View {
 
     private var windowCommands: WindowCommands {
         WindowCommands(
+            windowCommandsBox,
             newConversation: {
                 sheet = nil
                 storeOpen = false
@@ -830,37 +832,37 @@ struct MainView: View {
     // MARK: Tab bar
 
     /// The layout from iOS 18. Where the bar is at the bottom, a conversation, a Bot's chat or a
-    /// group, pushed, hides it: their input sits where it would be.
+    /// group, pushed, keeps it: the input sits above it.
     @available(iOS 18.0, *)
     private var tabLayout: some View {
         TabView(selection: $tab) {
             Tab(value: HomeTab.sessions) {
                 if sessionsSideBySide { sessionsSplit } else { sessionsStack }
             } label: {
-                tabLabel(Text(DrawerView.sessionsTitle), "fp.message", .sessions, custom: true)
+                tabLabel(Text(DrawerView.sessionsTitle), "fp.message", custom: true)
             }
             .badge(badges.waiting)
             Tab(value: HomeTab.bot) {
                 if sessionsSideBySide { botSplit } else { botStack(openDrawer: nil) }
             } label: {
-                tabLabel(Text(verbatim: "Bot"), "face.smiling", .bot, filled: "face.smiling.inverse")
+                tabLabel(Text(verbatim: "Bot"), "face.smiling")
             }
             .badge(badges.botPending)
             // 我的应用: the user's own tools and games, opened as often as a home screen's.
             Tab(value: HomeTab.apps) {
                 NavigationStack { MiniAppsPage(asTab: true) }
             } label: {
-                tabLabel(Text(MiniAppsPage.tabTitle), "square.on.circle", .apps, filled: "square.fill.on.circle.fill")
+                tabLabel(Text(MiniAppsPage.tabTitle), "square.on.circle")
             }
             Tab(value: HomeTab.explore) {
                 ExploreTabView(path: $explorePath)
             } label: {
-                tabLabel(Text("探索"), "square.grid.2x2", .explore)
+                tabLabel(Text("探索"), "square.grid.2x2")
             }
             Tab(value: HomeTab.settings) {
                 SettingsView(asTab: true)
             } label: {
-                tabLabel(Text("设置"), "gearshape", .settings)
+                tabLabel(Text("设置"), "gearshape")
             }
         }
         .tabViewStyle(.sidebarAdaptable)
@@ -878,21 +880,21 @@ struct MainView: View {
     private var phoneTabLayout: some View {
         TabView(selection: $tab) {
             Group { if sessionsSideBySide { sessionsSplit } else { sessionsStack } }
-                .tabItem { tabLabel(Text(DrawerView.sessionsTitle), "fp.message", .sessions, custom: true) }
+                .tabItem { tabLabel(Text(DrawerView.sessionsTitle), "fp.message", custom: true) }
                 .tag(HomeTab.sessions)
                 .badge(badges.waiting)
             Group { if sessionsSideBySide { botSplit } else { botStack(openDrawer: nil) } }
-                .tabItem { tabLabel(Text(verbatim: "Bot"), "face.smiling", .bot, filled: "face.smiling.inverse") }
+                .tabItem { tabLabel(Text(verbatim: "Bot"), "face.smiling") }
                 .tag(HomeTab.bot)
                 .badge(badges.botPending)
             NavigationStack { MiniAppsPage(asTab: true) }
-                .tabItem { tabLabel(Text(MiniAppsPage.tabTitle), "square.on.circle", .apps, filled: "square.fill.on.circle.fill") }
+                .tabItem { tabLabel(Text(MiniAppsPage.tabTitle), "square.on.circle") }
                 .tag(HomeTab.apps)
             ExploreTabView(path: $explorePath)
-                .tabItem { tabLabel(Text("探索"), "square.grid.2x2", .explore) }
+                .tabItem { tabLabel(Text("探索"), "square.grid.2x2") }
                 .tag(HomeTab.explore)
             SettingsView(asTab: true)
-                .tabItem { tabLabel(Text("设置"), "gearshape", .settings) }
+                .tabItem { tabLabel(Text("设置"), "gearshape") }
                 .tag(HomeTab.settings)
         }
     }
@@ -904,7 +906,7 @@ struct MainView: View {
                 .navigationDestination(for: DrawerView.Route.self) { route in
                     switch route {
                     case .archived: drawer(.archived)
-                    case .session(let id): pushedConversation(id).toolbar(.hidden, for: .tabBar)
+                    case .session(let id): pushedConversation(id)
                     }
                 }
         }
@@ -950,6 +952,10 @@ struct MainView: View {
     }
 
     private func toggleSessionsList() {
+        if TabSidebar.foldOffList() {
+            withAnimation { sessionsColumns = .all }
+            return
+        }
         withAnimation { sessionsColumns = sessionsColumns == .detailOnly ? .all : .detailOnly }
     }
 
@@ -958,14 +964,23 @@ struct MainView: View {
         if windowWidth < 1100 { withAnimation { sessionsColumns = .detailOnly } }
     }
 
-    /// A tab's name and icon: outlined, and filled while it is the one in front. Left alone the
-    /// system fills every icon that has a filled form, so it is told not to. `custom` is one of our
-    /// own symbols in the asset catalog (Symbols, drawn by `scripts/draw-tab-symbols.swift`), which
-    /// follows weight and size like a system one.
-    private func tabLabel(_ title: Text, _ symbol: String, _ value: HomeTab, filled: String? = nil, custom: Bool = false) -> some View {
-        let name = tab == value ? filled ?? "\(symbol).fill" : symbol
-        return Label { title } icon: { custom ? Image(name) : Image(systemName: name) }
-            .environment(\.symbolVariants, .none)
+    /// A tab's icon, outlined whether or not it is the one in front: left alone the system fills
+    /// every icon that has a filled form, so it is told not to. On a phone the bar shows the icon
+    /// alone, the name only to VoiceOver; an iPad keeps the name, which its tab bar at the top and
+    /// its sidebar show as the tab itself. `custom` is one of our own symbols in the asset catalog
+    /// (Symbols, drawn by `scripts/draw-tab-symbols.swift`), which follows weight and size like a
+    /// system one.
+    @ViewBuilder
+    private func tabLabel(_ title: Text, _ symbol: String, custom: Bool = false) -> some View {
+        let icon = (custom ? Image(symbol) : Image(systemName: symbol))
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            icon
+                .environment(\.symbolVariants, .none)
+                .accessibilityLabel(title)
+        } else {
+            Label { title } icon: { icon }
+                .environment(\.symbolVariants, .none)
+        }
     }
 
     /// A conversation on the 会话 tab's stack. Back is the system's; there is no drawer to open.
@@ -1004,10 +1019,12 @@ struct MainView: View {
         }
     }
 
-    /// The Bot list, with a Bot's chat or a group pushed on it.
-    private func botStack(openDrawer: (() -> Void)?) -> some View {
-        NavigationStack(path: $botPath) {
-            BotHomeView(openDrawer: openDrawer)
+    /// The Bot list, with a Bot's chat or a group pushed on it. `path` is `botPath` as the split
+    /// view's detail hands it over (`DetailPath`).
+    private func botStack(openDrawer: (() -> Void)?, path: Binding<[BotRoute]>? = nil) -> some View {
+        let path = path ?? $botPath
+        return NavigationStack(path: path) {
+            BotHomeView(openDrawer: openDrawer, open: { path.wrappedValue = [$0] })
                 .navigationDestination(for: BotRoute.self) { route in
                     botPage(route)
                         // Set here as well: what the split view sets does not reach a pushed page. A pushed
@@ -1016,8 +1033,6 @@ struct MainView: View {
                         .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomForWorkbench, toggle: !usesTabs && layoutWidth == .regular ? hideSidebar : nil))
                         // iPhone Duo open: no inspector on a pushed chat (see `workbenchInSheet`).
                         .environment(\.workbenchInSheet, usesTabs && ThisDevice.isDuo)
-                        // Its input takes the bar's place where the bar is at the bottom.
-                        .toolbar(usesTabs && layoutWidth != .regular ? .hidden : .automatic, for: .tabBar)
                 }
         }
     }
@@ -1026,27 +1041,29 @@ struct MainView: View {
     /// `botPath` is the one picked in the list; what a link pushes from there goes over it.
     private var botSplit: some View {
         NavigationSplitView(columnVisibility: $botColumns) {
-            BotHomeView(openDrawer: nil, selection: Binding(get: { botPath.first }, set: { route in botPath = route.map { [$0] } ?? [] }))
+            BotHomeView(openDrawer: nil, selection: Binding(get: { botPath.first }, set: { route in botPath = route.map { [$0] } ?? [] }), open: { botPath = [$0] })
                 // Widths as the split view's (`split`): a width that follows the fold hangs it.
                 .navigationSplitViewColumnWidth(min: 280, ideal: 320, max: 360)
                 .modifier(SidebarToggle(system: systemSidebarButton))
                 .modifier(BelowFloatingTabBar())
         } detail: {
-            NavigationStack(path: Binding(get: { Array(botPath.dropFirst()) }, set: { botPath = Array(botPath.prefix(1)) + $0 })) {
-                Group {
-                    if let route = botPath.first {
-                        botPage(route).id(route)
-                    } else {
-                        Text("选一个 Bot 或群聊")
-                            .font(.subheadline)
-                            .foregroundStyle(Palette.secondary)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .background(Palette.background)
+            DetailPath(path: Binding(get: { Array(botPath.dropFirst()) }, set: { botPath = Array(botPath.prefix(1)) + $0 })) { path in
+                NavigationStack(path: path) {
+                    Group {
+                        if let route = botPath.first {
+                            botPage(route).id(route)
+                        } else {
+                            Text("选一个 Bot 或群聊")
+                                .font(.subheadline)
+                                .foregroundStyle(Palette.secondary)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .background(Palette.background)
+                        }
                     }
-                }
-                .navigationDestination(for: BotRoute.self) { route in
-                    // Pushed over the picked chat: no inspector on iPhone Duo (see `workbenchInSheet`).
-                    botPage(route).environment(\.workbenchInSheet, ThisDevice.isDuo)
+                    .navigationDestination(for: BotRoute.self) { route in
+                        // Pushed over the picked chat: no inspector on iPhone Duo (see `workbenchInSheet`).
+                        botPage(route).environment(\.workbenchInSheet, ThisDevice.isDuo)
+                    }
                 }
             }
             .modifier(PastTheFold())
@@ -1059,6 +1076,10 @@ struct MainView: View {
     }
 
     private func toggleBotList() {
+        if TabSidebar.foldOffList() {
+            withAnimation { botColumns = .all }
+            return
+        }
         withAnimation { botColumns = botColumns == .detailOnly ? .all : .detailOnly }
     }
 
@@ -1199,6 +1220,33 @@ struct MainView: View {
     }
 }
 
+/// The tab bar opened into a sidebar (`sidebarAdaptable`, on an iPad).
+@MainActor
+private enum TabSidebar {
+    /// Before iOS 26 the sidebar lies over the window's leading edge and the tab's page is not
+    /// made narrower for it: the 会话 or Bot list, the split view's first column, is under it, and
+    /// showing or hiding that column changes nothing in sight. Asked for the list there, the
+    /// sidebar folds back into the tab bar, which uncovers it. True when it did.
+    static func foldOffList() -> Bool {
+        guard #available(iOS 18.0, *) else { return false }
+        if #available(iOS 26.0, *) { return false }
+        guard let tabs = controller, !tabs.sidebar.isHidden else { return false }
+        tabs.sidebar.isHidden = true
+        return true
+    }
+
+    /// The tab bar controller of the window in front: the one whose button was just tapped.
+    private static var controller: UITabBarController? {
+        let windows = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.flatMap(\.windows)
+        var pending = [(windows.first(where: \.isKeyWindow) ?? windows.first)?.rootViewController].compactMap { $0 }
+        while let next = pending.popLast() {
+            if let tabs = next as? UITabBarController { return tabs }
+            pending.append(contentsOf: next.children)
+        }
+        return nil
+    }
+}
+
 /// On the sidebar column: the system's sidebar button, kept or removed (`systemSidebarButton`).
 private struct SidebarToggle: ViewModifier {
     let system: Bool
@@ -1212,11 +1260,14 @@ private struct SidebarToggle: ViewModifier {
 /// width of the window keeps its items clear of it (it grows, and its title goes to a second row);
 /// the bars of a split view's columns do not: the conversation's title, centred in its column, sat
 /// under the tab bar (a new conversation's model picker could not be read or tapped), and so did
-/// the buttons near it. While the tab bar is there, the 会话 and Bot tabs' split views start under it, as
-/// it does from iOS 26, where the system does this itself. A phone's tab bar is at the bottom.
+/// the buttons near it. While the tab bar is there, the 会话 and Bot tabs' split views start under it.
+/// From iOS 26 the system does this itself; on iOS 27 it has two ways of doing it and has to be
+/// kept to one (`SplitBelowTabBar`). A phone's tab bar is at the bottom.
 private struct BelowFloatingTabBar: ViewModifier {
     func body(content: Content) -> some View {
-        if #available(iOS 26.0, *) {
+        if #available(iOS 27.0, *), UIDevice.current.userInterfaceIdiom == .pad {
+            content.background(SplitBelowTabBar())
+        } else if #available(iOS 26.0, *) {
             content
         } else if #available(iOS 18.0, *), UIDevice.current.userInterfaceIdiom == .pad {
             content.background(SplitBelowTabBar())
@@ -1227,18 +1278,33 @@ private struct BelowFloatingTabBar: ViewModifier {
 }
 
 /// The split view's bars are UIKit's, laid out from its safe area: what SwiftUI insets or pads
-/// inside a column does not move them. So the split view controller's own safe area is pushed down
-/// by one bar, and back up once the tab bar is away (turned into the sidebar, or hidden). It is
-/// in both columns: the sidebar can take the tab bar's place without the conversation's column
-/// changing size, and then the list is what goes or comes back.
+/// inside a column does not move them. So before iOS 26 the split view controller's own safe area
+/// is pushed down by one bar, and back up once the tab bar is away (turned into the sidebar, or
+/// hidden). It is in both columns: the sidebar can take the tab bar's place without the
+/// conversation's column changing size, and then the list is what goes or comes back.
+///
+/// iOS 27 keeps the bars clear by itself, but not the same way each time (seen on iPadOS 27.2;
+/// 26.4 does not do this). A tab shown for the first time has the tab bar's height in its page's
+/// safe area, and the split view starts below the bar. Shown again, the page's safe area is the
+/// window's, the split view starts under the tab bar, and its columns' bars are moved down
+/// instead. The first turns into the second piecemeal: the split view moves its bars down as soon
+/// as its own layout changes (the list hidden, a sheet with the keyboard up) while the page still
+/// keeps it below the tab bar, and both title rows stand a row too low until the tab is left and
+/// come back to. So a page found the first way is made to work its safe area out again, which
+/// takes it to the second at once, where it stays.
 @available(iOS 18.0, *)
 private struct SplitBelowTabBar: UIViewRepresentable {
     func makeUIView(context: Context) -> Adjuster { Adjuster() }
     func updateUIView(_ view: Adjuster, context: Context) { view.setNeedsLayout() }
 
     final class Adjuster: UIView {
+        /// The page was asked once since this view came into the window: asked again while the
+        /// answer stays the same, laying out would never end.
+        private var settled = false
+
         override func didMoveToWindow() {
             super.didMoveToWindow()
+            settled = false
             adjust()
             // Shown or hidden with the sidebar: what it says is settled once that has happened.
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in self?.adjust() }
@@ -1259,10 +1325,55 @@ private struct SplitBelowTabBar: UIViewRepresentable {
                 responder = next.next
             }
             guard let split, let tabs else { return }
+            if #available(iOS 27.0, *) {
+                settle(split, in: tabs)
+                return
+            }
             let floating = !tabs.isTabBarHidden && tabs.sidebar.isHidden
                 && tabs.traitCollection.horizontalSizeClass == .regular
             let top: CGFloat = floating ? 50 : 0
             if split.additionalSafeAreaInsets.top != top { split.additionalSafeAreaInsets.top = top }
+        }
+
+        /// The tab's page, when its safe area still holds the tab bar's height, works it out again:
+        /// a safe area changed and put back is what makes it.
+        private func settle(_ split: UISplitViewController, in tabs: UITabBarController) {
+            var page: UIViewController = split
+            while let parent = page.parent, parent !== tabs { page = parent }
+            guard !settled, page.parent === tabs, page.view.safeAreaInsets.top > tabs.view.safeAreaInsets.top else { return }
+            settled = true
+            page.additionalSafeAreaInsets.top += 1
+            page.view.layoutIfNeeded()
+            page.additionalSafeAreaInsets.top -= 1
+            page.view.layoutIfNeeded()
+        }
+    }
+}
+
+/// The path of a navigation stack in a split view's detail, handed over once the stack is on
+/// screen. Before iOS 18 a stack that first shows there with pages already on its path never
+/// finishes that update: the main thread turns inside SwiftUI for good. The app froze as it
+/// launched back onto a Bot's chat (and at every launch after), and when a Bot's chat was opened
+/// from a conversation (a toast, something shared to a Bot); a window grown wide with a chat
+/// open, or a big iPhone turned sideways with one pushed over another, makes a stack the same
+/// way. So the stack shows with nothing pushed and takes its pages a moment later, unanimated:
+/// they are there as they would have been. From iOS 18 the path is passed as it is.
+private struct DetailPath<Route: Hashable, Content: View>: View {
+    @Binding var path: [Route]
+    @ViewBuilder let content: (Binding<[Route]>) -> Content
+    @State private var shown = false
+
+    var body: some View {
+        if #available(iOS 18.0, *) {
+            content($path)
+        } else {
+            // Nothing is written back before then: the pages waiting on `path` are not lost.
+            content(Binding(get: { shown ? path : [] }, set: { if shown { path = $0 } }))
+                .task {
+                    var quiet = Transaction()
+                    quiet.disablesAnimations = true
+                    withTransaction(quiet) { shown = true }
+                }
         }
     }
 }

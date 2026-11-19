@@ -46,11 +46,10 @@ struct ConversationView: View {
     @State private var detail: TimelineDetail?
     @State private var actionsBox = ConversationActions.Box()
     @State private var scrollBox = TimelineScroll.Box()
+    @State private var workbenchCommandsBox = WorkbenchCommands.Box()
     /// Approvals seen since none were waiting, for the 「1/3」 of the sheet.
     @State private var approvalBatch: Set<String> = []
     @State private var keyboardUp = false
-    /// The window keeps a strip under the dock for the home indicator tall enough for the AI label.
-    @State private var labelUnderDock = true
     @State private var composerFocused = false
     /// The new-conversation page's free height: a short one drops the headline.
     @State private var heroHeight: CGFloat = .infinity
@@ -93,8 +92,6 @@ struct ConversationView: View {
             app.localSessions.release(sessionId)
         }
         .trackKeyboard($keyboardUp)
-        // A phone's strip (34 pt) holds the line clear of the indicator; an iPad's (20 pt) does not.
-        .onAppear { labelUnderDock = Self.homeIndicatorStrip >= 30 }
         // A key saved or an account signed in changes what the model picker can offer.
         .task(id: app.revision("llm/adapters-updated", "settings/document-updated", "credentials/reference-updated", "credentials/record-updated")) {
             if let model { await context.load(model) }
@@ -292,39 +289,20 @@ struct ConversationView: View {
                     )
                     .allowsHitTesting(presentedInteractionId(model) == nil)
                 }
-                // A Bot's title already carries a second line (what it is doing, its members), so the
-                // label goes under the input. Where the home indicator's strip is too thin for it
-                // (an iPad, a phone with a home button) it takes a row of its own.
-                if bot != nil && !labelUnderDock {
-                    AIContentLabel().frame(maxWidth: .infinity).padding(.top, 6)
-                }
             }
             .padding(.horizontal, 12)
             .padding(.top, 6)
             .padding(.bottom, 8)
-            // In the home indicator's strip under the dock: the input stays where it was. The
-            // keyboard covers it while up.
-            .overlay(alignment: .bottom) {
-                if bot != nil && labelUnderDock {
-                    AIContentLabel()
-                        .alignmentGuide(.bottom) { $0[.top] }
-                        // The bar's glass reaches a little past the dock's bottom padding.
-                        .offset(y: 10)
-                        .allowsHitTesting(false)
-                }
-            }
             .readableWidth()
             // The starter prompts scroll past the dock's padding to the screen's edge, not into the
             // safe area beside it: the status bar's column on iPhone Duo unfolded, the notch's side
-            // in landscape. Cut at the sides only: under the input sits the AI label.
+            // in landscape. Cut at the sides only.
             .mask { Rectangle().padding(.vertical, -200) }
             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { app.composerHeight = $0 }
         }
         .modifier(ComposerDrop(composer: model.composer, enabled: model.subagentReadOnly(parentAvailable: parentAvailable(model)) == nil))
         // Under the toolbar: what is inside an inspector's main view does not reach the navigation bar.
-        .modifier(WorkbenchBeside(shown: workbenchShown(workbenchBeside), regular: workbenchBeside, inspector: !workbenchInSheet) {
-            workbenchPage(model)
-        })
+        .modifier(WorkbenchBeside(model: model, open: $workbenchOpen, tab: $workbenchTab, regular: workbenchBeside, inspector: !workbenchInSheet))
         // It names the window in the iPad app switcher. Not drawn while the title is the principal
         // item; with the title moved aside for the workbench it would show as a second one.
         .modifier(WindowTitle(sessionId: sessionId, hidden: titleBesideWorkbench))
@@ -410,7 +388,7 @@ struct ConversationView: View {
         )))
         // Over the conversation on a phone, beside it where there is room.
         .sheet(isPresented: workbenchShown(!workbenchBeside)) {
-            workbenchPage(model)
+            WorkbenchView(model: model, tab: $workbenchTab) { workbenchOpen = false }
                 .presentationDetents([.large])
                 .presentationCornerRadius(36)
                 // A pull over the terminal is meant for its scrollback; ✕ closes the sheet.
@@ -426,7 +404,7 @@ struct ConversationView: View {
             }
         }
         .onChange(of: workbenchOpen) { _, open in if open, workbenchBeside { splitSidebar.makeRoom() } }
-        .focusedSceneValue(\.workbenchCommands, WorkbenchCommands(available: !blank && hasTools, toggle: toggleWorkbench, open: openWorkbench))
+        .focusedSceneValue(\.workbenchCommands, WorkbenchCommands(workbenchCommandsBox, available: !blank && hasTools, toggle: toggleWorkbench, open: openWorkbench))
         // The sheet leaves the background live, so the composer keeps its focus and the
         // keyboard would stay over the sheet; an answer comes first.
         .onChange(of: presentedInteractionId(model)) { _, id in if id != nil { dismissKeyboard() } }
@@ -518,10 +496,6 @@ struct ConversationView: View {
     /// One state, shown in whichever place the width calls for.
     private func workbenchShown(_ here: Bool) -> Binding<Bool> {
         Binding(get: { here && workbenchOpen }, set: { if !$0 { workbenchOpen = false } })
-    }
-
-    private func workbenchPage(_ model: SessionModel) -> some View {
-        WorkbenchView(model: model, tab: $workbenchTab) { workbenchOpen = false }
     }
 
     /// Quoting puts text in the draft (`MessageQuotes`): not offered where there is no input.
@@ -1940,53 +1914,69 @@ struct SplitSidebar: Equatable {
 
 /// The workbench beside the conversation. From iPadOS 26 on, an inspector. Before that an inspector
 /// on an upright iPad is laid over the conversation, dimmed under it, so there it is a column of its own.
-private struct WorkbenchBeside<Page: View>: ViewModifier {
-    @Binding var shown: Bool
+///
+/// Given the conversation's state and not a page built by it: built there, the page (its
+/// closures) was a new one on every pass of the conversation's body, and the inspector was set
+/// again each time. On iPadOS 26 that makes a sheet up from the list beside the conversation
+/// over again, as a focused value that changes does before it (`WorkbenchCommands.Box`).
+private struct WorkbenchBeside: ViewModifier {
+    let model: SessionModel
+    @Binding var open: Bool
+    @Binding var tab: WorkbenchTab
+    /// There is room for it beside the conversation; where there is not, it is the conversation's sheet.
     let regular: Bool
     /// iOS 26's inspector, unless the page is pushed where one breaks the push (`workbenchInSheet`).
     var inspector = true
-    @ViewBuilder let page: () -> Page
 
     func body(content: Content) -> some View {
         if #available(iOS 26.0, *), inspector {
-            content.inspector(isPresented: $shown) {
+            content.inspector(isPresented: Binding(get: { regular && open }, set: { if !$0 { open = false } })) {
                 // Only where it is shown: on a phone this content stays built while closed, and its
                 // toolbar lands in the conversation's bar.
-                if regular { page().inspectorColumnWidth(min: 320, ideal: 420, max: 640) }
+                if regular { page.inspectorColumnWidth(min: 320, ideal: 420, max: 640) }
             }
         } else {
             HStack(spacing: 0) {
                 content
-                if shown && regular {
+                if open && regular {
                     HStack(spacing: 0) {
                         Divider()
-                        page().frame(width: 420)
+                        page.frame(width: 420)
                     }
                     .transition(.move(edge: .trailing))
                 }
             }
-            .animation(.snappy(duration: 0.3), value: shown && regular)
+            .animation(.snappy(duration: 0.3), value: open && regular)
         }
     }
-}
 
-extension ConversationView {
-    /// The key window's bottom inset: the home indicator's strip, 0 on a phone with a home button.
-    /// The window's own, so the keyboard does not count.
-    static var homeIndicatorStrip: CGFloat {
-        let windows = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.flatMap(\.windows)
-        return (windows.first(where: \.isKeyWindow) ?? windows.first)?.safeAreaInsets.bottom ?? 0
+    private var page: some View {
+        WorkbenchView(model: model, tab: $tab, beside: true) { open = false }
     }
 }
 
 /// The explicit label that the replies are AI generated (《人工智能生成合成内容标识办法》 第四条:
-/// a prompt on the interaction screen). Under a started conversation's title, as a subtitle;
-/// in a Bot's chat, whose title has a line of its own, in the strip under the input.
+/// a prompt on the interaction screen). Under the title, as its subtitle: a conversation's, and a
+/// Bot's chat's or a group's, after what that line already says (`AILabelledSubtitle`).
 struct AIContentLabel: View {
     var body: some View {
         Text("内容由 AI 生成")
             .font(.caption2)
             .foregroundStyle(Palette.secondary)
             .lineLimit(1)
+    }
+}
+
+/// A title's second line that already says something (what a Bot is doing, a group's members),
+/// with the AI label after it. The label never gives way: what comes before it is cut first.
+struct AILabelledSubtitle<Lead: View>: View {
+    @ViewBuilder var lead: Lead
+
+    var body: some View {
+        HStack(spacing: 4) {
+            lead.lineLimit(1)
+            Text(verbatim: "·").font(.caption2).foregroundStyle(Palette.secondary)
+            AIContentLabel().fixedSize()
+        }
     }
 }

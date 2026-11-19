@@ -183,7 +183,8 @@ struct SettingsView: View {
 
             }
             .navigationTitle("设置")
-            .navigationBarTitleDisplayMode(.large)
+            // On the tab bar a small title, as every tab's: a large one only takes room.
+            .navigationBarTitleDisplayMode(asTab ? .inline : .large)
             .modifier(SettingsClose(shown: !asTab, dismiss: dismiss))
             .alert("重启 App 后生效", isPresented: $languageChanged) {
                 Button("好", role: .cancel) {}

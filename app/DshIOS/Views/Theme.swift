@@ -221,6 +221,18 @@ extension View {
     /// The background of a page that puts something of its own (tabs, an empty state) around a `groupedList()`.
     func pageBackground() -> some View { modifier(PageBackground()) }
 
+    /// A tab's own list, under the tab bar: from iOS 26 what scrolls under the bar softens, as on
+    /// the system's pages. Left to the system, the 会话 and Bot lists (plain lists on the app's own
+    /// background) kept a sharp edge there while 探索 (a grouped list) softened, so it is said.
+    @ViewBuilder
+    func tabBarEdgeSoftened() -> some View {
+        if #available(iOS 26.0, *) {
+            scrollEdgeEffectStyle(.soft, for: .bottom)
+        } else {
+            self
+        }
+    }
+
     /// A conversation's top bar. From iOS 26 it is the system's see-through bar: the messages
     /// run up under its buttons, sharp, and blur only under the status bar, above them, so the
     /// clock stays readable; the bottom edge, under the composer, softens as before. Before, a
@@ -478,6 +490,11 @@ struct DrawerButton: View {
 /// A blur under the system status bar alone, fading out above the bar's own buttons: what scrolls
 /// up there stays out of the clock's way, while the messages under the title stay sharp.
 private struct StatusBarSoftening: View {
+    /// The conversation reaches the top of the window, where the status bar is. A column that
+    /// starts lower has none over it (an iPad's, under the floating tab bar; a sheet's): there
+    /// the blur showed as a lighter band of its own, behind the tab bar and beside a list with none.
+    @State private var underStatusBar = false
+
     var body: some View {
         // The window's top inset is the status bar (or the Dynamic Island's band); this view's own
         // inset also holds the navigation bar, which is left clear.
@@ -489,7 +506,10 @@ private struct StatusBarSoftening: View {
                                  startPoint: .top, endPoint: .bottom))
             .frame(height: height + 10)
             .frame(maxWidth: .infinity, alignment: .top)
+            // Read here, inside: outside `ignoresSafeArea` the frame is the safe area's, below the bars.
+            .onGeometryChange(for: Bool.self) { $0.frame(in: .global).minY < 1 } action: { underStatusBar = $0 }
             .ignoresSafeArea(edges: .top)
+            .opacity(underStatusBar ? 1 : 0)
             .allowsHitTesting(false)
             .accessibilityHidden(true)
     }
