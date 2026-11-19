@@ -123,8 +123,14 @@ final class BotModel {
     var openRequest: BotOpenRequest?
     /// Approvals already announced, so each rings once.
     @ObservationIgnored private var announcedApprovals: Set<String> = []
-    /// The chat on screen (a Bot's or a group's id): what waits there needs no announcement.
+    /// The chat on screen (a Bot's or a group's id), kept by the root view: what waits there
+    /// needs no announcement.
     var visibleChat: String?
+    /// Its session: a turn that ends there is read as it lands.
+    var visibleSession: String? {
+        guard let visibleChat else { return nil }
+        return bot(visibleChat)?.sessionId ?? room(visibleChat)?.sessionId
+    }
 
     @ObservationIgnored private var revision: Double?
     @ObservationIgnored private var liveKey: String?
@@ -402,6 +408,8 @@ final class BotModel {
         if let key = team["modelsKey"].string { payload["models"] = .string(key) }
         do {
             let value = try await call("state", .object(payload))
+            // A reply fading into the chat on screen is not stalled by what its turn's end changed here.
+            await app.arrivalLanded()
             // Each write tells every view that reads it, so only a change is written.
             if !reachable { reachable = true }
             if value["unchanged"].bool != true, team != value { team = value }

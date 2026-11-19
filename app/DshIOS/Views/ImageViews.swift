@@ -207,6 +207,11 @@ struct AttachmentThumb: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("图片加载失败，轻点重试")
+            } else if let preview = attachment.attachmentId.flatMap({ model?.preview($0) }) {
+                // Just sent: the picture as it was picked, until the stored copy is read.
+                Image(uiImage: preview).resizable().scaledToFill()
+                    .frame(width: size.width, height: size.height)
+                    .clipped()
             } else {
                 Palette.field.overlay(ProgressView()).frame(width: size.width, height: size.height)
             }

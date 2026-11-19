@@ -238,7 +238,7 @@ extension EnvironmentValues {
 }
 
 /// Where a conversation's web links open: its own browser (S-87), the page the agent drives too.
-struct BrowserLinks {
+struct BrowserLinks: Equatable {
     let sessionId: String
     let origin: URL
     /// The workbench shows that browser beside the conversation, so the page opens there.

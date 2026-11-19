@@ -53,8 +53,8 @@ struct BotChatView: View {
                 // After the tray's sheet has gone.
                 Task { try? await Task.sleep(for: .milliseconds(350)); detailOpen = true }
             }
-            .onAppear { app.clearUnread(bot.sessionId); team.visibleChat = bot.id }
-            .onDisappear { app.clearUnread(bot.sessionId); if team.visibleChat == bot.id { team.visibleChat = nil } }
+            .onAppear { app.clearUnread(bot.sessionId) }
+            .onDisappear { app.clearUnread(bot.sessionId) }
         } else if team.status == .unknown {
             // The app opened on this chat (the page it was last on) before the team answered.
             ConversationLoading().background(Palette.background)

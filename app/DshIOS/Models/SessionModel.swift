@@ -11,6 +11,9 @@ final class SessionModel {
     @ObservationIgnored private let app: AppModel
 
     private(set) var items: [TimelineItem] = []
+    /// Whether the timeline holds anything. For a view that asks only that: reading `items` there
+    /// would redraw it at every change to the timeline.
+    private(set) var hasItems = false
     private(set) var live: [AssistantBlock] = []
     private(set) var running = false
     private(set) var title: String?
@@ -48,7 +51,7 @@ final class SessionModel {
     private(set) var loadingOlder = false
     private(set) var loaded = false
     /// Every projection value of the latest snapshot or refresh, for the composer docks.
-    private(set) var projectionValues: [String: JSON] = [:]
+    @ObservationIgnored private var projectionValues: [String: Tracked<JSON?>] = [:]
     var error: String?
     /// A subagent's parent-scoped address; the Host refuses a plain session address
     /// for a child, and its messages and stops go through the parent. Set before `start()`.
@@ -76,6 +79,11 @@ final class SessionModel {
     @ObservationIgnored private let imageCache: NSCache<NSString, UIImage> = {
         let cache = NSCache<NSString, UIImage>()
         cache.countLimit = 60
+        return cache
+    }()
+    @ObservationIgnored private let previewCache: NSCache<NSString, UIImage> = {
+        let cache = NSCache<NSString, UIImage>()
+        cache.countLimit = 40
         return cache
     }()
 
@@ -107,7 +115,7 @@ final class SessionModel {
                         ],
                     ])
                     for try await frame in stream {
-                        await self.app.bubbleLanded()
+                        await self.app.arrivalLanded()
                         self.apply(frame)
                     }
                 } catch {
@@ -265,6 +273,7 @@ final class SessionModel {
     /// unrelated observers are not invalidated.
     private func publishTimeline() {
         items = timeline.items
+        hasItems = !items.isEmpty
         if turnInfo != timeline.turnInfo { turnInfo = timeline.turnInfo }
         publishTimelineState()
     }
@@ -358,8 +367,25 @@ final class SessionModel {
         }
     }
 
+    /// One projection value from the session's latest read (`session/projections`), observed by
+    /// itself like the live ones (`AppModel.control`).
+    func projectionValue(_ key: String) -> JSON? {
+        if let held = projectionValues[key] { return held.value }
+        let held = Tracked<JSON?>(nil)
+        projectionValues[key] = held
+        return held.value
+    }
+
     private func applyProjections(_ values: JSON) {
-        projectionValues = values.object
+        // This runs after every event of a turn and most of what it reads is the same each time.
+        // Setting an observed property to an equal value redraws nothing, so the plain writes below
+        // cost nothing; the tuples and the in-place removal cannot be compared that way, and check
+        // for themselves.
+        let latest = values.object
+        for (key, held) in projectionValues where latest[key] == nil { held.value = nil }
+        for (key, value) in latest {
+            if let held = projectionValues[key] { held.value = value } else { projectionValues[key] = Tracked(value) }
+        }
         if let value = values["title"].string { title = value }
         if let mode = values["subagent"]["mode"].string { subagentMode = mode }
         todos = values["todos"].array.map { TodoItem(content: $0["content"].string ?? "", status: $0["status"].string ?? "pending") }
@@ -371,23 +397,28 @@ final class SessionModel {
         continuedQuestions = active
             .filter { $0["state"].string == "continued" && !replied.contains($0["callId"].string ?? "") }
             .map(PendingQuestion.init(continued:))
-        detachedQuestions.removeAll { activeQuestionStates[$0.id] != "open" }
+        if detachedQuestions.contains(where: { activeQuestionStates[$0.id] != "open" }) {
+            detachedQuestions.removeAll { activeQuestionStates[$0.id] != "open" }
+        }
         settledAnswers = Dictionary(values["userQuestions"]["settled"].array.map { ($0["callId"].string ?? "", $0["answers"]) }, uniquingKeysWith: { $1 })
         turnOutline = values["turnOutline"].array.compactMap(TurnOutline.init)
         let selection = values["modelSelection"]["next"].isNull ? values["modelSelection"]["lastUsed"] : values["modelSelection"]["next"]
         if let provider = selection["provider"].string, let model = selection["model"].string {
-            modelSelection = (provider, model, selection["reasoningEffort"].string)
+            let next = (provider, model, selection["reasoningEffort"].string)
+            if modelSelection.map({ $0 == next }) != true { modelSelection = next }
         }
         permission = values["permissions"]["currentValue"].string ?? permission
         let usage = values["tokenUsage"]
-        tokens = ((usage["uncachedInputTokens"].int ?? 0) + (usage["cacheReadTokens"].int ?? 0), usage["outputTokens"].int ?? 0, usage["cacheReadTokens"].int ?? 0)
+        let used = ((usage["uncachedInputTokens"].int ?? 0) + (usage["cacheReadTokens"].int ?? 0), usage["outputTokens"].int ?? 0, usage["cacheReadTokens"].int ?? 0)
+        if tokens != used { tokens = used }
         contextWindow = values["contextPressure"]["contextWindow"].int ?? contextWindow
         contextTokens = values["contextPressure"]["projectedTokens"].int ?? values["contextPressure"]["pressureTokens"].int ?? contextTokens
         workingDirectory = values["workingDirectory"].string ?? workingDirectory
-        queued = values["inbox"]["next-turn"].array.filter { $0["source"]["kind"].string != "user-question-reply" }.map { item in
-            (item["itemId"].string ?? item["id"].string ?? UUID().uuidString,
-             item["content"].array.compactMap { $0["text"].string }.joined(separator: "\n"))
+        let waiting = values["inbox"]["next-turn"].array.filter { $0["source"]["kind"].string != "user-question-reply" }.map { item in
+            (id: item["itemId"].string ?? item["id"].string ?? UUID().uuidString,
+             text: item["content"].array.compactMap { $0["text"].string }.joined(separator: "\n"))
         }
+        if !waiting.elementsEqual(queued, by: ==) { queued = waiting }
     }
 
     // MARK: Actions
@@ -682,6 +713,12 @@ final class SessionModel {
     }
 
     func cachedImage(_ attachmentId: String) -> UIImage? { imageCache.object(forKey: attachmentId as NSString) }
+
+    /// An image of a message just sent, as it was picked: its bubble shows this until the stored
+    /// copy is read (`AttachmentThumb`).
+    func keepPreview(_ preview: UIImage, for attachmentId: String) { previewCache.setObject(preview, forKey: attachmentId as NSString) }
+
+    func preview(_ attachmentId: String) -> UIImage? { previewCache.object(forKey: attachmentId as NSString) }
 }
 
 /// Kept between visits by `AppModel.localSessions`: opened again, the timeline is already there and

@@ -48,6 +48,8 @@ struct MainView: View {
     /// The way a drag on the shell set off, fixed by its first move; nil between drags.
     /// A plain reference filled by the drawer's rows.
     @State private var rowFrames = DrawerRowFrames()
+    /// The tab bar's badges, as `HomeBadgeCounter` counts them.
+    @State private var badges = HomeBadges()
     @State private var creating = false
     @State private var onboarding: Onboarding?
     /// 「添加 API Key」 was chosen in the sign-in sheet: its key editor follows once that sheet is gone.
@@ -189,6 +191,9 @@ struct MainView: View {
                 drawerLayout
             }
         }
+        // Counted outside this body. Counted here, every change to the session list or to what the
+        // Bots are doing would redraw this view, and with it the list and the conversation it builds.
+        .background { HomeBadgeCounter(badges: $badges) }
         // The drawer and the Bot pages, which have no way to the store themselves.
         .onChange(of: app.pluginStoreRequest) { _, token in
             guard token != nil, scenePhase != .background else { return }
@@ -339,6 +344,7 @@ struct MainView: View {
         }
         // Reading aloud belongs to the conversation on screen: moving to another one stops it.
         .onChange(of: onScreen, initial: true) { _, session in ReadAloud.shared.scope = session }
+        .onChange(of: shownBotChat, initial: true) { _, chat in app.botTeam.visibleChat = chat }
         .onChange(of: selection) { _, id in
             app.currentSession = shownSession
             if usesTabs {
@@ -833,13 +839,13 @@ struct MainView: View {
             } label: {
                 tabLabel(Text(DrawerView.sessionsTitle), "bubble.left.and.bubble.right", .sessions)
             }
-            .badge(waitingCount)
+            .badge(badges.waiting)
             Tab(value: HomeTab.bot) {
                 if sessionsSideBySide { botSplit } else { botStack(openDrawer: nil) }
             } label: {
                 tabLabel(Text(verbatim: "Bot"), "face.smiling", .bot, filled: "face.smiling.inverse")
             }
-            .badge(botPendingCount)
+            .badge(badges.botPending)
             // 我的应用: the user's own tools and games, opened as often as a home screen's.
             Tab(value: HomeTab.apps) {
                 NavigationStack { MiniAppsPage(asTab: true) }
@@ -874,11 +880,11 @@ struct MainView: View {
             Group { if sessionsSideBySide { sessionsSplit } else { sessionsStack } }
                 .tabItem { tabLabel(Text(DrawerView.sessionsTitle), "bubble.left.and.bubble.right", .sessions) }
                 .tag(HomeTab.sessions)
-                .badge(waitingCount)
+                .badge(badges.waiting)
             Group { if sessionsSideBySide { botSplit } else { botStack(openDrawer: nil) } }
                 .tabItem { tabLabel(Text(verbatim: "Bot"), "face.smiling", .bot, filled: "face.smiling.inverse") }
                 .tag(HomeTab.bot)
-                .badge(botPendingCount)
+                .badge(badges.botPending)
             NavigationStack { MiniAppsPage(asTab: true) }
                 .tabItem { tabLabel(Text(MiniAppsPage.tabTitle), "square.grid.2x2", .apps) }
                 .tag(HomeTab.apps)
@@ -959,26 +965,6 @@ struct MainView: View {
             .environment(\.symbolVariants, .none)
     }
 
-    /// What the 会话 tab's list shows waiting on the user: this phone's conversations and those on
-    /// the computers. The Bots' and the groups' sessions are left out, as the list leaves them out:
-    /// they count on the Bot tab.
-    private var waitingCount: Int {
-        let team = app.botTeam
-        let teamSessions = team.teamSessionIds
-        let local = app.sessions.keys.filter { id in
-            app.isWaiting(id) && !app.isArchived(id) && !teamSessions.contains(id)
-                && (team.teamWorkspaceId == nil || app.workspace(of: id)?.id != team.teamWorkspaceId)
-        }
-        let remote = app.remote.signedIn ? app.remote.listed().filter { $0.deviceOnline && $0.waiting }.count : 0
-        return local.count + remote
-    }
-
-    /// What the Bots wait on the user for, on the Bot tab.
-    private var botPendingCount: Int {
-        let team = app.botTeam
-        return team.bots.reduce(0) { $0 + team.pendingCount(of: $1) }
-    }
-
     /// A conversation on the 会话 tab's stack. Back is the system's; there is no drawer to open.
     @ViewBuilder
     private func pushedConversation(_ id: String) -> some View {
@@ -1001,6 +987,17 @@ struct MainView: View {
         case .bot(let id): return app.botTeam.bot(id)?.sessionId ?? "bot:\(id)"
         case .room(let id): return app.botTeam.room(id)?.sessionId ?? "room:\(id)"
         case nil: return "bots"
+        }
+    }
+
+    /// The Bot's chat or the group on screen (`BotModel.visibleChat`). Kept from here, as
+    /// `currentSession` is, and not by the pages as they come and go: opening an iPhone Duo
+    /// rebuilds them, and what they kept was lost on the way.
+    private var shownBotChat: String? {
+        guard botOpen else { return nil }
+        switch botPath.last {
+        case .bot(let id)?, .room(let id)?: return id
+        case nil: return nil
         }
     }
 
@@ -1398,5 +1395,44 @@ private struct DrawerEdgePan: UIViewRepresentable {
             default: ended(0)
             }
         }
+    }
+}
+
+/// The numbers on the tab bar's 会话 and Bot tabs.
+struct HomeBadges: Equatable {
+    var waiting = 0
+    var botPending = 0
+}
+
+/// Counts the tab bar's badges and hands `MainView` the numbers, which change far less often than
+/// what they are counted from.
+private struct HomeBadgeCounter: View {
+    @Environment(AppModel.self) private var app
+    @Binding var badges: HomeBadges
+
+    var body: some View {
+        Color.clear.onChange(of: HomeBadges(waiting: waitingCount, botPending: botPendingCount), initial: true) { _, counts in
+            badges = counts
+        }
+    }
+
+    /// What the 会话 tab's list shows waiting on the user: this phone's conversations and those on
+    /// the computers. The Bots' and the groups' sessions are left out, as the list leaves them out:
+    /// they count on the Bot tab.
+    private var waitingCount: Int {
+        let team = app.botTeam
+        let teamSessions = team.teamSessionIds
+        let local = app.sessions.keys.filter { id in
+            app.isWaiting(id) && !app.isArchived(id) && !teamSessions.contains(id)
+                && (team.teamWorkspaceId == nil || app.workspace(of: id)?.id != team.teamWorkspaceId)
+        }
+        let remote = app.remote.signedIn ? app.remote.listed().filter { $0.deviceOnline && $0.waiting }.count : 0
+        return local.count + remote
+    }
+
+    /// What the Bots wait on the user for, on the Bot tab.
+    private var botPendingCount: Int {
+        let team = app.botTeam
+        return team.bots.reduce(0) { $0 + team.pendingCount(of: $1) }
     }
 }
