@@ -837,7 +837,7 @@ struct MainView: View {
             Tab(value: HomeTab.sessions) {
                 if sessionsSideBySide { sessionsSplit } else { sessionsStack }
             } label: {
-                tabLabel(Text(DrawerView.sessionsTitle), "bubble.left.and.bubble.right", .sessions)
+                tabLabel(Text(DrawerView.sessionsTitle), "fp.message", .sessions, custom: true)
             }
             .badge(badges.waiting)
             Tab(value: HomeTab.bot) {
@@ -850,12 +850,12 @@ struct MainView: View {
             Tab(value: HomeTab.apps) {
                 NavigationStack { MiniAppsPage(asTab: true) }
             } label: {
-                tabLabel(Text(MiniAppsPage.tabTitle), "square.grid.2x2", .apps)
+                tabLabel(Text(MiniAppsPage.tabTitle), "square.on.circle", .apps, filled: "square.fill.on.circle.fill")
             }
             Tab(value: HomeTab.explore) {
                 ExploreTabView(path: $explorePath)
             } label: {
-                tabLabel(Text("探索"), "safari", .explore)
+                tabLabel(Text("探索"), "square.grid.2x2", .explore)
             }
             Tab(value: HomeTab.settings) {
                 SettingsView(asTab: true)
@@ -878,7 +878,7 @@ struct MainView: View {
     private var phoneTabLayout: some View {
         TabView(selection: $tab) {
             Group { if sessionsSideBySide { sessionsSplit } else { sessionsStack } }
-                .tabItem { tabLabel(Text(DrawerView.sessionsTitle), "bubble.left.and.bubble.right", .sessions) }
+                .tabItem { tabLabel(Text(DrawerView.sessionsTitle), "fp.message", .sessions, custom: true) }
                 .tag(HomeTab.sessions)
                 .badge(badges.waiting)
             Group { if sessionsSideBySide { botSplit } else { botStack(openDrawer: nil) } }
@@ -886,10 +886,10 @@ struct MainView: View {
                 .tag(HomeTab.bot)
                 .badge(badges.botPending)
             NavigationStack { MiniAppsPage(asTab: true) }
-                .tabItem { tabLabel(Text(MiniAppsPage.tabTitle), "square.grid.2x2", .apps) }
+                .tabItem { tabLabel(Text(MiniAppsPage.tabTitle), "square.on.circle", .apps, filled: "square.fill.on.circle.fill") }
                 .tag(HomeTab.apps)
             ExploreTabView(path: $explorePath)
-                .tabItem { tabLabel(Text("探索"), "safari", .explore) }
+                .tabItem { tabLabel(Text("探索"), "square.grid.2x2", .explore) }
                 .tag(HomeTab.explore)
             SettingsView(asTab: true)
                 .tabItem { tabLabel(Text("设置"), "gearshape", .settings) }
@@ -959,9 +959,12 @@ struct MainView: View {
     }
 
     /// A tab's name and icon: outlined, and filled while it is the one in front. Left alone the
-    /// system fills every icon that has a filled form, so it is told not to.
-    private func tabLabel(_ title: Text, _ symbol: String, _ value: HomeTab, filled: String? = nil) -> some View {
-        Label { title } icon: { Image(systemName: tab == value ? filled ?? "\(symbol).fill" : symbol) }
+    /// system fills every icon that has a filled form, so it is told not to. `custom` is one of our
+    /// own symbols in the asset catalog (Symbols, drawn by `scripts/draw-tab-symbols.swift`), which
+    /// follows weight and size like a system one.
+    private func tabLabel(_ title: Text, _ symbol: String, _ value: HomeTab, filled: String? = nil, custom: Bool = false) -> some View {
+        let name = tab == value ? filled ?? "\(symbol).fill" : symbol
+        return Label { title } icon: { custom ? Image(name) : Image(systemName: name) }
             .environment(\.symbolVariants, .none)
     }
 
