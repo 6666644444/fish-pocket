@@ -79,6 +79,9 @@ struct DrawerView: View {
 
     private static let ungrouped = ""
     private static let baseRows = 5
+    /// How many more sessions one tap on 「展开其余 n 个会话」 shows. The web adds five, which
+    /// is too few for a tap here.
+    private static let moreRows = 20
     private static let autoMaxRows = 50
     private static let searchLimit = 20
 
@@ -814,13 +817,13 @@ struct DrawerView: View {
         }
     }
 
-    /// 「展开其余 n 个会话」 five at a time (all when five or fewer remain), then 「收起」.
+    /// 「展开其余 n 个会话」 twenty at a time (all when twenty or fewer remain), then 「收起」.
     private func moreRow(_ group: SessionGroup, shown: Int) -> some View {
         let hidden = group.rows.count - shown
         return Button {
             withAnimation(.snappy(duration: 0.2)) {
                 if hidden > 0 {
-                    watermark[group.id] = hidden <= Self.baseRows ? group.rows.count : shown + Self.baseRows
+                    watermark[group.id] = hidden <= Self.moreRows ? group.rows.count : shown + Self.moreRows
                 } else {
                     watermark[group.id] = nil
                 }

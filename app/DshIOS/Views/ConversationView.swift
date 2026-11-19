@@ -149,6 +149,7 @@ struct ConversationView: View {
 
     private func isBlank(_ model: SessionModel) -> Bool {
         bot == nil && model.subagentAddress == nil && model.loaded && model.items.isEmpty && model.live.isEmpty && !model.running
+            && model.composer.bubbles.isEmpty
     }
 
     @ViewBuilder
@@ -200,6 +201,10 @@ struct ConversationView: View {
             // The bottom anchor only holds for the first layout; follow the user's own message and the start of a turn.
             .onChange(of: model.items.last?.id) { _, _ in
                 if case .user? = model.items.last { atBottom = true; scrollToBottom(proxy) }
+            }
+            // The message just sent is on screen before the engine has it.
+            .onChange(of: model.composer.bubbles.last?.id) { _, id in
+                if id != nil { atBottom = true; scrollToBottom(proxy) }
             }
             .onChange(of: model.running) { _, running in if running, atBottom { scrollToBottom(proxy) } }
             // A group round's replies are rows of the group's book (ds-bot 0.3.8), not events of this
@@ -928,6 +933,9 @@ private struct TimelineList: View {
     var body: some View {
         // A Bot's chat leaves out the turns that answered another Bot (ds-bot draws none of them).
         let items = bot.map { bot in model.items.filter { !bot.hides($0) } } ?? model.items
+        // A message just sent comes last, in the row its durable message takes over (`SessionModel.rowId`).
+        let bubbles = model.composer.bubbles.map { TimelineItem.user(seq: .max, text: $0.text, attachments: [], requestId: $0.id) }
+        let rows = (items + bubbles).enumerated().map { Row(id: model.rowId($0.element), index: $0.offset, item: $0.element) }
         let lastAssistant = items.last { if case .assistant = $0 { true } else { false } }?.id
         // The turn being worked on: the streamed attempt joins it, under one step line (as the web does).
         // A turn that has ended is not it: right after a send the session already runs while the new
@@ -940,7 +948,8 @@ private struct TimelineList: View {
             if model.hasMoreHistory { LoadOlderTrigger(model: model) }
             // A Bot's chat moves to a fresh part when it grows long; the earlier parts come from ds-bot.
             if !model.hasMoreHistory, model.loaded, let from = bot?.earlierFrom { BotEarlierParts(sessionId: from) }
-            ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+            ForEach(rows) { row in
+                let item = row.item
                 if bot?.room == true, case .assistant(_, let blocks, _, _) = item, let relay = RoomRelay(blocks: blocks) {
                     // A group round: its members' replies, under their names.
                     if !relay.empty { RoomRelayView(relay: relay, running: item.id == activeTurn).id(item.id) }
@@ -956,12 +965,12 @@ private struct TimelineList: View {
                         model: model,
                         isLast: isLast,
                         inProgress: false,
-                        prompt: isLast ? Self.prompt(before: index, in: items) : nil,
+                        prompt: isLast ? Self.prompt(before: row.index, in: items) : nil,
                         info: Self.turn(of: item).flatMap { model.turnInfo[$0] },
                         arrives: arrives(item)
                     )
                     .equatable()
-                    .id(item.id)
+                    .id(row.id)
                 }
             }
             // A message just sent comes first, then the line saying the reply is on its way: until the
@@ -977,6 +986,12 @@ private struct TimelineList: View {
         .padding(.top, 20)
         .padding(.bottom, 12)
         .readableWidth()
+    }
+
+    private struct Row: Identifiable {
+        let id: String
+        let index: Int
+        let item: TimelineItem
     }
 
     /// A message sent while the conversation is open rises into place; what a snapshot brought
@@ -1157,7 +1172,7 @@ private struct LoadOlderTrigger: View {
                 // The first layout has this in view until the bottom anchor takes hold.
                 try? await Task.sleep(for: .milliseconds(300))
                 guard !Task.isCancelled else { return }
-                let anchor = model.items.first?.id
+                let anchor = model.items.first.map(model.rowId)
                 // Its own task: scrolling on must not cancel the request halfway.
                 Task {
                     await model.loadOlder()
@@ -1200,6 +1215,8 @@ private struct UserBubble: View {
     /// Just sent: it rises from the composer into place.
     var arrives = false
     @State private var landed = false
+    /// It shows sooner than it lands: the rise is of a bubble that can be seen.
+    @State private var shown = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var revealed = false
     /// A long message (询问 AI writes one with an install log) folds to its first lines until asked for.
@@ -1269,13 +1286,14 @@ private struct UserBubble: View {
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
         .padding(.leading, 60)
-        .opacity(arrives && !landed ? 0 : 1)
+        .opacity(arrives && !shown ? 0 : 1)
         .scaleEffect(arrives && !landed && !reduceMotion ? 0.9 : 1, anchor: .bottomTrailing)
         .offset(y: arrives && !landed && !reduceMotion ? 36 : 0)
         .task {
             guard arrives, !landed else { return }
             // After the pass that laid the new row out: started inside it, most of the rise is over before a frame is drawn.
             await Task.yield()
+            withAnimation(.easeOut(duration: 0.1)) { shown = true }
             withAnimation(.spring(response: 0.42, dampingFraction: 0.74)) { landed = true }
         }
     }
