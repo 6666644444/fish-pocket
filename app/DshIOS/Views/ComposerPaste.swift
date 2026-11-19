@@ -7,9 +7,11 @@ import ObjectiveC
 /// attachment: from the edit menu's 粘贴, the iPad keyboard's paste key, and the keyboard's
 /// paste suggestion, which iOS offers only to an input that takes images. SwiftUI's text input
 /// takes text alone, and its own paste API starts at iOS 27, so the UIKit text view under the
-/// input learns it here.
+/// input learns it here. A file (拷贝 in Files) joins as a file, as the web takes a pasted file,
+/// and text over `ComposerModel.longTextLimit` as a text file: in the input it would hold the
+/// app on its layout.
 extension View {
-    func pastesImages(focused: Bool, into composer: ComposerModel) -> some View {
+    func pastesAttachments(focused: Bool, into composer: ComposerModel) -> some View {
         modifier(ImagePasteModifier(focused: focused, composer: composer))
     }
 }
@@ -26,8 +28,14 @@ private struct ImagePasteModifier: ViewModifier {
             DispatchQueue.main.async {
                 guard let view = UIResponder.focusedTextView else { return }
                 // A queued message being edited is text only.
-                ImagePaste.attach(to: view, accepts: { [composer] in composer.editingQueue == nil }) { image in
-                    if let refusal = composer.addImage(data: image) { app.showToast(refusal) }
+                ImagePaste.attach(to: view, accepts: { [composer] in composer.editingQueue == nil }) { pasted in
+                    switch pasted {
+                    case .image(let data):
+                        if let refusal = composer.addImage(data: data) { app.showToast(refusal) }
+                    case .file(let copy): composer.addStagedFile(copy)
+                    case .longText(let text): composer.addLongText(text)
+                    case .failed: app.showToast(String(localized: "粘贴的文件读取失败"))
+                    }
                 }
             }
         }
@@ -36,11 +44,19 @@ private struct ImagePasteModifier: ViewModifier {
 
 /// UIKit runs the paste as it does for any text view: the system hands over the clipboard only
 /// in the course of a paste the user asked for (a read of our own after the keyboard's paste
-/// key comes back empty). The view's paste delegate takes each image out of the paste and lets
-/// the rest, text, through untouched. Everything here runs on the main thread.
+/// key comes back empty). The view's paste delegate takes each image, file and long text out of
+/// the paste and lets the rest, text, through untouched. Everything here runs on the main thread.
 enum ImagePaste {
-    /// An image's own bytes: a PNG stays a PNG.
-    typealias Handler = (Data) -> Void
+    enum Pasted {
+        /// An image's own bytes: a PNG stays a PNG.
+        case image(Data)
+        /// A file's copy, in a folder of its own under `tmp/uploads` (`PickedMovie.stage`).
+        case file(URL)
+        case longText(String)
+        /// A file that could not be read.
+        case failed
+    }
+    typealias Handler = (Pasted) -> Void
 
     private final class Target: NSObject, UITextPasteDelegate {
         let accepts: () -> Bool
@@ -49,17 +65,12 @@ enum ImagePaste {
 
         func textPasteConfigurationSupporting(_ textPasteConfigurationSupporting: any UITextPasteConfigurationSupporting, transform item: any UITextPasteItem) {
             let provider = item.itemProvider
-            guard accepts(), let type = provider.registeredContentTypes.first(where: { $0.conforms(to: .image) }) else {
-                return item.setDefaultResult()
-            }
-            item.setNoResult()
-            let add = self.add
+            guard accepts() else { return item.setDefaultResult() }
+            let types = provider.registeredContentTypes
             weak let view = textPasteConfigurationSupporting as? UITextView
-            // An image that cannot be read pastes nothing: another 拷贝 is the only remedy anyway.
-            _ = provider.loadDataRepresentation(forTypeIdentifier: type.identifier) { data, _ in
-                guard let data else { return }
+            let add: @Sendable (Pasted) -> Void = { [add = self.add] pasted in
                 DispatchQueue.main.async {
-                    add(data)
+                    add(pasted)
                     // The text did not change, so the keyboard would keep offering the paste
                     // it just made (iOS 27's 粘贴自… suggestion): told the document changed, it
                     // refreshes its suggestions.
@@ -67,6 +78,36 @@ enum ImagePaste {
                     view.inputDelegate?.textWillChange(view)
                     view.inputDelegate?.textDidChange(view)
                 }
+            }
+            if let type = types.first(where: { $0.conforms(to: .image) }) {
+                item.setNoResult()
+                // An image that cannot be read pastes nothing: another 拷贝 is the only remedy anyway.
+                _ = provider.loadDataRepresentation(forTypeIdentifier: type.identifier) { data, _ in
+                    if let data { add(.image(data)) }
+                }
+            } else if provider.suggestedName != nil, let type = types.first(where: { $0.conforms(to: .data) }) {
+                // A file brings its name; text copied in an app comes without one. Files offers
+                // a text file's contents as text too, which would land in the input.
+                item.setNoResult()
+                _ = provider.loadFileRepresentation(for: type, openInPlace: false) { url, _, _ in
+                    // The system's copy is gone once this returns.
+                    guard let url, let copy = try? PickedMovie.stage(url) else { return add(.failed) }
+                    add(.file(copy))
+                }
+            } else if provider.canLoadObject(ofClass: NSString.self) {
+                // The paste waits for its items: a long text leaves it, the rest go in as they came.
+                _ = provider.loadObject(ofClass: NSString.self) { object, _ in
+                    let text = (object as? NSString) as String?
+                    DispatchQueue.main.async {
+                        guard let text, text.utf16.count > ComposerModel.longTextLimit else {
+                            return text.map { item.setResult(string: $0) } ?? item.setDefaultResult()
+                        }
+                        item.setNoResult()
+                        add(.longText(text))
+                    }
+                }
+            } else {
+                item.setDefaultResult()
             }
         }
     }

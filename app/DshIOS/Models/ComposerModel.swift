@@ -232,6 +232,10 @@ final class ComposerModel {
         text = draft.text
         quotes = draft.quotes
         mentions = draft.mentions
+        if draft.dropped {
+            DraftStore.shared.write(nil, for: sessionId)
+            app.showToast(String(localized: "上次的草稿太长，没有放回输入框"))
+        }
     }
 
     // MARK: Projections
@@ -362,20 +366,30 @@ final class ComposerModel {
         mentions.keys.sorted { $0.count > $1.count }.reduce(text) { $0.replacingOccurrences(of: $1, with: mentions[$1] ?? $1) }
     }
 
+    /// Text this long joins as a file (`addLongText`) instead of going into the input. The input
+    /// grows with what it holds, and SwiftUI works its height out by laying all of it out on the
+    /// main thread: two megabytes pasted held the app for 20 s, and 8 s on each key after.
+    static let longTextLimit = 5_000
+    /// A draft longer than this is neither kept nor put back. One pasted before `longTextLimit`
+    /// held every launch on that layout for most of a minute, long enough for the system to end
+    /// the app on a device: it could not be opened again.
+    static let draftLimit = 100_000
+
     /// The stored draft, in the shape of the web's `dsh.conversation.<sid>` store:
     /// `{draft: {text, references, mentions, quotes}}`. It is kept by `DraftStore`.
-    private static func loadDraft(_ sessionId: String) -> (text: String, quotes: [String], mentions: [String: String]) {
+    private static func loadDraft(_ sessionId: String) -> (text: String, quotes: [String], mentions: [String: String], dropped: Bool) {
         guard let data = DraftStore.shared.read(sessionId),
-              let stored = try? JSONDecoder().decode(JSON.self, from: data) else { return ("", [], [:]) }
+              let stored = try? JSONDecoder().decode(JSON.self, from: data) else { return ("", [], [:], false) }
         let text = stored["draft"]["text"].string ?? stored["draft"].string ?? ""
+        guard text.utf16.count <= draftLimit else { return ("", [], [:], true) }
         let restored = DraftQuotes.restore(text: text, quotes: stored["draft"]["quotes"].array)
-        return (restored.text, restored.quotes, stored["draft"]["mentions"].object.compactMapValues(\.string))
+        return (restored.text, restored.quotes, stored["draft"]["mentions"].object.compactMapValues(\.string), false)
     }
 
     private func persistDraft() {
         // A queued message in the input is not the draft: the draft waits in `setAside`.
         guard editingQueue == nil else { return }
-        guard !text.isEmpty || !quotes.isEmpty else { DraftStore.shared.write(nil, for: sessionId); return }
+        guard !text.isEmpty || !quotes.isEmpty, text.utf16.count <= Self.draftLimit else { DraftStore.shared.write(nil, for: sessionId); return }
         let draft = DraftQuotes.store(quotes: quotes, text: text)
         var fields: [String: JSON] = ["text": .string(draft.text), "references": [], "mentions": .object(mentions.mapValues { .string($0) })]
         if !draft.quotes.isEmpty { fields["quotes"] = .array(draft.quotes) }
@@ -847,6 +861,15 @@ final class ComposerModel {
             }
         }
         if let refusal { app.showToast(refusal) }
+    }
+
+    /// Text over `longTextLimit` (a paste, a share), as a text file that uploads like any other.
+    func addLongText(_ text: String) {
+        do {
+            addStagedFile(try PickedMovie.stage(Data(text.utf8), name: String(localized: "粘贴的文本") + ".txt"))
+        } catch {
+            app.showToast(error.localizedDescription)
+        }
     }
 
     /// A file already copied into its own `uploads/` folder (`PickedMovie.stage`): it uploads
