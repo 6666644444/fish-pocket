@@ -50,7 +50,7 @@
 
 - 工程文件不进仓库。Xcode Cloud 克隆后跑 `app/ci_scripts/ci_post_clone.sh`：装工具、下载 nodejs-mobile 和 Python、编译 libgit2、组装引擎、生成工程。这个脚本在 Mac 上也能直接跑，改完先本地跑一遍。
 - build 号由 Xcode Cloud 分配，每次构建加 1，失败的也占号。脚本把它写进生成的工程，`app/project.yml` 里的 `CURRENT_PROJECT_VERSION` 只对本地构建有效。
-- Fish Pocket 账号要构建时带上服务地址才会出现（`FISH_POCKET_API_URL`，`app/project.yml` 里默认为空）。云端构建从工作流的环境变量读它，脚本写进生成的工程；本地打正式包时在 `xcodebuild` 命令行上传。没带地址的构建里看不到这个功能，「新功能」里也不提它。
+- Fish Pocket 账号要构建时带上服务地址才会出现（`FISH_POCKET_API_URL`，`app/project.yml` 里默认为空）。云端构建从工作流的环境变量读它，脚本写进生成的工程；本地构建从 `.env.local` 读它（不进 git，照 `.env.local.example` 写；Claude Code 新建 worktree 时按 `.worktreeinclude` 拷过去），`scripts/run-sim.sh`、`scripts/run-device.sh` 自动带上，打包时会打印账号功能是开还是关（不设是正常的，账号不是必需的）；自己手写 `xcodebuild` 时要在命令行上传。没带地址的构建里看不到这个功能，「新功能」里也不提它。
 - 改了 `app/project.yml` 里 SwiftPM 依赖的版本后，本地构建一次，把 `app/DshIOS.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` 拷到 `app/ci_scripts/Package.resolved`。Xcode Cloud 不自己解析版本，两边对不上会构建失败。
 
 ### 分支
