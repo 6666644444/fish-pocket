@@ -131,7 +131,7 @@ struct RootView: View {
             // Long enough and it is not slow, it is stuck: say so and hand over the log.
             if engine.stalled {
                 EngineTrouble(headline: String(localized: "引擎还没起来"), since: engine.startedAt, logFile: engine.logFile,
-                              safeMode: { engine.requestSafeMode() })
+                              repair: engine)
             } else {
                 StartupView(message: String(localized: "正在启动 DSH 引擎…"))
             }
@@ -183,19 +183,20 @@ private struct EngineTrouble: View {
     /// When the wait began, for the running count; nil once the engine has exited.
     let since: Date?
     let logFile: URL
-    /// Safe mode, while the engine is still up to take it; nil once it has exited.
-    var safeMode: (() -> Void)?
+    /// The repair steps, while Node is still there to carry them out; nil once it has exited.
+    var repair: NodeEngine?
 
     @State private var log = ""
-    /// Safe mode was asked for: the engine restarts, and this screen goes when it is up.
-    @State private var safeModeRequested = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             VStack(alignment: .leading, spacing: 6) {
                 Text(headline).font(.headline).foregroundStyle(Palette.ink)
                 // One Text: a stack would space the counter off the comma after it.
-                if let since {
+                // Once `main.mjs` has stopped restarting nothing is being waited for any more.
+                if repair?.recovery?.state == .failed {
+                    Text("试了几次都没起来，已停止自动重启。")
+                } else if let since {
                     Text("已等待 ") + Text(since, style: .timer).monospacedDigit() + Text("，还在等")
                 }
                 Text("下面是引擎日志。复制或分享出去，就能看出卡在哪一步。")
@@ -212,37 +213,16 @@ private struct EngineTrouble: View {
                     .padding(12)
             }
             .defaultScrollAnchor(.bottom)
+            .frame(minHeight: 100)
             .background(Palette.grouped, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
 
-            if let safeMode {
-                // The way in when a plugin is what holds the engine up: its data, the
-                // plugin with it, outlives a reinstall, and the page that switches it off
-                // is behind the interface that is missing.
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("如果是第三方插件卡住了引擎，可以先把它们全部停用。插件不会被卸载，进去后可以在插件页逐个重新打开。")
-                        .font(.footnote)
-                        .foregroundStyle(Palette.secondary)
-                    Button {
-                        safeModeRequested = true
-                        safeMode()
-                    } label: {
-                        if safeModeRequested {
-                            HStack(spacing: 8) {
-                                ProgressView().controlSize(.small).tint(Palette.onInk)
-                                Text("正在重启引擎…")
-                            }
-                        } else {
-                            Text("停用第三方插件并重启")
-                        }
-                    }
-                    .buttonStyle(.capsule(.primary, height: 44))
-                    .disabled(safeModeRequested)
-                }
+            if let repair {
+                EngineRepair(engine: repair)
             }
 
             HStack(spacing: 12) {
                 Button("复制报告") { copyToPasteboard(report()) }
-                    .buttonStyle(.capsule(safeMode == nil ? .primary : .secondary, height: 44))
+                    .buttonStyle(.capsule(repair == nil ? .primary : .secondary, height: 44))
                 if FileManager.default.fileExists(atPath: logFile.path) {
                     ShareLink(item: logFile) { Text("分享日志") }
                         .buttonStyle(.capsule(.secondary, height: 44))
