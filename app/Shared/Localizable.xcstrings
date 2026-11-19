@@ -410,25 +410,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The tool “%2$@” in %1$@ hit an error while running:\n\n%3$@\n\nPlease fix it."
+            "value" : "The mini app “%2$@” in %1$@ hit an error while running:\n\n%3$@\n\nPlease fix it."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La herramienta «%2$@» de %1$@ ha dado un error al ejecutarse:\n\n%3$@\n\nArréglala, por favor."
+            "value" : "La miniapp «%2$@» de %1$@ ha dado un error al ejecutarse:\n\n%3$@\n\nArréglala, por favor."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ のツール「%2$@」の実行中にエラーが発生しました：\n\n%3$@\n\n直してください。"
+            "value" : "%1$@ のミニアプリ「%2$@」の実行中にエラーが発生しました：\n\n%3$@\n\n直してください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ 에 있는 도구 ‘%2$@’ 실행 중 오류가 났어요:\n\n%3$@\n\n고쳐 주세요."
+            "value" : "%1$@ 에 있는 미니 앱 ‘%2$@’ 실행 중 오류가 났어요:\n\n%3$@\n\n고쳐 주세요."
           }
         },
         "zh-Hant" : {
@@ -2784,13 +2784,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tool"
+                  "value" : "%lld mini app"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tools"
+                  "value" : "%lld mini apps"
                 }
               }
             }
@@ -2802,13 +2802,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld herramienta"
+                  "value" : "%lld miniapp"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld herramientas"
+                  "value" : "%lld miniapps"
                 }
               }
             }
@@ -2817,13 +2817,13 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld 個のツール"
+            "value" : "%lld 個のミニアプリ"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "도구 %lld개"
+            "value" : "미니 앱 %lld개"
           }
         },
         "zh-Hans" : {
@@ -7343,25 +7343,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Make me a tool for tracking expenses"
+            "value" : "Make me a mini app for tracking expenses"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hazme una herramienta para anotar gastos"
+            "value" : "Hazme una miniapp para anotar gastos"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "家計簿のツールを作って"
+            "value" : "家計簿のミニアプリを作って"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "가계부 도구를 만들어 줘"
+            "value" : "가계부 미니 앱을 만들어 줘"
           }
         },
         "zh-Hant" : {
@@ -22097,25 +22097,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Change the tool “%2$@” in %1$@: "
+            "value" : "Change the mini app “%2$@” in %1$@: "
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambia la herramienta «%2$@» de %1$@: "
+            "value" : "Cambia la miniapp «%2$@» de %1$@: "
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ のツール「%2$@」を修正："
+            "value" : "%1$@ のミニアプリ「%2$@」を修正："
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ 에 있는 도구 ‘%2$@’ 수정: "
+            "value" : "%1$@ 에 있는 미니 앱 ‘%2$@’ 수정: "
           }
         },
         "zh-Hant" : {
@@ -22505,25 +22505,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Make a Tool of Your Own"
+            "value" : "Make a Mini App of Your Own"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crea tu propia herramienta"
+            "value" : "Crea tu propia miniapp"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自分だけのツールを作る"
+            "value" : "自分だけのミニアプリを作る"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "나만의 도구 만들기"
+            "value" : "나만의 미니 앱 만들기"
           }
         },
         "zh-Hant" : {
@@ -22539,25 +22539,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Make Your Own Tools"
+            "value" : "Make Your Own Mini Apps"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crea tus propias herramientas"
+            "value" : "Crea tus propias miniapps"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "自分だけのツールを作る"
+            "value" : "自分だけのミニアプリを作る"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "나만의 도구 만들기"
+            "value" : "나만의 미니 앱 만들기"
           }
         },
         "zh-Hant" : {
@@ -28252,25 +28252,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Delete Tool"
+            "value" : "Delete Mini App"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eliminar herramienta"
+            "value" : "Eliminar miniapp"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ツールを削除"
+            "value" : "ミニアプリを削除"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "도구 삭제"
+            "value" : "미니 앱 삭제"
           }
         },
         "zh-Hant" : {
@@ -35430,25 +35430,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ask the agent in a chat to make a tool"
+            "value" : "Ask the agent in a chat to make a mini app"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pide al agente en un chat que cree una herramienta"
+            "value" : "Pide al agente en un chat que cree una miniapp"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "チャットでエージェントにツールを作ってもらいましょう"
+            "value" : "チャットでエージェントにミニアプリを作ってもらいましょう"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "대화에서 에이전트에게 도구를 만들어 달라고 하세요"
+            "value" : "대화에서 에이전트에게 미니 앱을 만들어 달라고 하세요"
           }
         },
         "zh-Hant" : {
@@ -35464,25 +35464,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ask the agent in a chat for a small tool or game. It lands in Tools, ready to open, and can go on your Home Screen too. Start with the built-in Days, Pomodoro and Fruit Flip."
+            "value" : "Ask the agent in a chat for a small tool or game. It lands in Mini Apps, ready to open, and can go on your Home Screen too. Start with the built-in Days, Pomodoro and Fruit Flip."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pide al agente en un chat una pequeña herramienta o un juego. Aparece en Herramientas, listo para abrir, y también puedes ponerlo en la pantalla de inicio. Empieza con Días, Pomodoro y Frutas pareja, que vienen incluidas."
+            "value" : "Pide al agente en un chat una pequeña herramienta o un juego. Aparece en Miniapps, listo para abrir, y también puedes ponerlo en la pantalla de inicio. Empieza con Días, Pomodoro y Frutas pareja, que vienen incluidas."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "チャットでエージェントに小さなツールやゲームを頼むと「ツール」に追加され、すぐに開けます。ホーム画面にも置けます。まずは付属のカウントダウン、ポモドーロ、フルーツめくりを試してみましょう。"
+            "value" : "チャットでエージェントに小さなツールやゲームを頼むと「ミニアプリ」に追加され、すぐに開けます。ホーム画面にも置けます。まずは付属のカウントダウン、ポモドーロ、フルーツめくりを試してみましょう。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "대화에서 에이전트에게 작은 도구나 게임을 부탁하면 ‘도구’에 들어가 바로 열 수 있어요. 홈 화면에도 둘 수 있어요. 먼저 기본으로 들어 있는 디데이, 뽀모도로, 과일 짝맞추기를 써 보세요."
+            "value" : "대화에서 에이전트에게 작은 도구나 게임을 부탁하면 ‘미니 앱’에 들어가 바로 열 수 있어요. 홈 화면에도 둘 수 있어요. 먼저 기본으로 들어 있는 디데이, 뽀모도로, 과일 짝맞추기를 써 보세요."
           }
         },
         "zh-Hans" : {
@@ -40578,25 +40578,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tools"
+            "value" : "Mini Apps"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Herramientas"
+            "value" : "Miniapps"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ツール"
+            "value" : "ミニアプリ"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "도구"
+            "value" : "미니 앱"
           }
         },
         "zh-Hant" : {
@@ -40612,25 +40612,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tools run only on this device, each on its own. They can’t read your files or chats, but they can use the internet."
+            "value" : "Mini apps run only on this device, each on its own. They can’t read your files or chats, but they can use the internet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las herramientas solo se ejecutan en este dispositivo, aisladas entre sí. No pueden leer tus archivos ni tus chats, pero sí usar internet."
+            "value" : "Las miniapps solo se ejecutan en este dispositivo, aisladas entre sí. No pueden leer tus archivos ni tus chats, pero sí usar internet."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ツールはこのデバイス上だけで、それぞれ独立して動きます。ファイルや会話は読み取れませんが、インターネットには接続できます。"
+            "value" : "ミニアプリはこのデバイス上だけで、それぞれ独立して動きます。ファイルや会話は読み取れませんが、インターネットには接続できます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "도구는 이 기기에서만, 서로 분리된 채로 실행돼요. 파일과 대화는 읽을 수 없지만 인터넷은 쓸 수 있어요."
+            "value" : "미니 앱은 이 기기에서만, 서로 분리된 채로 실행돼요. 파일과 대화는 읽을 수 없지만 인터넷은 쓸 수 있어요."
           }
         },
         "zh-Hant" : {
@@ -40646,25 +40646,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tool deleted"
+            "value" : "Mini app deleted"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Herramienta eliminada"
+            "value" : "Miniapp eliminada"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ツールは削除されました"
+            "value" : "ミニアプリを削除しました"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "삭제된 도구"
+            "value" : "미니 앱을 삭제했어요"
           }
         },
         "zh-Hant" : {
@@ -40680,25 +40680,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The tool’s files and the data it saved will be deleted. This can’t be undone."
+            "value" : "The mini app’s files and the data it saved will be deleted. This can’t be undone."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se eliminarán los archivos de la herramienta y los datos que haya guardado. No se puede deshacer."
+            "value" : "Se eliminarán los archivos de la miniapp y los datos que haya guardado. No se puede deshacer."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ツールのファイルと保存したデータはすべて削除され、元に戻せません。"
+            "value" : "ミニアプリのファイルと保存したデータはすべて削除され、元に戻せません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "도구 파일과 도구가 저장한 데이터가 모두 삭제되며 되돌릴 수 없어요."
+            "value" : "미니 앱 파일과 미니 앱이 저장한 데이터가 모두 삭제되며 되돌릴 수 없어요."
           }
         },
         "zh-Hant" : {
@@ -45249,25 +45249,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Make me a tool: "
+            "value" : "Make me a mini app: "
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hazme una herramienta: "
+            "value" : "Hazme una miniapp: "
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ツールを作って："
+            "value" : "ミニアプリを作って："
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "도구를 만들어 줘: "
+            "value" : "미니 앱을 만들어 줘: "
           }
         },
         "zh-Hant" : {
@@ -49609,25 +49609,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opens one of your tools. Add it to the Home Screen from Shortcuts to give that tool an icon of its own."
+            "value" : "Opens one of your mini apps. Add it to the Home Screen from Shortcuts to give that mini app an icon of its own."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abre una de tus herramientas. Añádelo a la pantalla de inicio desde Atajos para que esa herramienta tenga su propio icono."
+            "value" : "Abre una de tus miniapps. Añádelo a la pantalla de inicio desde Atajos para que esa miniapp tenga su propio icono."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ツールを 1 つ開きます。ショートカットからホーム画面に追加すると、そのツール専用のアイコンになります。"
+            "value" : "ミニアプリを 1 つ開きます。ショートカットからホーム画面に追加すると、そのミニアプリ専用のアイコンになります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "도구 하나를 열어요. 단축어에서 홈 화면에 추가하면 그 도구만의 아이콘이 돼요."
+            "value" : "미니 앱 하나를 열어요. 단축어에서 홈 화면에 추가하면 그 미니 앱만의 아이콘이 돼요."
           }
         },
         "zh-Hant" : {
@@ -49813,25 +49813,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Open Tool"
+            "value" : "Open Mini App"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir herramienta"
+            "value" : "Abrir miniapp"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ツールを開く"
+            "value" : "ミニアプリを開く"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "도구 열기"
+            "value" : "미니 앱 열기"
           }
         },
         "zh-Hant" : {
@@ -93858,25 +93858,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choose which tools the widget shows."
+            "value" : "Choose which mini apps the widget shows."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige qué herramientas muestra el widget."
+            "value" : "Elige qué miniapps muestra el widget."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ウィジェットに表示するツールを選びます。"
+            "value" : "ウィジェットに表示するミニアプリを選びます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "위젯에 넣을 도구를 고르세요."
+            "value" : "위젯에 넣을 미니 앱을 고르세요."
           }
         },
         "zh-Hant" : {
@@ -110619,25 +110619,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tools"
+            "value" : "Mini Apps"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Herramientas"
+            "value" : "Miniapps"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ツール"
+            "value" : "ミニアプリ"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "도구"
+            "value" : "미니 앱"
           }
         },
         "zh-Hans" : {
@@ -110978,25 +110978,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The home screen now uses Apple's tab bar, so Sessions, Bot, Tools, Explore and Settings are one tap away. Plugins, Connectors, Device capabilities, Phone Control and Remote Control are all under Explore, and search is in the session list. On iPad and iPhone Duo, the tab bar moves to the top or turns into a sidebar on its own."
+            "value" : "The home screen now uses Apple's tab bar, so Sessions, Bot, Mini Apps, Explore and Settings are one tap away. Plugins, Connectors, Device capabilities, Phone Control and Remote Control are all under Explore, and search is in the session list. On iPad and iPhone Duo, the tab bar moves to the top or turns into a sidebar on its own."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La pantalla de inicio usa ahora la barra de pestañas de Apple: Sesiones, Bot, Herramientas, Explorar y Configuración están a un toque. Complementos, Conectores, Funciones del dispositivo, Control del teléfono y Control remoto están en Explorar, y la búsqueda está en la lista de sesiones. En iPad y iPhone Duo, la barra de pestañas pasa sola arriba o se convierte en una barra lateral."
+            "value" : "La pantalla de inicio usa ahora la barra de pestañas de Apple: Sesiones, Bot, Miniapps, Explorar y Configuración están a un toque. Complementos, Conectores, Funciones del dispositivo, Control del teléfono y Control remoto están en Explorar, y la búsqueda está en la lista de sesiones. En iPad y iPhone Duo, la barra de pestañas pasa sola arriba o se convierte en una barra lateral."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ホーム画面が Apple のタブバーになり、セッション、Bot、ツール、探索、設定にワンタップで移動できます。プラグイン、コネクタ、デバイス機能、iPhone を操作、リモート操作はすべて「探索」にまとめ、検索はセッション一覧に入りました。iPad と iPhone Duo では、タブバーが自動的に上部に移動するか、サイドバーに切り替わります。"
+            "value" : "ホーム画面が Apple のタブバーになり、セッション、Bot、ミニアプリ、探索、設定にワンタップで移動できます。プラグイン、コネクタ、デバイス機能、iPhone を操作、リモート操作はすべて「探索」にまとめ、検索はセッション一覧に入りました。iPad と iPhone Duo では、タブバーが自動的に上部に移動するか、サイドバーに切り替わります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "홈 화면이 Apple 탭 바로 바뀌어 세션, Bot, 도구, 탐색, 설정을 한 번에 열 수 있어요. 플러그인, 커넥터, 기기 기능, iPhone 조작, 원격 제어는 모두 「탐색」에 있고, 검색은 세션 목록에 들어갔어요. iPad와 iPhone Duo에서는 탭 바가 자동으로 위쪽으로 옮겨지거나 사이드바로 바뀌어요."
+            "value" : "홈 화면이 Apple 탭 바로 바뀌어 세션, Bot, 미니 앱, 탐색, 설정을 한 번에 열 수 있어요. 플러그인, 커넥터, 기기 기능, iPhone 조작, 원격 제어는 모두 「탐색」에 있고, 검색은 세션 목록에 들어갔어요. iPad와 iPhone Duo에서는 탭 바가 자동으로 위쪽으로 옮겨지거나 사이드바로 바뀌어요."
           }
         },
         "zh-Hans" : {
@@ -111331,25 +111331,25 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "When the engine won't start, it's usually a plugin or a setting. Try the steps below in order. Your sessions, Bots, tools, and files won't be touched."
+            "value" : "When the engine won't start, it's usually a plugin or a setting. Try the steps below in order. Your sessions, Bots, mini apps, and files won't be touched."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si el motor no arranca, casi siempre es por un complemento o un ajuste. Prueba los pasos de abajo en orden. Tus sesiones, Bots, herramientas y archivos no se tocan."
+            "value" : "Si el motor no arranca, casi siempre es por un complemento o un ajuste. Prueba los pasos de abajo en orden. Tus sesiones, Bots, miniapps y archivos no se tocan."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "エンジンが起動しないのは、たいていプラグインか設定が原因です。下の手順を順番に試してください。セッション、Bot、ツール、ファイルには触れません。"
+            "value" : "エンジンが起動しないのは、たいていプラグインか設定が原因です。下の手順を順番に試してください。セッション、Bot、ミニアプリ、ファイルには触れません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "엔진이 시작되지 않는 건 대개 플러그인이나 설정 때문이에요. 아래 단계를 순서대로 시도해 보세요. 세션, Bot, 도구, 파일은 건드리지 않아요."
+            "value" : "엔진이 시작되지 않는 건 대개 플러그인이나 설정 때문이에요. 아래 단계를 순서대로 시도해 보세요. 세션, Bot, 미니 앱, 파일은 건드리지 않아요."
           }
         },
         "zh-Hant" : {
