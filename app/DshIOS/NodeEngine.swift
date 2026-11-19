@@ -42,23 +42,39 @@ final class NodeEngine: ObservableObject {
 
     var logFile: URL { EnginePaths.real(EnginePaths.shared + "/engine.log") }
 
-    /// Safe mode (engine/runtime/safe-mode.mjs): `main.mjs` switches off every
-    /// third-party plugin and restarts the engine. It is asked by file, since an
-    /// engine that never came up answers no HTTP; `main.mjs` looks every second.
-    private static let safeModeRequest = EnginePaths.real(EnginePaths.shared + "/safe-mode-request")
-    private static let safeModeReport = EnginePaths.real(EnginePaths.shared + "/safe-mode.json")
+    /// Recovery (engine/runtime/recovery.mjs, driven by `main.mjs`): the way back in when
+    /// the engine will not come up. It is asked by file, since an engine that never came up
+    /// answers no HTTP; `main.mjs` looks every second and says how the launch stands in
+    /// another file, read here with the URL.
+    private static let recoveryRequest = EnginePaths.real(EnginePaths.shared + "/recovery-request.json")
+    private static let recoveryStateFile = EnginePaths.real(EnginePaths.shared + "/recovery-state.json")
+    private static let recoveryReport = EnginePaths.real(EnginePaths.shared + "/recovery-report.json")
 
-    func requestSafeMode() {
-        FileManager.default.createFile(atPath: Self.safeModeRequest.path, contents: nil)
+    /// How the launch stands, as `main.mjs` last wrote it.
+    @Published private(set) var recovery: RecoveryState?
+
+    /// Ask for one recovery step. Returns its id, which comes back in `recovery.action` once done.
+    @discardableResult
+    func requestRecovery(_ action: RecoveryAction) -> String {
+        let id = UUID().uuidString
+        var body: [String: String] = ["id": id, "action": action.name]
+        if case .edit(let path, let text) = action {
+            body["path"] = path
+            body["text"] = text
+        }
+        if let data = try? JSONSerialization.data(withJSONObject: body) {
+            try? data.write(to: Self.recoveryRequest, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+        }
+        return id
     }
 
-    /// The plugins safe mode switched off, once: the record goes as it is read.
-    func takeSafeModeReport() -> [String]? {
-        guard let data = try? Data(contentsOf: Self.safeModeReport) else { return nil }
-        try? FileManager.default.removeItem(at: Self.safeModeReport)
-        struct Report: Decodable { let disabled: [String] }
-        guard let names = (try? JSONDecoder().decode(Report.self, from: data))?.disabled, !names.isEmpty else { return nil }
-        return names
+    /// What recovery did before this launch came up, once: the record goes as it is read.
+    func takeRecoveryReport() -> [RecoveryState.Action]? {
+        guard let data = try? Data(contentsOf: Self.recoveryReport) else { return nil }
+        try? FileManager.default.removeItem(at: Self.recoveryReport)
+        struct Report: Decodable { let actions: [RecoveryState.Action] }
+        guard let actions = (try? RecoveryState.decoder.decode(Report.self, from: data))?.actions, !actions.isEmpty else { return nil }
+        return actions
     }
 
     func start() {
@@ -89,8 +105,9 @@ final class NodeEngine: ObservableObject {
         try? FileManager.default.createDirectory(at: urlFile.deletingLastPathComponent(), withIntermediateDirectories: true)
         try? FileManager.default.removeItem(at: urlFile)
         // A request left from a launch that ended before the engine saw it: a new launch
-        // has not been asked.
-        try? FileManager.default.removeItem(at: Self.safeModeRequest)
+        // has not been asked. The state is the last launch's until `main.mjs` writes its own.
+        try? FileManager.default.removeItem(at: Self.recoveryRequest)
+        try? FileManager.default.removeItem(at: Self.recoveryStateFile)
         setenv("DSH_IOS_HOME", EnginePaths.home, 1)
         setenv("DSH_IOS_DATA", EnginePaths.shared, 1)
         setenv("DSH_IOS_DOCUMENTS", EnginePaths.documents, 1)
@@ -120,9 +137,16 @@ final class NodeEngine: ObservableObject {
     /// The engine rewrites the URL file each time it (re)starts listening.
     private func waitForURL(_ file: URL) async {
         var seen: Date?
+        var stateSeen: Date?
         var generation = 0
         while true {
             if case .exited = phase { return }
+            let stateModified = (try? FileManager.default.attributesOfItem(atPath: Self.recoveryStateFile.path))?[.modificationDate] as? Date
+            if stateModified != stateSeen {
+                stateSeen = stateModified
+                let state = (try? Data(contentsOf: Self.recoveryStateFile)).flatMap { try? RecoveryState.decoder.decode(RecoveryState.self, from: $0) }
+                if state != recovery { recovery = state }
+            }
             let modified = (try? FileManager.default.attributesOfItem(atPath: file.path))?[.modificationDate] as? Date
             if let modified, modified != seen,
                let text = try? String(contentsOf: file, encoding: .utf8),
@@ -133,8 +157,10 @@ final class NodeEngine: ObservableObject {
                 runningSince = Date()
                 stalled = false
             }
-            if case .starting = phase, let startedAt, Date().timeIntervalSince(startedAt) > Self.stallAfter {
-                stalled = true
+            // `main.mjs` has stopped restarting: no point waiting out the rest of the 20 s.
+            if case .starting = phase, let startedAt,
+               Date().timeIntervalSince(startedAt) > Self.stallAfter || recovery?.state == .failed {
+                if !stalled { stalled = true }
             }
             try? await Task.sleep(for: .milliseconds(500))
         }
@@ -177,4 +203,84 @@ final class NodeEngine: ObservableObject {
             node_start(Int32(arguments.count), pointer.baseAddress)
         }
     }
+}
+
+/// One step the launch screen can ask of `main.mjs` (engine/runtime/recovery.mjs).
+enum RecoveryAction: Equatable {
+    /// Switch off every third-party plugin.
+    case safeMode
+    /// Put back the settings of the last launch that came up.
+    case restore
+    /// Move every setting aside: the engine starts from its defaults.
+    case reset
+    /// Rewrite one settings file by hand.
+    case edit(path: String, text: String)
+    /// Only start the engine again.
+    case restart
+
+    var name: String {
+        switch self {
+        case .safeMode: "safe-mode"
+        case .restore: "restore"
+        case .reset: "reset"
+        case .edit: "edit"
+        case .restart: "restart"
+        }
+    }
+}
+
+/// How the launch stands (`recovery-state.json`, written by `main.mjs`).
+struct RecoveryState: Decodable, Equatable {
+    enum Phase: String, Decodable { case starting, running, failed }
+
+    /// One recovery step carried out.
+    struct Action: Decodable, Equatable {
+        let id: String
+        let action: String
+        let at: Date
+        let ok: Bool
+        let error: String?
+        /// The plugins switched off (safe mode).
+        let disabled: [String]?
+        /// The settings files changed, relative to `~/.dsh`.
+        let files: [String]?
+        /// When the settings put back were kept (restore).
+        let checkpoint: Date?
+        /// Where what was replaced went, as `~/…`.
+        let backup: String?
+    }
+
+    struct Change: Decodable, Equatable, Hashable {
+        enum Kind: String, Decodable { case changed, added, removed }
+        let path: String
+        let kind: Kind
+    }
+
+    /// The settings of the last launch that came up, and what putting them back would change.
+    struct Checkpoint: Decodable, Equatable {
+        let at: Date
+        let changes: [Change]
+    }
+
+    let state: Phase
+    let action: Action?
+    let checkpoint: Checkpoint?
+    /// The settings files, relative to `~/.dsh`.
+    let files: [String]
+
+    static let decoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        // `toISOString()`: with milliseconds, which `.iso8601` does not take.
+        let withFraction = ISO8601DateFormatter()
+        withFraction.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        let plain = ISO8601DateFormatter()
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let text = try decoder.singleValueContainer().decode(String.self)
+            guard let date = withFraction.date(from: text) ?? plain.date(from: text) else {
+                throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "not a date: \(text)"))
+            }
+            return date
+        }
+        return decoder
+    }()
 }

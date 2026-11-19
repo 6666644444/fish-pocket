@@ -37648,40 +37648,6 @@
         }
       }
     },
-    "如果是第三方插件卡住了引擎，可以先把它们全部停用。插件不会被卸载，进去后可以在插件页逐个重新打开。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "If a third-party plugin is holding up the engine, you can turn them all off. They stay installed, and once you are in you can turn them back on one at a time in Plugins."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Si un complemento de terceros está bloqueando el motor, puedes desactivarlos todos. Seguirán instalados y, una vez dentro, podrás volver a activarlos uno a uno en Complementos."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "サードパーティ製プラグインがエンジンを止めている場合は、まとめてオフにできます。アンインストールはされないので、起動後にプラグイン画面で 1 つずつオンに戻せます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "서드파티 플러그인 때문에 엔진이 멈췄다면 모두 끌 수 있어요. 삭제되지는 않으니, 들어간 뒤 플러그인 화면에서 하나씩 다시 켤 수 있어요."
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "如果是第三方外掛卡住了引擎，可以先把它們全部停用。外掛不會被解除安裝，進去後可以在外掛頁逐個重新打開。"
-          }
-        }
-      }
-    },
     "子任务状态更新" : {
       "localizations" : {
         "en" : {
@@ -38256,40 +38222,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "它們之間還沒有說過話。"
-          }
-        }
-      }
-    },
-    "它们仍然装着。可以在插件页逐个重新打开，找出是哪个卡住了引擎。\n\n%@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "They are still installed. Turn them back on one at a time in Plugins to find the one that held up the engine.\n\n%@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Siguen instalados. Vuelve a activarlos uno a uno en Complementos para encontrar el que bloqueaba el motor.\n\n%@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "プラグインはインストールされたままです。プラグイン画面で 1 つずつオンに戻すと、どれがエンジンを止めていたか分かります。\n\n%@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "플러그인은 그대로 설치되어 있어요. 플러그인 화면에서 하나씩 다시 켜 보면 어떤 것이 엔진을 멈췄는지 알 수 있어요.\n\n%@"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "它們仍然裝著。可以在外掛頁逐個重新打開，找出是哪個卡住了引擎。\n\n%@"
           }
         }
       }
@@ -42168,40 +42100,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已停用"
-          }
-        }
-      }
-    },
-    "已停用 %lld 个第三方插件" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Turned off %lld third-party plugins"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Complementos de terceros desactivados: %lld"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "サードパーティ製プラグインを %lld 個オフにしました"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "서드파티 플러그인 %lld개를 껐어요"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已停用 %lld 個第三方外掛"
           }
         }
       }
@@ -110614,6 +110512,284 @@
         }
       }
     },
+    "上次能启动是在 %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last started successfully on %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El último arranque correcto fue el %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最後に起動できたのは %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마지막으로 시작된 때: %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上次能啟動是在 %@"
+          }
+        }
+      }
+    },
+    "不能在这里编辑" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't Edit Here"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede editar aquí"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ここでは編集できません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여기서 편집할 수 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不能在這裡編輯"
+          }
+        }
+      }
+    },
+    "保存并重启" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save and Restart"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardar y reiniciar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存して再起動"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장하고 다시 시작"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "儲存並重新啟動"
+          }
+        }
+      }
+    },
+    "保存并重启引擎？" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save and restart the engine?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Guardar y reiniciar el motor?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存してエンジンを再起動しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장하고 엔진을 다시 시작할까요?"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "儲存並重新啟動引擎？"
+          }
+        }
+      }
+    },
+    "修改前的 %@ 会先备份，不会丢。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The current %@ is backed up first, so nothing is lost."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primero se hace una copia del %@ actual, así que no se pierde nada."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "変更前の %@ は先にバックアップされるので、失われません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "수정 전 %@ 파일은 먼저 백업되니 잃어버리지 않아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "修改前的 %@ 會先備份，不會遺失。"
+          }
+        }
+      }
+    },
+    "停用了 %lld 个第三方插件：%@。它们仍然装着，可以在插件页逐个重新打开，找出是哪个卡住了引擎。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turned off %1$lld third-party plugins: %2$@. They're still installed. Turn them back on one at a time in Plugins to find the one that was holding up the engine."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se desactivaron %1$lld complementos de terceros: %2$@. Siguen instalados. Vuelve a activarlos uno a uno en Complementos para encontrar el que bloqueaba el motor."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サードパーティ製プラグインを %1$lld 個オフにしました：%2$@。インストールされたままなので、プラグイン画面で 1 つずつオンに戻すと、どれがエンジンを止めていたかがわかります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "서드파티 플러그인 %1$lld개를 껐어요: %2$@. 여전히 설치되어 있으니, 플러그인 화면에서 하나씩 다시 켜 보며 어떤 플러그인이 엔진을 멈추게 했는지 찾을 수 있어요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停用了 %1$lld 个第三方插件：%2$@。它们仍然装着，可以在插件页逐个重新打开，找出是哪个卡住了引擎。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停用了 %1$lld 個第三方外掛：%2$@。它們仍然裝著，可以在外掛頁逐個重新打開，找出是哪個卡住了引擎。"
+          }
+        }
+      }
+    },
+    "停用并重启" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn Off and Restart"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desactivar y reiniciar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オフにして再起動"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "끄고 다시 시작"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停用並重新啟動"
+          }
+        }
+      }
+    },
+    "停用所有第三方插件？" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn off all third-party plugins?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Desactivar todos los complementos de terceros?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サードパーティ製プラグインをすべてオフにしますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 서드파티 플러그인을 끌까요?"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停用所有第三方外掛？"
+          }
+        }
+      }
+    },
     "在对话里让 Agent 做个小工具或小游戏，做好就放进「应用」里，点开就能用，也能放到主屏幕上。先试试自带的倒数日和水果翻翻。" : {
       "localizations" : {
         "en" : {
@@ -110794,6 +110970,942 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在「外掛」裡啟用官方的「思考過程翻譯」後，點開思考全文會預設顯示譯文，可以隨時切回原文；思考還在進行時也會邊出邊譯。"
+          }
+        }
+      }
+    },
+    "已保存 %@，修改前的版本在 %@。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saved %1$@. The version before your edit is in %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se guardó %1$@. La versión anterior a tu cambio está en %2$@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ を保存しました。変更前のものは %2$@ にあります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ 파일을 저장했어요. 수정 전 버전은 %2$@에 있어요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已保存 %1$@，修改前的版本在 %2$@。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已儲存 %1$@，修改前的版本在 %2$@。"
+          }
+        }
+      }
+    },
+    "已保存 %@，引擎还是没起来。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saved %@, but the engine still hasn't started."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se guardó %@, pero el motor sigue sin arrancar."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ を保存しましたが、エンジンはまだ起動していません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 파일을 저장했지만 엔진은 아직 시작되지 않았어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已儲存 %@，引擎還是沒啟動。"
+          }
+        }
+      }
+    },
+    "已停用 %lld 个第三方插件，引擎还是没起来。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turned off %lld third-party plugins, but the engine still hasn't started."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se desactivaron %lld complementos de terceros, pero el motor sigue sin arrancar."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サードパーティ製プラグインを %lld 個オフにしましたが、エンジンはまだ起動していません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "서드파티 플러그인 %lld개를 껐지만 엔진은 아직 시작되지 않았어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已停用 %lld 個第三方外掛，引擎還是沒啟動。"
+          }
+        }
+      }
+    },
+    "已换回上次能启动时的设置，引擎还是没起来。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restored the last working settings, but the engine still hasn't started."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se restauró la última configuración que funcionó, pero el motor sigue sin arrancar."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最後に起動できた設定に戻しましたが、エンジンはまだ起動していません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마지막으로 시작된 설정으로 되돌렸지만 엔진은 아직 시작되지 않았어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已換回上次能啟動時的設定，引擎還是沒啟動。"
+          }
+        }
+      }
+    },
+    "已重新启动，引擎还是没起来。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restarted, but the engine still hasn't started."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se reinició, pero el motor sigue sin arrancar."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "再起動しましたが、エンジンはまだ起動していません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다시 시작했지만 엔진은 아직 시작되지 않았어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已重新啟動，引擎還是沒啟動。"
+          }
+        }
+      }
+    },
+    "引擎的设置文件，在 ~/.dsh 下。保存前会先备份，改错了也找得回来。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The engine's settings files, in ~/.dsh. Each is backed up before saving, so a mistake can be undone."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los archivos de configuración del motor, en ~/.dsh. Se hace una copia antes de guardar, así que un error se puede deshacer."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エンジンの設定ファイルです（~/.dsh）。保存前にバックアップされるので、間違えても元に戻せます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "엔진의 설정 파일이에요(~/.dsh). 저장하기 전에 백업되니 잘못 고쳐도 되돌릴 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "引擎的設定檔，在 ~/.dsh 下。儲存前會先備份，改錯了也找得回來。"
+          }
+        }
+      }
+    },
+    "引擎起不来，多半是插件或设置出了问题。可以按顺序试下面几步，会话、Bot、小工具和文件都不会动。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When the engine won't start, it's usually a plugin or a setting. Try the steps below in order. Your sessions, Bots, tools, and files won't be touched."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si el motor no arranca, casi siempre es por un complemento o un ajuste. Prueba los pasos de abajo en orden. Tus sesiones, Bots, herramientas y archivos no se tocan."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エンジンが起動しないのは、たいていプラグインか設定が原因です。下の手順を順番に試してください。セッション、Bot、ツール、ファイルには触れません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "엔진이 시작되지 않는 건 대개 플러그인이나 설정 때문이에요. 아래 단계를 순서대로 시도해 보세요. 세션, Bot, 도구, 파일은 건드리지 않아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "引擎起不來，多半是外掛或設定出了問題。可以按順序試下面幾步，對話、Bot、實用工具和檔案都不會動。"
+          }
+        }
+      }
+    },
+    "引擎起来了" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The engine is up"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El motor ya arrancó"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エンジンが起動しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "엔진이 시작됐어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "引擎啟動了"
+          }
+        }
+      }
+    },
+    "换回上次能启动时的设置" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore Last Working Settings"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restaurar la última configuración que funcionó"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最後に起動できた設定に戻す"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마지막으로 시작된 설정으로 되돌리기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "換回上次能啟動時的設定"
+          }
+        }
+      }
+    },
+    "换回上次能启动时的设置？" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore the last working settings?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Restaurar la última configuración que funcionó?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最後に起動できた設定に戻しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마지막으로 시작된 설정으로 되돌릴까요?"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "換回上次能啟動時的設定？"
+          }
+        }
+      }
+    },
+    "换回并重启" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore and Restart"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restaurar y reiniciar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "戻して再起動"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "되돌리고 다시 시작"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "換回並重新啟動"
+          }
+        }
+      }
+    },
+    "插件不会被卸载。进去后可以在插件页逐个重新打开，找出是哪个卡住了引擎。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "They stay installed. Once you're in, you can turn them back on one at a time in Plugins to find the one holding up the engine."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seguirán instalados. Una vez dentro, podrás volver a activarlos uno a uno en Complementos para encontrar el que bloquea el motor."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "アンインストールはされません。起動後にプラグイン画面で 1 つずつオンに戻すと、どれがエンジンを止めているかがわかります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "삭제되지는 않아요. 들어간 뒤 플러그인 화면에서 하나씩 다시 켜 보면 어떤 플러그인이 엔진을 멈추게 했는지 찾을 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "外掛不會被解除安裝。進去後可以在外掛頁逐個重新打開，找出是哪個卡住了引擎。"
+          }
+        }
+      }
+    },
+    "模型、Key、插件开关、权限等设置都会恢复为默认，要重新配置。现在的设置文件会先移进备份，不会删除。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Models, keys, which plugins are on, permissions, and other settings all go back to their defaults and will need to be set up again. The current settings files are moved into a backup first, not deleted."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los modelos, las claves, los complementos activados, los permisos y el resto de la configuración vuelven a sus valores predeterminados y tendrás que configurarlos otra vez. Los archivos de configuración actuales se moverán primero a una copia de seguridad; no se eliminan."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "モデル、キー、プラグインのオン・オフ、権限などの設定はすべて初期状態に戻り、設定し直す必要があります。今の設定ファイルは先にバックアップへ移され、削除はされません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모델, 키, 플러그인 켜기/끄기, 권한 등 모든 설정이 기본값으로 돌아가며 다시 설정해야 해요. 지금 설정 파일은 먼저 백업으로 옮겨지며 삭제되지 않아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型、Key、外掛開關、權限等設定都會恢復為預設值，要重新設定。現在的設定檔會先移進備份，不會刪除。"
+          }
+        }
+      }
+    },
+    "没有可停用的第三方插件，引擎还是没起来。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There were no third-party plugins to turn off, and the engine still hasn't started."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No había complementos de terceros que desactivar y el motor sigue sin arrancar."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オフにできるサードパーティ製プラグインはありませんでした。エンジンはまだ起動していません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "끌 수 있는 서드파티 플러그인이 없었고, 엔진은 아직 시작되지 않았어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒有可停用的第三方外掛，引擎還是沒啟動。"
+          }
+        }
+      }
+    },
+    "编辑设置文件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit Settings Files"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar archivos de configuración"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定ファイルを編集"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정 파일 편집"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "編輯設定檔"
+          }
+        }
+      }
+    },
+    "设置会换回 %@ 引擎能启动时的样子，改动这些文件：\n%@\n\n现在的文件会先移进备份，不会删除。这之后改过的设置，比如新填的 Key，要重新配置。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings will go back to how they were on %1$@, when the engine last started. These files will change:\n%2$@\n\nThe current files are moved into a backup first, not deleted. Anything you've changed since, such as a newly added key, will need to be set up again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La configuración volverá a como estaba el %1$@, la última vez que arrancó el motor. Cambiarán estos archivos:\n%2$@\n\nLos archivos actuales se moverán primero a una copia de seguridad; no se eliminan. Lo que hayas cambiado desde entonces, como una clave nueva, tendrás que configurarlo otra vez."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定を、エンジンが最後に起動できた %1$@ の状態に戻します。変更されるファイル：\n%2$@\n\n今のファイルは先にバックアップへ移され、削除はされません。その後に変えた設定（新しく入力したキーなど）は設定し直す必要があります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정을 엔진이 마지막으로 시작된 %1$@ 상태로 되돌려요. 바뀌는 파일:\n%2$@\n\n지금 파일은 먼저 백업으로 옮겨지며 삭제되지 않아요. 그 뒤에 바꾼 설정(새로 입력한 키 등)은 다시 설정해야 해요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置会换回 %1$@ 引擎能启动时的样子，改动这些文件：\n%2$@\n\n现在的文件会先移进备份，不会删除。这之后改过的设置，比如新填的 Key，要重新配置。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定會換回 %1$@ 引擎能啟動時的樣子，改動這些檔案：\n%2$@\n\n現在的檔案會先移進備份，不會刪除。這之後改過的設定，比如新填的 Key，要重新設定。"
+          }
+        }
+      }
+    },
+    "设置已全部重置，引擎还是没起来。请复制报告发给我们。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All settings were reset, but the engine still hasn't started. Please copy the report and send it to us."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se restableció toda la configuración, pero el motor sigue sin arrancar. Copia el informe y envíanoslo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべての設定をリセットしましたが、エンジンはまだ起動していません。レポートをコピーして送ってください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 설정을 재설정했지만 엔진은 아직 시작되지 않았어요. 보고서를 복사해서 보내 주세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定已全部重置，引擎還是沒啟動。請拷貝報告傳給我們。"
+          }
+        }
+      }
+    },
+    "设置已重置为默认，原来的设置文件在 %@。模型、Key、插件开关等要重新配置。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings were reset to their defaults. The previous settings files are in %@. Models, keys, which plugins are on, and so on need to be set up again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La configuración se restableció a los valores predeterminados. Los archivos de configuración anteriores están en %@. Tendrás que volver a configurar los modelos, las claves, los complementos activados, etc."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定を初期状態にリセットしました。以前の設定ファイルは %@ にあります。モデル、キー、プラグインのオン・オフなどは設定し直してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정을 기본값으로 재설정했어요. 이전 설정 파일은 %@에 있어요. 모델, 키, 플러그인 켜기/끄기 등은 다시 설정해 주세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定已重置為預設值，原來的設定檔在 %@。模型、Key、外掛開關等要重新設定。"
+          }
+        }
+      }
+    },
+    "设置换回了 %@ 能启动时的样子。换下来的文件在 %@，之后填过的 Key 等设置要重新配置，也可以从那里找回。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings were restored to how they were on %1$@, when the engine last started. The files that were replaced are in %2$@. Anything set up since, such as keys, needs to be set up again, or can be recovered from there."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La configuración volvió a como estaba el %1$@, la última vez que arrancó el motor. Los archivos sustituidos están en %2$@. Lo que configuraste después, como las claves, tendrás que configurarlo otra vez o recuperarlo de ahí."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定を、最後に起動できた %1$@ の状態に戻しました。置き換えたファイルは %2$@ にあります。その後に設定したキーなどは設定し直すか、そこから取り戻せます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정을 마지막으로 시작된 %1$@ 상태로 되돌렸어요. 바뀐 파일은 %2$@에 있어요. 그 뒤에 입력한 키 같은 설정은 다시 설정하거나 거기서 되찾을 수 있어요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置换回了 %1$@ 能启动时的样子。换下来的文件在 %2$@，之后填过的 Key 等设置要重新配置，也可以从那里找回。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定換回了 %1$@ 能啟動時的樣子。換下來的檔案在 %2$@，之後填過的 Key 等設定要重新設定，也可以從那裡找回。"
+          }
+        }
+      }
+    },
+    "设置文件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings Files"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivos de configuración"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定ファイル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정 파일"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定檔"
+          }
+        }
+      }
+    },
+    "试了几次都没起来，已停止自动重启。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It failed to start several times, so automatic restarts have stopped."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No arrancó tras varios intentos, así que se detuvieron los reinicios automáticos."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "何度か試しても起動しなかったため、自動再起動を停止しました。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "여러 번 시도해도 시작되지 않아 자동 재시작을 멈췄어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試了幾次都沒啟動，已停止自動重新啟動。"
+          }
+        }
+      }
+    },
+    "这一步没能完成，原因在上面的日志里。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That step didn't finish. The reason is in the log above."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ese paso no se completó. El motivo está en el registro de arriba."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この手順は完了できませんでした。理由は上のログにあります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 단계를 마치지 못했어요. 이유는 위 로그에 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這一步沒能完成，原因在上面的日誌裡。"
+          }
+        }
+      }
+    },
+    "这个文件不是文本。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This file isn't text."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este archivo no es de texto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このファイルはテキストではありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 파일은 텍스트가 아니에요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這個檔案不是文字。"
+          }
+        }
+      }
+    },
+    "重新启动" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restart"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reiniciar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "再起動"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다시 시작"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新啟動"
+          }
+        }
+      }
+    },
+    "重置全部设置" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset All Settings"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restablecer toda la configuración"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべての設定をリセット"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 설정 재설정"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置所有設定"
+          }
+        }
+      }
+    },
+    "重置全部设置？" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset all settings?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Restablecer toda la configuración?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "すべての設定をリセットしますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 설정을 재설정할까요?"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置所有設定？"
+          }
+        }
+      }
+    },
+    "重置并重启" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset and Restart"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restablecer y reiniciar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リセットして再起動"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "재설정하고 다시 시작"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重置並重新啟動"
           }
         }
       }

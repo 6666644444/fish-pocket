@@ -64,6 +64,7 @@ Pipes, redirects, `&&`, `||`, variables, arrays, functions, loops, here-document
 
 - `$HOME` is `/home/dsh` and `$TMPDIR` is `/tmp`. Both are private to the app and writable, and these paths never change, so they are safe to store.
 - The first-use workspace is under `~/Documents`. Workspaces are not visible in the Files app.
+- `~/.ios/recovery/<time>-<step>/` holds the settings files (`~/.dsh/.credentials.yaml`, `~/.dsh/profiles/web/*`) that the app's launch-screen repair replaced when the engine would not start, at their paths relative to `~/.dsh`. When the user asks to get a key or setting back from there, copy what they want into the current file rather than the whole file back: the old one is what kept the engine down.
 - `~/apps` holds the user's mini apps (小工具), one folder each, which the app opens full screen. Load the `mini-apps` skill before creating or changing anything there.
 - `/` is the app's own tree: `home`, `tmp`, `opt`, plus anything you create. Writing to `/abc` or `/usr/local` works and stays inside the app.
 - `/etc`, `/usr/share` and `/System` are the real system and read-only. `/opt/dsh` is the app itself and read-only.

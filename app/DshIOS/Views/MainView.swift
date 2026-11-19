@@ -58,8 +58,8 @@ struct MainView: View {
     @State private var supportDialog = false
     /// 「新功能」 after an update (`WhatsNew`).
     @State private var whatsNew: WhatsNew.Release?
-    /// The plugins safe mode switched off on the launch screen (NodeEngine.requestSafeMode).
-    @State private var safeModeDisabled: [String]?
+    /// What the launch screen's repair did to get the engine up (NodeEngine.takeRecoveryReport).
+    @State private var recovered: [RecoveryState.Action]?
     /// It was shown: no update toast on top of it this time.
     @State private var newsShown = false
     /// 「在电脑上新建会话」, once whatever sheet asked for it has gone.
@@ -303,8 +303,8 @@ struct MainView: View {
         }
         .task(id: canAnnounce) {
             guard canAnnounce else { return }
-            if let names = NodeEngine.shared.takeSafeModeReport() {
-                safeModeDisabled = names
+            if let actions = NodeEngine.shared.takeRecoveryReport() {
+                recovered = actions
                 return
             }
             if let release = WhatsNew.take() {
@@ -560,11 +560,13 @@ struct MainView: View {
         .sheet(isPresented: Binding(get: { app.fishPocket.quotaPrompt }, set: { app.fishPocket.quotaPrompt = $0 })) {
             FishPocketTopUpSheet().sheetNotices()
         }
-        .alert("已停用 \(safeModeDisabled?.count ?? 0) 个第三方插件", isPresented: Binding(get: { safeModeDisabled != nil }, set: { if !$0 { safeModeDisabled = nil } })) {
-            Button("去插件页") { sheet = .plugins }
+        .alert("引擎起来了", isPresented: Binding(get: { recovered != nil }, set: { if !$0 { recovered = nil } })) {
+            if recovered?.contains(where: { $0.action == "safe-mode" && !($0.disabled ?? []).isEmpty }) == true {
+                Button("去插件页") { sheet = .plugins }
+            }
             Button("好", role: .cancel) {}
         } message: {
-            Text("它们仍然装着。可以在插件页逐个重新打开，找出是哪个卡住了引擎。\n\n\((safeModeDisabled ?? []).joined(separator: "\n"))")
+            Text((recovered ?? []).map(EngineRepair.report).filter { !$0.isEmpty }.joined(separator: "\n\n"))
         }
         .onChange(of: app.lastError) { _, error in if error != nil { Haptics.error() } }
         .alert("出错了", isPresented: Binding(get: { app.lastError != nil }, set: { if !$0 { app.lastError = nil } })) {
