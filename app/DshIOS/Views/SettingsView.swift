@@ -6,7 +6,7 @@ import WatchConnectivity
 /// 任务续跑, 小组件), then the rarely touched 外观, App 图标 and 语言. Developer pages sit behind 高级, versions and
 /// engine status behind 关于. 本机能力 and 远程控制 are on the 探索 tab (in the sidebar on an iPad before iOS 18), not here.
 /// 分享 Fish Pocket and Apple Watch open the list (on the tab bar they are on 探索 instead); the star, rating, website, source, feedback and author links,
-/// then the WeChat group's QR code, close it.
+/// then the WeChat group's QR code and the Discord server, close it.
 /// The engine card shows here only while the engine is not running. Every page reads the shared
 /// settings mirror, so a write anywhere shows everywhere.
 struct SettingsView: View {
@@ -175,6 +175,7 @@ struct SettingsView: View {
                     linkRow("问题反馈", "exclamationmark.bubble", "GitHub Issues", Self.issuesURL)
                     // The site's picture is swapped in place when the 7-day code expires: always the current one.
                     linkRow("微信交流群", "bubble.left.and.bubble.right", String(localized: "扫码加群"), AppLinks.wechatGroupCode)
+                    linkRow("Discord 社区", "person.2.circle", "discord.gg", AppLinks.discord)
                     linkRow("作者", "at", "sai · imsai.cc", Self.authorURL)
                 } footer: {
                     Text("觉得好用的话，去 App Store 给个评分 ⭐️，这是对项目最大的支持。")
