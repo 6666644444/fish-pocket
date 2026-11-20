@@ -22,7 +22,7 @@ struct ConversationActivity: View {
     /// How much room the timeline leaves under its last row, so what floats here never sits on it.
     @MainActor
     static func room(sessionId: String, jobs: JobsModel, browserShown: Bool, in app: AppModel) -> CGFloat {
-        if !browserShown, browser(of: sessionId, in: app) != nil { return BrowserModel.thumbnailSize.height + 12 }
+        if !browserShown, let browser = browser(of: sessionId, in: app) { return browser.thumbnailSize.height + 12 }
         return jobs.visibleCount > 0 ? 48 : 0
     }
 
