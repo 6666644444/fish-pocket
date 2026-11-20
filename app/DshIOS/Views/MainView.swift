@@ -392,10 +392,18 @@ struct MainView: View {
             // blank conversation already selected, and then no change of selection closes them.
             botOpen = false
             launchedUnderBot = false
-            let target = request.workspaceId.flatMap { id in app.workspaces.first { $0.id == id } } ?? workspace
-            if let target { workspaceId = target.id }
-            newConversation(in: target, agentPreset: request.agentPreset, draft: request.draft, prompt: request.prompt)
             setDrawer(false)
+            Task {
+                // As a link does: a request made as the app comes up (one typed in the Mini Apps bar)
+                // waits for the workspaces and the launch's own blank conversation, not dropped.
+                let deadline = ContinuousClock.now + .seconds(10)
+                while app.workspaces.isEmpty || creating, ContinuousClock.now < deadline {
+                    try? await Task.sleep(for: .milliseconds(100))
+                }
+                let target = request.workspaceId.flatMap { id in app.workspaces.first { $0.id == id } } ?? workspace
+                if let target { workspaceId = target.id }
+                newConversation(in: target, agentPreset: request.agentPreset, draft: request.draft, prompt: request.prompt)
+            }
         }
         .onChange(of: app.credentialRequest?.token) { _, token in
             guard token != nil, scenePhase != .background, let step = app.credentialRequest?.step else { return }
