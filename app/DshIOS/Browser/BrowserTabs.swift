@@ -232,6 +232,17 @@ final class BrowserModel {
         }
     }
 
+    /// These conversations were archived: their pages go, so they no longer run or hold memory. The
+    /// tabs stay, and so does the set kept across launches, so a page comes back if it is opened
+    /// again, as after 撤销. A page the user is looking at right now stays until it is put away
+    /// (`WorkbenchBrowser`).
+    static func releasePages(of archived: Set<String>) {
+        for id in archived {
+            guard let model = registry.models[id] else { continue }
+            for tab in model.tabs where tab.page?.onScreen == false { model.letGo(tab) }
+        }
+    }
+
     /// Release the tab's page, keeping where it was.
     private func letGo(_ tab: Tab) {
         guard let page = tab.page else { return }

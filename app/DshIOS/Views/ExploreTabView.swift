@@ -14,6 +14,11 @@ struct ExploreTabView: View {
     @Binding var path: [Route]
     @State private var phoneControl = PhoneControlService()
     @State private var watch = WatchPairing.current
+    /// 设置 and the pages pushed from it wear the settings look, which a page takes from the stack
+    /// it is in: put on just before 设置 is pushed, taken off once the stack is back at this page,
+    /// which the look does not change. Never in the same update as a push: before iOS 26 the stack,
+    /// shown again just after another tab, pushed 设置 a second time when its look changed with it.
+    @State private var settingsLook = false
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -52,7 +57,7 @@ struct ExploreTabView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink(value: Route.settings) {
+                    Button(action: openSettings) {
                         Image(systemName: "gearshape")
                     }
                     .accessibilityLabel("设置")
@@ -80,10 +85,16 @@ struct ExploreTabView: View {
                 Task { await phoneControl.refresh() }
             }
         }
-        // 设置 and the pages pushed from it wear the settings look, which a page takes from the
-        // stack it is in: on while 设置 is what this one shows. The other pages keep their own.
-        .environment(\.systemLists, path.first == .settings)
+        .environment(\.systemLists, settingsLook)
+        .onChange(of: path.isEmpty) { _, root in if root { settingsLook = false } }
         .inkTint()
+    }
+
+    /// The look first, 设置 in the next update (`settingsLook`).
+    private func openSettings() {
+        settingsLook = true
+        // A second tap before it shows pushes nothing more.
+        DispatchQueue.main.async { if path.isEmpty { path.append(.settings) } }
     }
 
     /// Once signed in: computers online, offline, or the sign-in to renew. Before, the line under
