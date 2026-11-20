@@ -1389,6 +1389,19 @@ private struct SplitBelowTabBar: UIViewRepresentable {
             adjust()
         }
 
+        /// Before iOS 26 the sidebar lies over an upright page, and nothing here is laid out as it
+        /// opens or folds back; a trait does change with it (not a public one). Without this the
+        /// room for the tab bar was taken away by a layout that came while the sidebar was open
+        /// (the app going to the background makes one) and not given back when the tab bar
+        /// returned. Not at once: sideways the list's column goes and comes back with the
+        /// sidebar, which lays this out anyway, and room made before that leaves the list's
+        /// buttons a few points off.
+        override func traitCollectionDidChange(_ previous: UITraitCollection?) {
+            super.traitCollectionDidChange(previous)
+            if #available(iOS 26.0, *) { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in self?.adjust() }
+        }
+
         private func adjust() {
             var split: UISplitViewController?
             var tabs: UITabBarController?
