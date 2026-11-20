@@ -440,6 +440,7 @@ extension BrowserPage: WKNavigationDelegate, WKUIDelegate {
 /// A conversation's browser in the workbench or full screen: the tab in front, its bar, and the tabs.
 struct WorkbenchBrowser: View {
     let model: BrowserModel
+    @Environment(AppModel.self) private var app
 
     var body: some View {
         Group {
@@ -451,6 +452,16 @@ struct WorkbenchBrowser: View {
             }
         }
         .onChange(of: model.selectedId) { _, _ in model.reviveSelected() }
+        .onDisappear {
+            // The conversation was archived while its page was on screen, where it was left alone:
+            // once it is put away, it goes too. After a moment, when the page has left the window.
+            let id = model.sessionId
+            guard app.isArchived(id) else { return }
+            Task { @MainActor in
+                try? await Task.sleep(for: .milliseconds(600))
+                BrowserModel.releasePages(of: [id])
+            }
+        }
     }
 }
 
@@ -677,7 +688,14 @@ struct FullScreenBrowser: View {
                 .navigationTitle(Self.site(model.url) ?? String(localized: "浏览器"))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar(.visible, for: .navigationBar)
-                .closeButton(action: close)
+                .toolbar {
+                    // Putting it away, not closing it: the pages stay open, and the agent goes on in
+                    // them. A ✕ here read as closing the browser. Tabs close from the tab button.
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: close) { Image(systemName: "chevron.down") }
+                            .accessibilityLabel("收起浏览器")
+                    }
+                }
         }
     }
 

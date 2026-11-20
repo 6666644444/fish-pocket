@@ -893,6 +893,7 @@ struct MainView: View {
             }
         }
         .tabViewStyle(.sidebarAdaptable)
+        .background(TabBarAppearanceFollower())
         // iPhone Duo open keeps a column at its trailing edge for the bar buttons and the tab bar. The
         // system settles what goes there when the tab view is made: made folded, then opened, the
         // buttons of the conversation beside the list never show. Made again at each fold, it holds
@@ -1287,6 +1288,56 @@ private enum TabSidebar {
             pending.append(contentsOf: next.children)
         }
         return nil
+    }
+}
+
+/// iOS 18 on an iPhone: the tab bar takes a new appearance (深色 → 浅色) but its buttons and its
+/// background keep the old one. The unselected icons were drawn in dark mode's grey over a light
+/// page, almost invisible, the badges in dark mode's red, and the bar's background, where a list
+/// ran under it (探索), dark; switching tabs did not bring it back, only a new launch. The bar
+/// itself has the new appearance, nothing overrides its subviews' (seen in the debugger): UIKit
+/// does not pass the change on to them. Changing the bar's own once more does, so after each
+/// change, where they still differ, it is set to the other appearance and back, at once, which
+/// draws nothing in between. iOS 26 and the iPad are not affected; iOS 17 has no `Tab`.
+private struct TabBarAppearanceFollower: UIViewRepresentable {
+    func makeUIView(context: Context) -> Follower { Follower() }
+    func updateUIView(_ view: Follower, context: Context) {}
+
+    final class Follower: UIView {
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            isUserInteractionEnabled = false
+            guard #unavailable(iOS 26.0), UIDevice.current.userInterfaceIdiom == .phone else { return }
+            registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (view: Follower, _: UITraitCollection) in
+                // After UIKit and SwiftUI are done with the change, and once more a moment later
+                // for a bar SwiftUI updates after that.
+                DispatchQueue.main.async { view.refresh() }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { view.refresh() }
+            }
+        }
+
+        @available(*, unavailable)
+        required init?(coder: NSCoder) { fatalError("not used from a nib") }
+
+        /// The tab bar of this window: the tab view's controller is beside this view, not above it.
+        private var bar: UITabBar? {
+            var pending = [window?.rootViewController].compactMap { $0 }
+            while let next = pending.popLast() {
+                if let tabs = next as? UITabBarController { return tabs.tabBar }
+                pending.append(contentsOf: next.children)
+            }
+            return nil
+        }
+
+        private func refresh() {
+            guard let bar, bar.overrideUserInterfaceStyle == .unspecified else { return }
+            let style = bar.traitCollection.userInterfaceStyle
+            guard bar.subviews.contains(where: { $0.traitCollection.userInterfaceStyle != style }) else { return }
+            bar.overrideUserInterfaceStyle = style == .dark ? .light : .dark
+            bar.layoutIfNeeded()
+            bar.overrideUserInterfaceStyle = .unspecified
+            bar.layoutIfNeeded()
+        }
     }
 }
 
