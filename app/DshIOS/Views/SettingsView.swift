@@ -118,6 +118,12 @@ private struct SettingsList: View {
                 NavigationLink { ReadAloudSettingsPage() } label: {
                     row("朗读", "speaker.wave.2", VoicePreferences.shared.readingVoice.title)
                 }
+                // dsh-image-gen, built into the engine: shown once the engine serves its settings.
+                if mirror.serves(ImageGenModel.namespace) {
+                    NavigationLink { ImageGenSettingsPage() } label: {
+                        row("生图", "photo.badge.plus", (ImageGenProvider(rawValue: mirror.namespace(ImageGenModel.namespace)?["value"]["provider"].string ?? "") ?? .google).title)
+                    }
+                }
                 if mirror.serves("permission") { permissionPicker }
             }
 

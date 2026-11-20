@@ -1562,6 +1562,10 @@ struct AssistantTurnView: View {
                         .overlay(alignment: .leading) { Rectangle().fill(Palette.stroke).frame(width: 2) }
                     }
                 }
+                // Pictures the turn made are what it was for: they stay out when its work folds away.
+                if !quiet, !showWork {
+                    ForEach(madePictures, id: \.id) { call in ImageGenCard(call: call, live: false) }
+                }
                 // In a Bot's chat: what it did while working, above its words; a card it ended on, below them.
                 if bot != nil && !quiet { BotTurnEvents(blocks: Array(blocks.prefix(finalStart))) }
                 if tailShown {
@@ -1607,6 +1611,18 @@ struct AssistantTurnView: View {
 
     private var answerText: String {
         blocks.compactMap { if case .text(_, let text) = $0 { return text }; return nil }.joined()
+    }
+
+    /// The image tool calls of the folded work: those that made pictures, or the last failure
+    /// when none did (with its way to the settings).
+    private var madePictures: [ToolCall] {
+        let calls = blocks.prefix(finalAnswerStart).compactMap { block -> ToolCall? in
+            if case .tool(let call) = block, ImageGenCard.handles(call), call.finished { return call }
+            return nil
+        }
+        let made = calls.filter { !$0.isError }
+        if !made.isEmpty { return made }
+        return calls.last.map { [$0] } ?? []
     }
 
     private var plans: [(title: String, plan: String)] {
@@ -1721,7 +1737,14 @@ private struct BlockView: View, Equatable {
         case .text(_, let text):
             MarkdownView(text: text, cached: !live, linksFiles: closing, selectable: false)
         case .tool(let call):
-            ToolCallView(call: call, live: live)
+            if ImageGenCard.handles(call) {
+                VStack(alignment: .leading, spacing: 4) {
+                    ToolCallView(call: call, live: live)
+                    ImageGenCard(call: call, live: live)
+                }
+            } else {
+                ToolCallView(call: call, live: live)
+            }
         case .image(_, let attachment):
             ImageGroup(attachments: [attachment])
         }

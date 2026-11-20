@@ -200,6 +200,16 @@ Bot 功能的后台是内置的 ds-bot 插件，版本锁定在 `engine/plugins/
 - 群聊每一轮的回复不在 `group_relay` 的工具结果里：0.3.8 起结果只给出这一轮在群聊账本里的位置（`{from, anchor}`），回复用 `group-rows` 读（`BotModel.loadRows`），群自己的会话这一轮随即结束，成员是否还在干活看 `group-rows` 返回的 `active`。升级前的轮次结果里仍带着 `replies`，两种都要认。
 - 它的 peer 依赖全是 `*`，而 npm 上 `@deepseek-ai/dsh-llm`、`dsh-scope`、`dsh-tools`、`dsh-web`、`dsh-typert-protocol` 的 `latest` 标签还停在 `0.0.1-rc.x` 占位版。所以 `engine/package.json` 用 `overrides` 把它们钉成引擎自己的 DSH 版本；升级 `@deepseek-ai/dsh` 时这几行要一起改，否则会装出一棵顶层是占位版的树。
 
+## 生图：内置 dsh-image-gen
+
+生图功能的后台是内置的第三方插件 dsh-image-gen，和 ds-bot 一样锁在 `engine/plugins/ios-host/pins.json`（`builtin`）、首次启动自动开启。打包时它的 README 截图和文档被裁掉，网页版的画布、图库、Studio 用的是它自己的界面。
+
+- **只用它的后端。**设置读写 `image-gen` 命名空间，Key 走凭据；测试连接、拉取模型、订阅登录走它的 `/plugins/dsh-image-gen/` 路由（`ImageGenModel`）。原生设置页（`ImageGenSettings.swift`）逐项对应它网页版设置卡片里的字段，升级插件时对照它 `src/client/index.tsx` 的 `ImageGenerationSettingsCard` 增删字段；保存前的几项校验（尺寸表、附加 JSON、OpenAI 尺寸、ComfyUI 工作流、官方接口的自动编辑格式）是照它的前端写的，也要一起对。
+- **订阅登录**用它在本机固定端口起的回调（ChatGPT 1455、Grok 56121、Google 51121），授权页在 App 内的 Safari 里打开，引擎一直在跑才接得到跳回，和连接器的登录是同一套。
+- **给模型的说明只放模型不可能知道的事**（`image-gen-notes.mjs`）：画布没打开时去掉插件那句「让用户去开工作台」，并在插件的生图说明后补一句 App 里生图设置的位置。不要往里加「该用哪张图」之类的指令，选图交给插件自己的规则和模型。`test/image-gen-notes.test.mjs` 会检查插件的上下文名和措辞，升级后它报错就先看插件现在说了什么。
+- **对话里的图**：生图结果由 `ImageGenCard` 显示，一轮折叠后图片仍留在外面；对话里任何一张图点开都有「标注」（`MarkupCanvas`），画完只把标注版放进输入框。
+- 升级插件后照「引擎或插件升级后的回归」走一遍，另外在设置页把每家服务商点开看一眼，再用一个真实或本机假的 OpenAI 兼容服务各生一张、改一张。
+
 ## Bot 的内置形象
 
 Bot 没有照片时显示的角色是 App 自己画的，形状和动作都写在 `app/DshIOS/Views/BotCharacter.swift` 里，不取自 ds-bot 的网页版。

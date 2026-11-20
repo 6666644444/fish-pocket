@@ -291,12 +291,18 @@ extension ToolCall {
             let queries = arguments["queries"].array.compactMap(\.string).filter { !$0.isEmpty }.map(Self.firstLine)
             if !queries.isEmpty { return queries.joined(separator: ", ") }
         }
+        // dsh-image-gen: what was asked for, not the first option alphabetically.
+        if displayName == "generate_images" {
+            let prompts = arguments["prompts"].array.compactMap(\.string).filter { !$0.isEmpty }.map(Self.firstLine)
+            if !prompts.isEmpty { return prompts.joined(separator: " · ") }
+        }
         let keys: [String] = switch displayName {
         case "bash", "pwsh": ["description", "command"]
         case "read", "read_image", "web_fetch": ["path", "file_path", "url"]
         case "web_search", "grep", "glob": ["query", "pattern", "url"]
         case "write", "edit": ["path", "file_path"]
         case "run_code": ["description"]
+        case "generate_image", "edit_image", "find_inspiration": ["prompt", "query"]
         default: []
         }
         for key in keys { if let value = arguments[key].string, !value.isEmpty { return Self.firstLine(value) } }

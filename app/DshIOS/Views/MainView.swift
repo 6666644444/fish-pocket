@@ -12,7 +12,7 @@ struct MainView: View {
     /// The phone's tabs.
     enum HomeTab: Hashable { case sessions, bot, apps, explore }
 
-    enum Sheet: String, Identifiable { case settings, plugins, store, schedules, signIn, cordis, share, watch, capabilities, connectors, phoneControl, remote, fishPocket, miniApps; var id: String { rawValue } }
+    enum Sheet: String, Identifiable { case settings, plugins, store, schedules, signIn, cordis, share, watch, capabilities, connectors, phoneControl, remote, fishPocket, miniApps, imageGen; var id: String { rawValue } }
 
     @Environment(AppModel.self) private var app
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -392,10 +392,18 @@ struct MainView: View {
             // blank conversation already selected, and then no change of selection closes them.
             botOpen = false
             launchedUnderBot = false
-            let target = request.workspaceId.flatMap { id in app.workspaces.first { $0.id == id } } ?? workspace
-            if let target { workspaceId = target.id }
-            newConversation(in: target, agentPreset: request.agentPreset, draft: request.draft, prompt: request.prompt)
             setDrawer(false)
+            Task {
+                // As a link does: a request made as the app comes up (one typed in the Mini Apps bar)
+                // waits for the workspaces and the launch's own blank conversation, not dropped.
+                let deadline = ContinuousClock.now + .seconds(10)
+                while app.workspaces.isEmpty || creating, ContinuousClock.now < deadline {
+                    try? await Task.sleep(for: .milliseconds(100))
+                }
+                let target = request.workspaceId.flatMap { id in app.workspaces.first { $0.id == id } } ?? workspace
+                if let target { workspaceId = target.id }
+                newConversation(in: target, agentPreset: request.agentPreset, draft: request.draft, prompt: request.prompt)
+            }
         }
         .onChange(of: app.credentialRequest?.token) { _, token in
             guard token != nil, scenePhase != .background, let step = app.credentialRequest?.step else { return }
@@ -480,7 +488,7 @@ struct MainView: View {
     }
 
     #if DEBUG
-    /// Screenshots and UI checks: `simctl launch … -dshOpen drawer|workbench|approval|question|timeline|settings|plugins|store|schedules|signin|support|share|watch|connectors|whatsnew|capabilities|phonecontrol|remote|start|fishpocket|topup|miniapps|miniapp`.
+    /// Screenshots and UI checks: `simctl launch … -dshOpen drawer|workbench|approval|question|timeline|settings|imagegen|plugins|store|schedules|signin|support|share|watch|connectors|whatsnew|capabilities|phonecontrol|remote|start|fishpocket|topup|miniapps|miniapp`.
     /// `miniapp` opens the tool `-dshApp <id>` names.
     /// The conversation takes `workbench|filesearch|approval|question|timeline` itself; `filesearch` is the workbench's
     /// file search, with `-dshQuery <text>` to start it on a search.
@@ -496,6 +504,7 @@ struct MainView: View {
         case "share": sheet = .share
         case "watch": sheet = .watch
         case "connectors": sheet = .connectors
+        case "imagegen": sheet = .imageGen
         case "whatsnew": whatsNew = WhatsNew.current
         case "capabilities": sheet = .capabilities
         case "phonecontrol": sheet = .phoneControl
@@ -530,6 +539,8 @@ struct MainView: View {
         case .remote: SheetStack { RemoteControlPage() }.environment(\.systemLists, true)
         case .fishPocket: SheetStack { FishPocketPage() }
         case .miniApps: SheetStack { MiniAppsPage() }
+        // 设置 → 生图, opened straight from a failed image in a conversation.
+        case .imageGen: SheetStack { ImageGenSettingsPage() }.settingsStyle()
         }
     }
 
@@ -602,6 +613,7 @@ struct MainView: View {
         sheet = nil
         if case .settings = step { sheet = .settings; return }
         if case .fishPocket = step { sheet = .fishPocket; return }
+        if case .imageGen = step { sheet = .imageGen; return }
         guard let ref = await app.officialKeyRef() else {
             if case .officialKey = step { sheet = .settings } else { sheet = .signIn }
             return
@@ -611,7 +623,7 @@ struct MainView: View {
             if case .signIn = step { onboarding = .signIn(ref: ref, autoStart: true) } else { onboarding = .signIn(ref: ref) }
         case .officialKey:
             onboarding = .key(ref: ref)
-        case .settings, .fishPocket:
+        case .settings, .fishPocket, .imageGen:
             break
         }
     }

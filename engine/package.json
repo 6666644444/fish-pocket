@@ -5,6 +5,7 @@
   "dependencies": {
     "@deepseek-ai/dsh": "0.2.2-rc.4",
     "ds-bot": "0.3.8",
+    "dsh-image-gen": "0.11.4",
     "iconv-lite": "0.7.3",
     "just-bash": "3.6.0",
     "node-addon-require-builtin-ios-arm64": "file:./shims/node-addon-require-builtin-ios-arm64",
