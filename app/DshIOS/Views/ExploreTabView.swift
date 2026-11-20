@@ -125,10 +125,10 @@ struct ExploreTabView: View {
                 Text(title).font(.body).foregroundStyle(Palette.ink)
                 Text(detail).font(.footnote).foregroundStyle(Palette.secondary).lineLimit(2)
             }
-            // The name and its line first; a status that does not fit is what gives way.
-            .layoutPriority(1)
             Spacer(minLength: 8)
-            trailing()
+            // The status whole first: cut short it says nothing ("1…" for one service connected),
+            // and the line under the name has a second row to go to.
+            trailing().layoutPriority(1)
         }
         .padding(.vertical, 4)
         .contentShape(Rectangle())
