@@ -49,7 +49,7 @@ struct EngineRepair: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("引擎起不来，多半是插件或设置出了问题。可以按顺序试下面几步，会话、Bot、小工具和文件都不会动。")
+            Text("引擎起不来，多半是插件或设置出了问题。可以按顺序试下面几步，会话、Bot、Mini Apps 和文件都不会动。")
                 .font(.footnote)
                 .foregroundStyle(Palette.secondary)
                 // The log above takes what room is left; these lines are not what gives.

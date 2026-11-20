@@ -1,6 +1,9 @@
-// Draws the 会话 tab's speech bubble as custom SF Symbols, `fp.message` and `fp.message.fill`, into
-// app/DshIOS/Assets.xcassets/Symbols. The system's own `message` may only stand for Apple's Messages
-// app, so this is our own drawing in the same spirit.
+// Draws the tab bar's own SF Symbols into app/DshIOS/Assets.xcassets/Symbols:
+// - 会话's speech bubble, `fp.message` and `fp.message.fill`. The system's own `message` may only
+//   stand for Apple's Messages app, so this is our own drawing in the same spirit.
+// - Bot's character, `fp.bot` and `fp.bot.fill`: the outline of the default Bot (`gumdrop` in
+//   BotCharacter.swift) with its two eyes, so the tab looks like the Bots it opens. SF Symbols has no
+//   robot, and the smiley it had said nothing about Bots.
 //
 //   swift scripts/draw-tab-symbols.swift app/DshIOS/Assets.xcassets/Symbols
 //
@@ -27,9 +30,9 @@ let strokes: [String: [Double]] = [
 let growth: [Double] = [0.988, 0.993, 0.998, 1.0, 1.012, 1.014, 1.024, 1.036, 1.046]
 let scaleOf: [String: Double] = ["S": 0.80, "M": 1.0, "L": 1.28]
 
-// Skeleton at Regular, medium scale. y up, baseline 0, cap height 70.459.
+// Skeletons at Regular, medium scale. y up, baseline 0, cap height 70.459.
 let A0 = 53.0, B0 = 41.5
-func skeleton() -> CGMutablePath {
+func bubble() -> CGMutablePath {
   let p = CGMutablePath()
   let cy = 0.0
   func pt(_ deg: Double) -> CGPoint { let r = deg * .pi / 180; return CGPoint(x: A0 * cos(r), y: cy + B0 * sin(r)) }
@@ -55,6 +58,39 @@ func skeleton() -> CGMutablePath {
   return p
 }
 
+// The gumdrop: a round top on a flat-bottomed body with rounded corners, 76 across in BotCharacter's
+// 100-grid, drawn here a little larger to sit as big as the system's round symbols.
+let botScale = 1.13
+func bot() -> CGMutablePath {
+  let k = botScale, r = 38.0 * k, c = 13.0 * k
+  let p = CGMutablePath()
+  p.move(to: CGPoint(x: -r, y: 0))
+  p.addArc(center: .zero, radius: r, startAngle: .pi, endAngle: 0, clockwise: true)
+  p.addLine(to: CGPoint(x: r, y: -r + c))
+  p.addArc(tangent1End: CGPoint(x: r, y: -r), tangent2End: CGPoint(x: r - c, y: -r), radius: c)
+  p.addLine(to: CGPoint(x: -r + c, y: -r))
+  p.addArc(tangent1End: CGPoint(x: -r, y: -r), tangent2End: CGPoint(x: -r, y: -r + c), radius: c)
+  p.closeSubpath()
+  return p
+}
+// Its eyes, two upright capsules a little below the middle. They thicken with the weight like the
+// line does, so a thin outline does not get heavy eyes.
+func botEyes(stroke: Double) -> CGPath {
+  let k = botScale, w = 4.2 + stroke * 0.6, h = w * 1.75, gap = 21.0 * k, y = -2.0 * k
+  let p = CGMutablePath()
+  for x in [-gap / 2, gap / 2] {
+    p.addRoundedRect(in: CGRect(x: x - w / 2, y: y - h / 2, width: w, height: h), cornerWidth: w / 2, cornerHeight: w / 2)
+  }
+  return p
+}
+
+struct Design { let name: String; let skeleton: () -> CGMutablePath; let eyes: ((Double) -> CGPath)?; let lift: Double }
+let designs = [
+  // The bubble's tail hangs below, so its ink sits a little above the cap height's middle.
+  Design(name: "fp.message", skeleton: bubble, eyes: nil, lift: 2.0),
+  Design(name: "fp.bot", skeleton: bot, eyes: botEyes, lift: 0),
+]
+
 func svgPath(_ path: CGPath, dx: Double, dy: Double) -> String {
   var d = ""
   func q(_ p: CGPoint) -> String { "\(String(format: "%.3f", Double(p.x) - dx)) \(String(format: "%.3f", -(Double(p.y)) + dy))" }
@@ -72,16 +108,19 @@ func svgPath(_ path: CGPath, dx: Double, dy: Double) -> String {
   return d
 }
 
-func glyph(fill: Bool, weight w: Int, scale s: String) -> CGPath {
+// Eyes, where a design has them, are solid in the outline and cut out of the filled form.
+func glyph(_ design: Design, fill: Bool, weight w: Int, scale s: String) -> CGPath {
   let k = scaleOf[s]! * growth[w]
   var t = CGAffineTransform(scaleX: k, y: k)
-  let sk = skeleton().copy(using: &t)!
+  let sk = design.skeleton().copy(using: &t)!
   let width = strokes[s]![w]
   let stroked = sk.copy(strokingWithWidth: width, lineCap: .round, lineJoin: .round, miterLimit: 4)
-  return fill ? sk.union(stroked, using: .winding) : stroked.normalized(using: .winding)
+  let shape = fill ? sk.union(stroked, using: .winding) : stroked.normalized(using: .winding)
+  guard let eyes = design.eyes?(width / scaleOf[s]!).copy(using: &t) else { return shape }
+  return fill ? shape.subtracting(eyes, using: .winding) : shape.union(eyes, using: .winding)
 }
 
-func template(fill: Bool, name: String) -> String {
+func template(_ design: Design, fill: Bool, name: String) -> String {
   var guides = "", symbols = ""
   for (s, base) in baselines.sorted(by: { $0.value < $1.value }) {
     guides += """
@@ -90,11 +129,11 @@ func template(fill: Bool, name: String) -> String {
 
     """
     for (i, wName) in weights.enumerated() {
-      let g = glyph(fill: fill, weight: i, scale: s)
+      let g = glyph(design, fill: fill, weight: i, scale: s)
       let b = g.boundingBoxOfPath
-      // Centred on the column, and on the cap height's middle, the tail hanging below as it would.
+      // Centred on the column, and on the cap height's middle (lifted where a tail hangs below).
       let left = colX[i] - Double(b.width) / 2
-      let midY = 70.459 / 2 + 2.0 * scaleOf[s]!
+      let midY = 70.459 / 2 + design.lift * scaleOf[s]!
       let dy = midY - Double(b.midY) // shift up so the ink's middle sits there
       // path coordinates: x from 0 at the left margin, y negative upward from the baseline
       let d = svgPath(g, dx: Double(b.minX), dy: -dy)
@@ -136,10 +175,11 @@ guard CommandLine.arguments.count == 2 else {
   print("usage: swift scripts/draw-tab-symbols.swift <asset catalog folder>"); exit(1)
 }
 let out = CommandLine.arguments[1]
-for (fill, name) in [(false, "fp.message"), (true, "fp.message.fill")] {
+for design in designs { for fill in [false, true] {
+  let name = fill ? "\(design.name).fill" : design.name
   let dir = "\(out)/\(name).symbolset"
   try! FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
-  try! template(fill: fill, name: name).write(toFile: "\(dir)/\(name).svg", atomically: true, encoding: .utf8)
+  try! template(design, fill: fill, name: name).write(toFile: "\(dir)/\(name).svg", atomically: true, encoding: .utf8)
   try! """
   {
     "info" : { "author" : "xcode", "version" : 1 },
@@ -147,4 +187,4 @@ for (fill, name) in [(false, "fp.message"), (true, "fp.message.fill")] {
   }
 
   """.write(toFile: "\(dir)/Contents.json", atomically: true, encoding: .utf8)
-}
+}}

@@ -9,7 +9,7 @@ enum MiniAppExamples {
     private static let installedKey = "dsh.miniApps.examplesInstalled"
     @MainActor private static var done = false
 
-    /// The apps 小工具 marks as examples, so nobody takes them for a catalog of ours. Installs
+    /// The apps Mini Apps marks as examples, so nobody takes them for a catalog of ours. Installs
     /// from before this was recorded fall back to what was offered.
     static var ids: Set<String> {
         let defaults = UserDefaults.standard

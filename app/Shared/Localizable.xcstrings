@@ -405,7 +405,7 @@
         }
       }
     },
-    "%@ 里的小工具「%@」运行时出错了：\n\n%@\n\n帮我修好。" : {
+    "%@ 里的 Mini App「%@」运行时出错了：\n\n%@\n\n帮我修好。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -434,7 +434,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ 裡的實用工具「%2$@」執行時出錯了：\n\n%3$@\n\n幫我修好。"
+            "value" : "%1$@ 裡的 Mini App「%2$@」執行時出錯了：\n\n%3$@\n\n幫我修好。"
           }
         }
       }
@@ -2776,7 +2776,7 @@
         }
       }
     },
-    "%lld 个小工具" : {
+    "%lld 个 Mini App" : {
       "localizations" : {
         "en" : {
           "variations" : {
@@ -2829,13 +2829,13 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld 个小工具"
+            "value" : "%lld 个 Mini App"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld 個實用工具"
+            "value" : "%lld 個 Mini App"
           }
         }
       }
@@ -22092,7 +22092,7 @@
         }
       }
     },
-    "修改 %@ 里的小工具「%@」：" : {
+    "修改 %@ 里的 Mini App「%@」：" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -22121,7 +22121,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "修改 %1$@ 裡的實用工具「%2$@」："
+            "value" : "修改 %1$@ 裡的 Mini App「%2$@」："
           }
         }
       }
@@ -22500,7 +22500,7 @@
         }
       }
     },
-    "做一个自己的小工具" : {
+    "做一个自己的 Mini App" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -22529,12 +22529,12 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "做一個自己的實用工具"
+            "value" : "做一個自己的 Mini App"
           }
         }
       }
     },
-    "做自己的小工具" : {
+    "做自己的 Mini App" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -22563,7 +22563,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "做自己的實用工具"
+            "value" : "做自己的 Mini App"
           }
         }
       }
@@ -28247,7 +28247,7 @@
         }
       }
     },
-    "删除小工具" : {
+    "删除 Mini App" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -28276,7 +28276,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "刪除實用工具"
+            "value" : "刪除 Mini App"
           }
         }
       }
@@ -35425,7 +35425,7 @@
         }
       }
     },
-    "在对话里让 Agent 做一个小工具" : {
+    "在对话里让 Agent 做一个 Mini App" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -35454,12 +35454,12 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在對話裡請 Agent 做一個實用工具"
+            "value" : "在對話裡請 Agent 做一個 Mini App"
           }
         }
       }
     },
-    "在对话里让 Agent 做个小工具或小游戏，做好就放进「小工具」里，点开就能用，也能放到主屏幕上。先试试自带的倒数日、番茄钟和水果翻翻。" : {
+    "在对话里让 Agent 做个小工具或小游戏，做好就放进「Mini Apps」里，点开就能用，也能放到主屏幕上。先试试自带的倒数日、番茄钟和水果翻翻。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -35488,13 +35488,13 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在对话里让 Agent 做个小工具或小游戏，做好就放进「小工具」里，点开就能用，也能放到主屏幕上。先试试自带的倒数日、番茄钟和水果翻翻。"
+            "value" : "在对话里让 Agent 做个小工具或小游戏，做好就放进「Mini Apps」里，点开就能用，也能放到主屏幕上。先试试自带的倒数日、番茄钟和水果翻翻。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "在對話裡請 Agent 做個實用工具或小遊戲，做好就放進「實用工具」裡，點開就能用，也能放到主畫面上。先試試內建的倒數日、番茄鐘和水果翻翻。"
+            "value" : "在對話裡請 Agent 做個實用工具或小遊戲，做好就放進「Mini Apps」裡，點開就能用，也能放到主畫面上。先試試內建的倒數日、番茄鐘和水果翻翻。"
           }
         }
       }
@@ -40573,7 +40573,7 @@
         }
       }
     },
-    "小工具" : {
+    "Mini Apps" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -40602,12 +40602,46 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "實用工具"
+            "value" : "Mini Apps"
           }
         }
       }
     },
-    "小工具只在这台设备上运行，彼此隔离，读不到你的文件和对话，可以联网。" : {
+    "Mini App" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mini App"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Miniapp"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ミニアプリ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "미니 앱"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mini App"
+          }
+        }
+      }
+    },
+    "Mini App 只在这台设备上运行，彼此隔离，读不到你的文件和对话，可以联网。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -40636,12 +40670,12 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "實用工具只在這台裝置上執行，彼此隔離，讀不到你的檔案和對話，可以連網。"
+            "value" : "Mini App 只在這台裝置上執行，彼此隔離，讀不到你的檔案和對話，可以連網。"
           }
         }
       }
     },
-    "小工具已删除" : {
+    "Mini App 已删除" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -40670,12 +40704,12 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "實用工具已刪除"
+            "value" : "Mini App 已刪除"
           }
         }
       }
     },
-    "小工具的文件和它保存的数据都会删除，无法恢复。" : {
+    "Mini App 的文件和它保存的数据都会删除，无法恢复。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -40704,7 +40738,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "實用工具的檔案和它儲存的資料都會刪除，無法復原。"
+            "value" : "Mini App 的檔案和它儲存的資料都會刪除，無法復原。"
           }
         }
       }
@@ -45244,7 +45278,7 @@
         }
       }
     },
-    "帮我做一个小工具：" : {
+    "帮我做一个 Mini App：" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -45273,7 +45307,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "幫我做一個實用工具："
+            "value" : "幫我做一個 Mini App："
           }
         }
       }
@@ -49604,7 +49638,7 @@
       },
       "extractionState" : "stale"
     },
-    "打开一个小工具。在快捷指令里把它添加到主屏幕，就是这个小工具的图标。" : {
+    "打开一个 Mini App。在快捷指令里把它添加到主屏幕，就是这个 Mini App 的图标。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -49633,7 +49667,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "打開一個實用工具。在捷徑裡把它加入主畫面，就是這個實用工具的圖像。"
+            "value" : "打開一個 Mini App。在捷徑裡把它加入主畫面，就是這個 Mini App 的圖像。"
           }
         }
       }
@@ -49808,7 +49842,7 @@
         }
       }
     },
-    "打开小工具" : {
+    "打开 Mini App" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -49837,7 +49871,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "打開實用工具"
+            "value" : "打開 Mini App"
           }
         }
       }
@@ -93853,7 +93887,7 @@
         }
       }
     },
-    "选择小组件里放哪些小工具。" : {
+    "选择小组件里放哪些 Mini App。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -93882,7 +93916,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "選擇小工具裡放哪些實用工具。"
+            "value" : "選擇小工具裡放哪些 Mini App。"
           }
         }
       }
@@ -110057,36 +110091,36 @@
       },
       "extractionState" : "stale"
     },
-    "把你做的小工具和小游戏放到主屏幕上。" : {
+    "把你做的 Mini App 放到主屏幕上。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Put the tools and games you made on your Home Screen."
+            "value" : "Put the mini apps you made on your Home Screen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pon en la pantalla de inicio las herramientas y juegos que has creado."
+            "value" : "Pon en la pantalla de inicio las miniapps que has creado."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "作ったツールやゲームをホーム画面に置けます。"
+            "value" : "作ったミニアプリをホーム画面に置けます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "직접 만든 도구와 게임을 홈 화면에 두세요."
+            "value" : "직접 만든 미니 앱을 홈 화면에 두세요."
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "把你做的實用工具和小遊戲放到主畫面上。"
+            "value" : "把你做的 Mini App 放到主畫面上。"
           }
         }
       }
@@ -110643,13 +110677,13 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "小工具"
+            "value" : "Mini Apps"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "實用工具"
+            "value" : "Mini Apps"
           }
         }
       }
@@ -110973,7 +111007,7 @@
       },
       "extractionState" : "stale"
     },
-    "首页改成苹果的标签栏，会话、Bot、小工具、探索、设置一点就到。插件、连接器、本机能力、操控手机、远程控制都在「探索」里，搜索放进了会话列表。iPad 和 iPhone Duo 上，标签栏会自动放到顶部或变成侧边栏。" : {
+    "首页改成苹果的标签栏，会话、Bot、Mini Apps、探索、设置一点就到。插件、连接器、本机能力、操控手机、远程控制都在「探索」里，搜索放进了会话列表。iPad 和 iPhone Duo 上，标签栏会自动放到顶部或变成侧边栏。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -111002,13 +111036,13 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "首页改成苹果的标签栏，会话、Bot、小工具、探索、设置一点就到。插件、连接器、本机能力、操控手机、远程控制都在「探索」里，搜索放进了会话列表。iPad 和 iPhone Duo 上，标签栏会自动放到顶部或变成侧边栏。"
+            "value" : "首页改成苹果的标签栏，会话、Bot、Mini Apps、探索、设置一点就到。插件、连接器、本机能力、操控手机、远程控制都在「探索」里，搜索放进了会话列表。iPad 和 iPhone Duo 上，标签栏会自动放到顶部或变成侧边栏。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "首頁改成 Apple 的標籤列，對話、Bot、實用工具、探索、設定一點就到。外掛、連接器、本機能力、操控手機、遠端控制都在「探索」裡，搜尋放進了對話列表。在 iPad 和 iPhone Duo 上，標籤列會自動移到頂部或變成側邊欄。"
+            "value" : "首頁改成 Apple 的標籤列，對話、Bot、Mini Apps、探索、設定一點就到。外掛、連接器、本機能力、操控手機、遠端控制都在「探索」裡，搜尋放進了對話列表。在 iPad 和 iPhone Duo 上，標籤列會自動移到頂部或變成側邊欄。"
           }
         }
       }
@@ -111326,7 +111360,7 @@
         }
       }
     },
-    "引擎起不来，多半是插件或设置出了问题。可以按顺序试下面几步，会话、Bot、小工具和文件都不会动。" : {
+    "引擎起不来，多半是插件或设置出了问题。可以按顺序试下面几步，会话、Bot、Mini Apps 和文件都不会动。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -111355,7 +111389,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "引擎起不來，多半是外掛或設定出了問題。可以按順序試下面幾步，對話、Bot、實用工具和檔案都不會動。"
+            "value" : "引擎起不來，多半是外掛或設定出了問題。可以按順序試下面幾步，對話、Bot、Mini Apps 和檔案都不會動。"
           }
         }
       }

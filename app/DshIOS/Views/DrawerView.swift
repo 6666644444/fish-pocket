@@ -425,9 +425,9 @@ struct DrawerView: View {
         Button { Haptics.tap(); app.miniAppsRequest = UUID() } label: {
             HStack(spacing: 12) {
                 Image(systemName: "apps.iphone").font(.callout).foregroundStyle(Palette.ink).frame(width: 22)
-                Text("小工具").font(.subheadline).foregroundStyle(Palette.ink)
+                Text(MiniAppsPage.tabTitle).font(.subheadline).foregroundStyle(Palette.ink)
                 Spacer()
-                Text(miniApps.apps.isEmpty ? String(localized: "小工具和小游戏") : String(localized: "\(miniApps.apps.count) 个小工具")).font(.footnote).foregroundStyle(Palette.secondary)
+                Text(miniApps.apps.isEmpty ? String(localized: "小工具和小游戏") : String(localized: "\(miniApps.apps.count) 个 Mini App")).font(.footnote).foregroundStyle(Palette.secondary)
             }
             .padding(.horizontal, 12)
             .frame(minHeight: 46)
