@@ -47,7 +47,7 @@ enum WhatsNew {
     /// Newest first. Until the app reaches an entry's version (and build, when it names one),
     /// the entry is not shown. Entries of one version are shown together, newest first.
     static let releases: [Release] = [
-        Release(version: "1.2.2", build: 122, features: [
+        Release(version: "1.2.2", build: 124, features: [
             Feature(symbol: "photo.badge.plus",
                     title: "让智能体给你画图",
                     detail: "在对话里说「画一张…」就能生成图片，也能改图、一次出一组。Gemini、OpenAI、即梦、通义、Grok、智谱和本地 ComfyUI 都能用；不想填 API Key，也可以登录 ChatGPT、Grok 或 Google 订阅账号。在设置 → 生图里配置。"),
