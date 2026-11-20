@@ -463,6 +463,7 @@ struct BotHomeView: View {
 
     /// A match picked: the search ends, and the chat opens.
     private func pick(_ route: BotRoute) {
+        clearFocusedSearchField()
         query = ""
         searchActive = false
         if let selection { selection.wrappedValue = route } else { open(route) }
