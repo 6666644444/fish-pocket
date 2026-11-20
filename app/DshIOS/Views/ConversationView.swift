@@ -1413,7 +1413,7 @@ private struct UserBubble: View {
         VStack(alignment: .trailing, spacing: 6) {
             ImageGroup(attachments: attachments.filter(\.isImage), alignment: .trailing)
             ForEach(Array(attachments.filter { !$0.isImage }.enumerated()), id: \.offset) { _, attachment in
-                FileCard(name: attachment.name ?? String(localized: "附件"), bytes: attachment.bytes)
+                SentFileCard(attachment: attachment)
                     .frame(maxWidth: 280, alignment: .trailing)
             }
             if !text.isEmpty {
