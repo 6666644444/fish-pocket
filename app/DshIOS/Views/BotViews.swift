@@ -587,9 +587,11 @@ struct BotHomeView: View {
     }
 
     /// The fill of the row whose chat is beside the list; the list's own (nil) on the others,
-    /// and where rows push.
-    private func pickedFill(_ route: BotRoute) -> Color? {
-        selection?.wrappedValue == route ? Palette.bubble : nil
+    /// and where rows push. A shape and not the bare color: the list keeps a color as it was in
+    /// the appearance it was first drawn in, and after light turned to dark (or back) with a
+    /// chat picked, its row stayed light under a name now white.
+    private func pickedFill(_ route: BotRoute) -> (some View)? {
+        selection?.wrappedValue == route ? Rectangle().fill(Palette.bubble) : nil
     }
 
     @ViewBuilder
@@ -617,7 +619,9 @@ struct BotHomeView: View {
     private func trailing(sessionId: String) -> some View {
         VStack(alignment: .trailing, spacing: 6) {
             if let date = app.sessions[sessionId]?.updatedAt {
-                Text(date, format: .relative(presentation: .numeric, unitsStyle: .narrow)).font(.caption2).foregroundStyle(Palette.faint)
+                // As the 会话 list says it. The system's relative format counts seconds, which stand still
+                // until the row is drawn again, and a reply stamped just ahead of this clock read "in 0 seconds".
+                Text(DrawerView.relative(date)).font(.caption2).foregroundStyle(Palette.faint)
             }
             if app.completionUnread.contains(sessionId) { Circle().fill(Palette.ink).frame(width: 8, height: 8) }
         }
