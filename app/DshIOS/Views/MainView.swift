@@ -1256,15 +1256,12 @@ private struct SidebarToggle: ViewModifier {
 /// the bars of a split view's columns do not: the conversation's title, centred in its column, sat
 /// under the tab bar (a new conversation's model picker could not be read or tapped), and so did
 /// the buttons near it. While the tab bar is there, the 会话 and Bot tabs' split views start under it.
-/// From iOS 26 the system does this itself; on iOS 27 it has two ways of doing it and has to be
-/// kept to one (`SplitBelowTabBar`). A phone's tab bar is at the bottom.
+/// From iOS 26 the system does this itself, but loses it when the sidebar folds back into the tab
+/// bar; on iOS 27 it also has two ways of doing it and has to be kept to one (`SplitBelowTabBar`).
+/// A phone's tab bar is at the bottom.
 private struct BelowFloatingTabBar: ViewModifier {
     func body(content: Content) -> some View {
-        if #available(iOS 27.0, *), UIDevice.current.userInterfaceIdiom == .pad {
-            content.background(SplitBelowTabBar())
-        } else if #available(iOS 26.0, *) {
-            content
-        } else if #available(iOS 18.0, *), UIDevice.current.userInterfaceIdiom == .pad {
+        if #available(iOS 18.0, *), UIDevice.current.userInterfaceIdiom == .pad {
             content.background(SplitBelowTabBar())
         } else {
             content
@@ -1287,6 +1284,12 @@ private struct BelowFloatingTabBar: ViewModifier {
 /// keeps it below the tab bar, and both title rows stand a row too low until the tab is left and
 /// come back to. So a page found the first way is made to work its safe area out again, which
 /// takes it to the second at once, where it stays.
+///
+/// The second way is lost when the sidebar folds back into the tab bar (upright, where it lies
+/// over the page; seen on iPadOS 27.2, and 26.4 ends up the same): the columns' bars are not
+/// moved down again and stay under the tab bar until the list is hidden and shown. A tab picked
+/// in that sidebar and shown for the first time comes up the same. A column found there has its
+/// page work its safe area out again too, which moves the bars back down.
 @available(iOS 18.0, *)
 private struct SplitBelowTabBar: UIViewRepresentable {
     func makeUIView(context: Context) -> Adjuster { Adjuster() }
@@ -1296,10 +1299,15 @@ private struct SplitBelowTabBar: UIViewRepresentable {
         /// The page was asked once since this view came into the window: asked again while the
         /// answer stays the same, laying out would never end.
         private var settled = false
+        /// The page is about to be asked for a column under the tab bar, and the times in a row
+        /// it was asked to no effect: it is not asked for ever.
+        private var asking = false
+        private var asked = 0
 
         override func didMoveToWindow() {
             super.didMoveToWindow()
             settled = false
+            asked = 0
             adjust()
             // Shown or hidden with the sidebar: what it says is settled once that has happened.
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in self?.adjust() }
@@ -1320,8 +1328,12 @@ private struct SplitBelowTabBar: UIViewRepresentable {
                 responder = next.next
             }
             guard let split, let tabs else { return }
-            if #available(iOS 27.0, *) {
-                settle(split, in: tabs)
+            if #available(iOS 26.0, *) {
+                var page: UIViewController = split
+                while let parent = page.parent, parent !== tabs { page = parent }
+                guard page.parent === tabs else { return }
+                if #available(iOS 27.0, *) { settle(page, in: tabs) }
+                uncover(split, on: page, in: tabs)
                 return
             }
             let floating = !tabs.isTabBarHidden && tabs.sidebar.isHidden
@@ -1330,13 +1342,41 @@ private struct SplitBelowTabBar: UIViewRepresentable {
             if split.additionalSafeAreaInsets.top != top { split.additionalSafeAreaInsets.top = top }
         }
 
-        /// The tab's page, when its safe area still holds the tab bar's height, works it out again:
-        /// a safe area changed and put back is what makes it.
-        private func settle(_ split: UISplitViewController, in tabs: UITabBarController) {
-            var page: UIViewController = split
-            while let parent = page.parent, parent !== tabs { page = parent }
-            guard !settled, page.parent === tabs, page.view.safeAreaInsets.top > tabs.view.safeAreaInsets.top else { return }
+        /// The tab's page, when its safe area still holds the tab bar's height, works it out again.
+        private func settle(_ page: UIViewController, in tabs: UITabBarController) {
+            guard !settled, page.view.safeAreaInsets.top > tabs.view.safeAreaInsets.top else { return }
             settled = true
+            ask(page)
+        }
+
+        /// This view's column, found under the tab bar, has the page work its safe area out again.
+        /// Not at once: asked while the sidebar is still folding, the page answers the same, and
+        /// often the first time after that too. So it is asked a moment later, and again while the
+        /// column is still there.
+        private func uncover(_ split: UISplitViewController, on page: UIViewController, in tabs: UITabBarController) {
+            guard !asking, asked < 20, covered(split, on: page, in: tabs) else { return }
+            asking = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+                guard let self else { return }
+                // `asking` is still set: the layout this starts does not ask for another.
+                if self.covered(split, on: page, in: tabs) { self.ask(page) }
+                self.asking = false
+                self.asked = self.covered(split, on: page, in: tabs) ? self.asked + 1 : 0
+                self.uncover(split, on: page, in: tabs)
+            }
+        }
+
+        /// The tab bar floats over this view's column: its height is neither in the page's safe
+        /// area nor in the column's own.
+        private func covered(_ split: UISplitViewController, on page: UIViewController, in tabs: UITabBarController) -> Bool {
+            guard window != nil, !tabs.isTabBarHidden, tabs.sidebar.isHidden, tabs.traitCollection.horizontalSizeClass == .regular,
+                  page.view.safeAreaInsets.top <= tabs.view.safeAreaInsets.top,
+                  let column = split.children.first(where: { isDescendant(of: $0.view) }) else { return false }
+            return column.view.safeAreaInsets.top <= split.view.safeAreaInsets.top
+        }
+
+        /// A safe area changed and put back is what makes a page work its own out again.
+        private func ask(_ page: UIViewController) {
             page.additionalSafeAreaInsets.top += 1
             page.view.layoutIfNeeded()
             page.additionalSafeAreaInsets.top -= 1
