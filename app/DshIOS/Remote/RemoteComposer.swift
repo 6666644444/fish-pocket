@@ -50,6 +50,8 @@ struct RemoteComposer: View {
                         .focused($focused)
                         .inkTint()
                         .padding(.vertical, 11)
+                        // Down to the bar's own edges.
+                        .focusesOnTap($focused, beyond: 5)
                     mainButton
                 }
             }

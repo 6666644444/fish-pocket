@@ -438,6 +438,8 @@ struct ComposerView: View {
                 } else {
                     input
                         .padding(.vertical, 11)
+                        // Down to the bar's own edges.
+                        .focusesOnTap($focused, beyond: 5)
                 }
                 voiceToggle
                 mainButton.holdHidden(voice.phase != .idle)

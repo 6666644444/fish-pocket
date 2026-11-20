@@ -296,6 +296,18 @@ extension View {
         }
     }
 
+    /// A text field in a bar answers only on its lines; the bar's room above and below them,
+    /// `beyond` past the field's own frame, puts the caret in it too. With one line that room is
+    /// most of the bar, and a tap there went nowhere: it took a second tap. A UIKit tap, as a
+    /// SwiftUI one this close to the bottom of the screen arrives late on a device.
+    func focusesOnTap(_ focus: FocusState<Bool>.Binding, beyond: CGFloat = 0) -> some View {
+        background {
+            FocusTap { focus.wrappedValue = true }
+                .padding(.vertical, -beyond)
+                .accessibilityHidden(true)
+        }
+    }
+
     /// A small control keeps its look; the tappable area grows to the 44 pt a thumb needs.
     func hitTarget(_ size: CGFloat = 44) -> some View {
         frame(minWidth: size, minHeight: size)
@@ -532,5 +544,28 @@ private struct StatusBarSoftening: View {
         let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
         let window = scenes.flatMap(\.windows).first(where: \.isKeyWindow) ?? scenes.first?.windows.first
         return window?.safeAreaInsets.top ?? 54
+    }
+}
+
+/// The tap behind a bar's text field (`focusesOnTap`).
+private struct FocusTap: UIViewRepresentable {
+    let tapped: () -> Void
+
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.addGestureRecognizer(UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.tap)))
+        return view
+    }
+
+    func updateUIView(_ view: UIView, context: Context) { context.coordinator.tapped = tapped }
+
+    func makeCoordinator() -> Coordinator { Coordinator(tapped: tapped) }
+
+    @MainActor
+    final class Coordinator: NSObject {
+        var tapped: () -> Void
+        init(tapped: @escaping () -> Void) { self.tapped = tapped }
+        @objc func tap() { tapped() }
     }
 }
