@@ -957,6 +957,12 @@ struct MainView: View {
             .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomInSessions, toggle: sessionsListToggle))
         }
         .navigationSplitViewStyle(.balanced)
+        // This is the layout while the width on screen is regular (`settledWidth`), and the split
+        // view stays as it is while the window is drawn narrow out of sight, as the one before
+        // iOS 18 does (`split`). Following the window, it folds into one column and opens again:
+        // on iPadOS 18 the list then came back with an empty bar, its buttons and search field
+        // gone until the next launch, and on iPhone Duo it came back put away.
+        .environment(\.horizontalSizeClass, .regular)
         // Only while this tab is in front: a conversation archived from another one does not pull it here.
         .task(id: selection == nil && !app.workspaces.isEmpty && tab == .sessions) {
             if selection == nil, !app.workspaces.isEmpty, tab == .sessions { newConversation(in: workspace) }
@@ -1092,6 +1098,8 @@ struct MainView: View {
             .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomInBots, toggle: systemSidebarButton ? nil : toggleBotList))
         }
         .navigationSplitViewStyle(.balanced)
+        // As the 会话 tab's (`sessionsSplit`): not folded while the window is narrow out of sight.
+        .environment(\.horizontalSizeClass, .regular)
     }
 
     private func toggleBotList() {
