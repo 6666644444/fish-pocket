@@ -216,7 +216,12 @@ struct MainView: View {
             storeOpen = false
             botOpen = true
             if usesTabs { tab = .bot }
-            botPath = request.route.map { route in request.push && botPath.last != route ? botPath + [route] : [route] } ?? []
+            let pages = request.route.map { route in request.push && botPath.last != route ? botPath + [route] : [route] } ?? []
+            // Before iOS 18 the stack in the split view's detail does not follow a path changed in
+            // here, while the views are being updated: the page on screen stays as it is (a chat
+            // shared to with the Bot list open never showed, and the next row tapped was pushed
+            // over it). Changed a moment later, it does.
+            if #available(iOS 18.0, *) { botPath = pages } else { Task { botPath = pages } }
             setDrawer(false)
         }
         // The sidebar's own row; the page is also still under Settings.
