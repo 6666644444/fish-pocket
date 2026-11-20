@@ -38,7 +38,6 @@ struct ConversationActivity: View {
             }
             if jobs.visibleCount > 0 {
                 chip(
-                    icon: "list.bullet.rectangle",
                     text: jobs.live.isEmpty ? Text("\(jobs.visibleCount) 个后台任务") : Text("\(jobs.live.count) 个后台任务运行中"),
                     running: !jobs.live.isEmpty,
                     action: openJobs
@@ -49,17 +48,15 @@ struct ConversationActivity: View {
         .animation(.snappy(duration: 0.18), value: jobs.visibleCount)
     }
 
-    private func chip(icon: String, text: Text, running: Bool, action: @escaping () -> Void) -> some View {
+    /// No picture, only the state, as each job's row in the list shows it: a breathing green dot
+    /// while one runs, a grey one when all have ended.
+    private func chip(text: Text, running: Bool, action: @escaping () -> Void) -> some View {
         Button {
             Haptics.tap()
             action()
         } label: {
-            HStack(spacing: 6) {
-                Image(systemName: icon)
-                    .font(.footnote.weight(.semibold))
-                    .overlay(alignment: .topTrailing) {
-                        if running { Circle().fill(Palette.running).frame(width: 7, height: 7).offset(x: 3, y: -3) }
-                    }
+            HStack(spacing: 7) {
+                JobsDot(running: running)
                 text.font(.footnote.weight(.medium)).lineLimit(1)
             }
             .foregroundStyle(Palette.ink)
@@ -71,5 +68,34 @@ struct ConversationActivity: View {
         .buttonStyle(.plain)
         .transition(.opacity.combined(with: .scale(scale: 0.8)))
         .accessibilityLabel(text)
+    }
+}
+
+/// The background jobs chip's mark. The halo breathes while a job runs, unless motion is reduced.
+private struct JobsDot: View {
+    let running: Bool
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var breathing = false
+
+    var body: some View {
+        let color = running ? Palette.running : Palette.faint
+        ZStack {
+            if running {
+                Circle()
+                    .fill(color.opacity(breathing ? 0.08 : 0.25))
+                    .scaleEffect(breathing ? 1.7 : 1)
+            }
+            Circle().fill(color).frame(width: 7, height: 7)
+        }
+        .frame(width: 12, height: 12)
+        .onAppear { breathe() }
+        .onChange(of: running) { _, _ in breathe() }
+        .accessibilityHidden(true)
+    }
+
+    private func breathe() {
+        breathing = false
+        guard running, !reduceMotion else { return }
+        withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) { breathing = true }
     }
 }

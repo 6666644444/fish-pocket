@@ -516,7 +516,9 @@ final class AppModel {
         switch frame["type"].string {
         case "baseline", "replace":
             workspaces = frame["value"]["items"].array.map(Workspace.init)
+            let before = archived
             archived = Set(frame["value"]["archivedSessionIds"].array.compactMap(\.string))
+            BrowserModel.releasePages(of: archived.subtracting(before))
             pinned = frame["value"]["pinnedSessionIds"].array.compactMap(\.string)
         case "upsert":
             let workspace = Workspace(frame["workspace"])
@@ -528,7 +530,10 @@ final class AppModel {
             let order = frame["workspaceIds"].array.compactMap(\.string)
             workspaces.sort { (order.firstIndex(of: $0.id) ?? .max) < (order.firstIndex(of: $1.id) ?? .max) }
         case "archived":
+            let before = archived
             archived = Set(frame["archivedSessionIds"].array.compactMap(\.string))
+            // Wherever it was archived from (here, the web, an agent), its browser lets its pages go.
+            BrowserModel.releasePages(of: archived.subtracting(before))
         case "pinned":
             pinned = frame["pinnedSessionIds"].array.compactMap(\.string)
         default:
