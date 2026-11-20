@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// Where the Bot pages go: the list, a Bot's own chat, a group chat.
-enum BotRoute: Hashable {
+/// Where the Bot pages go: the list, a Bot's own chat, a group chat. `Codable` for the one place
+/// its pages are read back out of a `NavigationPath` (`MainView.botStackInSplit`).
+enum BotRoute: Hashable, Codable {
     case bot(String)
     case room(String)
 }

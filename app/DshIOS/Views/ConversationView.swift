@@ -17,6 +17,7 @@ struct ConversationView: View {
     /// The global automation page (the reminders sheet leads there).
     @Environment(AppModel.self) private var app
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.scenePhase) private var scenePhase
     /// The split view's sidebar, as far as the conversation reaches it: room for the workbench, and
     /// (in a Bot's chat, which is pushed and has no drawer button of its own) the sidebar's button.
     @Environment(\.splitSidebar) private var splitSidebar
@@ -326,7 +327,7 @@ struct ConversationView: View {
             }
             // As the web keeps 新会话 in its sidebar, the bar keeps it one tap away: no drawer
             // first. A blank conversation is already a new one, so it only shows on a started one.
-            if started && bot == nil {
+            if started && bot == nil && !barButtonsAway {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
                         Haptics.tap()
@@ -340,9 +341,11 @@ struct ConversationView: View {
             // A Bot's chat has the Bot's own title instead of the session's.
             if bot == nil {
                 if model.subagentAddress != nil, let parent = app.sessions[sessionId]?.parentId {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button { app.open(session: parent) } label: { Image(systemName: "chevron.backward") }
-                            .accessibilityLabel("返回父会话")
+                    if !barButtonsAway {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button { app.open(session: parent) } label: { Image(systemName: "chevron.backward") }
+                                .accessibilityLabel("返回父会话")
+                        }
                     }
                     ToolbarItem(placement: titlePlacement) { SubagentSwitcher(sessionId: sessionId) }
                 } else if blank || (!model.loaded && app.sessions[sessionId]?.blank == true) {
@@ -358,7 +361,7 @@ struct ConversationView: View {
                     }
                 }
             }
-            if !blank {
+            if !blank && !barButtonsAway {
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     // A Bot runs no subagents of DSH's, its scheduled tasks are on its own page, and
                     // its background jobs float over the chat's foot.
@@ -462,6 +465,13 @@ struct ConversationView: View {
         .modifier(BrowserLinkScope(sessionId: sessionId, beside: browserBeside))
         .environment(\.sessionModel, model)
     }
+
+    /// The bar's buttons are taken off it for the time the app is out of sight. iPhone Duo open shows
+    /// the bar buttons of a split view's detail in the column at its trailing edge. Off screen, iOS
+    /// draws the app folded and open again for the app switcher, and the buttons that column had
+    /// come back faded and take no tap, until another conversation is opened. Put on the bar again
+    /// as the app comes back, they are new to the column, which shows them as they are.
+    private var barButtonsAway: Bool { ThisDevice.isDuo && scenePhase == .background }
 
     // MARK: Workbench
 

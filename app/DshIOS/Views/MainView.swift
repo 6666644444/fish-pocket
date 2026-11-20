@@ -648,7 +648,7 @@ struct MainView: View {
                 if storeOpen {
                     NavigationStack { PluginStoreView(openSidebar: hideSidebar) }
                 } else if botOpen {
-                    DetailPath(path: $botPath) { botStack(openDrawer: hideSidebar, path: $0) }
+                    DetailPath(path: $botPath) { botStackInSplit(path: $0) }
                 } else {
                     NavigationStack { conversation(openDrawer: hideSidebar) }
                 }
@@ -669,6 +669,11 @@ struct MainView: View {
         // page came back with the title gone from its back button.
         .environment(\.horizontalSizeClass, .regular)
         .frame(minWidth: scenePhase == .background ? widthOnLeaving : nil)
+        // With one kind of path in the detail (`botStackInSplit`), the split view keeps the pages
+        // links pushed as one stack takes another's place: a plugin's page stayed over the Bot
+        // list, a file from the workbench over the conversation a Bot's chat was left for. They go
+        // with the stack they were pushed on.
+        .onChange(of: storeOpen ? 0 : botOpen ? 1 : 2) { SplitDetail.popToRoot() }
     }
 
     /// The sidebar, as the split view is given it. Kept wide while the window is drawn narrow out
@@ -957,6 +962,12 @@ struct MainView: View {
             .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomInSessions, toggle: sessionsListToggle))
         }
         .navigationSplitViewStyle(.balanced)
+        // This is the layout while the width on screen is regular (`settledWidth`), and the split
+        // view stays as it is while the window is drawn narrow out of sight, as the one before
+        // iOS 18 does (`split`). Following the window, it folds into one column and opens again:
+        // on iPadOS 18 the list then came back with an empty bar, its buttons and search field
+        // gone until the next launch, and on iPhone Duo it came back put away.
+        .environment(\.horizontalSizeClass, .regular)
         // Only while this tab is in front: a conversation archived from another one does not pull it here.
         .task(id: selection == nil && !app.workspaces.isEmpty && tab == .sessions) {
             if selection == nil, !app.workspaces.isEmpty, tab == .sessions { newConversation(in: workspace) }
@@ -1038,22 +1049,33 @@ struct MainView: View {
         }
     }
 
-    /// The Bot list, with a Bot's chat or a group pushed on it. `path` is `botPath` as the split
-    /// view's detail hands it over (`DetailPath`).
-    private func botStack(openDrawer: (() -> Void)?, path: Binding<[BotRoute]>? = nil) -> some View {
-        let path = path ?? $botPath
-        return NavigationStack(path: path) {
-            BotHomeView(openDrawer: openDrawer, open: { path.wrappedValue = [$0] })
-                .navigationDestination(for: BotRoute.self) { route in
-                    botPage(route)
-                        // Set here as well: what the split view sets does not reach a pushed page. A pushed
-                        // chat has a back button where the conversation has its sidebar button, so the
-                        // sidebar's goes beside it. On the tab bar there is no sidebar: no button for one.
-                        .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomForWorkbench, toggle: !usesTabs && layoutWidth == .regular ? hideSidebar : nil))
-                        // iPhone Duo open: no inspector on a pushed chat (see `workbenchInSheet`).
-                        .environment(\.workbenchInSheet, usesTabs && ThisDevice.isDuo)
-                }
-        }
+    /// The Bot list, with a Bot's chat or a group pushed on it.
+    private func botStack(openDrawer: (() -> Void)?) -> some View {
+        NavigationStack(path: $botPath) { botList(openDrawer: openDrawer, path: $botPath) }
+    }
+
+    /// The same in the split view's detail (an iPad before iOS 18). `path` is `botPath` as the
+    /// detail hands it over (`DetailPath`), and the stack is given it as a `NavigationPath`, the
+    /// kind of path the two stacks it shares the detail with have. The split view takes the three
+    /// for one stack and compares their paths as one follows another: with this one's an array of
+    /// `BotRoute` it crashed there (`comparisonTypeMismatch`) whenever the Bot list was updated
+    /// once more in the update it left in, as it is on the way to another conversation
+    /// (`AppModel.currentSession` is set, and the list shows what is unread).
+    private func botStackInSplit(path: Binding<[BotRoute]>) -> some View {
+        NavigationStack(path: BotRoute.erased(path)) { botList(openDrawer: hideSidebar, path: path) }
+    }
+
+    private func botList(openDrawer: (() -> Void)?, path: Binding<[BotRoute]>) -> some View {
+        BotHomeView(openDrawer: openDrawer, open: { path.wrappedValue = [$0] })
+            .navigationDestination(for: BotRoute.self) { route in
+                botPage(route)
+                    // Set here as well: what the split view sets does not reach a pushed page. A pushed
+                    // chat has a back button where the conversation has its sidebar button, so the
+                    // sidebar's goes beside it. On the tab bar there is no sidebar: no button for one.
+                    .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomForWorkbench, toggle: !usesTabs && layoutWidth == .regular ? hideSidebar : nil))
+                    // iPhone Duo open: no inspector on a pushed chat (see `workbenchInSheet`).
+                    .environment(\.workbenchInSheet, usesTabs && ThisDevice.isDuo)
+            }
     }
 
     /// The Bot tab where it is wide, as the 会话 tab: the list beside the chat. The first route on
@@ -1092,6 +1114,8 @@ struct MainView: View {
             .environment(\.splitSidebar, SplitSidebar(makeRoom: makeRoomInBots, toggle: systemSidebarButton ? nil : toggleBotList))
         }
         .navigationSplitViewStyle(.balanced)
+        // As the 会话 tab's (`sessionsSplit`): not folded while the window is narrow out of sight.
+        .environment(\.horizontalSizeClass, .regular)
     }
 
     private func toggleBotList() {
@@ -1266,6 +1290,29 @@ private enum TabSidebar {
     }
 }
 
+/// The detail column of the split view (an iPad before iOS 18) in the window in front.
+@MainActor
+private enum SplitDetail {
+    /// Back to the column's first page, unanimated. SwiftUI follows it as it follows the back button.
+    static func popToRoot() {
+        let windows = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.flatMap(\.windows)
+        var pending = [(windows.first(where: \.isKeyWindow) ?? windows.first)?.rootViewController].compactMap { $0 }
+        while let next = pending.popLast() {
+            guard let split = next as? UISplitViewController else {
+                pending.append(contentsOf: next.children)
+                continue
+            }
+            let detail = split.viewController(for: .secondary)
+            guard let stack = (detail as? UINavigationController) ?? detail?.navigationController, stack.viewControllers.count > 1 else { return }
+            stack.popToRootViewController(animated: false)
+            // Carried out now: left for the next layout, the pages are still there when SwiftUI
+            // next sets the column's, and they stay.
+            stack.view.layoutIfNeeded()
+            return
+        }
+    }
+}
+
 /// On the sidebar column: the system's sidebar button, kept or removed (`systemSidebarButton`).
 private struct SidebarToggle: ViewModifier {
     let system: Bool
@@ -1342,6 +1389,19 @@ private struct SplitBelowTabBar: UIViewRepresentable {
             adjust()
         }
 
+        /// Before iOS 26 the sidebar lies over an upright page, and nothing here is laid out as it
+        /// opens or folds back; a trait does change with it (not a public one). Without this the
+        /// room for the tab bar was taken away by a layout that came while the sidebar was open
+        /// (the app going to the background makes one) and not given back when the tab bar
+        /// returned. Not at once: sideways the list's column goes and comes back with the
+        /// sidebar, which lays this out anyway, and room made before that leaves the list's
+        /// buttons a few points off.
+        override func traitCollectionDidChange(_ previous: UITraitCollection?) {
+            super.traitCollectionDidChange(previous)
+            if #available(iOS 26.0, *) { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in self?.adjust() }
+        }
+
         private func adjust() {
             var split: UISplitViewController?
             var tabs: UITabBarController?
@@ -1406,6 +1466,33 @@ private struct SplitBelowTabBar: UIViewRepresentable {
             page.additionalSafeAreaInsets.top -= 1
             page.view.layoutIfNeeded()
         }
+    }
+}
+
+extension BotRoute {
+    /// `path` as a `NavigationPath` (`MainView.botStackInSplit`).
+    fileprivate static func erased(_ path: Binding<[BotRoute]>) -> Binding<NavigationPath> {
+        Binding(get: { NavigationPath(path.wrappedValue) }, set: { next in
+            let pages = path.wrappedValue
+            if next.count <= pages.count {
+                path.wrappedValue = Array(pages.prefix(next.count))
+            } else if let pushed = routes(in: next) {
+                path.wrappedValue = pushed
+            }
+        })
+    }
+
+    /// What a row of the list pushed is read from the path's own encoding, the only way it gives
+    /// its pages back: the type's name and the page as JSON for each, the last one first.
+    private static func routes(in path: NavigationPath) -> [BotRoute]? {
+        guard let codable = path.codable, let data = try? JSONEncoder().encode(codable),
+              let fields = try? JSONDecoder().decode([String].self, from: data) else { return nil }
+        var routes: [BotRoute] = []
+        for index in stride(from: 1, to: fields.count, by: 2) {
+            guard let route = try? JSONDecoder().decode(BotRoute.self, from: Data(fields[index].utf8)) else { return nil }
+            routes.insert(route, at: 0)
+        }
+        return routes
     }
 }
 

@@ -117,7 +117,9 @@ struct RemoteConversationView: View {
             if let openDrawer {
                 ToolbarItem(placement: .topBarLeading) { DrawerButton(action: openDrawer) }
             }
-            if let meta = model.meta {
+            // Off the bar while the app is out of sight on iPhone Duo, as the conversation's
+            // (`ConversationView.barButtonsAway`).
+            if let meta = model.meta, !barButtonsAway {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
                         Haptics.tap()
@@ -129,7 +131,9 @@ struct RemoteConversationView: View {
                 }
             }
             ToolbarItem(placement: .principal) { RemoteTitleMenu(model: model) }
-            ToolbarItem(placement: .topBarTrailing) { moreMenu(model) }
+            if !barButtonsAway {
+                ToolbarItem(placement: .topBarTrailing) { moreMenu(model) }
+            }
         }
         .environment(\.conversationActions, ConversationActions(actionsBox, .init(
             openChanges: { panel = .changes },
@@ -245,6 +249,9 @@ struct RemoteConversationView: View {
             Haptics.tap()
         }
     }
+
+    /// Whether the bar's buttons are off it: while the app is out of sight on iPhone Duo.
+    private var barButtonsAway: Bool { ThisDevice.isDuo && scenePhase == .background }
 
     private func moreMenu(_ model: RemoteSessionModel) -> some View {
         Menu {
