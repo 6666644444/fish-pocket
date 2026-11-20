@@ -112394,6 +112394,5349 @@
           }
         }
       }
+    },
+    "14" : {
+      "shouldTranslate" : false
+    },
+    "150" : {
+      "shouldTranslate" : false
+    },
+    "256" : {
+      "shouldTranslate" : false
+    },
+    "300" : {
+      "shouldTranslate" : false
+    },
+    "AI 生成水印" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI-generated watermark"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marca de agua de IA"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 生成の透かし"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 생성 워터마크"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 生成浮水印"
+          }
+        }
+      }
+    },
+    "ChatGPT 订阅" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ChatGPT subscription"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suscripción a ChatGPT"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ChatGPT サブスクリプション"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ChatGPT 구독"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ChatGPT 訂閱"
+          }
+        }
+      }
+    },
+    "Google 官方地址或反代端点（完整路径）。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The official Google endpoint or a reverse-proxy endpoint (full path)."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL oficial de Google o endpoint de un proxy inverso (ruta completa)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google の公式 URL、またはリバースプロキシのエンドポイント（完全なパス）。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google 공식 주소 또는 리버스 프록시 엔드포인트(전체 경로)."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google 官方網址或反向代理端點（完整路徑）。"
+          }
+        }
+      }
+    },
+    "Google 订阅" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google subscription"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suscripción a Google"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google サブスクリプション"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google 구독"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google 訂閱"
+          }
+        }
+      }
+    },
+    "Grok 订阅" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grok subscription"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suscripción a Grok"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grok サブスクリプション"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grok 구독"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grok 訂閱"
+          }
+        }
+      }
+    },
+    "Interactions（默认）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interactions (default)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interactions (predeterminado)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interactions（デフォルト）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interactions(기본값)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interactions（預設）"
+          }
+        }
+      }
+    },
+    "JPEG 会在主体边缘留下压缩色斑，抠图时成了去不掉的彩色毛边，要后期加工就选 PNG。方舟默认在右下角加「AI 生成」标识，做素材时可以关掉。透明背景只对图生图有效，并且参考图本身要带透明通道。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JPEG leaves compression artifacts around the subject’s edges, which turn into colored fringes you can’t remove when cutting it out. If you’ll edit the image afterward, choose PNG. Ark adds an “AI-generated” label in the bottom-right corner by default; you can turn it off when making assets. A transparent background only works for image editing, and the reference image itself must have an alpha channel."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JPEG deja manchas de compresión en los bordes del sujeto que, al recortarlo, se convierten en halos de color imposibles de quitar; si vas a retocar la imagen después, elige PNG. Volcengine Ark añade por defecto la marca “Generado por IA” en la esquina inferior derecha; puedes quitarla si la imagen es para usarla como recurso. El fondo transparente solo funciona en la edición de imágenes, y la imagen de referencia debe tener canal alfa."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JPEG は被写体の輪郭に圧縮による色むらが残り、切り抜くと消せない色付きのフリンジになります。後で加工するなら PNG を選んでください。Ark はデフォルトで右下に「AI 生成」の表示を入れます。素材として使うときはオフにできます。透明な背景は画像編集でのみ有効で、参照画像自体にアルファチャンネルが必要です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JPEG는 피사체 가장자리에 압축 얼룩이 남아, 배경을 제거할 때 지워지지 않는 색 테두리가 생겨요. 나중에 편집할 거라면 PNG를 고르세요. Ark는 기본적으로 오른쪽 아래에 ‘AI 생성’ 표시를 넣는데, 소재로 쓸 때는 끌 수 있어요. 투명 배경은 이미지 편집에만 적용되며, 참조 이미지 자체에 투명 채널이 있어야 해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JPEG 會在主體邊緣留下壓縮色斑，去背時就成了去不掉的彩色毛邊，要後製就選 PNG。方舟預設在右下角加上「AI 生成」標示，做素材時可以關掉。透明背景只對圖生圖有效，而且參考圖本身要帶有透明通道。"
+          }
+        }
+      }
+    },
+    "JPEG（方舟默认，有损）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JPEG (Ark default, lossy)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JPEG (predeterminado en Ark, con pérdida)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JPEG（Ark のデフォルト、非可逆）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JPEG(Ark 기본값, 손실 압축)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JPEG（方舟預設，有損）"
+          }
+        }
+      }
+    },
+    "JSON images 数组（商汤等中转）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON images array (SenseTime and similar relays)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Array JSON images (SenseNova y otros relays)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON images 配列（センスタイムなどの中継）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON images 배열(SenseTime 등 중계 서비스)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON images 陣列（商湯等中轉）"
+          }
+        }
+      }
+    },
+    "JSON 图生图尺寸" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON edit size"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamaño de edición JSON"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON 画像編集のサイズ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON 이미지 편집 크기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON 圖生圖尺寸"
+          }
+        }
+      }
+    },
+    "Key 无效或没有权限" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key is invalid or lacks permission"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La clave no es válida o no tiene permisos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key が無効か、権限がありません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "키가 유효하지 않거나 권한이 없음"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key 無效或沒有權限"
+          }
+        }
+      }
+    },
+    "OpenAI 兼容" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI-compatible"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compatible con OpenAI"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI 互換"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI 호환"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI 相容"
+          }
+        }
+      }
+    },
+    "OpenAI 兼容 %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI-compatible %lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compatible con OpenAI %lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI 互換 %lld"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI 호환 %lld"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI 相容 %lld"
+          }
+        }
+      }
+    },
+    "OpenAI 兼容（中转站）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI-compatible (relay)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compatible con OpenAI (relay)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI 互換（中継サービス）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI 호환(중계 서비스)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI 相容（中轉站）"
+          }
+        }
+      }
+    },
+    "OpenAI 尺寸 %@ 无效：边长要是 16 的倍数且不超过 3840，比例在 1:3 到 3:1 之间，像素数在 655360 到 8294400 之间。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI size %@ is invalid: each side must be a multiple of 16 and no more than 3840, the aspect ratio between 1:3 and 3:1, and the pixel count between 655360 and 8294400."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El tamaño %@ no es válido para OpenAI: cada lado debe ser múltiplo de 16 y no superar 3840, la proporción debe estar entre 1:3 y 3:1, y el número de píxeles, entre 655360 y 8294400."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI のサイズ %@ は無効です。各辺は 16 の倍数で 3840 以下、縦横比は 1:3〜3:1、総ピクセル数は 655360〜8294400 にしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI 크기 %@이(가) 유효하지 않아요. 각 변의 길이는 16의 배수이면서 3840 이하, 비율은 1:3에서 3:1 사이, 픽셀 수는 655360에서 8294400 사이여야 해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OpenAI 尺寸 %@ 無效：邊長須為 16 的倍數且不超過 3840，比例介於 1:3 到 3:1 之間，像素數介於 655360 到 8294400 之間。"
+          }
+        }
+      }
+    },
+    "PNG（无损，带透明通道）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PNG (lossless, with alpha channel)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PNG (sin pérdida, con canal alfa)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PNG（可逆、アルファチャンネル付き）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PNG(무손실, 투명 채널 포함)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PNG（無損，帶透明通道）"
+          }
+        }
+      }
+    },
+    "SVG 矢量图在调用详情里" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The SVG vector image is in the call details"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La imagen vectorial SVG está en los detalles de la llamada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SVG ベクター画像は呼び出しの詳細にあります"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SVG 벡터 이미지는 호출 세부 정보에 있어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SVG 向量圖在呼叫詳細資訊裡"
+          }
+        }
+      }
+    },
+    "SVG 矢量图已保存到 %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SVG vector image saved to %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imagen vectorial SVG guardada en %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SVG ベクター画像を %@ に保存しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SVG 벡터 이미지를 %@에 저장했어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SVG 向量圖已儲存到 %@"
+          }
+        }
+      }
+    },
+    "auto, low, medium, high" : {
+      "shouldTranslate" : false
+    },
+    "dsh-image-gen" : {
+      "shouldTranslate" : false
+    },
+    "high" : {
+      "shouldTranslate" : false
+    },
+    "http://" : {
+      "shouldTranslate" : false
+    },
+    "https://" : {
+      "shouldTranslate" : false
+    },
+    "multipart + reference_images JSON 数组（base64）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "multipart + reference_images JSON array (base64)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "multipart + array JSON reference_images (base64)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "multipart + reference_images JSON 配列（base64）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "multipart + reference_images JSON 배열(base64)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "multipart + reference_images JSON 陣列（base64）"
+          }
+        }
+      }
+    },
+    "xAI 官方 api.x.ai 的 /v1 地址。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The official xAI /v1 URL at api.x.ai."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL /v1 oficial de xAI en api.x.ai."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "xAI 公式 api.x.ai の /v1 URL。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "xAI 공식 api.x.ai의 /v1 주소."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "xAI 官方 api.x.ai 的 /v1 網址。"
+          }
+        }
+      }
+    },
+    "「%@」没有生成：%@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%1$@」没有生成：%2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%1$@” wasn’t generated: %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%1$@” no se generó: %2$@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%1$@」を生成できませんでした：%2$@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‘%1$@’을(를) 생성하지 못했어요: %2$@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%1$@」沒有生成：%2$@"
+          }
+        }
+      }
+    },
+    "上限（MB）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Size limit (MB)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Límite (MB)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上限（MB）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "한도(MB)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上限（MB）"
+          }
+        }
+      }
+    },
+    "不添加" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Don’t add"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No añadir"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加しない"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "추가 안 함"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不加上"
+          }
+        }
+      }
+    },
+    "不透明（方舟默认）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opaque (Ark default)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opaco (predeterminado en Ark)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不透明（Ark のデフォルト）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "불투명(Ark 기본값)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不透明（方舟預設）"
+          }
+        }
+      }
+    },
+    "严格下载生成结果" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strict result downloads"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descarga estricta de resultados"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生成結果を厳格にダウンロード"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "생성 결과 엄격하게 다운로드"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "嚴格下載生成結果"
+          }
+        }
+      }
+    },
+    "中转站或自建服务的 OpenAI 兼容 /v1 地址（必填），例如 https://your-relay.example.com/v1。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The OpenAI-compatible /v1 URL of a relay or self-hosted service (required), for example https://your-relay.example.com/v1."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL /v1 compatible con OpenAI de tu relay o servicio propio (obligatoria), por ejemplo https://your-relay.example.com/v1."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中継サービスまたはセルフホストのサービスの OpenAI 互換 /v1 URL（必須）。例：https://your-relay.example.com/v1。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "중계 서비스나 자체 호스팅 서비스의 OpenAI 호환 /v1 주소(필수). 예: https://your-relay.example.com/v1"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "中轉站或自架服務的 OpenAI 相容 /v1 網址（必填），例如 https://your-relay.example.com/v1。"
+          }
+        }
+      }
+    },
+    "云端生成超时（秒）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cloud generation timeout (s)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiempo de espera en la nube (s)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "クラウド生成のタイムアウト（秒）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "클라우드 생성 시간 제한(초)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "雲端生成逾時（秒）"
+          }
+        }
+      }
+    },
+    "使用所选分辨率" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use selected resolution"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar la resolución elegida"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選択した解像度を使用"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택한 해상도 사용"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用所選解析度"
+          }
+        }
+      }
+    },
+    "保存到工作区" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save to workspace"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardar en el espacio de trabajo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ワークスペースに保存"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "워크스페이스에 저장"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "儲存到工作區"
+          }
+        }
+      }
+    },
+    "保留原图" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep originals"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conservar originales"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "元画像を保持"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "원본 이미지 보관"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保留原圖"
+          }
+        }
+      }
+    },
+    "保留天数" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Days to keep"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Días de conservación"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保持日数"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "보관 일수"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保留天數"
+          }
+        }
+      }
+    },
+    "分辨率表要写成「比例 → 档位（如 2K）→ 尺寸」的 JSON 对象。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The resolution table must be a JSON object of “aspect ratio → tier (such as 2K) → size”."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La tabla de resoluciones debe ser un objeto JSON con el formato “proporción → nivel (como 2K) → tamaño”."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解像度表は「比率 → レベル（2K など）→ サイズ」の JSON オブジェクトで書いてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "해상도 표는 ‘비율 → 등급(예: 2K) → 크기’ 형태의 JSON 객체로 작성해야 해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解析度表要寫成「比例 → 等級（如 2K）→ 尺寸」的 JSON 物件。"
+          }
+        }
+      }
+    },
+    "删除渠道" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete channel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar canal"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャネルを削除"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "채널 삭제"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除通道"
+          }
+        }
+      }
+    },
+    "勾选的模型可以在网页版工作台里切换。默认模型总在列表里。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checked models can be switched in the Web UI workbench. The default model is always in the list."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los modelos marcados se pueden cambiar desde el área de trabajo de la versión web. El modelo predeterminado siempre está en la lista."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チェックしたモデルは Web 版のワークベンチで切り替えられます。デフォルトのモデルは常に一覧に含まれます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택한 모델은 웹 버전 워크벤치에서 전환할 수 있어요. 기본 모델은 항상 목록에 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "勾選的模型可以在網頁版工作台裡切換。預設模型一定會在列表裡。"
+          }
+        }
+      }
+    },
+    "原生 generateContent" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Native generateContent"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "generateContent nativo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ネイティブ generateContent"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "네이티브 generateContent"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "原生 generateContent"
+          }
+        }
+      }
+    },
+    "去官方获取 Key" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Get a key"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtener una clave en el sitio oficial"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "公式サイトで Key を取得"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공식 사이트에서 키 발급받기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前往官方取得 Key"
+          }
+        }
+      }
+    },
+    "可选生成质量" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quality options"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calidades disponibles"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選択できる生成品質"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택 가능한 생성 품질"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可選生成品質"
+          }
+        }
+      }
+    },
+    "图片没有生成成功" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t generate the image"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo generar la imagen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像を生成できませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지를 생성하지 못했어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "圖片沒有生成成功"
+          }
+        }
+      }
+    },
+    "图片没有编辑成功" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t edit the image"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo editar la imagen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像を編集できませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지를 편집하지 못했어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "圖片沒有編輯成功"
+          }
+        }
+      }
+    },
+    "图生图" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Image editing"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edición de imágenes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像編集"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지 편집"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "圖生圖"
+          }
+        }
+      }
+    },
+    "圈哪改哪" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change just what you circle"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambia solo lo que marques"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "囲んだところだけ修正"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "동그라미 친 곳만 수정"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "圈哪裡改哪裡"
+          }
+        }
+      }
+    },
+    "在对话里说「画一张…」就能生成图片，也能改图、一次出一组。Gemini、OpenAI、即梦、通义、Grok、智谱和本地 ComfyUI 都能用；不想填 API Key，也可以登录 ChatGPT、Grok 或 Google 订阅账号。在设置 → 生图里配置。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Say “draw a …” in a conversation to generate an image. You can also edit images or make a whole set at once. Works with Gemini, OpenAI, Seedream, Tongyi, Grok, Zhipu, and local ComfyUI; if you’d rather not enter an API key, you can sign in with a ChatGPT, Grok, or Google subscription instead. Set it up in Settings → Image Generation."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di “dibuja…” en la conversación para generar imágenes; también puede editarlas o crear varias a la vez. Funciona con Gemini, OpenAI, Seedream, Tongyi, Grok, Zhipu y ComfyUI local; si no quieres introducir una API Key, también puedes iniciar sesión con tu suscripción de ChatGPT, Grok o Google. Configúralo en Configuración → Generación de imágenes."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会話で「…の絵を描いて」と言うだけで画像を生成できます。画像の修正や、まとめて複数枚の生成もできます。Gemini、OpenAI、Seedream、Tongyi、Grok、Zhipu、ローカルの ComfyUI に対応。API Key を入力したくない場合は、ChatGPT、Grok、Google のサブスクリプションアカウントでサインインすることもできます。設定 → 画像生成 で設定します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화에서 ‘…그려 줘’라고 말하면 이미지를 생성하고, 이미지를 고치거나 한 번에 여러 장을 만들 수도 있어요. Gemini, OpenAI, Seedream, Tongyi, Grok, Zhipu와 로컬 ComfyUI를 쓸 수 있고, API Key를 입력하고 싶지 않다면 ChatGPT, Grok 또는 Google 구독 계정으로 로그인해도 돼요. 설정 → 이미지 생성에서 설정하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在對話裡說「畫一張…」就能生成圖片，也能改圖、一次出一組。Gemini、OpenAI、即夢、通義、Grok、智譜和本地 ComfyUI 都能用；不想填 API Key，也可以登入 ChatGPT、Grok 或 Google 訂閱帳號。在設定 → 生圖裡完成設定。"
+          }
+        }
+      }
+    },
+    "填写 API 基础地址（如 https://example.com/v1beta），也兼容 Interactions 或 generateContent 的完整地址。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter the API base URL (such as https://example.com/v1beta). A full Interactions or generateContent URL also works."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Introduce la URL base de la API (por ejemplo, https://example.com/v1beta); también se admiten las URL completas de Interactions o generateContent."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API のベース URL を入力します（例：https://example.com/v1beta）。Interactions や generateContent の完全な URL にも対応しています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API 기본 주소(예: https://example.com/v1beta)를 입력하세요. Interactions나 generateContent의 전체 주소도 사용할 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "填寫 API 基礎網址（如 https://example.com/v1beta），也相容 Interactions 或 generateContent 的完整網址。"
+          }
+        }
+      }
+    },
+    "官方 api.openai.com 的 /v1 地址；中转站请用「OpenAI 兼容（中转站）」。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The official api.openai.com /v1 URL. For a relay, use “OpenAI-compatible (relay)”."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL /v1 oficial de api.openai.com. Para un relay, usa “Compatible con OpenAI (relay)”."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "公式 api.openai.com の /v1 URL です。中継サービスの場合は「OpenAI 互換（中継サービス）」を使ってください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공식 api.openai.com의 /v1 주소. 중계 서비스라면 ‘OpenAI 호환(중계 서비스)’을 사용하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "官方 api.openai.com 的 /v1 網址；中轉站請用「OpenAI 相容（中轉站）」。"
+          }
+        }
+      }
+    },
+    "工作台可选模型" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workbench models"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modelos disponibles en el área de trabajo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ワークベンチで選べるモデル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "워크벤치에서 선택 가능한 모델"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工作台可選模型"
+          }
+        }
+      }
+    },
+    "工作流不是有效的 ComfyUI API Format JSON。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The workflow isn’t valid ComfyUI API Format JSON."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El flujo de trabajo no es un JSON válido en API Format de ComfyUI."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ワークフローが有効な ComfyUI API Format JSON ではありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "워크플로가 유효한 ComfyUI API Format JSON이 아니에요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工作流程不是有效的 ComfyUI API Format JSON。"
+          }
+        }
+      }
+    },
+    "工作流名称" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workflow name"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre del flujo de trabajo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ワークフロー名"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "워크플로 이름"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工作流程名稱"
+          }
+        }
+      }
+    },
+    "工作流名称不能为空。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workflow names can’t be empty."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El nombre del flujo de trabajo no puede estar vacío."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ワークフロー名は必須です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "워크플로 이름은 비워 둘 수 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工作流程名稱不能空白。"
+          }
+        }
+      }
+    },
+    "工作流名称不能重复。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workflow names must be unique."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los nombres de los flujos de trabajo no pueden repetirse."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ワークフロー名は重複できません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "워크플로 이름은 중복될 수 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工作流程名稱不能重複。"
+          }
+        }
+      }
+    },
+    "工作流文件不能超过 5 MB。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workflow files can’t be larger than 5 MB."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El archivo del flujo de trabajo no puede superar los 5 MB."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ワークフローファイルは 5 MB 以下にしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "워크플로 파일은 5 MB를 넘을 수 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工作流程檔案不能超過 5 MB。"
+          }
+        }
+      }
+    },
+    "工作流的文本输入里没有 {{prompt}}，请在提示词输入里写上它再导出。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No text input in the workflow contains {{prompt}}. Put it in the prompt input, then export again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguna entrada de texto del flujo de trabajo contiene {{prompt}}. Escríbelo en la entrada del prompt y vuelve a exportarlo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ワークフローのテキスト入力に {{prompt}} がありません。プロンプトの入力に書き加えてから書き出してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "워크플로의 텍스트 입력에 {{prompt}}가 없어요. 프롬프트 입력에 넣은 다음 다시 내보내세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工作流程的文字輸入裡沒有 {{prompt}}，請在提示詞輸入裡寫上它再匯出。"
+          }
+        }
+      }
+    },
+    "已导入 %@，记得保存。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imported %@. Remember to save."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se importó %@. No olvides guardar."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ をインポートしました。保存を忘れずに。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@을(를) 가져왔어요. 잊지 말고 저장하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已匯入 %@，記得儲存。"
+          }
+        }
+      }
+    },
+    "已清除 Key" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key cleared"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clave borrada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key を消去しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "키를 지웠어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已清除 Key"
+          }
+        }
+      }
+    },
+    "已识别为魔搭 ModelScope 官方地址：文生图和图生图都要等魔搭排队出图，最长约 5 分钟。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recognized as the official ModelScope endpoint: both text-to-image and image editing wait in ModelScope’s queue, for up to about 5 minutes."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se detectó la URL oficial de ModelScope: tanto texto a imagen como edición de imágenes esperan en la cola de ModelScope, hasta unos 5 minutos."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ModelScope 公式の URL として認識しました。テキストから画像生成も画像編集も ModelScope の順番待ちがあり、最長で約 5 分かかります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ModelScope 공식 주소로 인식했어요. 텍스트로 이미지 생성과 이미지 편집 모두 ModelScope 대기열에서 순서를 기다려야 해서 최대 약 5분 걸려요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已辨識為魔搭 ModelScope 官方網址：文字生圖和圖生圖都要等魔搭排隊出圖，最長約 5 分鐘。"
+          }
+        }
+      }
+    },
+    "批量生成图片" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batch generate images"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generar imágenes en lote"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像をまとめて生成"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지 일괄 생성"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "批次生成圖片"
+          }
+        }
+      }
+    },
+    "找到 %lld 个生图模型，点一下就能选用。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Image models found: %lld. Tap one to use it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modelos de imagen encontrados: %lld. Toca uno para usarlo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 個の画像生成モデルが見つかりました。タップすると選択できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지 생성 모델 %lld개를 찾았어요. 탭하면 바로 선택할 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "找到 %lld 個生圖模型，點一下就能選用。"
+          }
+        }
+      }
+    },
+    "拉取模型" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fetch models"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtener modelos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "モデルを取得"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모델 불러오기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取得模型"
+          }
+        }
+      }
+    },
+    "接口地址" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Endpoint"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL de la API"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エンドポイント"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API 주소"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API 網址"
+          }
+        }
+      }
+    },
+    "接口地址还没有保存，请先点「保存」，再拉取模型或测试连接。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The endpoint isn’t saved yet. Tap “Save” first, then fetch models or test the connection."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La URL de la API aún no se ha guardado. Toca “Guardar” antes de obtener los modelos o probar la conexión."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エンドポイントがまだ保存されていません。先に「保存」をタップしてから、モデルを取得するか接続をテストしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API 주소가 아직 저장되지 않았어요. 먼저 ‘저장’을 탭한 다음 모델을 불러오거나 연결을 테스트하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API 網址還沒有儲存，請先點「儲存」，再取得模型或測試連線。"
+          }
+        }
+      }
+    },
+    "放弃这次画的内容？" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard this drawing?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Descartar lo que dibujaste?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "描いた内容を破棄しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이번에 그린 내용을 버릴까요?"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "放棄這次畫的內容？"
+          }
+        }
+      }
+    },
+    "文生图" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text-to-image"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Texto a imagen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テキストから画像生成"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "텍스트로 이미지 생성"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文字生圖"
+          }
+        }
+      }
+    },
+    "智谱开放平台 open.bigmodel.cn 的 /api/paas/v4 地址。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The /api/paas/v4 URL of the Zhipu open platform at open.bigmodel.cn."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL /api/paas/v4 de la plataforma abierta de Zhipu, open.bigmodel.cn."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zhipu オープンプラットフォーム open.bigmodel.cn の /api/paas/v4 URL。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zhipu 오픈 플랫폼 open.bigmodel.cn의 /api/paas/v4 주소."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "智譜開放平台 open.bigmodel.cn 的 /api/paas/v4 網址。"
+          }
+        }
+      }
+    },
+    "本地 ComfyUI" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Local ComfyUI"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ComfyUI local"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ローカル ComfyUI"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로컬 ComfyUI"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本地 ComfyUI"
+          }
+        }
+      }
+    },
+    "查找灵感" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find inspiration"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar inspiración"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "インスピレーションを検索"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "영감 찾기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "尋找靈感"
+          }
+        }
+      }
+    },
+    "查看画布" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View canvas"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver lienzo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キャンバスを表示"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "캔버스 보기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看畫布"
+          }
+        }
+      }
+    },
+    "查看画布选区" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View canvas selection"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver selección del lienzo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キャンバスの選択範囲を表示"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "캔버스 선택 영역 보기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看畫布選取範圍"
+          }
+        }
+      }
+    },
+    "标准 multipart（OpenAI 官方）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard multipart (official OpenAI)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "multipart estándar (OpenAI oficial)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "標準 multipart（OpenAI 公式）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "표준 multipart(OpenAI 공식)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "標準 multipart（OpenAI 官方）"
+          }
+        }
+      }
+    },
+    "标注" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Markup"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marcar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マークアップ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마크업"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "標註"
+          }
+        }
+      }
+    },
+    "格式是「比例 → 档位 → 像素尺寸」，留空用默认尺寸。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Format: “aspect ratio → tier → pixel size”. Leave empty for the default sizes."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El formato es “proporción → nivel → tamaño en píxeles”. Déjalo vacío para usar los tamaños predeterminados."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "形式は「比率 → レベル → ピクセルサイズ」です。空欄の場合はデフォルトのサイズを使います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "형식은 ‘비율 → 등급 → 픽셀 크기’이며, 비워 두면 기본 크기를 사용해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "格式為「比例 → 等級 → 像素尺寸」，留空則用預設尺寸。"
+          }
+        }
+      }
+    },
+    "模型 %@ 不支持尺寸 %@，请用 1024x1024、1536x1024 或 1024x1536。" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型 %1$@ 不支持尺寸 %2$@，请用 1024x1024、1536x1024 或 1024x1536。"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Model %1$@ doesn’t support size %2$@. Use 1024x1024, 1536x1024, or 1024x1536."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El modelo %1$@ no admite el tamaño %2$@. Usa 1024x1024, 1536x1024 o 1024x1536."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "モデル %1$@ はサイズ %2$@ に対応していません。1024x1024、1536x1024、1024x1536 のいずれかを使ってください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ 모델은 %2$@ 크기를 지원하지 않아요. 1024x1024, 1536x1024 또는 1024x1536을 사용하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型 %1$@ 不支援尺寸 %2$@，請用 1024x1024、1536x1024 或 1024x1536。"
+          }
+        }
+      }
+    },
+    "正在生成 %lld 张图片…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generating %lld images…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generando %lld imágenes…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 枚の画像を生成中…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지 %lld장 생성 중…"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在生成 %lld 張圖片…"
+          }
+        }
+      }
+    },
+    "正在生成图片" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generating image"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generando imagen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像を生成中"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지 생성 중"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在生成圖片"
+          }
+        }
+      }
+    },
+    "正在生成图片…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generating image…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generando imagen…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像を生成中…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지 생성 중…"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在生成圖片…"
+          }
+        }
+      }
+    },
+    "正在编辑图片" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editing image"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editando imagen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像を編集中"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지 편집 중"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在編輯圖片"
+          }
+        }
+      }
+    },
+    "正在编辑图片…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editing image…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editando imagen…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像を編集中…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지 편집 중…"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在編輯圖片…"
+          }
+        }
+      }
+    },
+    "正在运行、并且这台设备能访问到的 ComfyUI 地址。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The address of a running ComfyUI that this device can reach."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL de un ComfyUI en ejecución al que este dispositivo pueda acceder."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "実行中で、このデバイスからアクセスできる ComfyUI のアドレス。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "실행 중이고 이 기기에서 접근할 수 있는 ComfyUI 주소."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在執行且這台裝置能連到的 ComfyUI 網址。"
+          }
+        }
+      }
+    },
+    "没有筛出能生图的模型，可以直接输入模型名。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No image models found. You can type a model name instead."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se encontraron modelos de imagen. Puedes escribir el nombre del modelo directamente."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像生成に対応したモデルが見つかりませんでした。モデル名を直接入力できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지를 생성할 수 있는 모델을 찾지 못했어요. 모델 이름을 직접 입력할 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒有篩選出能生圖的模型，可以直接輸入模型名稱。"
+          }
+        }
+      }
+    },
+    "没有读到已保存的接口地址，请保存后再试。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t read a saved endpoint. Save it and try again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se encontró ninguna URL de la API guardada. Guárdala y vuelve a intentarlo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存済みのエンドポイントを読み込めませんでした。保存してからもう一度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장된 API 주소를 읽지 못했어요. 저장한 후 다시 시도하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "讀不到已儲存的 API 網址，請儲存後再試。"
+          }
+        }
+      }
+    },
+    "添加（方舟默认）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add (Ark default)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir (predeterminado en Ark)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加する（Ark のデフォルト）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "추가(Ark 기본값)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "加上（方舟預設）"
+          }
+        }
+      }
+    },
+    "渠道名称" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Channel name"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre del canal"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャネル名"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "채널 이름"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通道名稱"
+          }
+        }
+      }
+    },
+    "火山方舟兼容的 /api/v3 地址。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A Volcengine Ark–compatible /api/v3 URL."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL /api/v3 compatible con Volcengine Ark."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volcengine Ark 互換の /api/v3 URL。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volcengine Ark 호환 /api/v3 주소."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "火山方舟相容的 /api/v3 網址。"
+          }
+        }
+      }
+    },
+    "生图" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Image Generation"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generación de imágenes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像生成"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지 생성"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生圖"
+          }
+        }
+      }
+    },
+    "生图插件还没有启动。它随 App 内置，引擎启动后就会出现；如果一直没有，可以在「插件」里看它是否被关闭了。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The image generation plugin hasn’t started yet. It’s built into the app and appears once the engine starts. If it never shows up, check in “Plugins” whether it’s been turned off."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El complemento de generación de imágenes aún no se ha iniciado. Viene integrado en la app y aparece cuando arranca el motor; si no aparece, revisa en “Complementos” si está desactivado."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像生成プラグインはまだ起動していません。App に内蔵されており、エンジンが起動すると表示されます。いつまでも表示されない場合は、「プラグイン」で無効になっていないか確認してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지 생성 플러그인이 아직 시작되지 않았어요. 앱에 내장되어 있어 엔진이 시작되면 나타나요. 계속 나타나지 않으면 ‘플러그인’에서 꺼져 있는지 확인하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生圖外掛還沒有啟動。它內建在 App 裡，引擎啟動後就會出現；如果一直沒有出現，可以在「外掛」裡看看它是否被關閉了。"
+          }
+        }
+      }
+    },
+    "生图由内置的 dsh-image-gen 插件（Apache-2.0）提供。它的灵感库收录了 yang0 的手绘风格手册（github.com/yang0/handraw-style，MIT）、JimLiu/baoyu-skills 的封面构图（MIT）和 freestylefly/awesome-gpt-image-2 的案例集（MIT）。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Image generation is provided by the built-in dsh-image-gen plugin (Apache-2.0). Its inspiration library includes yang0’s hand-drawn style guide (github.com/yang0/handraw-style, MIT), cover layouts from JimLiu/baoyu-skills (MIT), and the example collection from freestylefly/awesome-gpt-image-2 (MIT)."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La generación de imágenes la proporciona el complemento integrado dsh-image-gen (Apache-2.0). Su biblioteca de inspiración incluye la guía de estilo dibujado a mano de yang0 (github.com/yang0/handraw-style, MIT), las composiciones de portada de JimLiu/baoyu-skills (MIT) y la colección de ejemplos de freestylefly/awesome-gpt-image-2 (MIT)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像生成は内蔵の dsh-image-gen プラグイン（Apache-2.0）が提供しています。そのインスピレーションライブラリには、yang0 の手描きスタイルガイド（github.com/yang0/handraw-style、MIT）、JimLiu/baoyu-skills のカバー構図（MIT）、freestylefly/awesome-gpt-image-2 の作例集（MIT）が収録されています。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지 생성은 내장된 dsh-image-gen 플러그인(Apache-2.0)이 제공해요. 영감 라이브러리에는 yang0의 손그림 스타일 가이드(github.com/yang0/handraw-style, MIT), JimLiu/baoyu-skills의 표지 구도(MIT), freestylefly/awesome-gpt-image-2의 사례 모음(MIT)이 수록되어 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生圖由內建的 dsh-image-gen 外掛（Apache-2.0）提供。它的靈感庫收錄了 yang0 的手繪風格手冊（github.com/yang0/handraw-style，MIT）、JimLiu/baoyu-skills 的封面構圖（MIT）和 freestylefly/awesome-gpt-image-2 的範例集（MIT）。"
+          }
+        }
+      }
+    },
+    "生图设置" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Image Generation Settings"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configuración de generación de imágenes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像生成の設定"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지 생성 설정"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生圖設定"
+          }
+        }
+      }
+    },
+    "生成图片" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generate image"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generar imagen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像を生成"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지 생성"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生成圖片"
+          }
+        }
+      }
+    },
+    "生成超时（秒）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generation timeout (s)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiempo de espera de generación (s)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生成のタイムアウト（秒）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "생성 시간 제한(초)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "生成逾時（秒）"
+          }
+        }
+      }
+    },
+    "登录成功" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signed in"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesión iniciada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サインインしました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그인했어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登入成功"
+          }
+        }
+      }
+    },
+    "硅基流动 JSON（image 字符串）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SiliconFlow JSON (image string)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "JSON de SiliconFlow (cadena image)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SiliconFlow JSON（image 文字列）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SiliconFlow JSON(image 문자열)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "矽基流動 JSON（image 字串）"
+          }
+        }
+      }
+    },
+    "等待在网页里完成登录…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for you to sign in on the web page…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esperando a que completes el inicio de sesión en la página web…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web ページでのサインイン完了を待っています…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "웹 페이지에서 로그인 완료를 기다리는 중…"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "等待在網頁裡完成登入…"
+          }
+        }
+      }
+    },
+    "编辑图片" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit image"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar imagen"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像を編集"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지 편집"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "編輯圖片"
+          }
+        }
+      }
+    },
+    "网页版输入栏显示生图切换胶囊" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show image provider pill in Web UI"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Píldora de generación de imágenes en la versión web"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web 版の入力欄に画像生成の切り替えカプセルを表示"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "웹 버전 입력창에 이미지 생성 전환 캡슐 표시"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "網頁版輸入列顯示生圖切換膠囊"
+          }
+        }
+      }
+    },
+    "背景" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Background"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fondo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "背景"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "배경"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "背景"
+          }
+        }
+      }
+    },
+    "自动清理请求缓存" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto-clean request cache"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limpiar caché de solicitudes automáticamente"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リクエストキャッシュを自動で整理"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "요청 캐시 자동 정리"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自動清理請求快取"
+          }
+        }
+      }
+    },
+    "自动（兼容商汤）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatic (SenseTime-compatible)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automático (compatible con SenseNova)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自動（センスタイム互換）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자동(SenseTime 호환)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自動（相容商湯）"
+          }
+        }
+      }
+    },
+    "自动：官方接口 JSON 格式" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatic: official API JSON format"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automático: formato JSON de la API oficial"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自動：公式エンドポイントの JSON 形式"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자동: 공식 API JSON 형식"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自動：官方介面 JSON 格式"
+          }
+        }
+      }
+    },
+    "自定义分辨率表（JSON）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom resolution table (JSON)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tabla de resoluciones personalizada (JSON)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "カスタム解像度表（JSON）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용자 지정 해상도 표(JSON)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自訂解析度表（JSON）"
+          }
+        }
+      }
+    },
+    "让智能体给你画图" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let the agent draw for you"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deja que el agente dibuje por ti"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントに絵を描いてもらう"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트에게 그림 부탁하기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "讓 AI 代理幫你畫圖"
+          }
+        }
+      }
+    },
+    "设置由配置文件提供，是只读的。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "These settings come from a configuration file and are read-only."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La configuración viene de un archivo de configuración y es de solo lectura."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定は設定ファイルで指定されているため、読み取り専用です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정이 구성 파일에서 제공되므로 읽기 전용이에요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定由設定檔提供，是唯讀的。"
+          }
+        }
+      }
+    },
+    "请先保存 API Key，再拉取模型或测试连接。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save an API key first, then fetch models or test the connection."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guarda primero la API Key antes de obtener los modelos o probar la conexión."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "先に API Key を保存してから、モデルを取得するか接続をテストしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "먼저 API Key를 저장한 다음 모델을 불러오거나 연결을 테스트하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請先儲存 API Key，再取得模型或測試連線。"
+          }
+        }
+      }
+    },
+    "请填写接口地址并保存，再拉取模型或测试连接。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter and save the endpoint, then fetch models or test the connection."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Introduce y guarda la URL de la API antes de obtener los modelos o probar la conexión."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エンドポイントを入力して保存してから、モデルを取得するか接続をテストしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API 주소를 입력하고 저장한 다음 모델을 불러오거나 연결을 테스트하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請填寫 API 網址並儲存，再取得模型或測試連線。"
+          }
+        }
+      }
+    },
+    "请填写渠道名称。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a channel name."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Introduce un nombre para el canal."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャネル名を入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "채널 이름을 입력하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請填寫通道名稱。"
+          }
+        }
+      }
+    },
+    "请求协议" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Request protocol"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Protocolo de solicitud"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リクエストプロトコル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "요청 프로토콜"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請求協定"
+          }
+        }
+      }
+    },
+    "请求协议还没有保存，请先点「保存」，再拉取模型或测试连接。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The request protocol isn’t saved yet. Tap “Save” first, then fetch models or test the connection."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El protocolo de solicitud aún no se ha guardado. Toca “Guardar” antes de obtener los modelos o probar la conexión."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リクエストプロトコルがまだ保存されていません。先に「保存」をタップしてから、モデルを取得するか接続をテストしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "요청 프로토콜이 아직 저장되지 않았어요. 먼저 ‘저장’을 탭한 다음 모델을 불러오거나 연결을 테스트하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請求協定還沒有儲存，請先點「儲存」，再取得模型或測試連線。"
+          }
+        }
+      }
+    },
+    "请求形态" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Request format"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Formato de solicitud"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リクエスト形式"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "요청 형태"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "請求形式"
+          }
+        }
+      }
+    },
+    "读不了这个文件。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t read this file."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede leer este archivo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このファイルを読み込めません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 파일을 읽을 수 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無法讀取這個檔案。"
+          }
+        }
+      }
+    },
+    "超时要在 1 到 3600 秒之间。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The timeout must be between 1 and 3600 seconds."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El tiempo de espera debe estar entre 1 y 3600 segundos."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タイムアウトは 1〜3600 秒の範囲で指定してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시간 제한은 1~3600초 사이여야 해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "逾時須介於 1 到 3600 秒之間。"
+          }
+        }
+      }
+    },
+    "输出格式" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Output format"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Formato de salida"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "出力形式"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "출력 형식"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "輸出格式"
+          }
+        }
+      }
+    },
+    "还没有填写 API Key" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No API key entered yet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no has introducido una API Key"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API Key が入力されていません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 API Key를 입력하지 않았어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "還沒有填寫 API Key"
+          }
+        }
+      }
+    },
+    "这个渠道的配置会被删除。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This channel’s settings will be deleted."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se eliminará la configuración de este canal."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このチャネルの設定は削除されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 채널의 설정이 삭제돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這個通道的設定會被刪除。"
+          }
+        }
+      }
+    },
+    "连接失败：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connection failed: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error de conexión: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続に失敗しました：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연결 실패: %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連線失敗：%@"
+          }
+        }
+      }
+    },
+    "连接成功" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conexión correcta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続に成功しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연결 성공"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連線成功"
+          }
+        }
+      }
+    },
+    "透明" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transparent"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transparente"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "透明"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "투명"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "透明"
+          }
+        }
+      }
+    },
+    "重做" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redo"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rehacer"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "やり直す"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "실행 복귀"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重做"
+          }
+        }
+      }
+    },
+    "阿里云百炼 DashScope 官方接口地址。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The official Alibaba Cloud Model Studio DashScope endpoint."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL oficial de la API de DashScope de Alibaba Cloud Model Studio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alibaba Cloud Model Studio（DashScope）の公式エンドポイント URL。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alibaba Cloud Model Studio DashScope 공식 API 주소."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "阿里雲百煉 DashScope 官方 API 網址。"
+          }
+        }
+      }
+    },
+    "附加 JSON 字段必须是合法的 JSON 对象。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extra JSON fields must be a valid JSON object."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los campos JSON adicionales deben ser un objeto JSON válido."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加の JSON フィールドは有効な JSON オブジェクトにしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "추가 JSON 필드는 유효한 JSON 객체여야 해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "附加 JSON 欄位必須是有效的 JSON 物件。"
+          }
+        }
+      }
+    },
+    "默认生成质量" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default quality"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calidad predeterminada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デフォルトの生成品質"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기본 생성 품질"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "預設生成品質"
+          }
+        }
+      }
+    },
+    "Key 只保存在这台设备上，页面不会读回明文。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your key stays on this device, and this page never reads it back."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La clave solo se guarda en este dispositivo y esta página nunca la vuelve a mostrar."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key はこのデバイスにだけ保存され、このページで平文が読み戻されることはありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key는 이 기기에만 저장되며, 이 페이지에서 다시 평문으로 보여 주지 않아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key 只儲存在這台裝置上，頁面不會讀回明文。"
+          }
+        }
+      }
+    },
+    "严格下载：服务商返回图片链接时，只从公网地址下载并核对是图片。保留原图：另存服务商给的原始文件（完整 GIF、原始分辨率）。请求缓存：发给服务商的参考图缩放后的副本，超过天数或上限时删掉旧的，上限填 0 表示不限。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strict downloads: when a provider returns an image link, download only from public addresses and check that it's an image. Keep originals: also save the provider's original file (full GIF, original resolution). Request cache: resized copies of reference images sent to providers; older ones are deleted past the day count or size limit. A limit of 0 means no limit."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descarga estricta: cuando el proveedor devuelve un enlace a la imagen, solo se descarga desde direcciones públicas y se comprueba que sea una imagen. Conservar originales: guarda también el archivo original del proveedor (GIF completo, resolución original). Caché de solicitudes: copias reducidas de las imágenes de referencia enviadas a los proveedores; las antiguas se borran al superar los días o el límite. Un límite de 0 significa sin límite."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "厳格なダウンロード：プロバイダが画像のリンクを返したとき、公開アドレスからのみダウンロードし、画像であることを確認します。元画像を保持：プロバイダが返した元のファイル（完全な GIF、元の解像度）も保存します。リクエストキャッシュ：プロバイダに送る参照画像を縮小したコピーで、日数か上限を超えると古いものから削除します。上限 0 は無制限です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "엄격한 다운로드: 제공업체가 이미지 링크를 돌려주면 공개 주소에서만 내려받고 이미지가 맞는지 확인해요. 원본 보관: 제공업체가 준 원본 파일(전체 GIF, 원래 해상도)도 따로 저장해요. 요청 캐시: 제공업체에 보내는 참고 이미지를 줄인 사본으로, 보관 일수나 한도를 넘으면 오래된 것부터 지워요. 한도를 0으로 두면 제한이 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "嚴格下載：服務商回傳圖片連結時，只從公網位址下載並核對確實是圖片。保留原圖：另存服務商給的原始檔案（完整 GIF、原始解析度）。請求快取：傳給服務商的參考圖縮放後的副本，超過天數或上限時刪掉舊的，上限填 0 表示不限。"
+          }
+        }
+      }
+    },
+    "从 ComfyUI 导出 API Format JSON，在提示词输入里写 {{prompt}}。打勾的是当前使用的，点进去可以改名、设预设提示词。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export an API Format JSON from ComfyUI with {{prompt}} in the prompt input. The checked one is in use; open one to rename it or set a preset prompt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exporta un JSON en API Format desde ComfyUI con {{prompt}} en la entrada del prompt. El marcado es el que se usa; ábrelo para cambiarle el nombre o fijar un prompt predefinido."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ComfyUI から API Format の JSON を書き出し、プロンプト入力に {{prompt}} を入れてください。チェックの付いたものが使用中です。開くと名前の変更やプリセットプロンプトの設定ができます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ComfyUI에서 API Format JSON을 내보내고 프롬프트 입력에 {{prompt}}를 넣으세요. 체크 표시가 있는 것이 현재 사용 중이며, 들어가면 이름을 바꾸거나 미리 설정한 프롬프트를 정할 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "從 ComfyUI 匯出 API Format JSON，在提示詞輸入裡寫 {{prompt}}。打勾的是目前使用的，點進去可以改名、設定預設提示詞。"
+          }
+        }
+      }
+    },
+    "其他渠道" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other channels"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otros canales"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほかのチャネル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다른 채널"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "其他通道"
+          }
+        }
+      }
+    },
+    "分辨率" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resolution"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resolución"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解像度"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "해상도"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解析度"
+          }
+        }
+      }
+    },
+    "即梦 Seedream" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seedream"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seedream"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seedream"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seedream"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "即夢 Seedream"
+          }
+        }
+      }
+    },
+    "同默认模型" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Same as default"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Igual que el predeterminado"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デフォルトと同じ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기본 모델과 같음"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同預設模型"
+          }
+        }
+      }
+    },
+    "商汤、通义、硅基流动等已确认的官方接口会自动用对应的 JSON 格式，其他中转按接口文档选。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmed official APIs such as SenseTime, Tongyi and SiliconFlow get their JSON format automatically; for other relays, pick what their API docs say."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las API oficiales confirmadas, como SenseNova, Tongyi y SiliconFlow, usan su formato JSON automáticamente; para otros servicios intermediarios, elige según su documentación."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "センスタイム、通義、SiliconFlow など確認済みの公式 API は対応する JSON 形式が自動で使われます。ほかの中継サービスは API のドキュメントに従って選んでください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SenseTime, Tongyi, SiliconFlow처럼 확인된 공식 API는 맞는 JSON 형식을 자동으로 써요. 다른 중계 서비스는 API 문서를 보고 고르세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "商湯、通義、矽基流動等已確認的官方介面會自動用對應的 JSON 格式，其他中轉依介面文件選擇。"
+          }
+        }
+      }
+    },
+    "图生图、分辨率、质量" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editing, resolution, quality"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edición, resolución, calidad"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像編集・解像度・品質"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지 편집, 해상도, 품질"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "圖生圖、解析度、品質"
+          }
+        }
+      }
+    },
+    "在网页版打开画布和图库" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open canvas and gallery in Web UI"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir lienzo y galería en la web"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web 版でキャンバスとギャラリーを開く"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "웹 버전에서 캔버스와 갤러리 열기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在網頁版開啟畫布和圖庫"
+          }
+        }
+      }
+    },
+    "导入工作流（JSON）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import workflow (JSON)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importar flujo de trabajo (JSON)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ワークフローを読み込む（JSON）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "워크플로 가져오기(JSON)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "匯入工作流程（JSON）"
+          }
+        }
+      }
+    },
+    "工作流" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Workflows"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flujos de trabajo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ワークフロー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "워크플로"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工作流程"
+          }
+        }
+      }
+    },
+    "当前使用" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In use"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En uso"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用中"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용 중"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "目前使用"
+          }
+        }
+      }
+    },
+    "恢复默认接口地址" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore default endpoint"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restaurar URL predeterminada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デフォルトのエンドポイントに戻す"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기본 API 주소로 되돌리기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "恢復預設 API 網址"
+          }
+        }
+      }
+    },
+    "拉取到的模型" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fetched models"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modelos obtenidos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取得したモデル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가져온 모델"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取得的模型"
+          }
+        }
+      }
+    },
+    "智能体画图时用它，对话里也能临时换别家。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The agent draws with this one; you can switch to another in a chat."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El agente dibuja con este; en un chat puedes cambiar a otro."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントが画像を描くときに使います。会話の中でほかに切り替えることもできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트가 그림을 그릴 때 써요. 대화 중에 다른 곳으로 바꿀 수도 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 代理畫圖時用它，對話裡也能臨時換別家。"
+          }
+        }
+      }
+    },
+    "智谱 GLM" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zhipu GLM"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zhipu GLM"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zhipu GLM"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zhipu GLM"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "智譜 GLM"
+          }
+        }
+      }
+    },
+    "更多设置" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More settings"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Más ajustes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その他の設定"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "추가 설정"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更多設定"
+          }
+        }
+      }
+    },
+    "更多选项" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "More options"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Más opciones"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その他のオプション"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "추가 옵션"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "更多選項"
+          }
+        }
+      }
+    },
+    "本地" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Local"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Local"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ローカル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로컬"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本地"
+          }
+        }
+      }
+    },
+    "格式、水印、背景" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Format, watermark, background"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Formato, marca de agua, fondo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "形式・透かし・背景"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "형식, 워터마크, 배경"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "格式、浮水印、背景"
+          }
+        }
+      }
+    },
+    "每个渠道单独配置地址、Key 和模型，对话里可以指定用哪个渠道。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each channel has its own endpoint, key and model; a chat can name which channel to use."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada canal tiene su propia URL, clave y modelo; en un chat se puede indicar qué canal usar."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャネルごとにエンドポイント、Key、モデルを設定します。会話の中でどのチャネルを使うか指定できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "채널마다 주소, Key, 모델을 따로 설정해요. 대화에서 어떤 채널을 쓸지 지정할 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每個通道單獨設定網址、Key 和模型，對話裡可以指定用哪個通道。"
+          }
+        }
+      }
+    },
+    "每张图另存一份到当前会话工作区的这个文件夹，留空存在工作区根目录。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each image is also saved to this folder in the session's workspace; leave it empty for the workspace root."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada imagen también se guarda en esta carpeta del espacio de trabajo de la sesión; déjalo vacío para usar la raíz."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画像ごとに現在のセッションのワークスペースのこのフォルダにも保存します。空欄ならワークスペースの直下に保存します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이미지마다 현재 세션 워크스페이스의 이 폴더에도 저장해요. 비워 두면 워크스페이스 최상위에 저장해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每張圖另存一份到目前對話工作區的這個資料夾，留空存在工作區根目錄。"
+          }
+        }
+      }
+    },
+    "每次调用会加在提示词前面。工作流里种子可以用 {{seed}}，宽高可以用 {{width}}、{{height}}（智能体给出尺寸或比例时生效，默认 1024×1024）；图生图在 LoadImage 的 image 输入写 {{image}}，几张参考图就写几个，按节点编号顺序对应。智能体调用时也能按名称指定工作流。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Added in front of the prompt on every call. In the workflow, use {{seed}} for the seed and {{width}}, {{height}} for the size (used when the agent gives a size or ratio; 1024×1024 by default). For image editing, put {{image}} in LoadImage's image input, one per reference image, matched in node order. The agent can also pick a workflow by name."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se añade delante del prompt en cada llamada. En el flujo, usa {{seed}} para la semilla y {{width}}, {{height}} para el tamaño (se aplican cuando el agente indica tamaño o proporción; 1024×1024 por defecto). Para editar imágenes, pon {{image}} en la entrada image de LoadImage, uno por imagen de referencia, en el orden de los nodos. El agente también puede elegir un flujo por su nombre."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "呼び出しのたびにプロンプトの前に付きます。ワークフローではシードに {{seed}}、幅と高さに {{width}}、{{height}} を使えます（エージェントがサイズか比率を指定したときに有効、デフォルトは 1024×1024）。画像編集では LoadImage の image 入力に {{image}} を書き、参照画像の枚数だけ書けばノード番号順に対応します。エージェントは名前でワークフローを指定することもできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "호출할 때마다 프롬프트 앞에 붙어요. 워크플로에서 시드는 {{seed}}, 크기는 {{width}}, {{height}}로 쓸 수 있어요(에이전트가 크기나 비율을 줄 때 적용되며 기본값은 1024×1024). 이미지 편집은 LoadImage의 image 입력에 {{image}}를 참고 이미지 수만큼 쓰면 노드 번호 순서대로 대응해요. 에이전트가 이름으로 워크플로를 지정할 수도 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每次呼叫會加在提示詞前面。工作流程裡種子可以用 {{seed}}，寬高可以用 {{width}}、{{height}}（AI 代理給出尺寸或比例時生效，預設 1024×1024）；圖生圖在 LoadImage 的 image 輸入寫 {{image}}，幾張參考圖就寫幾個，依節點編號順序對應。AI 代理呼叫時也能依名稱指定工作流程。"
+          }
+        }
+      }
+    },
+    "添加渠道" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add channel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir canal"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャネルを追加"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "채널 추가"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增通道"
+          }
+        }
+      }
+    },
+    "清除 API Key" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear API key"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Borrar API Key"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API Key を消去"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API Key 지우기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "清除 API Key"
+          }
+        }
+      }
+    },
+    "用 API Key 的服务商共用，5–3600 秒，默认 150 秒。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared by every API-key provider. 5–3600 seconds, 150 by default."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compartido por todos los proveedores con API Key. De 5 a 3600 segundos; 150 por defecto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API Key を使うすべてのプロバイダで共通です。5〜3600 秒、デフォルトは 150 秒です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API Key를 쓰는 모든 제공업체에 공통으로 적용돼요. 5–3600초, 기본값은 150초예요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用 API Key 的服務商共用，5–3600 秒，預設 150 秒。"
+          }
+        }
+      }
+    },
+    "用订阅账号生图，不需要 API Key，也支持带参考图改图（最多 5 张）。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generates with your subscription account, no API key needed. Editing with reference images works too (up to 5)."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Genera con tu cuenta de suscripción, sin API Key. También puede editar con imágenes de referencia (hasta 5)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サブスクリプションアカウントで画像を生成するので API Key は不要です。参照画像を使った編集もできます（最大 5 枚）。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "구독 계정으로 이미지를 생성해서 API Key가 필요 없어요. 참고 이미지로 편집하는 것도 돼요(최대 5장)."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用訂閱帳號生圖，不需要 API Key，也支援帶參考圖改圖（最多 5 張）。"
+          }
+        }
+      }
+    },
+    "由 %@ 提供" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ から提供"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@에서 제공"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "由 %@ 提供"
+          }
+        }
+      }
+    },
+    "留空只用对话内容" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave empty to use only the chat"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déjalo vacío para usar solo el chat"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "空欄なら会話の内容だけを使います"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "비워 두면 대화 내용만 써요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "留空只用對話內容"
+          }
+        }
+      }
+    },
+    "登录在 App 里打开的网页中完成，不会改动 API Key 或默认服务商。需要代理才能访问时，请先打开代理再登录。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You sign in on a page that opens in the app; it doesn't change any API key or the default provider. If you need a proxy to reach the service, turn it on before signing in."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El inicio de sesión se hace en una página que se abre en la app y no cambia ninguna API Key ni el proveedor predeterminado. Si necesitas un proxy para acceder, actívalo antes de iniciar sesión."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サインインはアプリ内で開くページで行い、API Key やデフォルトのプロバイダは変更されません。アクセスにプロキシが必要な場合は、先にプロキシをオンにしてからサインインしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그인은 앱 안에서 열리는 페이지에서 하며, API Key나 기본 제공업체는 바뀌지 않아요. 접속에 프록시가 필요하면 프록시를 먼저 켠 다음 로그인하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登入在 App 裡開啟的網頁中完成，不會變更 API Key 或預設服務商。需要代理伺服器才能連上時，請先開啟代理伺服器再登入。"
+          }
+        }
+      }
+    },
+    "硅基流动可以分别填 Qwen/Qwen-Image 和 Qwen/Qwen-Image-Edit。编辑尺寸由参考图决定，不发送尺寸和质量；Qwen-Image-Edit 支持一张图，Edit-2509 最多三张。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For SiliconFlow, use Qwen/Qwen-Image for text-to-image and Qwen/Qwen-Image-Edit for editing. The edit size comes from the reference image, so size and quality aren't sent; Qwen-Image-Edit takes one image, Edit-2509 up to three."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En SiliconFlow, usa Qwen/Qwen-Image para texto a imagen y Qwen/Qwen-Image-Edit para edición. El tamaño de la edición lo marca la imagen de referencia, así que no se envían tamaño ni calidad; Qwen-Image-Edit admite una imagen y Edit-2509 hasta tres."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SiliconFlow では、テキストから画像生成に Qwen/Qwen-Image、画像編集に Qwen/Qwen-Image-Edit を指定できます。編集のサイズは参照画像で決まるため、サイズと品質は送りません。Qwen-Image-Edit は 1 枚、Edit-2509 は最大 3 枚に対応します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SiliconFlow는 텍스트로 이미지 생성에 Qwen/Qwen-Image, 이미지 편집에 Qwen/Qwen-Image-Edit를 각각 쓸 수 있어요. 편집 크기는 참고 이미지가 정하므로 크기와 품질은 보내지 않아요. Qwen-Image-Edit는 1장, Edit-2509는 최대 3장까지예요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "矽基流動可以分別填 Qwen/Qwen-Image 和 Qwen/Qwen-Image-Edit。編輯尺寸由參考圖決定，不傳送尺寸和品質；Qwen-Image-Edit 支援一張圖，Edit-2509 最多三張。"
+          }
+        }
+      }
+    },
+    "订阅账号 · 不用 API Key" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscriptions · no API key"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suscripciones · sin API Key"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サブスクリプション · API Key 不要"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "구독 계정 · API Key 불필요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "訂閱帳號 · 不用 API Key"
+          }
+        }
+      }
+    },
+    "质量留空就不发送，上游要支持所填的值；可选质量用逗号分隔。附加字段会合并到请求体末尾，可以覆盖 size 和 quality。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave quality empty to not send it; the upstream must support the value you enter. Separate the quality options with commas. Extra fields are merged into the end of the request body and can override size and quality."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si dejas la calidad vacía no se envía; el proveedor debe admitir el valor que pongas. Separa las calidades disponibles con comas. Los campos adicionales se añaden al final del cuerpo de la solicitud y pueden sobrescribir size y quality."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "品質を空欄にすると送信しません。入力する値は上流が対応している必要があります。選べる品質はカンマで区切ります。追加フィールドはリクエスト本文の末尾にマージされ、size と quality を上書きできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "품질을 비워 두면 보내지 않아요. 입력한 값은 상위 서비스가 지원해야 해요. 선택 가능한 품질은 쉼표로 구분해요. 추가 필드는 요청 본문 끝에 합쳐지며 size와 quality를 덮어쓸 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "品質留空就不傳送，上游要支援所填的值；可選品質用逗號分隔。附加欄位會合併到請求主體末尾，可以覆寫 size 和 quality。"
+          }
+        }
+      }
+    },
+    "通义 DashScope" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tongyi DashScope"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tongyi DashScope"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tongyi DashScope"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tongyi DashScope"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通義 DashScope"
+          }
+        }
+      }
+    },
+    "附加字段（JSON）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extra fields (JSON)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Campos adicionales (JSON)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加フィールド（JSON）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "추가 필드(JSON)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "附加欄位（JSON）"
+          }
+        }
+      }
+    },
+    "预设提示词" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preset prompt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prompt predefinido"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プリセットプロンプト"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "미리 설정한 프롬프트"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "預設提示詞"
+          }
+        }
+      }
+    },
+    "默认使用" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Predeterminado"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デフォルト"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기본"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "預設使用"
+          }
+        }
+      }
+    },
+    "点开对话里的图片，用底部的「标注」圈出要改的地方，再说「把这里换成…」，智能体会照着你圈的位置改。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open a picture in the chat, circle what to change with Markup at the bottom, then say “replace this with…”. The agent changes the spot you circled."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre una imagen del chat, marca con «Marcar» abajo lo que quieres cambiar y di «cambia esto por…». El agente cambia justo la zona que marcaste."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会話の画像を開き、下の「マークアップ」で変えたい場所を囲んでから「ここを…に変えて」と伝えると、エージェントが囲んだ場所を直します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화 속 이미지를 열고 아래의 ‘마크업’으로 바꿀 곳에 동그라미를 친 다음 ‘여기를 …로 바꿔 줘’라고 말하면, 에이전트가 동그라미 친 곳을 고쳐요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點開對話裡的圖片，用底部的「標註」圈出要改的地方，再說「把這裡換成…」，AI 代理會照著你圈的位置改。"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

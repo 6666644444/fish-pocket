@@ -36,18 +36,20 @@ engine="$app_dir/nodejs-project"
 # The versions the bundle actually carries, against the ones the repo pins.
 dsh="$(node -p "require('$engine/node_modules/@deepseek-ai/dsh/package.json').version")"
 bot="$(node -p "require('$engine/node_modules/ds-bot/package.json').version")"
+imagegen="$(node -p "require('$engine/node_modules/dsh-image-gen/package.json').version")"
 pinned_dsh="$(node -p "require('$root/engine/package.json').dependencies['@deepseek-ai/dsh']")"
 pinned_bot="$(node -p "require('$root/engine/plugins/ios-host/pins.json')['ds-bot'].version")"
+pinned_imagegen="$(node -p "require('$root/engine/plugins/ios-host/pins.json')['dsh-image-gen'].version")"
 app_version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app_dir/Info.plist")"
 app_build="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app_dir/Info.plist")"
-printf 'app %s (%s) · engine dsh %s · ds-bot %s\n' "$app_version" "$app_build" "$dsh" "$bot"
+printf 'app %s (%s) · engine dsh %s · ds-bot %s · dsh-image-gen %s\n' "$app_version" "$app_build" "$dsh" "$bot" "$imagegen"
 
 # Every screen the Debug build routes by launch argument (MainView.openForChecks,
 # ConversationView). Each is terminated first so the launch argument is re-read.
 if [ "${SMOKE_SCREENS:-full}" = key ]; then
-  screens=(home settings plugins store schedules connectors capabilities miniapps whatsnew)
+  screens=(home settings imagegen plugins store schedules connectors capabilities miniapps whatsnew)
 else
-  screens=(home drawer settings plugins store schedules signin support share watch connectors
+  screens=(home drawer settings imagegen plugins store schedules signin support share watch connectors
            whatsnew capabilities phonecontrol remote start fishpocket topup miniapps workbench
            filesearch approval question timeline)
 fi
@@ -119,15 +121,25 @@ check "every DSH bundle the engine lists is $dsh" \
 check "ds-bot bundle is $bot (pins.json says $pinned_bot)" \
   "r.result.value.some(b => b.name === 'ds-bot' && b.version === '$bot')" "$bundles"
 [ "$bot" = "$pinned_bot" ] || { echo "FAIL pins.json pins ds-bot $pinned_bot, bundle has $bot"; fail=1; }
+check "dsh-image-gen bundle is $imagegen (pins.json says $pinned_imagegen)" \
+  "r.result.value.some(b => b.name === 'dsh-image-gen' && b.version === '$imagegen')" "$bundles"
+[ "$imagegen" = "$pinned_imagegen" ] || { echo "FAIL pins.json pins dsh-image-gen $pinned_imagegen, bundle has $imagegen"; fail=1; }
 
 rows="$(call pluginManager/listPlugins '{}')"
 check "bot row mounted without error" \
   "r.result.value.some(x => (x.entryId === 'include:bot') && x.enabled === true && !x.error)" "$rows"
+check "image-gen row mounted without error" \
+  "r.result.value.some(x => /(^|:)image-gen$/.test(x.entryId) && x.enabled === true && !x.error)" "$rows"
 check "no plugin row reports an error" "r.result.value.every(x => !x.error)" "$rows"
 
 state="$(curl -s -b "$jar" -H 'Content-Type: application/json' -d '{"endpoint":"state","payload":{}}' \
   "http://$host/api/bot")"
 check "ds-bot backend answers /api/bot" "r.ok === true && Array.isArray(r.value.bots)" "$state"
+
+check "image-gen settings are served" "r.result.ok === true && r.result.value.namespaces.some(n => n.ns === 'image-gen')" \
+  "$(call settings/describe '{}')"
+health="$(curl -s -b "$jar" -X POST "http://$host/plugins/dsh-image-gen/settings-health")"
+check "dsh-image-gen answers its settings-health route" "typeof r === 'object' && r !== null" "$health"
 
 check "session list reads" "r.result.ok === true && Array.isArray(r.result.value.items)" \
   "$(call session/list '{"_request":{}}')"
