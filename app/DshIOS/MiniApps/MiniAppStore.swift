@@ -13,11 +13,19 @@ struct MiniApp: Identifiable, Hashable {
     let name: String
     let icon: String
     let color: String
+    /// `icon.png` in the folder, when the app drew an icon of its own: it stands in for the emoji.
+    let iconImage: URL?
     let summary: String?
     let folder: URL
     let modified: Date
 
-    var catalogEntry: MiniAppSummary { MiniAppSummary(id: id, name: name, icon: icon, color: color) }
+    var catalogEntry: MiniAppSummary {
+        // Named by what the file is now, so a redrawn icon reaches the widget.
+        let stamp = iconImage.flatMap { try? FileManager.default.attributesOfItem(atPath: $0.path) }
+            .map { "\(id)-\($0[.size] as? Int ?? 0)-\(Int(($0[.modificationDate] as? Date)?.timeIntervalSince1970 ?? 0)).png" }
+        return MiniAppSummary(id: id, name: name, icon: icon, color: color, image: stamp)
+    }
+    static let iconFile = "icon.png"
     /// Where the agent finds it.
     var enginePath: String { "~/apps/\(id)" }
 
@@ -51,9 +59,11 @@ struct MiniApp: Identifiable, Hashable {
             }
             return value.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.flatMap { $0.isEmpty ? nil : $0 }
         }
+        let image = folder.appending(path: iconFile)
         let dates = [manifest, entry(in: folder)!].compactMap { (try? files.attributesOfItem(atPath: $0.path))?[.modificationDate] as? Date }
         return MiniApp(id: id, name: text("name").map { String($0.prefix(40)) } ?? id, icon: emoji(text("icon")) ?? defaultIcon,
-                       color: text("color") ?? defaultColor, summary: text("description"), folder: folder,
+                       color: text("color") ?? defaultColor, iconImage: files.fileExists(atPath: image.path) ? image : nil,
+                       summary: text("description"), folder: folder,
                        modified: dates.max() ?? .distantPast)
     }
 
@@ -112,7 +122,8 @@ final class MiniAppStore {
                 for app in apps { await MiniAppPublisher.shared.publish(app) }
             }
         }
-        if MiniAppCatalog.write(apps.map(\.catalogEntry)) {
+        let images = Dictionary(uniqueKeysWithValues: apps.compactMap { app in app.iconImage.map { (app.id, $0) } })
+        if MiniAppCatalog.write(apps.map(\.catalogEntry), images: images) {
             WidgetCenter.shared.reloadTimelines(ofKind: MiniAppCatalog.widgetKind)
         }
     }

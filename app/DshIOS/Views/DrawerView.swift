@@ -153,17 +153,21 @@ struct DrawerView: View {
     // MARK: On the tab bar
 
     /// The 会话 tab: the sessions alone, under a small title. What the sidebar also holds has tabs
-    /// of its own (Bot, 工具); search, the view menu and a new conversation are in the bar. Search
-    /// is not often wanted, so it is a button, and the search page of the sidebar opens from it.
+    /// of its own (Bot, 工具); the view menu and a new conversation are in the bar, and the system's
+    /// search field is above the list, shown by pulling down.
     /// The stack around it is the shell's, which pushes the conversation.
     private var sessionsTab: some View {
         List {
-            if let engineStatus {
-                Text(engineStatus).font(.footnote).foregroundStyle(Palette.secondary).padding(.horizontal, 12).plainRow()
+            if !search.trimmingCharacters(in: .whitespaces).isEmpty {
+                searchResults
+            } else {
+                if let engineStatus {
+                    Text(engineStatus).font(.footnote).foregroundStyle(Palette.secondary).padding(.horizontal, 12).plainRow()
+                }
+                if app.remote.expired { remoteExpiredRow }
+                if grouping == .time { timeList } else { groupList }
+                archivedEntry
             }
-            if app.remote.expired { remoteExpiredRow }
-            if grouping == .time { timeList } else { groupList }
-            archivedEntry
         }
         .sessionList()
         .refreshable {
@@ -175,14 +179,14 @@ struct DrawerView: View {
         .navigationTitle(Self.sessionsTitle)
         // A small title, as every tab's: a large one only takes room.
         .navigationBarTitleDisplayMode(.inline)
+        // The system's field in the bar, out of sight above the list until it is pulled down; what
+        // is typed turns the list into the matches.
+        .searchable(text: $search, isPresented: $searchActive, placement: .navigationBarDrawer(displayMode: .automatic), prompt: "搜索会话")
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled()
         // ⌘F and the like.
-        .onChange(of: searchRequest) { openSearch() }
-        .fullScreenCover(isPresented: $searchOpen, onDismiss: { search = "" }) { searchPage }
+        .onChange(of: searchRequest) { searchActive = true }
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button { Haptics.tap(); openSearch() } label: { Image(systemName: "magnifyingglass") }
-                    .accessibilityLabel("搜索会话")
-            }
             ToolbarItem(placement: .topBarTrailing) { viewMenu(compact: true) }
             ToolbarItem(placement: .topBarTrailing) {
                 newConversationControl {
@@ -283,6 +287,10 @@ struct DrawerView: View {
             searchShown = false
             searchActive = false
             withoutAnimation { searchOpen = false }
+        } else if style == .sessions, searchActive || !search.isEmpty {
+            // The 会话 tab's own field: back from the conversation, the list is whole again.
+            search = ""
+            searchActive = false
         }
         select(id)
     }

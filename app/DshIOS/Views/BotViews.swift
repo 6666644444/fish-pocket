@@ -289,9 +289,7 @@ struct BotHomeView: View {
     @State private var settingsOpen = false
     @State private var showHidden = false
     @State private var query = ""
-    /// The search page is up; `searchShown` fades it, `searchActive` is the system field's focus.
-    @State private var searchOpen = false
-    @State private var searchShown = false
+    /// The search field has the focus.
     @State private var searchActive = false
     /// What was said in the Bots' own chats that holds the search words, newest first.
     @State private var hits: [ChatHit] = []
@@ -324,10 +322,6 @@ struct BotHomeView: View {
             if let openDrawer { ToolbarItem(placement: .topBarLeading) { DrawerButton(action: openDrawer) } }
             if team.status == .ready {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button { Haptics.tap(); openSearch() } label: { Image(systemName: "magnifyingglass") }
-                        .accessibilityLabel("搜索 Bot、群聊和私聊记录")
-                }
-                ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button { creating = .bot } label: { Label("新建 Bot", systemImage: "person.badge.plus") }
                         Button { creating = .room } label: { Label("新建群聊", systemImage: "person.2") }
@@ -351,8 +345,6 @@ struct BotHomeView: View {
         // Its own sheet, as 设置 is: the pages inside are the system's lists.
         .sheet(isPresented: $settingsOpen) { SheetStack { BotTeamSettingsView() }.settingsStyle() }
         .refreshable { await team.refreshState() }
-        // The field writes what it held back as the page goes: cleared again once it has gone.
-        .fullScreenCover(isPresented: $searchOpen, onDismiss: { query = "" }) { searchPage }
         .task(id: query) { await searchMessages() }
         // A key or a provider set in 设置 changes the models a Bot can run on; nothing on the
         // feed says so, so the list is read again when DSH says they changed.
@@ -423,49 +415,19 @@ struct BotHomeView: View {
         }.sorted(by: team.listOrder)
     }
 
+    /// The system's search field is in the bar above the list, out of sight until the list is
+    /// pulled down, as the 会话 tab's is; what is typed turns the list into the matches.
     private var list: some View {
-        List { rows }
+        List { if needle.isEmpty { rows } else { searchRows } }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .tabBarEdgeSoftened()
+        .searchable(text: $query, isPresented: $searchActive, placement: .navigationBarDrawer(displayMode: .automatic), prompt: "搜索 Bot、群聊和私聊记录")
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled()
     }
 
     // MARK: Search
-
-    /// Search is a page of its own over the list, as the 会话 tab's is: the system's search field
-    /// (in glass at the bottom from iOS 26, in the bar before) and the matches. It fades in.
-    private var searchPage: some View {
-        NavigationStack {
-            List {
-                if !needle.isEmpty { searchRows }
-            }
-            .listStyle(.plain)
-            .scrollContentBackground(.hidden)
-            .overlay(alignment: .top) {
-                if needle.isEmpty {
-                    VStack(spacing: 10) {
-                        Image(systemName: "magnifyingglass").font(.title2).foregroundStyle(Palette.ink)
-                        Text("搜索 Bot、群聊和私聊记录").font(.subheadline).foregroundStyle(Palette.secondary)
-                    }
-                    .padding(.top, 96)
-                    .accessibilityElement(children: .combine)
-                }
-            }
-            .background(Palette.background)
-            .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $query, isPresented: $searchActive, prompt: "搜索 Bot、群聊和私聊记录")
-            .textInputAutocapitalization(.never)
-            .autocorrectionDisabled()
-            .searchFieldAtBottom()
-            .modifier(SearchPageClose(action: closeSearch))
-        }
-        .inkTint()
-        .opacity(searchShown ? 1 : 0)
-        .presentationBackground(.clear)
-        .onAppear { withAnimation(.easeOut(duration: 0.2)) { searchShown = true } }
-        // The field's own ✕ (取消 before iOS 26) is the way out.
-        .onChange(of: searchActive) { if !searchActive { closeSearch() } }
-    }
 
     /// What matches: Bots and groups by name, then what was said in the Bots' own chats.
     @ViewBuilder
@@ -499,35 +461,11 @@ struct BotHomeView: View {
         }
     }
 
-    private func openSearch() {
-        guard !searchOpen else { return }
-        searchActive = true
-        withoutAnimation { searchOpen = true }
-    }
-
-    private func closeSearch() {
-        guard searchOpen, searchShown else { return }
-        searchActive = false
-        withAnimation(.easeIn(duration: 0.15)) { searchShown = false } completion: {
-            query = ""
-            withoutAnimation { searchOpen = false }
-        }
-    }
-
-    /// A match picked: the page goes at once, and the chat opens under it.
+    /// A match picked: the search ends, and the chat opens.
     private func pick(_ route: BotRoute) {
         query = ""
-        searchShown = false
         searchActive = false
-        withoutAnimation { searchOpen = false }
         if let selection { selection.wrappedValue = route } else { open(route) }
-    }
-
-    /// The cover's own slide is not wanted: the page fades.
-    private func withoutAnimation(_ change: () -> Void) {
-        var transaction = Transaction()
-        transaction.disablesAnimations = true
-        withTransaction(transaction, change)
     }
 
     @ViewBuilder

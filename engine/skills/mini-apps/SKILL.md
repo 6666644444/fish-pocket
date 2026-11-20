@@ -12,6 +12,7 @@ The user can keep small web apps in this iOS app: tools, trackers, games. Each o
 One folder per app: `~/apps/<id>/`. The id is the folder's name and the app's address, `fishapp://<id>/`. Use lower-case letters, digits and hyphens only (`ledger`, `pomodoro-timer`, `2048`). An existing id is an existing app: when making a new one, pick a free id; when changing one, edit its folder.
 
 - `app.json` (required): `{"name": "记账本", "icon": "💰", "color": "#FF9500", "description": "一句话说明"}`. `name` is what the user sees, in the user's language, short (up to about 6 Chinese characters or 12 letters). `icon` is one emoji. `color` is a `#RRGGBB` background for the icon. `description` is one line.
+- `icon.png` (optional): a picture of your own for the icon, in place of the emoji. Square, 256 pixels or more a side, drawn to the edges with no transparency and no rounded corners (the app rounds them). Keep `icon` and `color` in `app.json` all the same. Only add one when you can make a good PNG; the emoji is fine otherwise.
 - The entry, one of:
   - `App.jsx` (or `App.tsx`): a React component as the default export. The app renders it into `<div id="root">` for you. This is the default choice.
   - `index.html`: a page of your own, for apps that do not use React. `<script type="module" src="./main.js">` and relative paths work.
@@ -41,6 +42,7 @@ Your files are the working copy. The user opens the published copy, which the ap
 ## Make it feel like an app
 
 - It fills the phone screen under a native title bar, which shows `name` and a close button. Do not draw your own title bar or close button.
+- From iOS 26 that bar is see-through: the page starts below it and scrolls up beneath it, blurred there by the system. Lay the page out as if the bar were not there: `100dvh` is the height below the bar and `env(safe-area-inset-top)` is 0, so add no top padding for it. Give `html` or `body` a background colour; it shows behind the bar.
 - Design for a phone held upright first: 375 to 430 points wide. Touch targets at least 44 points. No hover-only controls.
 - Use the system font (`-apple-system, system-ui`). Support dark mode with `@media (prefers-color-scheme: dark)` unless the app has its own fixed look.
 - Respect the bottom safe area: `padding-bottom: env(safe-area-inset-bottom)` on fixed bottom bars.

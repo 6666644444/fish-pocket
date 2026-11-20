@@ -58,11 +58,17 @@ private struct MiniAppsWidgetView: View {
         .containerBackground(WidgetPalette.background, for: .widget)
     }
 
+    @ViewBuilder
     private func icon(_ app: MiniAppSummary, size: CGFloat) -> some View {
-        Text(verbatim: app.icon)
-            .font(.system(size: size * 0.5))
-            .frame(width: size, height: size)
-            .widgetFill(Color(miniApp: app.color).gradient, in: RoundedRectangle(cornerRadius: size * 0.225, style: .continuous))
+        let shape = RoundedRectangle(cornerRadius: size * 0.225, style: .continuous)
+        if let image = MiniAppCatalog.icon(app) {
+            Image(uiImage: image).resizable().scaledToFill().frame(width: size, height: size).clipShape(shape)
+        } else {
+            Text(verbatim: app.icon)
+                .font(.system(size: size * 0.5))
+                .frame(width: size, height: size)
+                .widgetFill(Color(miniApp: app.color).gradient, in: shape)
+        }
     }
 
     private func small(_ app: MiniAppSummary) -> some View {
