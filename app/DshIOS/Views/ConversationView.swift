@@ -601,7 +601,7 @@ struct ConversationView: View {
         .scrollClipDisabled()
     }
 
-    /// What it can do as an assistant on this phone: device capabilities, a 小工具, another app
+    /// What it can do as an assistant on this phone: device capabilities, a mini app, another app
     /// through phone control, a scheduled task. Each one works when sent as is; a capability that is
     /// switched off, or phone control not set up, gets the agent's answer saying where to turn it on.
     private static var suggestions: [String] {

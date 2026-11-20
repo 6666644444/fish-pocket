@@ -51,11 +51,11 @@ enum MiniAppPresenter {
 
     static func editDraft(_ app: MiniApp) -> String {
         // The path is followed by a space: a `/` token at the end of the draft opens the command menu.
-        String(localized: "修改 \(app.enginePath) 里的小工具「\(app.name)」：")
+        String(localized: "修改 \(app.enginePath) 里的 Mini App「\(app.name)」：")
     }
 
     static func fixDraft(_ app: MiniApp, error: String) -> String {
-        String(localized: "\(app.enginePath) 里的小工具「\(app.name)」运行时出错了：\n\n\(error)\n\n帮我修好。")
+        String(localized: "\(app.enginePath) 里的 Mini App「\(app.name)」运行时出错了：\n\n\(error)\n\n帮我修好。")
     }
 }
 

@@ -278,7 +278,7 @@ struct ComposerView: View {
         }
         .task(id: pendingDraft) {
             guard let pendingDraft else { return }
-            // The same draft again (小工具's 开始做 tapped twice before sending) is not added twice.
+            // The same draft again (Mini Apps' 开始做 tapped twice before sending) is not added twice.
             if pendingDraft.utf16.count > ComposerModel.longTextLimit {
                 composer.addLongText(pendingDraft)
             } else if composer.text.isEmpty {

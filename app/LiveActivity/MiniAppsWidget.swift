@@ -8,8 +8,8 @@ struct MiniAppsWidget: Widget {
         AppIntentConfiguration(kind: MiniAppCatalog.widgetKind, intent: MiniAppsWidgetIntent.self, provider: MiniAppsProvider()) { entry in
             MiniAppsWidgetView(entry: entry)
         }
-        .configurationDisplayName("小工具")
-        .description("把你做的小工具和小游戏放到主屏幕上。")
+        .configurationDisplayName("Mini Apps")
+        .description("把你做的 Mini App 放到主屏幕上。")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
@@ -96,8 +96,8 @@ private struct MiniAppsWidgetView: View {
         VStack(alignment: .leading, spacing: 6) {
             FishMark(size: 18)
             Spacer(minLength: 0)
-            Text("小工具").font(.headline)
-            Text("在对话里让 Agent 做一个小工具").font(.caption).foregroundStyle(WidgetPalette.secondary).lineLimit(2)
+            Text("Mini Apps").font(.headline)
+            Text("在对话里让 Agent 做一个 Mini App").font(.caption).foregroundStyle(WidgetPalette.secondary).lineLimit(2)
         }
         .foregroundStyle(WidgetPalette.ink)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

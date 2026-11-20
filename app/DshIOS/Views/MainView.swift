@@ -845,7 +845,7 @@ struct MainView: View {
             Tab(value: HomeTab.bot) {
                 if sessionsSideBySide { botSplit } else { botStack(openDrawer: nil) }
             } label: {
-                tabLabel(Text(verbatim: "Bot"), "face.smiling")
+                tabLabel(Text(verbatim: "Bot"), "fp.bot", custom: true)
             }
             .badge(badges.botPending)
             // 我的应用: the user's own tools and games, opened as often as a home screen's.
@@ -879,7 +879,7 @@ struct MainView: View {
                 .tag(HomeTab.sessions)
                 .badge(badges.waiting)
             Group { if sessionsSideBySide { botSplit } else { botStack(openDrawer: nil) } }
-                .tabItem { tabLabel(Text(verbatim: "Bot"), "face.smiling") }
+                .tabItem { tabLabel(Text(verbatim: "Bot"), "fp.bot", custom: true) }
                 .tag(HomeTab.bot)
                 .badge(badges.botPending)
             NavigationStack { MiniAppsPage(asTab: true) }

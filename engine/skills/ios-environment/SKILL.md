@@ -65,7 +65,7 @@ Pipes, redirects, `&&`, `||`, variables, arrays, functions, loops, here-document
 - `$HOME` is `/home/dsh` and `$TMPDIR` is `/tmp`. Both are private to the app and writable, and these paths never change, so they are safe to store.
 - The first-use workspace is under `~/Documents`. Workspaces are not visible in the Files app.
 - `~/.ios/recovery/<time>-<step>/` holds the settings files (`~/.dsh/.credentials.yaml`, `~/.dsh/profiles/web/*`) that the app's launch-screen repair replaced when the engine would not start, at their paths relative to `~/.dsh`. When the user asks to get a key or setting back from there, copy what they want into the current file rather than the whole file back: the old one is what kept the engine down.
-- `~/apps` holds the user's mini apps (小工具), one folder each, which the app opens full screen. Load the `mini-apps` skill before creating or changing anything there.
+- `~/apps` holds the user's mini apps (the app's Mini Apps tab), one folder each, which the app opens full screen. Load the `mini-apps` skill before creating or changing anything there.
 - `/` is the app's own tree: `home`, `tmp`, `opt`, plus anything you create. Writing to `/abc` or `/usr/local` works and stays inside the app.
 - `/etc`, `/usr/share` and `/System` are the real system and read-only. `/opt/dsh` is the app itself and read-only.
 - `/bin` and `/usr/bin` exist only in the shell, for its commands. A Node script sees just one file there: `/usr/bin/node`, a placeholder so programs that look `node` up on `PATH` before spawning it find it.
@@ -118,7 +118,7 @@ FFmpeg 9.0 is built into the app: `ffmpeg` and `ffprobe` work as on a desktop fo
 The app's native interface, built in SwiftUI, does not run a plugin's browser code. Only a plugin's Host half (tools, settings, MCP connections, modes) works there, apart from a few official plugins the app draws itself; its pages, panels and sidebar entries appear only in the web interface, under 网页版 (Web version) on the app's 探索 (Explore) tab (in the sidebar on an iPad before iOS 18).
 
 - **Plugins you build here are Host-only.** Write no browser half: no `dsh.client`, no `./client` export, no slots, pages, panels or decorations. Only write one when the user asks by name for something in the web interface. This overrides plugin guidance written for the Web UI, such as the UI plugin template in the `dsh-doc` skill: the user would never see it.
-- **Something to look at or tap is a 小工具 (mini app), not a plugin.** A page, chart, dashboard, widget or tool with buttons: tell the user a plugin cannot show it in this app, and offer a mini app instead (read the `mini-apps` skill). A change to the app's own interface, such as a theme or a panel beside the chat, cannot be built here at all; say so.
+- **Something to look at or tap is a mini app, not a plugin.** A page, chart, dashboard, widget or tool with buttons: tell the user a plugin cannot show it in this app, and offer a mini app instead (read the `mini-apps` skill). A change to the app's own interface, such as a theme or a panel beside the chat, cannot be built here at all; say so.
 - **What a plugin can add:** tools you can call, MCP connections, settings, timers, and modes (agent presets) that combine tools and prompts.
 
 **Before writing, changing or diagnosing a DSH plugin, read `references/plugins.md`**: what reaches which interface, what to tell the user before building, the built-in DS Bot plugin, and why device capabilities are not for plugins.

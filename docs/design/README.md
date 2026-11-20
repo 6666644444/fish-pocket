@@ -25,7 +25,7 @@ SwiftUI 原生界面的下一版视觉与交互。本目录是**设计稿**，�
 
 iPad（regular 宽度）保留常驻侧栏：抽屉内容直接作为 `NavigationSplitView` 的 sidebar，其余不变。
 
-> **2026-11 更新：改为系统的底部 Tab。** iOS 18 起不再用抽屉和常驻侧栏，iPhone、iPhone Duo、iPad 共用一套系统 `TabView`（`sidebarAdaptable` 样式）：「会话 · Bot · 小工具 · 探索」四个 Tab（设置从探索页右上角的齿轮进入），窄屏在底部，宽屏由系统放到顶部或换成侧边栏，Duo 展开时是右侧的竖条。会话 Tab 窄屏时点开会话推入新页面并隐藏 Tab 栏，宽屏时列表和会话并排；搜索在会话页的系统搜索框里；插件、连接器、远程控制、操控手机、网页版集中在「探索」页（`ExploreTabView`）。启动只回到上次的会话或 Bot Tab。iOS 17 仍是上面的抽屉 / 侧栏。下文写「侧边栏」的地方，iOS 18 起对应这几个 Tab。
+> **2026-11 更新：改为系统的底部 Tab。** iOS 18 起不再用抽屉和常驻侧栏，iPhone、iPhone Duo、iPad 共用一套系统 `TabView`（`sidebarAdaptable` 样式）：「会话 · Bot · Mini Apps · 探索」四个 Tab（设置从探索页右上角的齿轮进入），窄屏在底部，宽屏由系统放到顶部或换成侧边栏，Duo 展开时是右侧的竖条。会话 Tab 窄屏时点开会话推入新页面并隐藏 Tab 栏，宽屏时列表和会话并排；搜索在会话页的系统搜索框里；插件、连接器、远程控制、操控手机、网页版集中在「探索」页（`ExploreTabView`）。启动只回到上次的会话或 Bot Tab。iOS 17 仍是上面的抽屉 / 侧栏。下文写「侧边栏」的地方，iOS 18 起对应这几个 Tab。
 
 ## 3. 设计 token
 
