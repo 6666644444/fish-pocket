@@ -8,8 +8,28 @@ import WebKit
 /// happened to the page: an operation of the agent's ended, a load finished, another tab came to
 /// the front. WebKit draws it at the thumbnail's own size, pictures are a second apart at least,
 /// and a browser keeps one.
+///
+/// The picture is all of what the page shows, in the page's own shape: tall on a phone, wider on
+/// an iPad or an open iPhone Duo.
 extension BrowserModel {
-    static let thumbnailSize = CGSize(width: 108, height: 70)
+    /// The picture is as large as fits in this.
+    private static let thumbnailBox = CGSize(width: 112, height: 140)
+    /// A page far taller than it is wide (a narrow window on an iPad) gives its top.
+    private static let thumbnailTallest: CGFloat = 2.2
+
+    private static func thumbnailFit(_ page: CGSize) -> CGSize {
+        guard page.width > 0, page.height > 0 else { return thumbnailBox }
+        let scale = min(thumbnailBox.width / page.width, thumbnailBox.height / page.height)
+        return CGSize(width: (page.width * scale).rounded(), height: (page.height * scale).rounded())
+    }
+
+    /// The size the chat draws the picture at. Before there is one, the shape a page has on this device.
+    var thumbnailSize: CGSize {
+        if let image = selected?.thumbnail { return Self.thumbnailFit(image.size) }
+        let phone = UIDevice.current.userInterfaceIdiom == .phone
+        return Self.thumbnailFit(phone ? CGSize(width: 9, height: 17) : CGSize(width: 4, height: 3))
+    }
+
     private static let thumbnailInterval: TimeInterval = 1
     /// How often a page nothing happened to is drawn again.
     private static let thumbnailEvery: TimeInterval = 5
@@ -62,13 +82,12 @@ extension BrowserModel {
         // the like: the page itself is what is inside them.
         let shown = view.bounds.inset(by: view.safeAreaInsets)
         guard shown.width > 0, shown.height > 0 else { return }
-        let size = Self.thumbnailSize
         let configuration = WKSnapshotConfiguration()
-        // The top of what the page shows, in the thumbnail's shape and at its size.
+        // All of what the page shows, at the size the chat draws it.
         configuration.rect = CGRect(
             x: shown.minX, y: shown.minY, width: shown.width,
-            height: min(shown.height, shown.width * size.height / size.width))
-        configuration.snapshotWidth = NSNumber(value: Double(size.width))
+            height: min(shown.height, shown.width * Self.thumbnailTallest))
+        configuration.snapshotWidth = NSNumber(value: Double(Self.thumbnailFit(configuration.rect.size).width))
         let once = Once()
         let image: UIImage? = await withCheckedContinuation { continuation in
             view.takeSnapshot(with: configuration) { image, _ in
@@ -103,7 +122,7 @@ struct BrowserThumbnail: View {
     let action: () -> Void
 
     var body: some View {
-        let size = BrowserModel.thumbnailSize
+        let size = browser.thumbnailSize
         let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
         let site = FullScreenBrowser.site(browser.url)
         Button {
@@ -115,7 +134,7 @@ struct BrowserThumbnail: View {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFill()
-                        .frame(width: size.width, height: size.height, alignment: .top)
+                        .frame(width: size.width, height: size.height)
                 } else {
                     Palette.field
                     Image(systemName: "globe")
@@ -129,8 +148,8 @@ struct BrowserThumbnail: View {
                         .font(.caption2.weight(.medium))
                         .foregroundStyle(Palette.ink)
                         .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                        .padding(.horizontal, 6)
+                        .minimumScaleFactor(0.75)
+                        .padding(.horizontal, 5)
                         .frame(maxWidth: .infinity, minHeight: 18)
                         // A plain fill: a blur over a picture that keeps changing is drawn again each time.
                         .background(Palette.background)
