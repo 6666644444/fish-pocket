@@ -586,12 +586,13 @@ struct BotHomeView: View {
         }
     }
 
-    /// The fill of the row whose chat is beside the list; the list's own (nil) on the others,
-    /// and where rows push. A shape and not the bare color: the list keeps a color as it was in
-    /// the appearance it was first drawn in, and after light turned to dark (or back) with a
-    /// chat picked, its row stayed light under a name now white.
-    private func pickedFill(_ route: BotRoute) -> (some View)? {
-        selection?.wrappedValue == route ? Rectangle().fill(Palette.bubble) : nil
+    /// The fill of a row beside the chat: the picked one's mark, clear on the others, as the 会话
+    /// list has it; the list's own (nil) where rows push. Every row beside the chat has one from
+    /// the start: the list keeps up only a background the row had as its cell was made. One that
+    /// first came with the picking was drawn once and left so, and after light turned to dark
+    /// (or back) the picked row stayed light under a name now white.
+    private func pickedFill(_ route: BotRoute) -> Color? {
+        selection.map { $0.wrappedValue == route ? Palette.bubble : .clear }
     }
 
     @ViewBuilder
