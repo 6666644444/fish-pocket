@@ -64,9 +64,11 @@ struct RemoteConversationView: View {
     private func content(_ model: RemoteSessionModel) -> some View {
         ScrollViewReader { proxy in
             ScrollView {
-                RemoteTimelineList(model: model)
-                    .modifier(LinkOpening())
-                Color.clear.frame(height: 1).id(Self.bottomId)
+                TimelineRows {
+                    RemoteTimelineList(model: model)
+                        .modifier(LinkOpening())
+                    Color.clear.frame(height: 1).id(Self.bottomId)
+                }
             }
             .environment(\.timelineScroll, TimelineScroll(scrollBox, top: timelineTop) { id in
                 Task { @MainActor in

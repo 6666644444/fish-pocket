@@ -163,9 +163,11 @@ struct ConversationView: View {
         let started = !blank && model.subagentAddress == nil && !(!model.loaded && app.sessions[sessionId]?.blank == true)
         ScrollViewReader { proxy in
             ScrollView {
-                TimelineList(model: model)
-                    .modifier(LinkOpening())
-                TimelineFoot(sessionId: sessionId, jobs: jobs, browserShown: browserBeside, chips: !blank && hasTools).id(Self.bottomId)
+                TimelineRows {
+                    TimelineList(model: model)
+                        .modifier(LinkOpening())
+                    TimelineFoot(sessionId: sessionId, jobs: jobs, browserShown: browserBeside, chips: !blank && hasTools).id(Self.bottomId)
+                }
             }
             // Until the first read answers; a conversation known to be blank shows its own start.
             // The fade is the overlay's alone: animating the timeline's arrival would carry it past
@@ -712,7 +714,7 @@ struct ConversationView: View {
 /// bottom counts as following, and growth then scrolls along; scrolling up lets go.
 /// iOS 17 has no scroll geometry: the view stays where the anchor leaves it.
 /// A long timeline opens at its end and grows from there; a short one sits at the top.
-/// iOS 17 has only the one anchor, so a short timeline sits at the bottom there.
+/// iOS 17 has only the one anchor, for every role (`TimelineRows` keeps a short timeline right under it).
 struct TimelineAnchor: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 18.0, *) {
@@ -722,6 +724,30 @@ struct TimelineAnchor: ViewModifier {
                 .defaultScrollAnchor(.top, for: .alignment)
         } else {
             content.defaultScrollAnchor(.bottom)
+        }
+    }
+}
+
+/// What a timeline's scroll view holds: its rows, one under another, as the scroll view itself
+/// lays them out. Before iOS 18 they stand in a space never shorter than the room they scroll in.
+/// With the bottom anchor of that time (`TimelineAnchor`), rows that do not fill the screen are
+/// placed at its foot by SwiftUI at every change of their height, and put back at the top by
+/// the scroll view in the same pass, which SwiftUI does not hear of: the rows are drawn at the
+/// top and take their taps where they would be at the foot (a step tapped open could not be
+/// tapped again, nor anything in a short conversation once a reply had come) until a drag
+/// brings the two together. Filled out to the room, the foot is where the rows already end.
+struct TimelineRows<Rows: View>: View {
+    @ViewBuilder let rows: Rows
+
+    var body: some View {
+        if #available(iOS 18.0, *) {
+            rows
+        } else {
+            ZStack(alignment: .top) {
+                Color.clear.containerRelativeFrame(.vertical)
+                // At their own height: the stack would share the whole room out among them.
+                VStack { rows }.fixedSize(horizontal: false, vertical: true)
+            }
         }
     }
 }
