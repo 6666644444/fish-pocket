@@ -33,6 +33,8 @@ struct MainView: View {
     /// The sidebar, in regular width.
     @State private var sidebar = NavigationSplitViewVisibility.all
     @State private var windowWidth: CGFloat = 0
+    /// The window's width as the app left the screen: the split view keeps it while out of sight (`split`).
+    @State private var widthOnLeaving: CGFloat?
     @State private var searchRequest = 0
     @State private var drawerOpen = false
     @State private var tab = HomeTab.sessions
@@ -343,6 +345,7 @@ struct MainView: View {
                 app.currentSession = shownSession
                 ReadAloud.shared.scope = onScreen
             }
+            if phase == .background { widthOnLeaving = windowWidth }
         }
         // Reading aloud belongs to the conversation on screen: moving to another one stops it.
         .onChange(of: onScreen, initial: true) { _, session in ReadAloud.shared.scope = session }
@@ -629,7 +632,7 @@ struct MainView: View {
     // MARK: Layouts
 
     private var split: some View {
-        NavigationSplitView(columnVisibility: $sidebar) {
+        NavigationSplitView(columnVisibility: sidebarOnScreen) {
             // A width that follows the fold hangs the split view, on the one layout pass where
             // the window has turned and the width has not. These fit every pose.
             drawer.navigationSplitViewColumnWidth(min: 280, ideal: 320, max: 360)
@@ -652,6 +655,22 @@ struct MainView: View {
         // Side by side wherever both fit. Where they do not, the system keeps the sidebar
         // away and its button slides it over the conversation.
         .navigationSplitViewStyle(.balanced)
+        // This layout stays while the window is drawn narrow out of sight (`settledWidth`), and the
+        // split view has to stay as it is too. Following the window, it folds into one column and
+        // opens again, and in between a page pushed in its detail is laid out without the
+        // environment from outside its stack: with a Bot's chat or a plugin's page open, the app
+        // crashed in the background (no `AppModel`), and a page that got through that came back
+        // without its toolbar. It keeps its width as well: squeezed beside the sidebar, a pushed
+        // page came back with the title gone from its back button.
+        .environment(\.horizontalSizeClass, .regular)
+        .frame(minWidth: scenePhase == .background ? widthOnLeaving : nil)
+    }
+
+    /// The sidebar, as the split view is given it. Kept wide while the window is drawn narrow out
+    /// of sight, the split view brings back a sidebar that was away (for the workbench) and says
+    /// so. That is not followed: back on screen, the sidebar is away as it was left.
+    private var sidebarOnScreen: Binding<NavigationSplitViewVisibility> {
+        Binding(get: { sidebar }, set: { if scenePhase != .background { sidebar = $0 } })
     }
 
     /// Whether the system's sidebar button stays. From iOS 27.1 it has to: removed, a split
