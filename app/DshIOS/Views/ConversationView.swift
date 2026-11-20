@@ -221,7 +221,8 @@ struct ConversationView: View {
                     if !atBottom && !blank {
                         VStack(spacing: 8) {
                             // The web's turn rail needs a wide window; here it is a list one tap away.
-                            if model.turnOutline.count >= 2 {
+                            // A Bot's chat or a group is a chat, not turns to jump between: ds-bot's window has none.
+                            if botTimeline == nil, model.turnOutline.count >= 2 {
                                 FloatingIcon(systemName: "list.bullet", label: "跳转到轮次") { showTurns = true }
                             }
                             FloatingIcon(systemName: "chevron.down", label: "回到底部") {
@@ -1481,7 +1482,8 @@ private struct UserBubble: View {
 
 /// One assistant turn. Its work (reasoning and tool calls) sits under one grey line
 /// above the answer: what it is doing while it runs (open), and once done its title
-/// with 「已完成，用时…」 (folded, unless it failed, was stopped or was steered: C-32).
+/// with 「已完成，用时…」 (folded, unless it failed, was stopped or was steered: C-32). A Bot's
+/// finished reply has no such line.
 /// A finished turn adds its plan and file cards; its actions are a long press away (`TurnMenu`).
 struct AssistantTurnView: View {
     let blocks: [AssistantBlock]
@@ -1528,11 +1530,28 @@ struct AssistantTurnView: View {
         // With nothing of the turn to show (a Bot at work in its own chat) there is no view at all. An
         // empty stack would still be a row of the timeline: the spacing around it pushed the message
         // above it up a little as the turn's first step came in.
+        // A Bot's finished reply has no step line, as in ds-bot's own window: what it did that a reader
+        // wants is drawn in the reply (`BotTurnEvents`), and opened, the line held little else.
+        // A reply cut short keeps it, for the 「已停止」「处理失败」 it carries.
+        let botReply = bot != nil && !inProgress && !["aborted", "interrupted", "error"].contains(info?.closedKind ?? "")
         if tailShown {
             VStack(alignment: .leading, spacing: 8) {
+                if botReply {
+                    // With 「显示思考过程」 on, its reasoning shows on its own, as ds-bot's thinking row does.
+                    if let bot, bot.showsThinking {
+                        let reasoning = Array(blocks.prefix(finalStart).filter { if case .reasoning = $0 { true } else { false } })
+                        if !reasoning.isEmpty {
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(reasoning, id: \.id) { block in BlockView(block: block, live: false).equatable() }
+                                if let turn, finished { BotThinkingTime(turn: turn) }
+                            }
+                        }
+                    }
+                    ForEach(madePictures, id: \.id) { call in ImageGenCard(call: call, live: false) }
+                }
                 // While working the step line always shows (the one loading indicator of the turn);
                 // a streamed answer with no work before it needs none.
-                if !quiet, finalStart > 0 || (inProgress && !ownChat && (blocks.isEmpty || liveCount == 0)) {
+                if !botReply, !quiet, finalStart > 0 || (inProgress && !ownChat && (blocks.isEmpty || liveCount == 0)) {
                     Button {
                         withAnimation(.easeInOut(duration: 0.18)) { choice = !showWork }
                     } label: {
@@ -1563,7 +1582,7 @@ struct AssistantTurnView: View {
                     }
                 }
                 // Pictures the turn made are what it was for: they stay out when its work folds away.
-                if !quiet, !showWork {
+                if !botReply, !quiet, !showWork {
                     ForEach(madePictures, id: \.id) { call in ImageGenCard(call: call, live: false) }
                 }
                 // In a Bot's chat: what it did while working, above its words; a card it ended on, below them.
