@@ -172,6 +172,7 @@ struct MainView: View {
     /// device be left standing empty.
     @State private var settledWidth: UserInterfaceSizeClass?
     @State private var windowCommandsBox = WindowCommands.Box()
+    @State private var openSessionBox = OpenSessionAction.Box()
     private var layoutWidth: UserInterfaceSizeClass? { settledWidth ?? sizeClass }
 
     /// Announcements are made once, so never under a sheet.
@@ -583,7 +584,7 @@ struct MainView: View {
         } message: {
             Text(app.lastError ?? "")
         }
-        .environment(\.openSession) { open(session: $0) }
+        .environment(\.openSession, OpenSessionAction(openSessionBox) { open(session: $0) })
     }
 
     // MARK: Credentials

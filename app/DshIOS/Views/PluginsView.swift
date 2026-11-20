@@ -14,14 +14,38 @@ extension EnvironmentValues {
 
     /// Open a session in the conversation area; the shell sets it. `让 Agent 创建插件`
     /// and the Agent presets' creator entry use it.
-    var openSession: ((String) -> Void)? {
+    var openSession: OpenSessionAction? {
         get { self[OpenSessionKey.self] }
         set { self[OpenSessionKey.self] = newValue }
     }
 }
 
 private struct OpenSessionKey: EnvironmentKey {
-    static let defaultValue: ((String) -> Void)? = nil
+    static let defaultValue: OpenSessionAction? = nil
+}
+
+/// The shell's way to open a session, for the environment. A closure there cannot be compared:
+/// every page reading it was told it had changed whenever the environment reached it again, and
+/// before iOS 26 a navigation stack sends it again to a pushed page each time a page is pushed
+/// from that one. 设置 pushed from the 探索 tab reads it and pushes 插件 and 自动化, which take
+/// it too: the two bodies and the stack kept updating one another and the app had to be killed.
+/// In a box that stays the same the value never changes.
+struct OpenSessionAction: Equatable {
+    final class Box {
+        var open: (String) -> Void = { _ in }
+    }
+
+    private let box: Box
+
+    /// The shell's latest way to do it, put in the box it keeps.
+    init(_ box: Box, open: @escaping (String) -> Void) {
+        box.open = open
+        self.box = box
+    }
+
+    func callAsFunction(_ session: String) { box.open(session) }
+
+    static func == (lhs: Self, rhs: Self) -> Bool { lhs.box === rhs.box }
 }
 
 extension View {
