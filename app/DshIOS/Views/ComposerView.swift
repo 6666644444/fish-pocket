@@ -278,7 +278,7 @@ struct ComposerView: View {
         }
         .task(id: pendingDraft) {
             guard let pendingDraft else { return }
-            // The same draft again (Mini Apps' 开始做 tapped twice before sending) is not added twice.
+            // The same draft again (a Mini App's 让 Agent 修改 chosen twice before sending) is not added twice.
             if pendingDraft.utf16.count > ComposerModel.longTextLimit {
                 composer.addLongText(pendingDraft)
             } else if composer.text.isEmpty {
@@ -438,6 +438,8 @@ struct ComposerView: View {
                 } else {
                     input
                         .padding(.vertical, 11)
+                        // Down to the bar's own edges.
+                        .focusesOnTap($focused, beyond: 5)
                 }
                 voiceToggle
                 mainButton.holdHidden(voice.phase != .idle)

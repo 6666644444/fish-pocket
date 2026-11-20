@@ -5876,6 +5876,40 @@
         }
       }
     },
+    "习惯打卡" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Habit tracker"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registro de hábitos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "習慣トラッカー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "습관 체크"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "習慣打卡"
+          }
+        }
+      }
+    },
     "你的 Fish Pocket 来自 App Store，按这一页操作。" : {
       "localizations" : {
         "en" : {
@@ -6114,6 +6148,40 @@
         }
       }
     },
+    "做一个 Mini App" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make a Mini App"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crear una miniapp"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ミニアプリを作る"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "미니 앱 만들기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "做一個 Mini App"
+          }
+        }
+      }
+    },
     "停止服务" : {
       "localizations" : {
         "en" : {
@@ -6314,6 +6382,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "先確認 TestFlight 裡的 Fish Pocket 已經裝好，詳情頁裡「Apple Watch」一項寫著「是」，手錶系統是 watchOS 10 或更新版本。仍然沒有的話，打開 iPhone 上的 Watch App，在「可用的 App」裡也能安裝。"
+          }
+        }
+      }
+    },
+    "再做一个 Mini App…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make another mini app…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea otra miniapp…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もう一つミニアプリを作る…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "미니 앱 하나 더 만들기…"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "再做一個 Mini App…"
           }
         }
       }
@@ -7338,6 +7440,40 @@
         }
       }
     },
+    "帮我做一个 Mini App：%@。以下是我的要求：\n1. " : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make me a mini app: %@. My requirements:\n1. "
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hazme una miniapp: %@. Mis requisitos:\n1. "
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ミニアプリを作って：%@。要望は次のとおりです：\n1. "
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "미니 앱을 만들어 줘: %@. 내 요구 사항은 다음과 같아:\n1. "
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "幫我做一個 Mini App：%@。以下是我的要求：\n1. "
+          }
+        }
+      }
+    },
     "帮我做一个记账小工具" : {
       "localizations" : {
         "en" : {
@@ -7470,6 +7606,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "怎麼安裝"
+          }
+        }
+      }
+    },
+    "想要什么 Mini App？" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What mini app do you want?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué miniapp quieres?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どんなミニアプリがほしい？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "어떤 미니 앱이 필요하세요?"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "想要什麼 Mini App？"
           }
         }
       }
@@ -10786,6 +10956,40 @@
         }
       }
     },
+    "背单词卡片" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vocabulary flashcards"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarjetas de vocabulario"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "単語カード"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "단어 암기 카드"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "背單字卡片"
+          }
+        }
+      }
+    },
     "葡萄紫" : {
       "localizations" : {
         "en" : {
@@ -11748,6 +11952,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "設定教學"
+          }
+        }
+      }
+    },
+    "说说你想要什么，Agent 做好后会放在这里" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Say what you want. The agent puts it here when it’s done."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di lo que quieres. El agente lo dejará aquí cuando esté listo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ほしいものを伝えてください。できあがるとエージェントがここに置きます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "원하는 걸 말해 보세요. 에이전트가 다 만들면 여기에 둬요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "說說你想要什麼，Agent 做好後會放在這裡"
           }
         }
       }
@@ -45767,6 +46005,7 @@
       }
     },
     "开始做" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -55432,6 +55671,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "收起"
+          }
+        }
+      }
+    },
+    "收起浏览器" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hide Browser"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocultar navegador"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ブラウザをしまう"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "브라우저 숨기기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "收起瀏覽器"
           }
         }
       }
@@ -82190,6 +82463,7 @@
       }
     },
     "自带的几个示例，看看 Agent 能做出什么。用不上可以长按删除。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -85172,6 +85446,7 @@
       }
     },
     "说说你想要什么，比如「做个记账本」「做个背单词卡片」，Agent 做好后会放在这里，点开就能用。" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
