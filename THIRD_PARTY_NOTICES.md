@@ -18,6 +18,7 @@
 | [SwiftMath](https://github.com/mgriebling/SwiftMath) | 1.7.3 | MIT；随包的数学字体各有许可证（GUST 字体许可证、SIL OFL 等），见其 README 的 Fonts 一节 | Copyright (c) 2023 Computer Inspirations | 回复里的公式排版 |
 | [pnpm](https://github.com/pnpm/pnpm) | 11.28.5 | MIT | Rico Sta. Cruz、Zoltan Kochan 及贡献者 | 插件安装 |
 | [DS Bot](https://github.com/Fei2411/DS-Bot)（`ds-bot`） | 0.3.8 | Apache-2.0 | Copyright 2026 Fei2411 and the DS Bot contributors | Bot 功能的后台，内置在引擎里 |
+| [dsh-image-gen](https://github.com/shanliuling/dsh-image-gen)（`dsh-image-gen`） | 0.11.4 | Apache-2.0 | Copyright 2026 shanliuling | 生图功能的后台，内置在引擎里；网页版里的画布、图库和 Studio 是它自己的界面 |
 | [Simple Icons](https://github.com/simple-icons/simple-icons) | 16.37.0 | CC0-1.0 | Simple Icons 贡献者 | Bot 连接器页面的品牌图标 |
 | [page-agent](https://github.com/alibaba/page-agent)（`@page-agent/page-controller`、`@page-agent/ui`） | 1.12.4 | MIT | Copyright (c) 2026 SimonLuvRamen, Copyright (c) 2026 Alibaba Group Holding Limited | 智能体操作浏览器时读网页、点击和输入，操作时网页上的光效、指针和状态面板 |
 | [ai-motion](https://www.npmjs.com/package/ai-motion) | 0.4.8 | MIT | Copyright (c) 2025 Simon | page-agent 遮罩层的动态光效 |
@@ -44,12 +45,12 @@ libgit2 的完整许可证见其仓库的 [COPYING](https://github.com/libgit2/l
 
 ## 打进 App 的 npm 包
 
-`scripts/build-engine.sh` 组装出的引擎目录约有 686 个 npm 包，按各包 `package.json` 的 `license` 字段统计分布如下：
+`scripts/build-engine.sh` 组装出的引擎目录约有 687 个 npm 包，按各包 `package.json` 的 `license` 字段统计分布如下：
 
 | 许可证 | 包数量 |
 |---|---|
 | MIT | 579 |
-| Apache-2.0 | 58 |
+| Apache-2.0 | 59 |
 | BSD-3-Clause | 20 |
 | ISC | 16 |
 | BSD-2-Clause | 7 |
@@ -59,10 +60,14 @@ libgit2 的完整许可证见其仓库的 [COPYING](https://github.com/libgit2/l
 
 上游自带的许可证文件会随包一起打进 App。准确清单以 `engine/package-lock.json` 为准，个别包不带单独的许可证文件，以其 `package.json` 的声明为准。
 
-需要单独留意的两项：
+需要单独留意的几项：
 
 - **`@deepseek-ai/libreoffice-kit`（MPL-2.0）：** 只保留了很小的 JS 外壳，平台二进制、静态库和 wasm 在打包时已删除，`office-kit` 和 Office 技能也已禁用（`engine/ios.patch.yml`）。
 - **`ds-bot`（Apache-2.0）：** 它的 npm 包只带 LICENSE，不带上游仓库的 NOTICE。按 Apache-2.0 第 4 条，`engine/notices/ds-bot.NOTICE`（取自上游 v0.3.8）在打包时放到 `ds-bot/NOTICE`，随 App 一起分发。原生界面只调用它的接口，没有使用它的界面代码。
+- **`dsh-image-gen`（Apache-2.0）：** 上游仓库没有 NOTICE，npm 包里的 LICENSE 随包分发。打包时删掉了它的 README 截图和文档，代码没有改动。原生的设置页、对话里的图片卡片和图片标注都是 App 自己的界面，只调用它的接口；网页版里用的是它自己的界面。它的灵感库收录了以下开源内容：
+  - 手绘风格手册取自 [yang0/handraw-style](https://github.com/yang0/handraw-style)（MIT），原作者 yang0 要求使用时署名，App 的生图设置页里也写明了出处。
+  - 封面构图类型取自 [JimLiu/baoyu-skills](https://github.com/JimLiu/baoyu-skills) 的 baoyu-cover-image 技能（MIT）。
+  - 案例集取自 [freestylefly/awesome-gpt-image-2](https://github.com/freestylefly/awesome-gpt-image-2)（MIT），只打包了提示词文字，示例图片在网页版里按需从网上加载，不随 App 分发。
 - **`just-bash` 自带的 CPython（Python 许可证）：** 位于 `just-bash/vendor/cpython-emscripten`，随 just-bash 一起打包，但 iOS 上没有启用 `python` 命令。
 
 ## 吉祥物（不适用 MIT）

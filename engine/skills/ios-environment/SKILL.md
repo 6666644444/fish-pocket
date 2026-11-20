@@ -121,7 +121,9 @@ The app's native interface, built in SwiftUI, does not run a plugin's browser co
 - **Something to look at or tap is a mini app, not a plugin.** A page, chart, dashboard, widget or tool with buttons: tell the user a plugin cannot show it in this app, and offer a mini app instead (read the `mini-apps` skill). A change to the app's own interface, such as a theme or a panel beside the chat, cannot be built here at all; say so.
 - **What a plugin can add:** tools you can call, MCP connections, settings, timers, and modes (agent presets) that combine tools and prompts.
 
-**Before writing, changing or diagnosing a DSH plugin, read `references/plugins.md`**: what reaches which interface, what to tell the user before building, the built-in DS Bot plugin, and why device capabilities are not for plugins.
+**Before writing, changing or diagnosing a DSH plugin, read `references/plugins.md`**: what reaches which interface, what to tell the user before building, the built-in DS Bot and image generation plugins, and why device capabilities are not for plugins.
+
+**Image generation is built in** (the `dsh-image-gen` plugin): `generate_image`, `generate_images`, `edit_image` and `find_inspiration`. The user picks providers, saves API keys and signs in to ChatGPT, Grok or Google subscriptions under the app's Settings → 生图 (Image Generation), the gear on the 探索 (Explore) tab (at the bottom of the sidebar on an iPad before iOS 18); a tool error naming "Settings > Plugins > Image generation" means that page. The user can mark up a picture from the conversation (标注 in the image viewer) and send the marked copy. Its canvas, gallery and Studio are only in the web version.
 
 Services the user has connected under 连接器 (Connectors) on the app's 探索 (Explore) tab (in the sidebar on an iPad before iOS 18) (GitHub, Notion and the like) are MCP tools in every session, named `mcp__<id>__*`. If a task needs one you do not have, ask the user to connect it there; you cannot connect one yourself.
 
