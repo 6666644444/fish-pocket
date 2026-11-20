@@ -138,7 +138,7 @@ struct MiniAppsPage: View {
 
     private func tile(_ app: MiniApp) -> some View {
         VStack(spacing: 6) {
-            MiniAppIcon(icon: app.icon, color: app.color, size: iconSize)
+            MiniAppIcon(app, size: iconSize)
             Text(app.name).font(.caption).foregroundStyle(Palette.ink).lineLimit(1)
         }
         .frame(maxWidth: .infinity)
@@ -169,18 +169,49 @@ struct MiniAppsPage: View {
     }
 }
 
-/// An app's icon: its emoji on its color, in the home screen's shape.
+/// An app's icon in the home screen's shape: the picture it drew, else its emoji on its color.
 struct MiniAppIcon: View {
     let icon: String
     let color: String
+    /// The app's own `icon.png`, edge to edge, in place of the emoji.
+    var image: URL?
     let size: CGFloat
 
+    init(icon: String, color: String, image: URL? = nil, size: CGFloat) {
+        self.icon = icon
+        self.color = color
+        self.image = image
+        self.size = size
+    }
+
+    init(_ app: MiniApp, size: CGFloat) {
+        self.init(icon: app.icon, color: app.color, image: app.iconImage, size: size)
+    }
+
     var body: some View {
-        RoundedRectangle(cornerRadius: size * 0.225, style: .continuous)
-            .fill(Color(miniApp: color).gradient)
-            .frame(width: size, height: size)
-            .overlay { Text(verbatim: icon).font(.system(size: size * 0.5)) }
-            .accessibilityHidden(true)
+        let shape = RoundedRectangle(cornerRadius: size * 0.225, style: .continuous)
+        Group {
+            if let picture = image.flatMap(Self.picture) {
+                Image(uiImage: picture).resizable().scaledToFill().frame(width: size, height: size).clipShape(shape)
+            } else {
+                shape.fill(Color(miniApp: color).gradient)
+                    .frame(width: size, height: size)
+                    .overlay { Text(verbatim: icon).font(.system(size: size * 0.5)) }
+            }
+        }
+        .accessibilityHidden(true)
+    }
+
+    /// Decoded once per file as it is now: the grid draws its icons on every pass.
+    private static let pictures = NSCache<NSString, UIImage>()
+
+    private static func picture(_ file: URL) -> UIImage? {
+        let modified = (try? FileManager.default.attributesOfItem(atPath: file.path))?[.modificationDate] as? Date
+        let key = "\(file.path)\u{0}\(modified?.timeIntervalSince1970 ?? 0)" as NSString
+        if let hit = pictures.object(forKey: key) { return hit }
+        guard let picture = UIImage(contentsOfFile: file.path) else { return nil }
+        pictures.setObject(picture, forKey: key)
+        return picture
     }
 }
 
@@ -205,7 +236,7 @@ struct MiniAppCard: View {
             MiniAppPresenter.open(id)
         } label: {
             HStack(spacing: 12) {
-                MiniAppIcon(icon: app?.icon ?? MiniApp.defaultIcon, color: app?.color ?? MiniApp.defaultColor, size: 44)
+                MiniAppIcon(icon: app?.icon ?? MiniApp.defaultIcon, color: app?.color ?? MiniApp.defaultColor, image: app?.iconImage, size: 44)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(app?.name ?? title).font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink).lineLimit(1)
                     Text(looked && app == nil ? String(localized: "Mini App 已删除") : app?.summary ?? String(localized: "Mini App"))

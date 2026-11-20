@@ -76,16 +76,18 @@ struct MiniAppScreen: View {
                     ready = true
                 }
                 // Down to the screen's edge: the page's own background fills the home indicator's strip.
-                .ignoresSafeArea(.container, edges: .bottom)
+                // From iOS 26 up under the bar too: the page scrolls beneath the system's see-through
+                // bar and softens there, as the app's own pages do. Before, the bar stays solid.
+                .ignoresSafeArea(.container, edges: Self.underBar ? .vertical : .bottom)
                 .background(Color(uiColor: .systemBackground))
                 // The app's icon until its page is in: the web view's own start is a blank screen.
                 .overlay {
                     if !page.loaded {
                         ZStack {
                             Color(uiColor: .systemBackground)
-                            MiniAppIcon(icon: app.icon, color: app.color, size: 76)
+                            MiniAppIcon(app, size: 76)
                         }
-                        .ignoresSafeArea(.container, edges: .bottom)
+                        .ignoresSafeArea(.container, edges: Self.underBar ? .vertical : .bottom)
                         .transition(.opacity)
                     }
                 }
@@ -109,6 +111,10 @@ struct MiniAppScreen: View {
                     }
                 }
         }
+    }
+
+    private static var underBar: Bool {
+        if #available(iOS 26.0, *) { true } else { false }
     }
 
     private func errorBanner(_ error: String) -> some View {
@@ -180,11 +186,9 @@ private struct MiniAppWebView: UIViewRepresentable {
         configuration.userContentController.add(context.coordinator.messages, name: MiniAppServer.messageName)
         configuration.allowsInlineMediaPlayback = true
         configuration.mediaTypesRequiringUserActionForPlayback = []
-        let view = WKWebView(frame: .zero, configuration: configuration)
+        let view = PageWebView(frame: .zero, configuration: configuration)
         view.navigationDelegate = context.coordinator
         view.uiDelegate = context.coordinator
-        view.isOpaque = false
-        view.backgroundColor = .systemBackground
         #if DEBUG
         view.isInspectable = true
         #endif
@@ -295,6 +299,45 @@ private struct MiniAppWebView: UIViewRepresentable {
     }
 }
 
+/// The web view where it runs up under the title bar (iOS 26 on): the page starts below the bar and
+/// scrolls beneath it, and a screen's height to the page (`100dvh`) is what shows below the bar.
+/// WebKit does this itself for a page that leaves the screen's edges to it. One that takes them
+/// (`viewport-fit=cover`, as the page around `App.jsx` does, so that it can pad for the home
+/// indicator) is laid out from the very top, so here the bar is declared as covering the page:
+/// the page's sizes and `env(safe-area-inset-top)` then leave it out, and the scroll view is
+/// inset to match, which WebKit leaves to its owner.
+private final class PageWebView: WKWebView, UIScrollViewDelegate {
+    override init(frame: CGRect, configuration: WKWebViewConfiguration) {
+        super.init(frame: frame, configuration: configuration)
+        scrollView.delegate = self
+    }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) is not used") }
+
+    override func safeAreaInsetsDidChange() {
+        super.safeAreaInsetsDidChange()
+        clearTheBar()
+    }
+
+    /// WebKit starts or stops insetting the page itself once it has read the page's viewport,
+    /// some time after the page loads.
+    func scrollViewDidChangeAdjustedContentInset(_ scrollView: UIScrollView) {
+        clearTheBar()
+    }
+
+    func clearTheBar() {
+        guard #available(iOS 26.0, *) else { return }
+        // WebKit sets this to `.always` while it insets the page itself.
+        let top = scrollView.contentInsetAdjustmentBehavior == .never ? safeAreaInsets.top : 0
+        guard obscuredContentInsets.top != top else { return }
+        let atTop = scrollView.contentOffset.y <= -scrollView.contentInset.top
+        obscuredContentInsets = UIEdgeInsets(top: top, left: 0, bottom: 0, right: 0)
+        scrollView.contentInset.top = top
+        scrollView.verticalScrollIndicatorInsets.top = top
+        if atTop { scrollView.contentOffset.y = -top }
+    }
+}
+
 /// Blocks requests to this phone itself (localhost, 127.x, ::1): servers the engine and its
 /// plugins run there are not an app's business.
 @MainActor
@@ -322,7 +365,11 @@ enum MiniAppHomeScreen {
     static func add(_ app: MiniApp) {
         let icon = ZStack {
             Rectangle().fill(Color(miniApp: app.color).gradient)
-            Text(verbatim: app.icon).font(.system(size: 90))
+            if let picture = app.iconImage.flatMap({ UIImage(contentsOfFile: $0.path) }) {
+                Image(uiImage: picture).resizable().scaledToFill()
+            } else {
+                Text(verbatim: app.icon).font(.system(size: 90))
+            }
         }
         HomeScreenShortcut.add(name: app.name, items: [
             URLQueryItem(name: "id", value: app.id),

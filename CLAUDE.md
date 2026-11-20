@@ -149,7 +149,9 @@ Agent 用的 `browser` 工具有哪些动作、各要什么参数、给模型看
 - **隔离**：每个应用一个独立的 `WKWebsiteDataStore`（按 id 派生），删应用时一起删；能联网，但用内容规则拦掉 localhost、127.x 等本机地址；不开放相机、麦克风等本机能力。
 - **入口**：「Mini Apps」Tab（iPhone 都有，iPad 从 iOS 18 起有；iOS 17 的 iPad 侧边栏是「Mini Apps」一行）、聊天里单独一行的 `[名字](fishapp://<id>)` 链接会显示成卡片、`dsh://app/<id>` 链接、「Mini Apps」小组件（`app/LiveActivity/MiniAppsWidget.swift`）、快捷指令里的「打开 Mini App」。
 - **叫法**：界面上叫 Mini App。Tab、页面标题、小组件这类指一整组的地方用复数 Mini Apps，指其中一个时用单数 Mini App（「删除 Mini App」「3 个 Mini App」）。简体、繁体中文都直接写英文，不译成「小工具」「應用」：繁体里「小工具」是系统对小组件的叫法，「应用」又会让人以为是我们提供的 App；其他语言用各自的写法（Miniapps、ミニアプリ、미니 앱）。替用户写好、发给 Agent 的话（「帮我做一个记账小工具」）照口语写，不受这条限制。
-- **示例**：自带的几个示例（`MiniAppExamples`）在页面上单独放在「示例」一节，和用户自己做的分开；哪些是示例记在 UserDefaults 里，不写进应用文件夹。小组件和快捷指令读 App Group 里的 `mini-apps.json`，主 App 每次读应用列表时写它。
+- **图标**：默认是 `app.json` 里的 emoji 配底色；文件夹里有 `icon.png`（方形、铺满、不带圆角）时用它。小组件读不到应用文件夹，主 App 写 `mini-apps.json` 时把图标一起拷进 App Group 的 `mini-app-icons/`。示例的图标是 `icon.svg` 画的，改了要重新导出同目录的 `icon.png`（360 像素）。
+- **全屏页的顶栏**：iOS 26 起网页一直铺到系统的透明顶栏下面，滚上去的内容由系统虚化（`MiniAppScreen.swift` 的 `PageWebView`）；页面仍从顶栏下方开始排，`100dvh` 是顶栏以下的高度，顶栏后面是页面自己的底色。更早的系统顶栏是实底的，网页不铺上去。
+- **示例**：自带的几个示例（`MiniAppExamples`）在页面上单独放在「示例」一节，和用户自己做的分开；哪些是示例记在 UserDefaults 里，不写进应用文件夹。示例只在第一次拷进 `~/apps`，之后改了示例，老用户手里还是旧的：所以重做一个示例时，把它上一版三个源文件的指纹加进 `MiniAppExamples.shipped`，`revision` 加 1，没被改过的旧拷贝会换成新版，用户或 Agent 改过的不动。示例存的数据不会清，新版要读得了旧版存下的格式。小组件和快捷指令读 App Group 里的 `mini-apps.json`，主 App 每次读应用列表时写它。
 - **Agent 的浏览器**也能打开 `fishapp://<id>/`，看到的是开发版（现编译、结果放缓存），Agent 用它截图自查；那里的存储是浏览器的，不是用户那份。
 - **运行时**：`app/DshIOS/MiniApps/Runtime` 是 `scripts/build-mini-app-runtime.sh` 打出来的 React 18 和 Sucrase，提交进仓库，平时不用跑。升级版本时改脚本里的版本号重跑，并更新 `THIRD_PARTY_NOTICES.md`。
 - **skill**：`engine/skills/mini-apps/SKILL.md` 告诉 Agent 格式和限制，`scripts/check.mjs` 是给 Agent 自查用的检查脚本（`engine/test/mini-apps.test.mjs` 测它）。改了内置的库、能用的能力、文件格式或入口，同一个提交里更新这份 skill。

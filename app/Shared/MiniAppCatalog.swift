@@ -11,6 +11,8 @@ struct MiniAppSummary: Codable, Hashable, Identifiable {
     let icon: String
     /// `#RRGGBB`.
     let color: String
+    /// The app's own icon, a file in `MiniAppCatalog.icons`; nil when it has only the emoji.
+    var image: String?
 }
 
 enum MiniAppCatalog {
@@ -27,10 +29,31 @@ enum MiniAppCatalog {
         return (try? JSONDecoder().decode([MiniAppSummary].self, from: data)) ?? []
     }
 
-    /// Whether the list changed.
+    /// The icons the apps drew themselves, copied where the widget can read them.
+    private static var icons: URL? { fileURL?.deletingLastPathComponent().appending(path: "mini-app-icons", directoryHint: .isDirectory) }
+
+    static func icon(_ app: MiniAppSummary) -> UIImage? {
+        guard let name = app.image, let folder = icons else { return nil }
+        return UIImage(contentsOfFile: folder.appending(path: name).path)
+    }
+
+    /// Whether the list changed. `images` is each app's `icon.png`, by id.
     @discardableResult
-    static func write(_ apps: [MiniAppSummary]) -> Bool {
+    static func write(_ apps: [MiniAppSummary], images: [String: URL] = [:]) -> Bool {
         guard apps != read(), let url = fileURL, let data = try? JSONEncoder().encode(apps) else { return false }
+        if let icons {
+            let files = FileManager.default
+            try? files.createDirectory(at: icons, withIntermediateDirectories: true)
+            let wanted = Set(apps.compactMap(\.image))
+            for name in (try? files.contentsOfDirectory(atPath: icons.path)) ?? [] where !wanted.contains(name) {
+                try? files.removeItem(at: icons.appending(path: name))
+            }
+            for app in apps {
+                guard let name = app.image, let source = images[app.id] else { continue }
+                let target = icons.appending(path: name)
+                if !files.fileExists(atPath: target.path) { try? files.copyItem(at: source, to: target) }
+            }
+        }
         try? data.write(to: url, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
         return true
     }
