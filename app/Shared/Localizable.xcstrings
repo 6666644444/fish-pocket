@@ -111007,42 +111007,42 @@
       },
       "extractionState" : "stale"
     },
-    "首页改成苹果的标签栏，会话、Bot、Mini Apps、探索、设置一点就到。插件、连接器、本机能力、操控手机、远程控制都在「探索」里，搜索放进了会话列表。iPad 和 iPhone Duo 上，标签栏会自动放到顶部或变成侧边栏。" : {
+    "首页改成苹果的标签栏，会话、Bot、Mini Apps、探索一点就到，设置在探索页右上角。插件、连接器、本机能力、操控手机、远程控制都在「探索」里，搜索放进了会话列表。iPad 和 iPhone Duo 上，标签栏会自动放到顶部或变成侧边栏。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The home screen now uses Apple's tab bar, so Sessions, Bot, Mini Apps, Explore and Settings are one tap away. Plugins, Connectors, Device capabilities, Phone Control and Remote Control are all under Explore, and search is in the session list. On iPad and iPhone Duo, the tab bar moves to the top or turns into a sidebar on its own."
+            "value" : "The home screen now uses Apple's tab bar, so Sessions, Bot, Mini Apps and Explore are one tap away, with Settings at the top right of Explore. Plugins, Connectors, Device capabilities, Phone Control and Remote Control are all under Explore, and search is in the session list. On iPad and iPhone Duo, the tab bar moves to the top or turns into a sidebar on its own."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La pantalla de inicio usa ahora la barra de pestañas de Apple: Sesiones, Bot, Miniapps, Explorar y Configuración están a un toque. Complementos, Conectores, Funciones del dispositivo, Control del teléfono y Control remoto están en Explorar, y la búsqueda está en la lista de sesiones. En iPad y iPhone Duo, la barra de pestañas pasa sola arriba o se convierte en una barra lateral."
+            "value" : "La pantalla de inicio usa ahora la barra de pestañas de Apple: Sesiones, Bot, Miniapps y Explorar están a un toque, y Configuración está arriba a la derecha en Explorar. Complementos, Conectores, Funciones del dispositivo, Control del teléfono y Control remoto están en Explorar, y la búsqueda está en la lista de sesiones. En iPad y iPhone Duo, la barra de pestañas pasa sola arriba o se convierte en una barra lateral."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ホーム画面が Apple のタブバーになり、セッション、Bot、ミニアプリ、探索、設定にワンタップで移動できます。プラグイン、コネクタ、デバイス機能、iPhone を操作、リモート操作はすべて「探索」にまとめ、検索はセッション一覧に入りました。iPad と iPhone Duo では、タブバーが自動的に上部に移動するか、サイドバーに切り替わります。"
+            "value" : "ホーム画面が Apple のタブバーになり、セッション、Bot、ミニアプリ、探索にワンタップで移動できます。設定は「探索」の右上にあります。プラグイン、コネクタ、デバイス機能、iPhone を操作、リモート操作はすべて「探索」にまとめ、検索はセッション一覧に入りました。iPad と iPhone Duo では、タブバーが自動的に上部に移動するか、サイドバーに切り替わります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "홈 화면이 Apple 탭 바로 바뀌어 세션, Bot, 미니 앱, 탐색, 설정을 한 번에 열 수 있어요. 플러그인, 커넥터, 기기 기능, iPhone 조작, 원격 제어는 모두 「탐색」에 있고, 검색은 세션 목록에 들어갔어요. iPad와 iPhone Duo에서는 탭 바가 자동으로 위쪽으로 옮겨지거나 사이드바로 바뀌어요."
+            "value" : "홈 화면이 Apple 탭 바로 바뀌어 세션, Bot, 미니 앱, 탐색을 한 번에 열 수 있고, 설정은 「탐색」 오른쪽 위에 있어요. 플러그인, 커넥터, 기기 기능, iPhone 조작, 원격 제어는 모두 「탐색」에 있고, 검색은 세션 목록에 들어갔어요. iPad와 iPhone Duo에서는 탭 바가 자동으로 위쪽으로 옮겨지거나 사이드바로 바뀌어요."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "首页改成苹果的标签栏，会话、Bot、Mini Apps、探索、设置一点就到。插件、连接器、本机能力、操控手机、远程控制都在「探索」里，搜索放进了会话列表。iPad 和 iPhone Duo 上，标签栏会自动放到顶部或变成侧边栏。"
+            "value" : "首页改成苹果的标签栏，会话、Bot、Mini Apps、探索一点就到，设置在探索页右上角。插件、连接器、本机能力、操控手机、远程控制都在「探索」里，搜索放进了会话列表。iPad 和 iPhone Duo 上，标签栏会自动放到顶部或变成侧边栏。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "首頁改成 Apple 的標籤列，對話、Bot、Mini Apps、探索、設定一點就到。外掛、連接器、本機能力、操控手機、遠端控制都在「探索」裡，搜尋放進了對話列表。在 iPad 和 iPhone Duo 上，標籤列會自動移到頂部或變成側邊欄。"
+            "value" : "首頁改成 Apple 的標籤列，對話、Bot、Mini Apps、探索一點就到，設定在探索頁右上角。外掛、連接器、本機能力、操控手機、遠端控制都在「探索」裡，搜尋放進了對話列表。在 iPad 和 iPhone Duo 上，標籤列會自動移到頂部或變成側邊欄。"
           }
         }
       }

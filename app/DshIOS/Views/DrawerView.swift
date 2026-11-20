@@ -289,6 +289,7 @@ struct DrawerView: View {
             withoutAnimation { searchOpen = false }
         } else if style == .sessions, searchActive || !search.isEmpty {
             // The 会话 tab's own field: back from the conversation, the list is whole again.
+            clearFocusedSearchField()
             search = ""
             searchActive = false
         }

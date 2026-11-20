@@ -24,8 +24,12 @@ struct ConversationView: View {
     @State private var model: SessionModel?
     @State private var context = ComposerContext()
     @State private var workbenchOpen = false
-    /// The tab last looked at, in any conversation: the workbench opens where it was left.
-    @AppStorage("dsh.workbench.tab") private var workbenchTab = WorkbenchTab.terminal
+    /// The workbench's tab, kept as the last one looked at in any conversation (`WorkbenchTab.last`).
+    /// A state of this view and not an `@AppStorage`: the binding of one is a new one on every
+    /// pass of this body, so the workbench beside the conversation was set again each time
+    /// (`WorkbenchBeside`), and what it shows was worked out again at every write to the
+    /// defaults, whichever key.
+    @State private var workbenchTab = WorkbenchTab.last
     /// The browser opened full screen from the chat.
     @State private var fullBrowser: BrowserModel?
     /// Interactions swiped away; they stay answerable from the 「等你允许」 line.
@@ -404,6 +408,7 @@ struct ConversationView: View {
             }
         }
         .onChange(of: workbenchOpen) { _, open in if open, workbenchBeside { splitSidebar.makeRoom() } }
+        .onChange(of: workbenchTab) { _, tab in WorkbenchTab.last = tab }
         .focusedSceneValue(\.workbenchCommands, WorkbenchCommands(workbenchCommandsBox, available: !blank && hasTools, toggle: toggleWorkbench, open: openWorkbench))
         // The sheet leaves the background live, so the composer keeps its focus and the
         // keyboard would stay over the sheet; an answer comes first.
@@ -490,6 +495,8 @@ struct ConversationView: View {
     }
 
     private func toggleWorkbench() {
+        // Where it was left, which may have been in another conversation since this one was made.
+        if !workbenchOpen { workbenchTab = .last }
         workbenchOpen.toggle()
     }
 

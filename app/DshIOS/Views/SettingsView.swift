@@ -10,9 +10,45 @@ import WatchConnectivity
 /// The engine card shows here only while the engine is not running. Every page reads the shared
 /// settings mirror, so a write anywhere shows everywhere.
 struct SettingsView: View {
+    /// A page of the 探索 tab, pushed from its gear, rather than a sheet: that tab's navigation
+    /// stack and back button, no ✕. The stack sets the settings look for it (`ExploreTabView`).
+    var pushed = false
+
+    var body: some View {
+        if pushed { SettingsList(pushed: true) } else { SettingsSheet() }
+    }
+}
+
+extension SettingsView {
+    /// A permission preset in the words the app uses everywhere (`{value, name}`).
+    static func permissionName(_ option: JSON) -> String {
+        switch option["value"].string {
+        case "read-only": String(localized: "仅可查看")
+        case "workspace-write": String(localized: "工作区内修改")
+        case "danger-full-access": String(localized: "完全权限")
+        case "auto": String(localized: "自动审查")
+        default: localized(option["name"]) ?? option["value"].string ?? ""
+        }
+    }
+}
+
+/// 设置 as a sheet, with its ✕. `dismiss` is read here, outside the stack, and not by the list:
+/// the list pushes further, and a pushed page that reads it and pushes on freezes the app before
+/// iOS 26 (see `dismisses(when:)`). Pushed from the 探索 tab the list is such a page: there
+/// 插件 and 自动化 never opened and the app had to be killed.
+private struct SettingsSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack { SettingsList(pushed: false).closeButton(dismiss) }
+            // 设置 and every page pushed or presented from it: the system's lists, not the monochrome ones.
+            .settingsStyle()
+    }
+}
+
+private struct SettingsList: View {
     @Environment(AppModel.self) private var app
     @EnvironmentObject private var engine: NodeEngine
-    @Environment(\.dismiss) private var dismiss
     @Environment(\.openSession) private var openSession
     @State private var defaultModel: String?
     @State private var pluginCount: Int?
@@ -27,9 +63,8 @@ struct SettingsView: View {
     @State private var languageChanged = false
     @AppStorage(BackgroundKeeper.continuedKey) private var continuedProcessing = false
     @AppStorage(WidgetSnapshotWriter.showTitlesKey) private var widgetTitles = true
-    /// A page of the 探索 tab, pushed from its gear, rather than a sheet: that tab's navigation
-    /// stack and back button, no ✕. The stack sets the settings look for it (`ExploreTabView`).
-    var pushed = false
+    /// Pushed from the 探索 tab rather than the root of the sheet (`SettingsView.pushed`).
+    let pushed: Bool
 
     private var mirror: SettingsMirror { app.settings }
 
@@ -39,16 +74,6 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        if pushed {
-            page
-        } else {
-            NavigationStack { page }
-                // 设置 and every page pushed or presented from it: the system's lists, not the monochrome ones.
-                .settingsStyle()
-        }
-    }
-
-    private var page: some View {
         List {
             if !engineRunning {
                 Section { EngineCard() }
@@ -100,7 +125,7 @@ struct SettingsView: View {
                 NavigationLink { PluginsView() } label: {
                     row("插件", "puzzlepiece.extension", pluginCount.map { String(localized: "\($0) 个") } ?? "")
                 }
-                NavigationLink { SchedulesView(openSession: openSession) } label: {
+                NavigationLink { SchedulesView(openSession: openSession.map { open in { open($0) } }) } label: {
                     row("自动化", "clock.arrow.2.circlepath", app.scheduleCount.map { String(localized: "\($0) 个") } ?? "")
                 }
             }
@@ -194,7 +219,6 @@ struct SettingsView: View {
         }
         .navigationTitle("设置")
         .navigationBarTitleDisplayMode(pushed ? .inline : .large)
-        .modifier(SettingsClose(shown: !pushed, dismiss: dismiss))
         .alert("重启 App 后生效", isPresented: $languageChanged) {
             Button("好", role: .cancel) {}
         } message: {
@@ -252,7 +276,7 @@ struct SettingsView: View {
             else { Task { await write("permission", ["defaultPreset"], .string(value)) } }
         })) {
             ForEach(permissionOptions, id: \.self) { option in
-                Text(Self.permissionName(option)).tag(option["value"].string ?? "")
+                Text(SettingsView.permissionName(option)).tag(option["value"].string ?? "")
             }
             if !permissionOptions.contains(where: { $0["value"].string == current }) {
                 Text(current).tag(current)
@@ -281,17 +305,6 @@ struct SettingsView: View {
         return continuesTurns
             ? String(localized: "离开 App 后播放无声音频，任务、自动化和开发服务器都不停，会多耗一些电。音频被来电等打断时，进行中的任务仍会继续跑完。")
             : String(localized: "离开 App 后播放无声音频，任务、自动化和开发服务器都不停。会多耗一些电。")
-    }
-
-    /// A permission preset in the words the app uses everywhere (`{value, name}`).
-    static func permissionName(_ option: JSON) -> String {
-        switch option["value"].string {
-        case "read-only": String(localized: "仅可查看")
-        case "workspace-write": String(localized: "工作区内修改")
-        case "danger-full-access": String(localized: "完全权限")
-        case "auto": String(localized: "自动审查")
-        default: localized(option["name"]) ?? option["value"].string ?? ""
-        }
     }
 
     private func load() async {
@@ -669,15 +682,5 @@ private struct ShareAppRow: View {
             Spacer(minLength: 0)
         }
         .padding(.vertical, 4)
-    }
-}
-
-/// The settings sheet's ✕; pushed from the 探索 tab it has the back button instead.
-private struct SettingsClose: ViewModifier {
-    let shown: Bool
-    let dismiss: DismissAction
-
-    func body(content: Content) -> some View {
-        if shown { content.closeButton(dismiss) } else { content }
     }
 }

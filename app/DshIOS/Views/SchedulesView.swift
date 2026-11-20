@@ -759,6 +759,7 @@ private struct SavedPrompt: View {
 struct WebFallbackView: View {
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     var body: some View {
         NavigationStack {
@@ -768,14 +769,22 @@ struct WebFallbackView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItemGroup(placement: .topBarTrailing) {
-                        Menu {
-                            Button("添加到主屏幕", systemImage: "plus.square.on.square") { HomeScreenShortcut.addWeb() }
-                        } label: {
-                            Image(systemName: "ellipsis")
+                        Group {
+                            Menu {
+                                Button("添加到主屏幕", systemImage: "plus.square.on.square") { HomeScreenShortcut.addWeb() }
+                            } label: {
+                                Image(systemName: "ellipsis")
+                            }
+                            .accessibilityLabel("更多")
+                            Button { dismiss() } label: { Image(systemName: "xmark") }
+                                .accessibilityLabel("关闭")
                         }
-                        .accessibilityLabel("更多")
-                        Button { dismiss() } label: { Image(systemName: "xmark") }
-                            .accessibilityLabel("关闭")
+                        // iPhone Duo keeps the bar buttons in the column at its trailing edge, folded and
+                        // open. At a fold SwiftUI puts a new view on each bar item it already had, and with
+                        // the title off the bar that column often goes on holding the old one: the capsule
+                        // is left empty, nothing in it takes a tap, and the page has no other way out. Made
+                        // anew at each fold, the buttons are new items to the column, and it takes those.
+                        .id(ThisDevice.isDuo ? sizeClass : nil)
                     }
                 }
         }

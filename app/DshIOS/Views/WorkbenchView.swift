@@ -13,6 +13,14 @@ enum WorkbenchTab: String, CaseIterable, Identifiable {
         case .context: "上下文"
         }
     }
+
+    /// The tab last looked at, in any conversation: the workbench opens where it was left.
+    static var last: WorkbenchTab {
+        get { UserDefaults.standard.string(forKey: lastKey).flatMap(WorkbenchTab.init) ?? .terminal }
+        set { if newValue != last { UserDefaults.standard.set(newValue.rawValue, forKey: lastKey) } }
+    }
+
+    private static let lastKey = "dsh.workbench.tab"
 }
 
 /// The session's tools in one place: terminal, files, a browser, the changes this

@@ -79,7 +79,7 @@ struct MiniAppScreen: View {
                 // From iOS 26 up under the bar too: the page scrolls beneath the system's see-through
                 // bar and softens there, as the app's own pages do. Before, the bar stays solid.
                 .ignoresSafeArea(.container, edges: Self.underBar ? .vertical : .bottom)
-                .background(Color(uiColor: .systemBackground))
+                .background(page.backdrop ?? Color(uiColor: .systemBackground))
                 // The app's icon until its page is in: the web view's own start is a blank screen.
                 .overlay {
                     if !page.loaded {
@@ -154,6 +154,9 @@ final class MiniAppPage {
     var error: String?
     /// The page has loaded (the launch screen goes).
     var loaded = false
+    /// The page's own background, as WebKit reads it: what shows beside the page where it keeps
+    /// clear of the screen's edges (a phone on its side, iPhone Duo's column of system buttons).
+    var backdrop: Color?
     /// Every error since the page loaded, for the agent.
     private(set) var errors: [String] = []
     @ObservationIgnored weak var webView: WKWebView?
@@ -193,6 +196,9 @@ private struct MiniAppWebView: UIViewRepresentable {
         view.isInspectable = true
         #endif
         page.webView = view
+        context.coordinator.backdrop = view.observe(\.underPageBackgroundColor, options: [.initial, .new]) { [weak page] view, _ in
+            MainActor.assumeIsolated { page?.backdrop = Color(uiColor: view.underPageBackgroundColor) }
+        }
         let url = URL(string: "\(MiniAppServer.scheme)://\(app.id)/")!
         Task {
             if let rules = await LocalNetworkRules.list { configuration.userContentController.add(rules) }
@@ -210,6 +216,8 @@ private struct MiniAppWebView: UIViewRepresentable {
     final class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate {
         let messages: Messages
         let appId: String
+        /// Follows the page's background for `MiniAppPage.backdrop`, while the web view lives.
+        var backdrop: NSKeyValueObservation?
 
         init(page: MiniAppPage, appId: String) {
             messages = Messages(page: page)

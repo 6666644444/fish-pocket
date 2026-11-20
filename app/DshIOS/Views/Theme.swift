@@ -445,6 +445,17 @@ func clearFocusedTextInput() {
     }
 }
 
+/// The same for the system's search field, when code ends its search (a match was picked).
+/// Left alone, the field commits what a Chinese input method was composing as it closes and
+/// writes it back to the binding just emptied: the list stays on the matches, with the field
+/// out of sight. Only a search field: beside a conversation the keyboard may be the composer's.
+@MainActor
+func clearFocusedSearchField() {
+    guard let field = UIResponder.focused as? UISearchTextField else { return }
+    field.unmarkText()
+    field.text = ""
+}
+
 extension UIResponder {
     /// The text view holding the keyboard, if one does (a multi-line SwiftUI field is one).
     @MainActor static var focusedTextView: UITextView? { focused as? UITextView }

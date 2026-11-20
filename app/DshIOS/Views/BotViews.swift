@@ -463,6 +463,7 @@ struct BotHomeView: View {
 
     /// A match picked: the search ends, and the chat opens.
     private func pick(_ route: BotRoute) {
+        clearFocusedSearchField()
         query = ""
         searchActive = false
         if let selection { selection.wrappedValue = route } else { open(route) }
@@ -586,10 +587,13 @@ struct BotHomeView: View {
         }
     }
 
-    /// The fill of the row whose chat is beside the list; the list's own (nil) on the others,
-    /// and where rows push.
+    /// The fill of a row beside the chat: the picked one's mark, clear on the others, as the 会话
+    /// list has it; the list's own (nil) where rows push. Every row beside the chat has one from
+    /// the start: the list keeps up only a background the row had as its cell was made. One that
+    /// first came with the picking was drawn once and left so, and after light turned to dark
+    /// (or back) the picked row stayed light under a name now white.
     private func pickedFill(_ route: BotRoute) -> Color? {
-        selection?.wrappedValue == route ? Palette.bubble : nil
+        selection.map { $0.wrappedValue == route ? Palette.bubble : .clear }
     }
 
     @ViewBuilder
@@ -617,7 +621,9 @@ struct BotHomeView: View {
     private func trailing(sessionId: String) -> some View {
         VStack(alignment: .trailing, spacing: 6) {
             if let date = app.sessions[sessionId]?.updatedAt {
-                Text(date, format: .relative(presentation: .numeric, unitsStyle: .narrow)).font(.caption2).foregroundStyle(Palette.faint)
+                // As the 会话 list says it. The system's relative format counts seconds, which stand still
+                // until the row is drawn again, and a reply stamped just ahead of this clock read "in 0 seconds".
+                Text(DrawerView.relative(date)).font(.caption2).foregroundStyle(Palette.faint)
             }
             if app.completionUnread.contains(sessionId) { Circle().fill(Palette.ink).frame(width: 8, height: 8) }
         }
