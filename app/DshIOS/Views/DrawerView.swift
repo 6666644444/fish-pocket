@@ -57,6 +57,10 @@ struct DrawerView: View {
     /// Open a session in a window of its own, where the system has windows.
     var openInWindow: ((String) -> Void)?
     var style = Style.sidebar
+    /// In the 会话 tab's split view 「已归档」 takes the list's place in its column instead of being
+    /// pushed, and leads back from there (`MainView.sessionsSplit`).
+    var openArchive: (() -> Void)?
+    var closeArchive: (() -> Void)?
 
     @AppStorage("dsh.drawer.groupBy") private var groupBy = GroupBy.workspace
     /// Groups the user opened or closed, as JSON `{workspaceId: Bool}`.
@@ -964,18 +968,31 @@ struct DrawerView: View {
     private var archivedEntry: some View {
         let count = archivedRows.count + remote.listed(archived: true).count
         if count > 0 {
-            NavigationLink(value: Route.archived) {
-                HStack(spacing: 10) {
-                    Image(systemName: "archivebox").font(.system(size: 15)).foregroundStyle(Palette.secondary).frame(width: 22)
-                    Text("已归档").font(.subheadline).foregroundStyle(Palette.ink)
-                    Spacer(minLength: 4)
-                    Text("\(count)").font(.caption).foregroundStyle(Palette.faint)
+            Group {
+                if let openArchive {
+                    Button(action: openArchive) {
+                        archivedLabel(count)
+                            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                } else {
+                    NavigationLink(value: Route.archived) { archivedLabel(count) }
                 }
-                .padding(.leading, 12)
             }
             .padding(.top, 8)
             .plainRow()
         }
+    }
+
+    private func archivedLabel(_ count: Int) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: "archivebox").font(.system(size: 15)).foregroundStyle(Palette.secondary).frame(width: 22)
+            Text("已归档").font(.subheadline).foregroundStyle(Palette.ink)
+            Spacer(minLength: 4)
+            Text("\(count)").font(.caption).foregroundStyle(Palette.faint)
+        }
+        .padding(.leading, 12)
     }
 
     private var archivedPage: some View {
@@ -993,6 +1010,13 @@ struct DrawerView: View {
         .navigationTitle("已归档")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(Palette.background, for: .navigationBar)
+        .toolbar {
+            if let closeArchive {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(action: closeArchive) { Label(Self.sessionsTitle, systemImage: "chevron.backward") }
+                }
+            }
+        }
     }
 
     private func emptyRow(_ text: LocalizedStringKey) -> some View {

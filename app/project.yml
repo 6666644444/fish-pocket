@@ -167,7 +167,11 @@ targets:
           UIColorName: Background
           UIImageName: LaunchMark
           UIImageRespectsSafeAreaInsets: false
-        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        # iPhone: upright only. Turned upright from sideways on a big iPhone, iOS 26 and 27 crashed in
+        # the system's rotation (a tab out of sight held the conversation's inspector), and the phone
+        # held sideways was hardly used. iPhone Duo open, folded and half open, and iPad turned or
+        # resized, never did it.
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
         # iPad: several windows, each on its own conversation (one engine connection).
         UIApplicationSceneManifest:
