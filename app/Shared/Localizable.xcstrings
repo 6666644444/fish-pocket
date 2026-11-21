@@ -5597,6 +5597,46 @@
         }
       }
     },
+    "Bot 和群聊" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bots and Group Chats"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bots y grupos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot とグループチャット"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot 및 그룹 채팅"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot 和群聊"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot 和群組"
+          }
+        }
+      }
+    },
     "Bot 模式" : {
       "localizations" : {
         "en" : {
@@ -5661,6 +5701,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fish Pocket 的引擎需要用到處理器的一組指令，搭載 A10 系列晶片的裝置沒有這組指令，例如 iPad（第 6、7 代）和 iPad Pro（第 2 代）。引擎在這類裝置上一啟動就會閃退，所以這次沒有啟動它。"
+          }
+        }
+      }
+    },
+    "GitHub、Notion 等服务和本机能力" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub, Notion and other services, plus device capabilities"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub, Notion y otros servicios, y funciones del dispositivo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub や Notion などのサービスとデバイス機能"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub, Notion 등 서비스와 기기 기능"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub、Notion 等服务和本机能力"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GitHub、Notion 等服務和本機能力"
           }
         }
       }
@@ -5838,6 +5918,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "一支常駐的 Bot 團隊：可以私訊，可以拉群組一起商量，也能時間到了自己開工。入口在側邊欄。"
+          }
+        }
+      }
+    },
+    "与 AI 共创" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Made with AI"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creadas con IA"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI と一緒に作る"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI와 함께 만들기"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "与 AI 共创"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "與 AI 共創"
           }
         }
       }
@@ -6586,6 +6706,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "分享錄影"
+          }
+        }
+      }
+    },
+    "创作" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crear"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "つくる"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "만들기"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创作"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "創作"
           }
         }
       }
@@ -66066,6 +66226,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "模型、資料集和 Spaces"
+          }
+        }
+      }
+    },
+    "模型、连接方式、语音和外观" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Models, ways to connect, voice, and appearance"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modelos, formas de conexión, voz y apariencia"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "モデル、接続方法、音声、外観"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모델, 연결 방식, 음성, 화면 모드"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型、连接方式、语音和外观"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型、連線方式、語音和外觀"
           }
         }
       }

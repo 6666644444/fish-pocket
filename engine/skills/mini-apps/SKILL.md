@@ -5,7 +5,7 @@ description: Make or change an app for Mini Apps - a small tool or game the user
 
 # Mini apps
 
-The user can keep small web apps in this iOS app: tools, trackers, games. Each one is a folder under `~/apps`. The app lists them under Mini Apps, a tab of its own (a Mini Apps row in the sidebar on an iPad before iOS 18), opens each full screen in a web view of its own, and lets the user put it on the home screen. Opening one does not start you or the engine: it is plain front-end code running in WebKit.
+The user can keep small web apps in this iOS app: tools, trackers, games. Each one is a folder under `~/apps`. The app lists them under Mini Apps, a row near the top of its Explore tab (a Mini Apps row in the sidebar on an iPad before iOS 18), opens each full screen in a web view of its own, and lets the user put it on the home screen. Opening one does not start you or the engine: it is plain front-end code running in WebKit.
 
 ## Where and what
 
@@ -71,7 +71,7 @@ When the app is written, end your reply with a link to it **on a line of its own
 [记账本](fishapp://ledger)
 ```
 
-Mention once that it is under the Mini Apps tab and can go on the home screen from the app's ··· menu. Do not explain the folder layout unless asked.
+Mention once that it is under Mini Apps at the top of the app's Explore tab and can go on the home screen from the app's ··· menu. Do not explain the folder layout unless asked.
 
 ## Changing an app
 

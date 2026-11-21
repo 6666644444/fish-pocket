@@ -6,8 +6,6 @@ import SwiftUI
 /// is, and looks like it: the request is typed there, on this page, and sending it starts the
 /// conversation that makes the app.
 struct MiniAppsPage: View {
-    /// The phone's Mini Apps tab, under a large title; otherwise a sheet with its close button.
-    var asTab = false
     @State private var store = MiniAppStore.shared
     @State private var deleting: MiniApp?
     /// The page's width (the grid's columns and spacing follow from it) and the height it shows
@@ -78,7 +76,7 @@ struct MiniAppsPage: View {
         }
     }
 
-    /// The Mini Apps tab's name and the page's title.
+    /// The page's title, and its row on 探索 and in the iPad's sidebar before iOS 18.
     static var tabTitle: String {
         String(localized: "tab.apps", defaultValue: "Mini Apps", comment: "Tab and page title: the small tools and games the user had the agent make")
     }

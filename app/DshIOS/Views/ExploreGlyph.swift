@@ -7,7 +7,7 @@ import SwiftUI
 ///
 /// Every icon is drawn on a 38-point grid and scaled to `size`.
 struct ExploreGlyph: View {
-    enum Kind { case plugins, connectors, capabilities, phoneControl, remote, watch, web, share }
+    enum Kind { case miniApps, plugins, connectors, phoneControl, remote, watch, web, share, settings }
 
     let kind: Kind
     var size: CGFloat = 38
@@ -17,14 +17,15 @@ struct ExploreGlyph: View {
             context.scaleBy(x: canvas.width / 38, y: canvas.height / 38)
             var pen = Pen(context: context)
             switch kind {
+            case .miniApps: pen.miniApps()
             case .plugins: pen.plugins()
             case .connectors: pen.connectors()
-            case .capabilities: pen.capabilities()
             case .phoneControl: pen.phoneControl()
             case .remote: pen.remote()
             case .watch: pen.watch()
             case .web: pen.web()
             case .share: pen.share()
+            case .settings: pen.settings()
             }
         }
         .frame(width: size, height: size)
@@ -58,6 +59,12 @@ private struct Pen {
         }
     }
 
+    /// A square on a circle, as the Mini Apps tab's symbol was: something made, set on a round.
+    mutating func miniApps() {
+        stroke(dot(15, 15, 10))
+        fill(box(16, 16, 17, 17, 4.5))
+    }
+
     /// A block with a socket in its side, and the piece on its way in.
     mutating func plugins() {
         stroke(Path { path in
@@ -82,13 +89,6 @@ private struct Pen {
         stroke(dot(10, 27, 4))
         stroke(dot(28, 27, 4))
         fill(dot(19, 11, 4.5))
-    }
-
-    /// This phone, and what is on it.
-    mutating func capabilities() {
-        stroke(box(11, 5, 16, 28, 4.5))
-        fill(dot(19, 15.5, 4.5))
-        stroke(lines([(15, 24.5), (23, 24.5)], [(15, 28), (20, 28)]))
     }
 
     /// A phone, and a tap landing on it.
@@ -119,6 +119,13 @@ private struct Pen {
         context.fill(dot(9.6, 10.9, 1).union(dot(13.2, 10.9, 1)), with: ink)
         fill(box(9.5, 18.5, 9, 8, 2.2))
         stroke(lines([(22.5, 20), (28.5, 20)], [(22.5, 24.5), (26, 24.5)]))
+    }
+
+    /// Two sliders, one of them being set.
+    mutating func settings() {
+        stroke(lines([(5, 12), (19, 12)], [(29, 12), (33, 12)], [(5, 26), (9, 26)], [(19, 26), (33, 26)]))
+        stroke(dot(24, 12, 4.5))
+        fill(dot(14, 26, 4.8))
     }
 
     /// A tray, and what leaves it.
