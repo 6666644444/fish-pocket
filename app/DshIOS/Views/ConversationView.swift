@@ -1072,12 +1072,18 @@ private struct TimelineFollow: View {
     let ownMessage: () -> Void
     let turnStarted: () -> Void
 
+    private var queued: [String] {
+        model.composer.queueRows.map(\.id) + model.composer.steerRows.map(\.id) + model.composer.visiblePending.filter { $0.placement != .transcript }.map(\.id)
+    }
+
     var body: some View {
         Color.clear
             .onChange(of: model.items.last?.id) { _, _ in
                 if case .user? = model.items.last { ownMessage() }
             }
             .onChange(of: model.composer.bubbles.last?.id) { _, id in if id != nil { ownMessage() } }
+            // A message queued or steered while the agent works shows at the foot: brought into view.
+            .onChange(of: queued) { old, new in if !Set(new).subtracting(old).isEmpty { ownMessage() } }
             .onChange(of: model.running) { _, running in if running { turnStarted() } }
     }
 }
@@ -1152,6 +1158,8 @@ private struct TimelineList: View {
                 }
                 .modifier(Awaited(unseen: sending))
             }
+            // Messages waiting for the next turn, each with 「插话」: a view of its own, the queue being a projection.
+            QueuedMessages(model: model)
         }
         .padding(.horizontal, 20)
         .padding(.top, 20)
