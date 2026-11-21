@@ -42,7 +42,7 @@ While you drive another app, the user is looking at that app, not at this conver
 - you stop early because of an error or because the service went away.
 
 ```bash
-python3 ~/.ictrl/bin/ictrl_rpc.py --host 127.0.0.1:8200 call open_url "{\"url\":\"${FISH_POCKET_URL_SCHEME:-dsh}://\"}"
+python3 ~/.ictrl/bin/ictrl_rpc.py --host 127.0.0.1:8200 call open_url "{\"url\":\"${FISH_POCKET_URL_SCHEME:-fishpocket}://\"}"
 ```
 
 Use the service's `open_url`, not your own `open_url` tool: yours only lets a few schemes through. `FISH_POCKET_URL_SCHEME` is this app's own link scheme. Return first, then ask or report, in the same turn; do not end a turn while another app is still in front.

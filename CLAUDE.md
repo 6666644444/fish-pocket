@@ -130,6 +130,15 @@
 
 写法上保持现在的风格：英文、短句、先说能不能用再说替代办法；「Commands that exist」之外的命令都会被当成不存在，所以新增命令一定要列进去。
 
+## 回复里的公式
+
+公式先用 SwiftMath 排（同步，`Views/MathFormula.swift`），它排不了的交给 KaTeX（`Views/MathKaTeX.swift`）：带中文的、`\xrightarrow`、公式中间的 `\boxed`、`\overset`、`\underbrace` 等等。网页版所有公式都用 KaTeX，所以原生用同一个版本，排出来和网页版一样。
+
+- KaTeX 在一个不显示的网页里跑（`Math/MathPage.html`），每条公式由 WebKit 画成 PDF 再转成图，按源码和字号缓存。第一次出现时要等一下，这期间显示源码。
+- 行内公式按 KaTeX 允许断行的位置（关系符、运算符之后）切成几段图，段间插零宽空格，长公式才能像网页版一样折行。
+- 公式图平时按文字颜色染色显示。带自己颜色的（`\color`、`\colorbox`，以及 KaTeX 标红的不支持命令）一律交给 KaTeX，按原色显示，深色模式另画一份；彩色底框里没指定颜色的字，按底色深浅选深色或浅色墨水。
+- KaTeX 的文件在 `Math/KaTeX`，由 `scripts/build-katex.sh` 生成并提交。**升级 `@deepseek-ai/dsh` 后看一眼网页版用的 KaTeX 版本**（`dsh-web-frontend/dist/assets/vendor-*.js` 里的 `"0.x.y"`），变了就改脚本里的版本重跑，更新 `THIRD_PARTY_NOTICES.md`，再用 `-dshOpen timeline` 看一遍样例里的公式，iOS 17 也看（字体没加载完时 iOS 17 会漏画字符）。
+
 ## 浏览器能力
 
 Agent 用的 `browser` 工具有哪些动作、各要什么参数、给模型看的说明，全写在 `app/DshIOS/Browser/BrowserCatalog.swift` 一处：引擎按它生成工具（`describe`），原生层按它放行动作，参数也按它检查。
@@ -147,7 +156,7 @@ Agent 用的 `browser` 工具有哪些动作、各要什么参数、给模型看
 - **开发版和发布版**：Agent 写的文件是开发版；用户打开的是发布版，即应用文件夹里的 `.build`：所有文件的完整快照，JSX、TS 已经编译好，打开时不编译、不依赖系统会清理的缓存。发布在 Agent 一轮结束（会话列表里不再有运行中的会话）、读应用列表、第一次打开时进行（`MiniAppPublisher.swift`），按文件的路径、大小、修改时间判断是否过期；有 Agent 在跑时，打开的是上一次发布的版本，不会打开改到一半的应用。上一版留在 `.build-previous`。
 - **加载**：`app/DshIOS/MiniApps/MiniAppServer.swift` 用自定义协议 `fishapp://<id>/` 提供文件，只给本应用文件夹里的东西；用户那边提供发布版，Agent 浏览器那边提供开发版、返回时用 Sucrase（JavaScriptCore 里跑，没有 JIT，所以只在创作时编译）编译；页面开头注入 import map（`react` 等指向内置的 React）和错误上报脚本。
 - **隔离**：每个应用一个独立的 `WKWebsiteDataStore`（按 id 派生），删应用时一起删；能联网，但用内容规则拦掉 localhost、127.x 等本机地址；不开放相机、麦克风等本机能力。
-- **入口**：「Mini Apps」Tab（iPhone 都有，iPad 从 iOS 18 起有；iOS 17 的 iPad 侧边栏是「Mini Apps」一行）、聊天里单独一行的 `[名字](fishapp://<id>)` 链接会显示成卡片、`dsh://app/<id>` 链接、「Mini Apps」小组件（`app/LiveActivity/MiniAppsWidget.swift`）、快捷指令里的「打开 Mini App」。
+- **入口**：「Mini Apps」Tab（iPhone 都有，iPad 从 iOS 18 起有；iOS 17 的 iPad 侧边栏是「Mini Apps」一行）、聊天里单独一行的 `[名字](fishapp://<id>)` 链接会显示成卡片、`fishpocket://app/<id>` 链接（旧的 `dsh://app/<id>` 也认）、「Mini Apps」小组件（`app/LiveActivity/MiniAppsWidget.swift`）、快捷指令里的「打开 Mini App」。
 - **叫法**：界面上叫 Mini App。Tab、页面标题、小组件这类指一整组的地方用复数 Mini Apps，指其中一个时用单数 Mini App（「删除 Mini App」「3 个 Mini App」）。简体、繁体中文都直接写英文，不译成「小工具」「應用」：繁体里「小工具」是系统对小组件的叫法，「应用」又会让人以为是我们提供的 App；其他语言用各自的写法（Miniapps、ミニアプリ、미니 앱）。替用户写好、发给 Agent 的话（「帮我做一个记账小工具」）照口语写，不受这条限制。
 - **图标**：默认是 `app.json` 里的 emoji 配底色；文件夹里有 `icon.png`（方形、铺满、不带圆角）时用它。小组件读不到应用文件夹，主 App 写 `mini-apps.json` 时把图标一起拷进 App Group 的 `mini-app-icons/`。示例的图标是 `icon.svg` 画的，改了要重新导出同目录的 `icon.png`（360 像素）。
 - **全屏页的顶栏**：iOS 26 起网页一直铺到系统的透明顶栏下面，滚上去的内容由系统虚化（`MiniAppScreen.swift` 的 `PageWebView`）；页面仍从顶栏下方开始排，`100dvh` 是顶栏以下的高度，顶栏后面是页面自己的底色。更早的系统顶栏是实底的，网页不铺上去。
@@ -193,12 +202,21 @@ App 给系统提供四个操作：新对话、打开 Bot、打开 Mini App、查
 
 别的 App 点「分享」选 Fish Pocket，内容进新对话、某个 Bot 或群聊的输入框，不自动发送。扩展是 `app/ShareExtension`（target `DshShare`），引擎不在扩展里，扩展什么都不发。
 
-- 扩展一打开就把文字、链接、图片、文件拷进 App Group 的 `Share/inbox/<id>/`；用户选好去处后写下 `delivery.json`，再打开 `dsh://share/<id>`。App 收到后把文件挪进自己的临时目录，交给对应会话的输入框（`Shared/ShareInbox.swift`、`MainView.receive`）。
+- 扩展一打开就把文字、链接、图片、文件拷进 App Group 的 `Share/inbox/<id>/`；用户选好去处后写下 `delivery.json`，再打开 `fishpocket://share/<id>`。App 收到后把文件挪进自己的临时目录，交给对应会话的输入框（`Shared/ShareInbox.swift`、`MainView.receive`）。
 - 系统没让扩展拉起 App 时，内容留在收件箱里，App 下次回到前台会自己取走；超过半小时没取的直接清掉。
 - 扩展里列的 Bot 和群聊来自 App 写的 `Share/targets.json` 和 `Share/avatars/`（`ShareTargetsWriter`）：顺序同 Bot 页，隐藏的不列，头像是 App 按自己的画法渲染好的图，群头像深浅色各一张。扩展不编译 `BotCharacter`，改了头像画法不用动扩展。
 - 扩展的文案在 `app/Shared/Localizable.xcstrings`，`scripts/sync-strings.sh` 会一起收进来。扩展不认 `NSAccentColorName`，主色在 `ShareView` 里显式指定。
 - 发行签名多了一个 bundle ID：`com.wsw.dsh-ios.Share`，要有 App Group。
-- 拉起 App 的链接前缀是工程变量 `DSH_URL_SCHEME`（正式版 `dsh`）。用别的 Bundle ID 并排装测试包时，`DSH_APP_GROUP` 和它都要换成测试包自己的，不然链接可能打开正式包，正式包读不到测试包的 App Group。
+- 拉起 App 的链接前缀是工程变量 `DSH_URL_SCHEME`（正式版 `fishpocket`），App 生成的链接都用它。用别的 Bundle ID 并排装测试包时，`DSH_APP_GROUP` 和它都要换成测试包自己的，不然链接可能打开正式包，正式包读不到测试包的 App Group。
+
+## 链接前缀：`fishpocket`，`dsh` 只作兼容
+
+App 的链接前缀是 `fishpocket://`（`DSH_URL_SCHEME`）。早先用的 `dsh://` 太通用，可能和别的 App（比如 DeepSeek 官方的 DSH App）撞上，几个 App 注册同一个前缀时 iOS 打开哪一个是不确定的，所以换成了独占的前缀。路由都在 `app/Shared/DshLink.swift`：`session`、`new`、`share`、`app`、`web`。
+
+- **`dsh` 永久保留，只用来兼容。**它写在 `DSH_LEGACY_URL_SCHEME`，主 App 同时注册两个前缀，`DshLink(url:)` 两个都认，`handlesExternalEvents` 两个都交给已开的窗口。用户桌面上已有的网页版和 Mini App 图标网址里写死了 `scheme=dsh`，快捷指令、NFC 自动化、旧聊天记录里也可能有 `dsh://`，所以不能删。
+- **新生成的链接一律用 `fishpocket`**（`DshLink.scheme`）：小组件、灵动岛、分享扩展、主屏幕图标（官网 `/add-to-home/` 的 `scheme=`）、iCTRL 回调、引擎拿到的 `FISH_POCKET_URL_SCHEME`。不要在代码、skill 或文案里新写 `dsh://`。
+- **并排装的测试包把 `DSH_LEGACY_URL_SCHEME` 设成空**，否则它也注册 `dsh`，会抢走正式包的旧链接。空值时 `CFBundleURLSchemes` 里留下一个空字符串，系统不当成前缀，`DshLink` 也会跳过它。
+- 官网 `/add-to-home/` 页面按 `scheme=` 跳回 App，它对前缀的校验要同时认 `fishpocket`、`dsh` 和测试包的前缀。
 
 ## Bot：只用 DS Bot 的后端
 
@@ -233,6 +251,7 @@ Bot 没有照片时显示的角色是 App 自己画的，形状和动作都写�
 
 iOS 18 起，iPhone、iPhone Duo、iPad 共用一套系统 `TabView`，样式是 `sidebarAdaptable`（`MainView.tabLayout`）：「会话 · Bot · Mini Apps · 探索」四个 Tab，设置是探索页的一页，从它右上角的齿轮进入（`SettingsView(pushed: true)`），窄屏在底部，宽屏由系统放到顶部或换成侧边栏，Duo 展开时是右侧的竖条。宽窄切换（Duo 开合、iPad 拖窗口）不换布局，Tab 保持不变。iOS 17 的 iPhone 用同样四个 Tab，只是换成旧写法（`TabView` 加 `.tabItem`，`MainView.phoneTabLayout`），Tab 栏始终在底部，页面和行为与 iOS 18 起的一致。iOS 17 的 iPad 仍是旧布局：常驻侧边栏，窄窗口是抽屉（`DrawerView` 的 `sidebar` 样式，`MainView.split` / `drawerLayout`）；旧写法的 Tab 栏在 iPad 上也只能放底部，所以没改。iPhone Duo 只有 iOS 27，不涉及旧版本。
 
+- **iPhone 只支持竖屏**（`app/project.yml` 的 `UISupportedInterfaceOrientations`，iPad 四个方向照旧）。大屏 iPhone 横屏时会话 Tab 是分栏，会话页旁边的工作台在 iOS 26 起用的是系统的 inspector；切到别的 Tab 再转回竖屏，后台那个 inspector 在系统的转屏动画里被重排，App 闪退（`UISplitViewController internal inconsistency: unexpected column dimension for resizing`，栈里没有我们的代码）。横屏用得少，所以直接不支持。Duo 开合、Duo 展开时转动、iPad 转屏和拖窄窗口都实测不会触发；Duo 展开时系统不理会方向锁，照样会转。不要再把 iPhone 横屏打开，要开先解决这个闪退。
 - **会话 Tab**：窄屏是列表，点开会话推入新页面；宽屏是列表和会话并排的分栏（`sessionsSplit`），没有选中时自动开一个空白会话，和旧分栏一样。这层分栏照旧分栏的规矩：列宽固定、从 27.1 起保留系统侧栏按钮（`systemSidebarButton`，否则 Duo 会卡死）、Duo 半开时避开折痕（`PastTheFold`）。
 - **新增一个全局入口**（像插件、连接器、本机能力、操控手机、远程控制、网页版这类），要同时加到 `ExploreTabView` 和 `DrawerView` 侧边栏的那几行里：后者是 iOS 17 上 iPad 的入口，漏了 iOS 17 的 iPad 用户就找不到。
 - **文案和给模型的说明里写入口位置时**，写成「探索 → …（iOS 17 的 iPad 上在侧边栏）」。原生拒绝消息（`native/ios-native`）和 ios-environment skill 里用的是英文 "the app's Explore tab (in the sidebar on an iPad before iOS 18)"。
@@ -246,6 +265,7 @@ iOS 18 起，iPhone、iPhone Duo、iPad 共用一套系统 `TabView`，样式是
 - **iPadOS 18 上 Tab 栏展开成侧边栏时会盖住分栏左侧的列表**（系统不给分栏让位置；iPadOS 26 起是三栏并排）。这时会话页左上角的列表按钮改为把侧边栏收回 Tab 栏（`TabSidebar.foldOffList`），列表就露出来了。
 - **分栏左侧的列表不用系统的选中（`List(selection:)`）。**列表拿到焦点后（切走 Tab 再切回来），系统用主色画选中行，而主色是写名字用的墨色：深色模式下整行变白、名字看不见。Bot 列表在并排时每行是一个按钮，自己设置选中的路由，选中行的底色用 `listRowBackground` 画（`BotHomeView.row`、`pickedFill`），和会话列表的做法一样。并排时每一行从一开始就给底色，没选中的给透明，不给 nil：行建好以后才第一次出现的底色，列表只画一次就不再更新，切换深浅色后选中行会停在原来的外观。不要用给列表改主色的办法去盖系统的选中色，主色会漏到同一栏的工具栏按钮上（iOS 18 上「⋯」会看不见）。
 - 窄屏时会话、Bot 聊天、群聊推入后 Tab 栏照样显示，输入框在它上面，所以聊天页底部不要再放别的东西（「内容由 AI 生成」放在标题下面，Bot 和群聊接在标题第二行后面，见 `AILabelledSubtitle`）。iPhone 上 Tab 栏只显示图标，文字只给读屏用；iPad 保留文字，因为 iPadOS 顶部的 Tab 栏只显示文字。
+- **分栏左侧的列表栏里不要放会推入页面的链接，也不要给这一栏套 `NavigationStack`。**左栏没有自己的栈时，`NavigationLink(value:)` 推出的页面会被系统放进右侧会话栏，那里没有返回按钮，点左侧会话也换不回来（#284，「已归档」就是这样）。给左栏套一层栈也不行：在 iPadOS 18 上，从推入的页面返回后，左栏会多出系统侧栏按钮，`toolbar(removing:)` 去不掉；用它把列表收起再展开，标题、视图菜单、新会话按钮会一直消失到重启。所以「已归档」改为在左栏里原地换内容（`MainView.listShowsArchive`），自己画返回按钮。窗口变窄、切走会话 Tab 时把它换回列表：已归档页还在时分栏被重建，列表随后才出现，iPadOS 18 会把列表的搜索框收进导航栏。以后往左栏再加二级页面，照这个做，并在 iPadOS 18 上验证：进出几次、收起展开列表、横竖来回转、切 Tab 再切回来，看标题行和搜索框是否都在。
 - **并排在会话旁边的面板（工作台）不要自带 `NavigationStack`。**它已经在会话所在的导航栈里，再套一层会被 SwiftUI 并进外层的栈，连路径一起接管：外层是 Bot 页那种定类型路径时，路径下次变化就闪退（`AnyNavigationPath.Error.comparisonTypeMismatch`，TestFlight 上 iPad 的闪退就是它）；不闪退的布局里，之后推入的页面不显示。面板里的下级页面用 `NavigationLink { 页面 }` 直接推到会话的栈上，不用按值跳转（`NavigationLink(value:)`），值的类型和外层路径对不上。弹出层里的面板是另一棵视图树，可以有自己的栈（`WorkbenchView.beside`）。
 - **iOS 17 的 iPad 分栏详情栏里轮流出现的几个栈，路径要是同一种。**详情栏按状态放插件、Bot、会话三个栈之一，系统把它们当成同一个栈，换栈时会比较前后两个路径：Bot 栈带 `[BotRoute]` 路径、另两个不带路径时类型对不上，App 闪退（`AnyNavigationPath.Error.comparisonTypeMismatch`；在 Bot 页点侧边栏里另一条会话必现）。所以 Bot 栈在这里把路径包成 `NavigationPath` 交给系统（`MainView.botStackInSplit`）。路径同类之后，系统换栈时会把上一个栈里用链接推入的页面留下来（插件下级页盖在 Bot 列表上），所以换栈时先把详情栏退回根页（`SplitDetail.popToRoot`）。以后往详情栏里再加一个栈，也照这两条做，并在 iPadOS 17 上验证：Bot 页点另一条会话；插件下级页开着时点「Bot」。
 

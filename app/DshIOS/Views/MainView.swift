@@ -44,6 +44,8 @@ struct MainView: View {
     @State private var explorePath: [ExploreTabView.Route] = []
     /// The 会话 tab's own split view, where it is wide: the list can make way for the workbench.
     @State private var sessionsColumns = NavigationSplitViewVisibility.all
+    /// 「已归档」 in the list's place, in that split view.
+    @State private var listShowsArchive = false
     /// The Bot tab's, as the 会话 tab's: the Bot list beside the chat.
     @State private var botColumns = NavigationSplitViewVisibility.all
     @State private var drag: CGFloat = 0
@@ -74,7 +76,7 @@ struct MainView: View {
     /// The launch went back to a Bot page: the blank conversation made under it does not take its place.
     @State private var launchedUnderBot = false
 
-    /// A `dsh://` link this window received (`RootView`), until it is followed.
+    /// A `fishpocket://` link this window received (`RootView`), until it is followed.
     @Binding private var link: LinkRequest?
 
     /// `session`: the one this window opened on, when it opened on one.
@@ -285,6 +287,10 @@ struct MainView: View {
             guard usesTabs else { return }
             botOpen = tab == .bot
             app.currentSession = shownSession
+            // Away from the 会话 tab, the archive leaves the list's place: back, the tab shows the list.
+            // Shown again over the archive, iPadOS 18 put the list's search field away once the list
+            // came back.
+            if tab != .sessions { listShowsArchive = false }
         }
         .onChange(of: botOpen) { _, open in if usesTabs, open { tab = .bot } }
         // Back to the list (or the archive) on the 会话 tab: no conversation on screen any more.
@@ -476,6 +482,10 @@ struct MainView: View {
             sessionsColumns = .all
             botColumns = .all
         }
+        // Narrow, the archive leaves the list's place: the split view made again starts on the list.
+        // Made with the archive in front and the list after it, iOS 18 put the list's search field
+        // away until the list was pulled down.
+        if size != .regular { listShowsArchive = false }
     }
 
     /// `selection` on the tab bar: a session is pushed on the 会话 tab, in front; none, it is popped.
@@ -865,7 +875,7 @@ struct MainView: View {
 
     private var drawer: some View { drawer(.sidebar) }
 
-    private func drawer(_ style: DrawerView.Style) -> some View {
+    private func drawer(_ style: DrawerView.Style, openArchive: (() -> Void)? = nil, closeArchive: (() -> Void)? = nil) -> some View {
         DrawerView(
             selection: selection,
             workspace: workspace,
@@ -879,7 +889,9 @@ struct MainView: View {
             openSignIn: { sheet = .signIn },
             searchRequest: searchRequest,
             openInWindow: supportsMultipleWindows ? { openWindow(id: DshIOSApp.window, value: SessionWindow(session: $0)) } : nil,
-            style: style
+            style: style,
+            openArchive: openArchive,
+            closeArchive: closeArchive
         )
     }
 
@@ -963,17 +975,25 @@ struct MainView: View {
     /// split view's: with none selected (at launch, after archiving) a blank one opens.
     private var sessionsSplit: some View {
         NavigationSplitView(columnVisibility: $sessionsColumns) {
-            drawer(.sessions)
-                .navigationDestination(for: DrawerView.Route.self) { route in
-                    switch route {
-                    case .archived: drawer(.archived)
-                    case .session(let id): pushedConversation(id)
-                    }
+            // 「已归档」 takes the list's place in its column, with a way back, and the conversation
+            // beside it stays. As a link it went to the conversation's column, and nothing took it
+            // away again: no back button, and a session picked in the list did not show (#284).
+            // Not pushed on a stack of the column's own: back from there iPadOS 18 put the system's
+            // sidebar button in the list's bar for good (`toolbar(removing:)` no longer took it
+            // away), and the list put away with it came back with an empty bar.
+            Group {
+                if listShowsArchive {
+                    drawer(.archived, closeArchive: { withAnimation(.snappy(duration: 0.3)) { listShowsArchive = false } })
+                        .transition(.move(edge: .trailing))
+                } else {
+                    drawer(.sessions, openArchive: { withAnimation(.snappy(duration: 0.3)) { listShowsArchive = true } })
+                        .transition(.move(edge: .leading))
                 }
-                // Widths as the split view's (`split`): a width that follows the fold hangs it.
-                .navigationSplitViewColumnWidth(min: 280, ideal: 320, max: 360)
-                .modifier(SidebarToggle(system: systemSidebarButton))
-                .modifier(BelowFloatingTabBar())
+            }
+            // Widths as the split view's (`split`): a width that follows the fold hangs it.
+            .navigationSplitViewColumnWidth(min: 280, ideal: 320, max: 360)
+            .modifier(SidebarToggle(system: systemSidebarButton))
+            .modifier(BelowFloatingTabBar())
         } detail: {
             NavigationStack {
                 if let selection { pushedConversation(selection) } else { conversation(openDrawer: nil) }
@@ -1181,7 +1201,7 @@ struct MainView: View {
         }
     }
 
-    /// `dsh://session/<id>` opens the session; `dsh://new` a new conversation with the keyboard up,
+    /// `fishpocket://session/<id>` opens the session; `fishpocket://new` a new conversation with the keyboard up,
     /// once the workspaces are known and the launch's own blank conversation is in place.
     private func follow(_ link: DshLink) async {
         // Taken already (by another window, or found waiting as the app came to the front): nothing to do.

@@ -48,6 +48,11 @@ struct RemoteComposer: View {
                         .font(.callout)
                         .lineLimit(1...5)
                         .focused($focused)
+                        .returnKeySends(focused: focused) {
+                            guard !empty, model.canSend || model.sendWaits, reading.isEmpty else { return }
+                            Haptics.tap()
+                            Task { await model.send() }
+                        }
                         .inkTint()
                         .padding(.vertical, 11)
                         // Down to the bar's own edges.

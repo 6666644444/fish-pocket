@@ -156,7 +156,7 @@ final class AppModel {
     var pendingPrompts: [String: String] = [:]
     /// Files another app shared, waiting for a session's composer to attach them.
     var pendingFiles: [String: SharedFiles] = [:]
-    /// Sessions whose composer takes the keyboard when it appears (`dsh://new`).
+    /// Sessions whose composer takes the keyboard when it appears (`fishpocket://new`).
     var pendingFocus: Set<String> = []
     /// A session to open in the main view (set through `open(session:)`; the root view consumes it).
     var openRequest: (id: String, token: UUID)?
