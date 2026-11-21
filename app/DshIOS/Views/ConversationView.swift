@@ -1283,8 +1283,10 @@ private struct TimelineRow: View, Equatable {
             .frame(maxWidth: .infinity, alignment: .center)
         case .maxTokens:
             MaxTokensNotice(model: model)
-        case .credential(_, let problem):
-            CredentialNotice(id: item.id, problem: problem, model: model)
+        case .credential(_, let problem, let reason):
+            CredentialNotice(id: item.id, problem: problem, reason: reason, model: model)
+        case .quota(_, let text):
+            QuotaNotice(id: item.id, text: text, model: model)
         case .questionReply(let reply):
             QuestionReplyBubble(reply: reply)
         case .trigger(let trigger):

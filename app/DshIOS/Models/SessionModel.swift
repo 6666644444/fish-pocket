@@ -171,16 +171,14 @@ final class SessionModel {
             if subagentAddress == nil {
                 PhoneRecorder.shared.observe(event, session: sessionId, request: items.lastUserText)
             }
-            // Only a live turn end prompts for quota or support; history replays never do.
+            // Only a live turn end prompts for credentials or support; history replays never do.
             if event["type"].string == "turn/end" {
                 if let failure = TurnFailure(reason: event["data"]["reason"]) {
+                    // Out of balance is the conversation's card to say (QuotaNotice), never a popup:
+                    // only re-read the balances it offers to top up.
                     if failure.isQuota {
-                        // Fish Pocket credits are topped up in the app; DeepSeek balances on Platform.
-                        if modelCatalog?.selection(self)?.provider == FishPocketAPI.provider {
-                            app.fishPocket.reportQuota()
-                        } else {
-                            app.account.reportQuota(code: failure.code ?? "QUOTA")
-                        }
+                        if app.fishPocket.signedIn { Task { await app.fishPocket.refresh() } }
+                        if failure.code == "ACCOUNT_QUOTA" { Task { await app.account.refreshDetails() } }
                     }
                     // A key that stopped working is the conversation's card to explain; none at all is the first step.
                     if failure.credentialProblem == .missing {

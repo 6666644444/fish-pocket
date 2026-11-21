@@ -49,9 +49,8 @@ final class AccountModel {
     private(set) var balance: JSON?
     /// Unread Platform notifications, newest first; one card shows at a time.
     private(set) var notifications: [AccountNotification] = []
-    /// One-shot shell notices: a toast line, or the no-balance prompt.
+    /// One-shot shell notice: a toast line.
     var toast: String?
-    var quotaPrompt = false
 
     @ObservationIgnored private var watchTask: Task<Void, Never>?
     @ObservationIgnored private var detailsGeneration = 0
@@ -154,7 +153,6 @@ final class AccountModel {
             dismissed = []
             pollTask?.cancel()
             pollTask = nil
-            quotaPrompt = false
             return
         }
         if !wasSignedIn { pollNotifications() }
@@ -315,15 +313,6 @@ final class AccountModel {
         default: break
         }
     }
-
-    /// A live turn ended on `QUOTA`/`ACCOUNT_QUOTA`: an account route asks to top up, anything else is a toast.
-    func reportQuota(code: String) {
-        if code == "ACCOUNT_QUOTA", signedIn, topUpURL != nil {
-            quotaPrompt = true
-        } else {
-            toast = String(localized: "当前请求的额度已用尽")
-        }
-    }
 }
 
 /// Platform Web's balance text: two decimals rounded down, grouped digits, and
@@ -353,10 +342,12 @@ private func grouped(_ value: Decimal, _ rounding: NSDecimalNumber.RoundingMode)
 struct TurnFailure {
     let code: String?
     let message: String
+    /// The provider's own words, as the engine recorded them.
+    let raw: String
 
     /// `reason` of a `turn/end`: a recorded error, a sign-out abort, or a turn closed by an engine restart.
     init?(reason: JSON) {
-        let code: String?, raw: String
+        var code: String?, raw: String
         switch reason["kind"].string {
         case "error":
             code = reason["error"]["code"].string
@@ -370,7 +361,11 @@ struct TurnFailure {
         default:
             return nil
         }
+        // new-api and one-api refuse an exhausted balance with 401/403, which the engine reads as a
+        // bad key. Their fixed codes and wording say otherwise; anything less certain stays as it is.
+        if code == "AUTH", Self.relayQuotaMarkers.contains(where: raw.contains) { code = "QUOTA" }
         self.code = code
+        self.raw = raw
         switch code {
         case "ACCOUNT_SIGNED_OUT": message = String(localized: "任务已因退出 DeepSeek 登录而停止。")
         case "INTERRUPTED": message = String(localized: "DSH 进程在本轮完成前退出（例如被强制结束、崩溃或关闭超时），重新启动后本轮已中止。未完成的工具调用结果未知。")
@@ -391,6 +386,21 @@ struct TurnFailure {
     }
 
     var isQuota: Bool { code == "QUOTA" || code == "ACCOUNT_QUOTA" }
+
+    /// What the provider said: the `message` of the body the engine quotes ("401: {…}"), else the text as is.
+    var providerMessage: String {
+        if let start = raw.firstIndex(of: "{"),
+           let body = try? JSONDecoder().decode(JSON.self, from: Data(raw[start...].utf8)),
+           let said = body["message"].string ?? body["error"]["message"].string, !said.isEmpty {
+            return said
+        }
+        return raw.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    /// The balance errors of the two common open-source relays, word for word: new-api's and
+    /// one-api's `insufficient_user_quota`, new-api's `pre_consume_token_quota_failed`, and
+    /// one-api's token message.
+    private static let relayQuotaMarkers = ["insufficient_user_quota", "pre_consume_token_quota_failed", "该令牌额度已用尽"]
 
     /// The turn never reached a model for want of a working credential.
     enum CredentialProblem: Hashable { case missing, invalid }

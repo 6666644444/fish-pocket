@@ -68,7 +68,7 @@ final class FishPocketAccount {
     private(set) var tokensPerCredit: (input: Int, output: Int)?
     /// A pack purchase in progress.
     private(set) var purchasing: String?
-    /// The conversation ran out of credits: offer the packs.
+    /// The packs, about buying more: opened from a conversation's out-of-balance card.
     var quotaPrompt = false
     var toast: String?
 
@@ -405,11 +405,9 @@ final class FishPocketAccount {
         }
     }
 
-    /// A live turn on the `fish-pocket` route ended for lack of credits.
-    func reportQuota() {
-        quotaPrompt = true
-        Task { await refresh() }
-    }
+    /// Whether a conversation that ran out of balance may offer Fish Pocket credits: only in the
+    /// App Store build, where they can be bought (TestFlight cannot use in-app purchase).
+    var offeredOnQuota: Bool { available && AppDistribution.channel == .appStore }
 }
 
 /// The device name shown next to its runtime key on the server (e.g. "iPhone").
