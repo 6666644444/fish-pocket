@@ -7634,6 +7634,40 @@
         }
       }
     },
+    "在说" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speaking"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hablando"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "話しています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "말하는 중"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在說"
+          }
+        }
+      }
+    },
     "在输入框的「+」里打开「智能体团队协作」，复杂的任务会拆给多个智能体，用一张共享任务板分工推进。效果更好，token 也用得更多。" : {
       "localizations" : {
         "en" : {
@@ -10395,6 +10429,40 @@
         }
       }
     },
+    "开通「豆包流式语音识别模型 2.0」和「豆包语音合成模型 2.0」。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable “Doubao Streaming Speech Recognition Model 2.0” and “Doubao Speech Synthesis Model 2.0”."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activa «Doubao Streaming Speech Recognition Model 2.0» y «Doubao Speech Synthesis Model 2.0»."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「豆包流式语音识别模型 2.0」（Doubao ストリーミング音声認識モデル 2.0）と「豆包语音合成模型 2.0」（Doubao 音声合成モデル 2.0）を有効にします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‘豆包流式语音识别模型 2.0’(Doubao 스트리밍 음성 인식 모델 2.0)과 ‘豆包语音合成模型 2.0’(Doubao 음성 합성 모델 2.0) 서비스를 활성화하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開通「豆包流式語音識別模型 2.0」和「豆包語音合成模型 2.0」。"
+          }
+        }
+      }
+    },
     "所选计费方式没有可用额度：可能没有开通，或额度已用完。请到控制台确认，或换成你开通的计费方式" : {
       "localizations" : {
         "en" : {
@@ -10976,6 +11044,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在開啟 %@…"
+          }
+        }
+      }
+    },
+    "正在接通…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connecting…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conectando…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続中…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연결 중…"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在接通…"
           }
         }
       }
@@ -12244,6 +12346,40 @@
         }
       }
     },
+    "直接说话，说完停一下就好" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Just talk, and pause when you're done"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Habla y haz una pausa al terminar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "そのまま話して、話し終えたら少し間を置いてください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "그냥 말하고, 다 말했으면 잠깐 멈추세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直接說話，說完停一下就好"
+          }
+        }
+      }
+    },
     "直接进入和某个 Bot 的聊天。" : {
       "localizations" : {
         "en" : {
@@ -12454,6 +12590,40 @@
         }
       }
     },
+    "系统音频服务重启了" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The system's audio service restarted"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El servicio de audio del sistema se reinició"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "システムのオーディオサービスが再起動しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시스템 오디오 서비스가 다시 시작됐어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "系統音訊服務重新啟動了"
+          }
+        }
+      }
+    },
     "终端字标" : {
       "localizations" : {
         "en" : {
@@ -12552,6 +12722,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "暫時無法翻譯，已顯示原文"
+          }
+        }
+      }
+    },
+    "耳机" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Headphones"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auriculares"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ヘッドフォン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "헤드폰"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "耳機"
           }
         }
       }
@@ -13137,6 +13341,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "火山引擎沒有接受這個 API Key，請檢查 Key 和開通的計費方式"
+          }
+        }
+      }
+    },
+    "火山引擎没有接受这个 Key 的语音合成，请在控制台开通「豆包语音合成模型 2.0」" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volcengine didn't accept this key for speech synthesis. Enable “Doubao Speech Synthesis Model 2.0” in the console."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volcengine no aceptó esta clave para la síntesis de voz. Activa «Doubao Speech Synthesis Model 2.0» en la consola."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volcengine がこの Key での音声合成を受け付けませんでした。コンソールで「豆包语音合成模型 2.0」（Doubao 音声合成モデル 2.0）を有効にしてください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volcengine이 이 Key의 음성 합성을 받아들이지 않았어요. 콘솔에서 ‘豆包语音合成模型 2.0’(Doubao 음성 합성 모델 2.0)을 활성화하세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "火山引擎沒有接受這個 Key 的語音合成，請在主控台開通「豆包語音合成模型 2.0」"
+          }
+        }
+      }
+    },
+    "火山引擎的语音合成没有回应，请稍后再试" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volcengine's speech synthesis didn't respond. Please try again later."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La síntesis de voz de Volcengine no respondió. Inténtalo de nuevo más tarde."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volcengine の音声合成から応答がありません。しばらくしてからもう一度お試しください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volcengine 음성 합성이 응답하지 않아요. 잠시 후 다시 시도하세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "火山引擎的語音合成沒有回應，請稍後再試"
           }
         }
       }
@@ -14368,6 +14640,142 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "語音輸入還沒有設定"
+          }
+        }
+      }
+    },
+    "语音通话" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voice Call"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Llamada de voz"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "音声通話"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "음성 통화"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "語音通話"
+          }
+        }
+      }
+    },
+    "语音通话设置" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voice Call Settings"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajustes de llamada de voz"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "音声通話の設定"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "음성 통화 설정"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "語音通話設定"
+          }
+        }
+      }
+    },
+    "语音通话需要火山引擎的 API Key" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voice calls need a Volcengine API key"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las llamadas de voz necesitan una API Key de Volcengine"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "音声通話には Volcengine の API Key が必要です"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "음성 통화를 하려면 Volcengine API Key가 필요해요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "語音通話需要火山引擎的 API Key"
+          }
+        }
+      }
+    },
+    "语音通话需要用麦克风，请在系统设置里打开。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voice calls need the microphone. Turn it on in Settings."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las llamadas de voz necesitan el micrófono. Actívalo en Ajustes."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "音声通話にはマイクが必要です。設定でオンにしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "음성 통화를 하려면 마이크가 필요해요. 설정에서 켜세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "語音通話需要使用麥克風，請在系統設定裡開啟。"
           }
         }
       }
@@ -23284,6 +23692,40 @@
         }
       }
     },
+    "你好，通话时我会用这个声音回答你。想说什么直接说，说完停一下就好。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hi, this is the voice I'll answer you in on calls. Just say what's on your mind, and pause when you're done."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hola, esta es la voz con la que te responderé en las llamadas. Di lo que quieras y haz una pausa cuando termines."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "こんにちは。通話ではこの声でお答えします。話したいことをそのまま話して、話し終えたら少し間を置いてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "안녕하세요, 통화할 때 이 목소리로 대답할게요. 하고 싶은 말을 그냥 하고, 다 말했으면 잠깐 멈추면 돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你好，通話時我會用這個聲音回答你。想說什麼直接說，說完停一下就好。"
+          }
+        }
+      }
+    },
     "你用一条消息回答了" : {
       "localizations" : {
         "en" : {
@@ -23382,6 +23824,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "你說的"
+          }
+        }
+      }
+    },
+    "你：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tú: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "あなた：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "나: %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你：%@"
           }
         }
       }
@@ -24980,6 +25456,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "停止自動朗讀"
+          }
+        }
+      }
+    },
+    "停止试听" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop Preview"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dejar de escuchar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試聴を停止"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "미리 듣기 중지"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "停止試聽"
           }
         }
       }
@@ -32397,6 +32907,40 @@
         }
       }
     },
+    "去处理" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Review"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確認する"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확인하기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "去處理"
+          }
+        }
+      }
+    },
     "去插件页" : {
       "localizations" : {
         "en" : {
@@ -33653,6 +34197,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "取消隱藏"
+          }
+        }
+      }
+    },
+    "取消静音" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unmute"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activar sonido"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "消音を解除"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "음소거 해제"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消靜音"
           }
         }
       }
@@ -35358,6 +35936,40 @@
         }
       }
     },
+    "听你说话用豆包流式语音识别模型 2.0，回答的声音用豆包语音合成模型 2.0，两个都要在控制台开通，费用由火山引擎按你的用量收取。计费方式指识别的计费方式，要和控制台开通的一致，没特别选过就用「小时版」。通话的声音直接发给火山引擎，App 不保存录音。API Key 和按住说话共用，只保存在这台设备本地。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your speech is recognized by Doubao Streaming Speech Recognition Model 2.0, and answers are spoken by Doubao Speech Synthesis Model 2.0. Enable both in the console; Volcengine charges you for what you use. The billing option is the one for recognition and must match the one you enabled in the console; if you didn't pick one, use “Hourly”. Call audio goes straight to Volcengine, and the app keeps no recordings. The API key is shared with hold to talk and stays on this device only."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que dices lo reconoce Doubao Streaming Speech Recognition Model 2.0 y las respuestas las pronuncia Doubao Speech Synthesis Model 2.0. Activa los dos en la consola; Volcengine te cobra según lo que uses. La modalidad de facturación es la del reconocimiento y debe coincidir con la que activaste en la consola; si no elegiste ninguna, usa «Por horas». El audio de la llamada va directamente a Volcengine y la app no guarda grabaciones. La API Key es la misma que la de mantener pulsado para hablar y solo se guarda en este dispositivo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "あなたの声は Doubao ストリーミング音声認識モデル 2.0 で認識し、回答は Doubao 音声合成モデル 2.0 の声で読み上げます。どちらもコンソールで有効にする必要があり、料金は使った分だけ Volcengine から請求されます。課金方式は音声認識の課金方式で、コンソールで有効にしたものと同じにしてください。特に選んでいない場合は「時間課金」を選びます。通話の音声は Volcengine に直接送信され、App には録音を保存しません。API Key は「押したまま話す」と共通で、このデバイスにだけ保存されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "말소리는 Doubao 스트리밍 음성 인식 모델 2.0으로 인식하고, 대답은 Doubao 음성 합성 모델 2.0 목소리로 읽어 줘요. 두 모델 모두 콘솔에서 활성화해야 하며, 요금은 사용한 만큼 Volcengine에서 청구해요. 과금 방식은 음성 인식의 과금 방식으로, 콘솔에서 활성화한 것과 같아야 하며 따로 고른 적이 없다면 ‘시간제’를 사용하세요. 통화 음성은 Volcengine으로 바로 전송되며, 앱은 녹음을 저장하지 않아요. API Key는 누른 채 말하기와 함께 쓰며, 이 기기에만 저장돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "聽你說話用豆包串流語音辨識模型 2.0，回答的聲音用豆包語音合成模型 2.0，兩個都要在主控台開通，費用由火山引擎按你的用量收取。計費方式指辨識的計費方式，要和主控台開通的一致，沒特別選過就用「小時版」。通話的聲音直接傳給火山引擎，App 不儲存錄音。API Key 和按住說話共用，只儲存在這台裝置上。"
+          }
+        }
+      }
+    },
     "启动失败" : {
       "localizations" : {
         "en" : {
@@ -36306,6 +36918,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "回答先前等待中的問題"
+          }
+        }
+      }
+    },
+    "回答用这个声音念出来，是豆包语音合成模型 2.0 的音色。试听也按火山引擎的价格计费；通话中改了声音，下一通电话生效。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Answers are read in this voice, one of the Doubao Speech Synthesis Model 2.0 voices. Previews are billed at Volcengine's rates too. A voice changed during a call applies from the next call."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las respuestas se leen con esta voz, una de las voces de Doubao Speech Synthesis Model 2.0. Las escuchas de prueba también se cobran con las tarifas de Volcengine. Si cambias la voz durante una llamada, se aplica a partir de la siguiente."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回答はこの声で読み上げます。Doubao 音声合成モデル 2.0 の音声です。試聴も Volcengine の料金で課金されます。通話中に声を変えた場合は、次の通話から反映されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대답은 이 목소리로 읽어 줘요. Doubao 음성 합성 모델 2.0의 음색이에요. 미리 듣기도 Volcengine 요금으로 과금돼요. 통화 중에 목소리를 바꾸면 다음 통화부터 적용돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回答用這個聲音念出來，是豆包語音合成模型 2.0 的音色。試聽也按火山引擎的價格計費；通話中改了聲音，下一通電話生效。"
           }
         }
       }
@@ -37296,6 +37942,40 @@
         }
       }
     },
+    "在会话和 Bot 的聊天里，输入框空着时点右边的波形按钮，就能像打电话一样和它说话：直接说，说完停一下它就回答；它说话时你一开口，它就停下来听你说。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In a session or a chat with a Bot, tap the waveform button on the right of the empty input field to talk to it like on a phone call: just speak, pause when you're done, and it answers. Start talking while it speaks, and it stops to listen to you."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En una sesión o en el chat de un Bot, con el campo de texto vacío, toca el botón de onda de la derecha para hablarle como en una llamada: habla, haz una pausa al terminar y te responderá. Si empiezas a hablar mientras habla, se detiene para escucharte."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セッションや Bot とのチャットで、入力欄が空のときに右側の波形ボタンをタップすると、電話のように話せます。そのまま話して、話し終えたら少し間を置くと答えてくれます。相手が話している途中でもあなたが話し始めれば、止まって聞いてくれます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "세션이나 Bot 채팅에서 입력란이 비어 있을 때 오른쪽의 파형 버튼을 누르면 전화하듯이 말할 수 있어요. 그냥 말하고 다 말했으면 잠깐 멈추면 대답해요. 상대가 말하는 중에 말을 시작하면 멈추고 들어 줘요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在對話和 Bot 的聊天裡，輸入框空著時點右邊的波形按鈕，就能像打電話一樣和它說話：直接說，說完停一下它就回答；它說話時你一開口，它就停下來聽你說。"
+          }
+        }
+      }
+    },
     "在你的音乐资料库里找歌和歌单，并按你设的写入方式播放、暂停、切歌" : {
       "localizations" : {
         "en" : {
@@ -37399,6 +38079,40 @@
         }
       }
     },
+    "在听" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listening"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escuchando"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "聞いています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "듣는 중"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在聽"
+          }
+        }
+      }
+    },
     "在它自己的私聊和群聊里都按这个权限工作；群聊另设了权限的，按群聊的。" : {
       "localizations" : {
         "en" : {
@@ -37429,6 +38143,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在它自己的私訊和群組裡都按這個權限工作；群組另設了權限的，按群組的。"
+          }
+        }
+      }
+    },
+    "在对话里处理完，通话会接着进行" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Handle it in the chat, and the call carries on"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resuélvelo en el chat y la llamada seguirá"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会話で対応すれば、通話はそのまま続きます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화에서 처리하면 통화가 계속돼요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在對話裡處理完，通話會接著進行"
           }
         }
       }
@@ -37673,6 +38421,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在微信、照片、Safari 裡點「分享」選 Fish Pocket，文字、連結、圖片和檔案會放進新對話、某個 Bot 或群組的輸入框，確認後再傳送。"
+          }
+        }
+      }
+    },
+    "在想" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thinking"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pensando"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "考えています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "생각하는 중"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在想"
           }
         }
       }
@@ -47218,6 +48000,40 @@
         }
       }
     },
+    "已静音" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muted"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silenciado"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "消音中"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "음소거됨"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已靜音"
+          }
+        }
+      }
+    },
     "市场" : {
       "localizations" : {
         "en" : {
@@ -49905,6 +50721,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "待繼續的目標"
+          }
+        }
+      }
+    },
+    "很久没听到你说话，已自动挂断" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Didn't hear you for a while, so the call ended"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No te oí durante un rato, así que se colgó la llamada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "しばらく声が聞こえなかったため、通話を終了しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "한동안 말소리가 없어서 통화를 종료했어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "很久沒聽到你說話，已自動掛斷"
           }
         }
       }
@@ -53543,6 +54393,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "拒絕"
+          }
+        }
+      }
+    },
+    "挂断" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colgar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終了"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "종료"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結束"
           }
         }
       }
@@ -63922,6 +64806,40 @@
         }
       }
     },
+    "最小化通话" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimize Call"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimizar llamada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話を最小化"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화 최소화"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "縮小通話"
+          }
+        }
+      }
+    },
     "最近使用" : {
       "localizations" : {
         "en" : {
@@ -71843,6 +72761,40 @@
         }
       }
     },
+    "没听到声音，%lld 秒后挂断" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Didn't hear anything. Ending in %lld s"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se oye nada. Se colgará en %lld s"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "声が聞こえません。%lld 秒後に終了します"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "소리가 들리지 않아요. %lld초 후 종료돼요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒聽到聲音，%lld 秒後掛斷"
+          }
+        }
+      }
+    },
     "没开的能力，智能体和你装的插件都用不了，也没法替你打开。系统的授权框只会在你点「开启」时出现。" : {
       "localizations" : {
         "en" : {
@@ -79214,6 +80166,40 @@
         }
       }
     },
+    "等你确认" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for you"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esperando tu confirmación"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "あなたの確認待ち"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확인을 기다리는 중"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "等你確認"
+          }
+        }
+      }
+    },
     "等你给一个密钥" : {
       "localizations" : {
         "en" : {
@@ -81200,6 +82186,74 @@
         }
       }
     },
+    "结束" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colgar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "終了"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "종료"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結束"
+          }
+        }
+      }
+    },
+    "结束通话" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End Call"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finalizar llamada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話を終了"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화 종료"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結束通話"
+          }
+        }
+      }
+    },
     "结果" : {
       "localizations" : {
         "en" : {
@@ -81812,6 +82866,40 @@
         }
       }
     },
+    "继续通话" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep Talking"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seguir hablando"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話を続ける"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화 계속하기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "繼續通話"
+          }
+        }
+      }
+    },
     "缓存写入" : {
       "localizations" : {
         "en" : {
@@ -82148,6 +83236,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "缺少金鑰"
+          }
+        }
+      }
+    },
+    "网络不稳定，正在重连…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connection unstable. Reconnecting…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conexión inestable. Reconectando…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ネットワークが不安定です。再接続中…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "네트워크가 불안정해요. 다시 연결하는 중…"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "網路不穩定，正在重新連線…"
           }
         }
       }
@@ -84637,6 +85759,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "至少選擇一個模型才能儲存。"
+          }
+        }
+      }
+    },
+    "英语女声" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "English, female"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inglés, femenina"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "英語・女性"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "영어 여성"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "英語女聲"
+          }
+        }
+      }
+    },
+    "英语男声" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "English, male"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inglés, masculina"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "英語・男性"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "영어 남성"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "英語男聲"
           }
         }
       }
@@ -87147,6 +88337,80 @@
         }
       }
     },
+    "语音合成出错（%@）：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speech synthesis failed (%1$@): %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error de síntesis de voz (%1$@): %2$@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "音声合成でエラーが発生しました（%1$@）：%2$@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "음성 합성 오류(%1$@): %2$@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "语音合成出错（%1$@）：%2$@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "語音合成出錯（%1$@）：%2$@"
+          }
+        }
+      }
+    },
+    "语音合成出错：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speech synthesis failed: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error de síntesis de voz: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "音声合成でエラーが発生しました：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "음성 합성 오류: %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "語音合成出錯：%@"
+          }
+        }
+      }
+    },
     "语音转写" : {
       "localizations" : {
         "en" : {
@@ -87211,6 +88475,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "說一個整個群組要達成的結果，群主會和你確認細節，再分階段帶著成員推進。"
+          }
+        }
+      }
+    },
+    "说句话也能接着聊" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Or just say something to keep talking"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O di algo para seguir hablando"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "話しかければ、そのまま続けられます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "말을 걸면 계속 이야기할 수 있어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "說句話也能接著聊"
           }
         }
       }
@@ -91636,6 +92934,40 @@
         }
       }
     },
+    "返回通话" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back to Call"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a la llamada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話に戻る"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화로 돌아가기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返回通話"
+          }
+        }
+      }
+    },
     "还没提问" : {
       "localizations" : {
         "en" : {
@@ -95535,6 +96867,40 @@
         }
       }
     },
+    "连接成功，可以打电话了" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected. You can call now."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conectado. Ya puedes llamar."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続に成功しました。通話できます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연결됐어요. 이제 통화할 수 있어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連線成功，可以打電話了"
+          }
+        }
+      }
+    },
     "连接服务的请求有了结果" : {
       "localizations" : {
         "en" : {
@@ -96631,6 +97997,210 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "聯絡人"
+          }
+        }
+      }
+    },
+    "通话中不能按住说话" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hold to talk isn't available during a call"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No puedes mantener pulsado para hablar durante una llamada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話中は「押したまま話す」を使えません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화 중에는 누른 채 말하기를 쓸 수 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話中不能按住說話"
+          }
+        }
+      }
+    },
+    "通话中不能朗读" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't read aloud during a call"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede leer en voz alta durante una llamada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話中は読み上げできません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화 중에는 소리 내어 읽기를 할 수 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話中不能朗讀"
+          }
+        }
+      }
+    },
+    "通话没能继续" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The call couldn't go on"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La llamada no pudo continuar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話を続けられませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화를 이어갈 수 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話沒能繼續"
+          }
+        }
+      }
+    },
+    "通话结束" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Call Ended"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Llamada finalizada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話終了"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화 종료"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話結束"
+          }
+        }
+      }
+    },
+    "通话被系统打断，已挂断" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The system interrupted the call, so it ended"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El sistema interrumpió la llamada y se colgó"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "システムに中断されたため、通話を終了しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시스템이 통화를 중단해서 종료했어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話被系統打斷，已結束通話"
+          }
+        }
+      }
+    },
+    "通话静音" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mute Call"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silenciar llamada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話を消音"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화 음소거"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話靜音"
           }
         }
       }
@@ -98948,6 +100518,40 @@
         }
       }
     },
+    "需要你确认一下" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Needs your confirmation"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Necesita tu confirmación"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "確認が必要です"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확인이 필요해요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要你確認一下"
+          }
+        }
+      }
+    },
     "需要允许安装脚本" : {
       "localizations" : {
         "en" : {
@@ -99182,6 +100786,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "需要遷移"
+          }
+        }
+      }
+    },
+    "静音" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mute"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silenciar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "消音"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "음소거"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "靜音"
           }
         }
       }
@@ -99790,6 +101428,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "進階"
+          }
+        }
+      }
+    },
+    "麦克风已关" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Microphone is off"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Micrófono apagado"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マイクはオフです"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마이크가 꺼져 있어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "麥克風已關"
+          }
+        }
+      }
+    },
+    "麦克风打不开：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't open the microphone: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo abrir el micrófono: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マイクを開けません：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마이크를 열 수 없어요: %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "麥克風打不開：%@"
           }
         }
       }
@@ -102976,6 +104682,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "掃描 QR Code 登入"
+          }
+        }
+      }
+    },
+    "扬声器" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speaker"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Altavoz"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "スピーカー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스피커"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "擴音"
           }
         }
       }
@@ -108231,6 +109971,40 @@
         }
       }
     },
+    "还在吗？没声音的话我先挂了" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Still there? If I don't hear anything, I'll hang up."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Sigues ahí? Si no oigo nada, voy a colgar."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだいますか？声が聞こえなければ切りますね。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 계세요? 아무 소리가 없으면 끊을게요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "還在嗎？沒聲音的話我先掛了"
+          }
+        }
+      }
+    },
     "还有 %lld 个标签页" : {
       "localizations" : {
         "en" : {
@@ -110164,6 +111938,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "沒有拿到 Apple 登入憑證，請重試。"
+          }
+        }
+      }
+    },
+    "没有收到回答，请再说一次" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No answer came back. Please say it again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No llegó ninguna respuesta. Vuelve a decirlo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "回答が届きませんでした。もう一度話してください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대답을 받지 못했어요. 다시 말해 주세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒有收到回答，請再說一次"
           }
         }
       }
@@ -114161,6 +115969,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "這一步沒能完成，原因在上面的日誌裡。"
+          }
+        }
+      }
+    },
+    "这一轮出错了，详情在对话里" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This turn failed; the details are in the chat"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este turno falló; los detalles están en el chat"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このターンでエラーが発生しました。詳細は会話にあります"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이번 턴에서 오류가 났어요. 자세한 내용은 대화에 있어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這一輪出錯了，詳情在對話裡"
           }
         }
       }

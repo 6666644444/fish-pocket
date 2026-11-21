@@ -85,7 +85,8 @@ final class LiveActivityController {
         // reads the session list too: a change there comes back here to follow another.
         hold(Self.runningSessions(in: app).first?.id)
         let held = held
-        let next = withObservationTracking { Self.state(of: app, held: held) } onChange: { [weak self] in
+        // A voice call has its own activity (`CallActivity`): the agent's waits until it ends.
+        let next = withObservationTracking { CallCenter.shared.active ? nil : Self.state(of: app, held: held) } onChange: { [weak self] in
             // Not at once: what it reads changes with every piece of a reply as it streams, and
             // the activity is not drawn that often. A few times a second is as fresh as it shows.
             Task { @MainActor in

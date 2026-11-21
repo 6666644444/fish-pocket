@@ -113,6 +113,10 @@
     # (hold-to-talk, replies read aloud), sent with the stored DeepSeek key.
     - id: ios-speech
       name: ./plugins/ios-speech/index.mjs
+    # Voice calls from the app's call screen: a session on a call gets a note for the
+    # model each turn (answer briefly, aloud). The audio itself never reaches the engine.
+    - id: ios-call
+      name: ./plugins/ios-call/index.mjs
     # Third model route next to the DeepSeek account and API-key routes: DeepSeek
     # models paid with Fish Pocket credits. Its own entry, never a profile in
     # llm-pi-ai's settings: config for llm-pi-ai here would override the user's
