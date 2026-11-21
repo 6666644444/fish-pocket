@@ -47,6 +47,14 @@ enum WhatsNew {
     /// Newest first. Until the app reaches an entry's version (and build, when it names one),
     /// the entry is not shown. Entries of one version are shown together, newest first.
     static let releases: [Release] = [
+        Release(version: "1.2.2", build: 124, features: [
+            Feature(symbol: "photo.badge.plus",
+                    title: "让智能体给你画图",
+                    detail: "在对话里说「画一张…」就能生成图片，也能改图、一次出一组。Gemini、OpenAI、即梦、通义、Grok、智谱和本地 ComfyUI 都能用；不想填 API Key，也可以登录 ChatGPT、Grok 或 Google 订阅账号。在设置 → 生图里配置。"),
+            Feature(symbol: "pencil.tip.crop.circle",
+                    title: "圈哪改哪",
+                    detail: "点开对话里的图片，用底部的「标注」圈出要改的地方，再说「把这里换成…」，智能体会照着你圈的位置改。"),
+        ]),
         Release(version: "1.2.1", build: 114, features: [
             Feature(symbol: "tray.and.arrow.down",
                     title: "把 DeepSeek 的聊天记录搬过来",

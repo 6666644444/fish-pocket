@@ -219,7 +219,7 @@ struct ComposerView: View {
     /// A question the shell wrote for the reader (询问 AI): sent as soon as the conversation shows.
     var pendingPrompt: String?
     var consumePrompt: () -> Void = {}
-    /// Take the keyboard once shown (`dsh://new` from a widget).
+    /// Take the keyboard once shown (`fishpocket://new` from a widget).
     var focusOnAppear = false
     var consumeFocus: () -> Void = {}
     /// `/export`: the web downloads the ZIP itself, so this opens the log sheet instead of executing.
@@ -244,6 +244,8 @@ struct ComposerView: View {
     @State private var confirmingPermission: String?
     /// The token whose 「全部」 sheet is open.
     @State private var browsing: TriggerHit?
+    /// What Return does while the candidate panel is up; the panel keeps it current.
+    @State private var panelReturn: CandidatePanel.ReturnChoice = .wait
     /// Runs once the open sheet is gone: the next picker can only present then.
     @State private var afterSheet: (() -> Void)?
     /// The keyboard comes back when the open sheet or picker closes: it was up when ＋ opened
@@ -262,7 +264,8 @@ struct ComposerView: View {
         let trigger = activeTrigger
         VStack(alignment: .leading, spacing: 8) {
             if let trigger {
-                CandidatePanel(model: model, context: context, hit: trigger, pick: { pick($0, over: trigger) }, showAll: { refocus = true; browsing = trigger })
+                CandidatePanel(model: model, context: context, hit: trigger, pick: { pick($0, over: trigger) }, showAll: { refocus = true; browsing = trigger },
+                               onReturn: { panelReturn = $0 })
             }
             field
                 // While held, the bar's own fill over the surface: the waveform's ink, red to cancel.
@@ -278,7 +281,7 @@ struct ComposerView: View {
         }
         .task(id: pendingDraft) {
             guard let pendingDraft else { return }
-            // The same draft again (Mini Apps' 开始做 tapped twice before sending) is not added twice.
+            // The same draft again (a Mini App's 让 Agent 修改 chosen twice before sending) is not added twice.
             if pendingDraft.utf16.count > ComposerModel.longTextLimit {
                 composer.addLongText(pendingDraft)
             } else if composer.text.isEmpty {
@@ -459,6 +462,19 @@ struct ComposerView: View {
             .lineLimit(1...5)
             .focused($focused)
             .pastesAttachments(focused: focused, into: composer)
+            // Over the `/` or `@` panel, its first row (`CandidatePanel.ReturnChoice`); otherwise
+            // whatever the send button would do, and with nothing to send, nothing.
+            .returnKeySends(focused: focused) {
+                if let trigger = activeTrigger {
+                    switch panelReturn {
+                    case .pick(let candidate): return pick(candidate, over: trigger)
+                    case .wait: return
+                    case .send: break
+                    }
+                }
+                guard !composer.nothingToSend, !composer.executing, !composer.savingQueueEdit else { return }
+                send(.preferred)
+            }
             .inkTint()
             .padding(.trailing, tall ? 30 : 0)
             .onGeometryChange(for: Bool.self) { $0.size.height > threeLines } action: { tall = $0 }
@@ -687,7 +703,7 @@ struct ComposerView: View {
         }
         // Pending uploads still answer a tap, with the reason (C-87).
         .disabled(empty || working)
-        // Not plain Return: on a hardware keyboard that also ends a pinyin composition.
+        // Plain Return is the input's own (`returnKeySends`): it can tell a pinyin composition apart.
         .keyboardShortcut(.return, modifiers: .command)
         .contextMenu {
             if model.running && !editing {

@@ -38,7 +38,7 @@ struct DshIOSApp: App {
     }
 }
 
-/// A `dsh://` link a window received; the token tells a repeat of the same link apart.
+/// A `fishpocket://` (or old `dsh://`) link a window received; the token tells a repeat of the same link apart.
 struct LinkRequest: Equatable {
     let link: DshLink
     let token = UUID()
@@ -87,7 +87,7 @@ struct RootView: View {
     @EnvironmentObject private var engine: NodeEngine
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage(ThemePreference.key) private var themePreference = ThemePreference.system
-    /// A `dsh://` link, held here because a widget can launch the app: the main view
+    /// A `fishpocket://` link, held here because a widget can launch the app: the main view
     /// is not up until the engine is, and follows it then.
     @State private var link: LinkRequest?
     private let connection = EngineConnection.shared
@@ -108,10 +108,10 @@ struct RootView: View {
             .onChange(of: scenePhase) { _, phase in
                 if phase == .background { MiniAppStore.shared.refresh() }
             }
-            // A `dsh://` link goes to a window that is already open. Any window may also take a plain
-            // launch: unless one allows it, iPadOS opens another window on every tap of the app's icon.
-            // `preferring` stays narrow, so `openWindow` still gets its new window.
-            .handlesExternalEvents(preferring: ["\(DshLink.scheme)://"], allowing: ["*"])
+            // A `fishpocket://` link, or an old `dsh://` one, goes to a window that is already open. Any
+            // window may also take a plain launch: unless one allows it, iPadOS opens another window on
+            // every tap of the app's icon. `preferring` stays narrow, so `openWindow` still gets its new window.
+            .handlesExternalEvents(preferring: Set(DshLink.schemes.map { "\($0)://" }), allowing: ["*"])
     }
 
     /// An app of 我的应用 opens at once, over whatever is up: it needs no engine. The rest

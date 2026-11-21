@@ -132,10 +132,6 @@ struct DrawerView: View {
                 archivedEntry
             }
             .sessionList()
-            .refreshable {
-                await app.refreshSessions()
-                await app.remote.refresh()
-            }
             // Both bars float: the list scrolls under them, up to the screen's edges.
             .floatingBars(top: topBar, bottom: bottomBar)
             .background(Palette.background)
@@ -174,10 +170,6 @@ struct DrawerView: View {
             }
         }
         .sessionList()
-        .refreshable {
-            await app.refreshSessions()
-            await app.remote.refresh()
-        }
         .background(Palette.background)
         .tabBarEdgeSoftened()
         .navigationTitle(Self.sessionsTitle)

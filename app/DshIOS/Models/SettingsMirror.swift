@@ -239,6 +239,7 @@ enum SharedModelKey {
     nonisolated(unsafe) static var plugins: UInt8 = 0
     nonisolated(unsafe) static var install: UInt8 = 0
     nonisolated(unsafe) static var bots: UInt8 = 0
+    nonisolated(unsafe) static var imageGen: UInt8 = 0
 }
 
 extension AppModel {

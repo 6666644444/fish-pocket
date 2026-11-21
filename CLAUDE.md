@@ -130,6 +130,15 @@
 
 写法上保持现在的风格：英文、短句、先说能不能用再说替代办法；「Commands that exist」之外的命令都会被当成不存在，所以新增命令一定要列进去。
 
+## 回复里的公式
+
+公式先用 SwiftMath 排（同步，`Views/MathFormula.swift`），它排不了的交给 KaTeX（`Views/MathKaTeX.swift`）：带中文的、`\xrightarrow`、公式中间的 `\boxed`、`\overset`、`\underbrace` 等等。网页版所有公式都用 KaTeX，所以原生用同一个版本，排出来和网页版一样。
+
+- KaTeX 在一个不显示的网页里跑（`Math/MathPage.html`），每条公式由 WebKit 画成 PDF 再转成图，按源码和字号缓存。第一次出现时要等一下，这期间显示源码。
+- 行内公式按 KaTeX 允许断行的位置（关系符、运算符之后）切成几段图，段间插零宽空格，长公式才能像网页版一样折行。
+- 公式图平时按文字颜色染色显示。带自己颜色的（`\color`、`\colorbox`，以及 KaTeX 标红的不支持命令）一律交给 KaTeX，按原色显示，深色模式另画一份；彩色底框里没指定颜色的字，按底色深浅选深色或浅色墨水。
+- KaTeX 的文件在 `Math/KaTeX`，由 `scripts/build-katex.sh` 生成并提交。**升级 `@deepseek-ai/dsh` 后看一眼网页版用的 KaTeX 版本**（`dsh-web-frontend/dist/assets/vendor-*.js` 里的 `"0.x.y"`），变了就改脚本里的版本重跑，更新 `THIRD_PARTY_NOTICES.md`，再用 `-dshOpen timeline` 看一遍样例里的公式，iOS 17 也看（字体没加载完时 iOS 17 会漏画字符）。
+
 ## 浏览器能力
 
 Agent 用的 `browser` 工具有哪些动作、各要什么参数、给模型看的说明，全写在 `app/DshIOS/Browser/BrowserCatalog.swift` 一处：引擎按它生成工具（`describe`），原生层按它放行动作，参数也按它检查。
@@ -147,7 +156,7 @@ Agent 用的 `browser` 工具有哪些动作、各要什么参数、给模型看
 - **开发版和发布版**：Agent 写的文件是开发版；用户打开的是发布版，即应用文件夹里的 `.build`：所有文件的完整快照，JSX、TS 已经编译好，打开时不编译、不依赖系统会清理的缓存。发布在 Agent 一轮结束（会话列表里不再有运行中的会话）、读应用列表、第一次打开时进行（`MiniAppPublisher.swift`），按文件的路径、大小、修改时间判断是否过期；有 Agent 在跑时，打开的是上一次发布的版本，不会打开改到一半的应用。上一版留在 `.build-previous`。
 - **加载**：`app/DshIOS/MiniApps/MiniAppServer.swift` 用自定义协议 `fishapp://<id>/` 提供文件，只给本应用文件夹里的东西；用户那边提供发布版，Agent 浏览器那边提供开发版、返回时用 Sucrase（JavaScriptCore 里跑，没有 JIT，所以只在创作时编译）编译；页面开头注入 import map（`react` 等指向内置的 React）和错误上报脚本。
 - **隔离**：每个应用一个独立的 `WKWebsiteDataStore`（按 id 派生），删应用时一起删；能联网，但用内容规则拦掉 localhost、127.x 等本机地址；不开放相机、麦克风等本机能力。
-- **入口**：「Mini Apps」Tab（iPhone 都有，iPad 从 iOS 18 起有；iOS 17 的 iPad 侧边栏是「Mini Apps」一行）、聊天里单独一行的 `[名字](fishapp://<id>)` 链接会显示成卡片、`dsh://app/<id>` 链接、「Mini Apps」小组件（`app/LiveActivity/MiniAppsWidget.swift`）、快捷指令里的「打开 Mini App」。
+- **入口**：「Mini Apps」Tab（iPhone 都有，iPad 从 iOS 18 起有；iOS 17 的 iPad 侧边栏是「Mini Apps」一行）、聊天里单独一行的 `[名字](fishapp://<id>)` 链接会显示成卡片、`fishpocket://app/<id>` 链接（旧的 `dsh://app/<id>` 也认）、「Mini Apps」小组件（`app/LiveActivity/MiniAppsWidget.swift`）、快捷指令里的「打开 Mini App」。
 - **叫法**：界面上叫 Mini App。Tab、页面标题、小组件这类指一整组的地方用复数 Mini Apps，指其中一个时用单数 Mini App（「删除 Mini App」「3 个 Mini App」）。简体、繁体中文都直接写英文，不译成「小工具」「應用」：繁体里「小工具」是系统对小组件的叫法，「应用」又会让人以为是我们提供的 App；其他语言用各自的写法（Miniapps、ミニアプリ、미니 앱）。替用户写好、发给 Agent 的话（「帮我做一个记账小工具」）照口语写，不受这条限制。
 - **图标**：默认是 `app.json` 里的 emoji 配底色；文件夹里有 `icon.png`（方形、铺满、不带圆角）时用它。小组件读不到应用文件夹，主 App 写 `mini-apps.json` 时把图标一起拷进 App Group 的 `mini-app-icons/`。示例的图标是 `icon.svg` 画的，改了要重新导出同目录的 `icon.png`（360 像素）。
 - **全屏页的顶栏**：iOS 26 起网页一直铺到系统的透明顶栏下面，滚上去的内容由系统虚化（`MiniAppScreen.swift` 的 `PageWebView`）；页面仍从顶栏下方开始排，`100dvh` 是顶栏以下的高度，顶栏后面是页面自己的底色。更早的系统顶栏是实底的，网页不铺上去。
@@ -183,12 +192,21 @@ Agent 用的 `browser` 工具有哪些动作、各要什么参数、给模型看
 
 别的 App 点「分享」选 Fish Pocket，内容进新对话、某个 Bot 或群聊的输入框，不自动发送。扩展是 `app/ShareExtension`（target `DshShare`），引擎不在扩展里，扩展什么都不发。
 
-- 扩展一打开就把文字、链接、图片、文件拷进 App Group 的 `Share/inbox/<id>/`；用户选好去处后写下 `delivery.json`，再打开 `dsh://share/<id>`。App 收到后把文件挪进自己的临时目录，交给对应会话的输入框（`Shared/ShareInbox.swift`、`MainView.receive`）。
+- 扩展一打开就把文字、链接、图片、文件拷进 App Group 的 `Share/inbox/<id>/`；用户选好去处后写下 `delivery.json`，再打开 `fishpocket://share/<id>`。App 收到后把文件挪进自己的临时目录，交给对应会话的输入框（`Shared/ShareInbox.swift`、`MainView.receive`）。
 - 系统没让扩展拉起 App 时，内容留在收件箱里，App 下次回到前台会自己取走；超过半小时没取的直接清掉。
 - 扩展里列的 Bot 和群聊来自 App 写的 `Share/targets.json` 和 `Share/avatars/`（`ShareTargetsWriter`）：顺序同 Bot 页，隐藏的不列，头像是 App 按自己的画法渲染好的图，群头像深浅色各一张。扩展不编译 `BotCharacter`，改了头像画法不用动扩展。
 - 扩展的文案在 `app/Shared/Localizable.xcstrings`，`scripts/sync-strings.sh` 会一起收进来。扩展不认 `NSAccentColorName`，主色在 `ShareView` 里显式指定。
 - 发行签名多了一个 bundle ID：`com.wsw.dsh-ios.Share`，要有 App Group。
-- 拉起 App 的链接前缀是工程变量 `DSH_URL_SCHEME`（正式版 `dsh`）。用别的 Bundle ID 并排装测试包时，`DSH_APP_GROUP` 和它都要换成测试包自己的，不然链接可能打开正式包，正式包读不到测试包的 App Group。
+- 拉起 App 的链接前缀是工程变量 `DSH_URL_SCHEME`（正式版 `fishpocket`），App 生成的链接都用它。用别的 Bundle ID 并排装测试包时，`DSH_APP_GROUP` 和它都要换成测试包自己的，不然链接可能打开正式包，正式包读不到测试包的 App Group。
+
+## 链接前缀：`fishpocket`，`dsh` 只作兼容
+
+App 的链接前缀是 `fishpocket://`（`DSH_URL_SCHEME`）。早先用的 `dsh://` 太通用，可能和别的 App（比如 DeepSeek 官方的 DSH App）撞上，几个 App 注册同一个前缀时 iOS 打开哪一个是不确定的，所以换成了独占的前缀。路由都在 `app/Shared/DshLink.swift`：`session`、`new`、`share`、`app`、`web`。
+
+- **`dsh` 永久保留，只用来兼容。**它写在 `DSH_LEGACY_URL_SCHEME`，主 App 同时注册两个前缀，`DshLink(url:)` 两个都认，`handlesExternalEvents` 两个都交给已开的窗口。用户桌面上已有的网页版和 Mini App 图标网址里写死了 `scheme=dsh`，快捷指令、NFC 自动化、旧聊天记录里也可能有 `dsh://`，所以不能删。
+- **新生成的链接一律用 `fishpocket`**（`DshLink.scheme`）：小组件、灵动岛、分享扩展、主屏幕图标（官网 `/add-to-home/` 的 `scheme=`）、iCTRL 回调、引擎拿到的 `FISH_POCKET_URL_SCHEME`。不要在代码、skill 或文案里新写 `dsh://`。
+- **并排装的测试包把 `DSH_LEGACY_URL_SCHEME` 设成空**，否则它也注册 `dsh`，会抢走正式包的旧链接。空值时 `CFBundleURLSchemes` 里留下一个空字符串，系统不当成前缀，`DshLink` 也会跳过它。
+- 官网 `/add-to-home/` 页面按 `scheme=` 跳回 App，它对前缀的校验要同时认 `fishpocket`、`dsh` 和测试包的前缀。
 
 ## Bot：只用 DS Bot 的后端
 
@@ -199,6 +217,16 @@ Bot 功能的后台是内置的 ds-bot 插件，版本锁定在 `engine/plugins/
 - ds-bot 网页版能做的事，都要用原生界面做。网页版入口可以保留，但只作为次要的备用入口，不能让用户依赖它完成主要操作。
 - 群聊每一轮的回复不在 `group_relay` 的工具结果里：0.3.8 起结果只给出这一轮在群聊账本里的位置（`{from, anchor}`），回复用 `group-rows` 读（`BotModel.loadRows`），群自己的会话这一轮随即结束，成员是否还在干活看 `group-rows` 返回的 `active`。升级前的轮次结果里仍带着 `replies`，两种都要认。
 - 它的 peer 依赖全是 `*`，而 npm 上 `@deepseek-ai/dsh-llm`、`dsh-scope`、`dsh-tools`、`dsh-web`、`dsh-typert-protocol` 的 `latest` 标签还停在 `0.0.1-rc.x` 占位版。所以 `engine/package.json` 用 `overrides` 把它们钉成引擎自己的 DSH 版本；升级 `@deepseek-ai/dsh` 时这几行要一起改，否则会装出一棵顶层是占位版的树。
+
+## 生图：内置 dsh-image-gen
+
+生图功能的后台是内置的第三方插件 dsh-image-gen，和 ds-bot 一样锁在 `engine/plugins/ios-host/pins.json`（`builtin`）、首次启动自动开启。打包时它的 README 截图和文档被裁掉，网页版的画布、图库、Studio 用的是它自己的界面。
+
+- **只用它的后端。**设置读写 `image-gen` 命名空间，Key 走凭据；测试连接、拉取模型、订阅登录走它的 `/plugins/dsh-image-gen/` 路由（`ImageGenModel`）。原生设置页（`ImageGenSettings.swift`）逐项对应它网页版设置卡片里的字段，升级插件时对照它 `src/client/index.tsx` 的 `ImageGenerationSettingsCard` 增删字段；保存前的几项校验（尺寸表、附加 JSON、OpenAI 尺寸、ComfyUI 工作流、官方接口的自动编辑格式）是照它的前端写的，也要一起对。
+- **订阅登录**用它在本机固定端口起的回调（ChatGPT 1455、Grok 56121、Google 51121），授权页在 App 内的 Safari 里打开，引擎一直在跑才接得到跳回，和连接器的登录是同一套。
+- **给模型的说明只放模型不可能知道的事**（`image-gen-notes.mjs`）：画布没打开时去掉插件那句「让用户去开工作台」，并在插件的生图说明后补一句 App 里生图设置的位置。不要往里加「该用哪张图」之类的指令，选图交给插件自己的规则和模型。`test/image-gen-notes.test.mjs` 会检查插件的上下文名和措辞，升级后它报错就先看插件现在说了什么。
+- **对话里的图**：生图结果由 `ImageGenCard` 显示，一轮折叠后图片仍留在外面；对话里任何一张图点开都有「标注」（`MarkupCanvas`），画完只把标注版放进输入框。
+- 升级插件后照「引擎或插件升级后的回归」走一遍，另外在设置页把每家服务商点开看一眼，再用一个真实或本机假的 OpenAI 兼容服务各生一张、改一张。
 
 ## Bot 的内置形象
 

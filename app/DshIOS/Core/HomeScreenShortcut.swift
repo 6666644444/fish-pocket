@@ -4,7 +4,7 @@ import UIKit
 /// Puts an icon on the home screen through Safari. iOS lets no app place one there itself, but
 /// Safari's 添加到主屏幕 does for a web page: the website's page (AppLinks.addToHomeScreen) takes the
 /// name and icon from what follows its `#`, and when opened from the home screen goes on to one of
-/// the app's links: `dsh://app/<id>` for an app of 我的应用 (`id=`), `dsh://web` for the 网页版
+/// the app's links: `fishpocket://app/<id>` for an app of 我的应用 (`id=`), `fishpocket://web` for the 网页版
 /// (`to=web`). The fragment never reaches the server. The icon is drawn here: Safari's canvas does
 /// not draw emoji.
 @MainActor

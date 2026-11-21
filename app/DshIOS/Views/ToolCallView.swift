@@ -138,6 +138,11 @@ enum ToolStyle {
         case "request_connector", "list_connectors": return "point.3.connected.trianglepath.dotted"
         case "mail_send", "mail_search", "mail_read": return "envelope"
         case "list_capabilities", "save_capability", "delete_capability": return "puzzlepiece"
+        // dsh-image-gen.
+        case "generate_image", "generate_images": return "photo.badge.plus"
+        case "edit_image": return "wand.and.stars"
+        case "find_inspiration": return "lightbulb"
+        case "canvas_state", "view_canvas": return "scribble"
         default: return name.hasPrefix("mcp__") ? "server.rack" : "wrench.and.screwdriver"
         }
     }
@@ -166,6 +171,8 @@ enum ToolStyle {
         "remember": String(localized: "记下来"), "forget": String(localized: "从记忆里去掉"), "recall": String(localized: "翻记忆"),
         "request_secret": String(localized: "请求密钥"), "list_secrets": String(localized: "查看密钥"), "request_connector": String(localized: "请求连接服务"), "list_connectors": String(localized: "查看连接器"),
         "mail_send": String(localized: "发邮件"), "list_capabilities": String(localized: "查看能力"), "save_capability": String(localized: "保存能力"), "delete_capability": String(localized: "删除能力"),
+        "generate_image": String(localized: "生成图片"), "generate_images": String(localized: "批量生成图片"), "edit_image": String(localized: "编辑图片"),
+        "find_inspiration": String(localized: "查找灵感"), "canvas_state": String(localized: "查看画布"), "view_canvas": String(localized: "查看画布选区"),
         "terminal_open": String(localized: "创建终端"), "terminal_read": String(localized: "读取终端"), "terminal_list": String(localized: "查看终端"), "terminal_signal": String(localized: "发送终端信号"), "terminal_close": String(localized: "关闭终端"),
     ]
 
