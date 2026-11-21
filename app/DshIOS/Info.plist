@@ -41,6 +41,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>$(DSH_URL_SCHEME)</string>
+				<string>$(DSH_LEGACY_URL_SCHEME)</string>
 			</array>
 		</dict>
 	</array>
@@ -48,6 +49,8 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>DshAppGroup</key>
 	<string>$(DSH_APP_GROUP)</string>
+	<key>DshLegacyURLScheme</key>
+	<string>$(DSH_LEGACY_URL_SCHEME)</string>
 	<key>DshURLScheme</key>
 	<string>$(DSH_URL_SCHEME)</string>
 	<key>FishPocketAPIURL</key>

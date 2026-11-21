@@ -219,7 +219,7 @@ struct ComposerView: View {
     /// A question the shell wrote for the reader (询问 AI): sent as soon as the conversation shows.
     var pendingPrompt: String?
     var consumePrompt: () -> Void = {}
-    /// Take the keyboard once shown (`dsh://new` from a widget).
+    /// Take the keyboard once shown (`fishpocket://new` from a widget).
     var focusOnAppear = false
     var consumeFocus: () -> Void = {}
     /// `/export`: the web downloads the ZIP itself, so this opens the log sheet instead of executing.

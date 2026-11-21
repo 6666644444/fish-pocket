@@ -156,7 +156,7 @@ Agent 用的 `browser` 工具有哪些动作、各要什么参数、给模型看
 - **开发版和发布版**：Agent 写的文件是开发版；用户打开的是发布版，即应用文件夹里的 `.build`：所有文件的完整快照，JSX、TS 已经编译好，打开时不编译、不依赖系统会清理的缓存。发布在 Agent 一轮结束（会话列表里不再有运行中的会话）、读应用列表、第一次打开时进行（`MiniAppPublisher.swift`），按文件的路径、大小、修改时间判断是否过期；有 Agent 在跑时，打开的是上一次发布的版本，不会打开改到一半的应用。上一版留在 `.build-previous`。
 - **加载**：`app/DshIOS/MiniApps/MiniAppServer.swift` 用自定义协议 `fishapp://<id>/` 提供文件，只给本应用文件夹里的东西；用户那边提供发布版，Agent 浏览器那边提供开发版、返回时用 Sucrase（JavaScriptCore 里跑，没有 JIT，所以只在创作时编译）编译；页面开头注入 import map（`react` 等指向内置的 React）和错误上报脚本。
 - **隔离**：每个应用一个独立的 `WKWebsiteDataStore`（按 id 派生），删应用时一起删；能联网，但用内容规则拦掉 localhost、127.x 等本机地址；不开放相机、麦克风等本机能力。
-- **入口**：「Mini Apps」Tab（iPhone 都有，iPad 从 iOS 18 起有；iOS 17 的 iPad 侧边栏是「Mini Apps」一行）、聊天里单独一行的 `[名字](fishapp://<id>)` 链接会显示成卡片、`dsh://app/<id>` 链接、「Mini Apps」小组件（`app/LiveActivity/MiniAppsWidget.swift`）、快捷指令里的「打开 Mini App」。
+- **入口**：「Mini Apps」Tab（iPhone 都有，iPad 从 iOS 18 起有；iOS 17 的 iPad 侧边栏是「Mini Apps」一行）、聊天里单独一行的 `[名字](fishapp://<id>)` 链接会显示成卡片、`fishpocket://app/<id>` 链接（旧的 `dsh://app/<id>` 也认）、「Mini Apps」小组件（`app/LiveActivity/MiniAppsWidget.swift`）、快捷指令里的「打开 Mini App」。
 - **叫法**：界面上叫 Mini App。Tab、页面标题、小组件这类指一整组的地方用复数 Mini Apps，指其中一个时用单数 Mini App（「删除 Mini App」「3 个 Mini App」）。简体、繁体中文都直接写英文，不译成「小工具」「應用」：繁体里「小工具」是系统对小组件的叫法，「应用」又会让人以为是我们提供的 App；其他语言用各自的写法（Miniapps、ミニアプリ、미니 앱）。替用户写好、发给 Agent 的话（「帮我做一个记账小工具」）照口语写，不受这条限制。
 - **图标**：默认是 `app.json` 里的 emoji 配底色；文件夹里有 `icon.png`（方形、铺满、不带圆角）时用它。小组件读不到应用文件夹，主 App 写 `mini-apps.json` 时把图标一起拷进 App Group 的 `mini-app-icons/`。示例的图标是 `icon.svg` 画的，改了要重新导出同目录的 `icon.png`（360 像素）。
 - **全屏页的顶栏**：iOS 26 起网页一直铺到系统的透明顶栏下面，滚上去的内容由系统虚化（`MiniAppScreen.swift` 的 `PageWebView`）；页面仍从顶栏下方开始排，`100dvh` 是顶栏以下的高度，顶栏后面是页面自己的底色。更早的系统顶栏是实底的，网页不铺上去。
@@ -192,12 +192,21 @@ Agent 用的 `browser` 工具有哪些动作、各要什么参数、给模型看
 
 别的 App 点「分享」选 Fish Pocket，内容进新对话、某个 Bot 或群聊的输入框，不自动发送。扩展是 `app/ShareExtension`（target `DshShare`），引擎不在扩展里，扩展什么都不发。
 
-- 扩展一打开就把文字、链接、图片、文件拷进 App Group 的 `Share/inbox/<id>/`；用户选好去处后写下 `delivery.json`，再打开 `dsh://share/<id>`。App 收到后把文件挪进自己的临时目录，交给对应会话的输入框（`Shared/ShareInbox.swift`、`MainView.receive`）。
+- 扩展一打开就把文字、链接、图片、文件拷进 App Group 的 `Share/inbox/<id>/`；用户选好去处后写下 `delivery.json`，再打开 `fishpocket://share/<id>`。App 收到后把文件挪进自己的临时目录，交给对应会话的输入框（`Shared/ShareInbox.swift`、`MainView.receive`）。
 - 系统没让扩展拉起 App 时，内容留在收件箱里，App 下次回到前台会自己取走；超过半小时没取的直接清掉。
 - 扩展里列的 Bot 和群聊来自 App 写的 `Share/targets.json` 和 `Share/avatars/`（`ShareTargetsWriter`）：顺序同 Bot 页，隐藏的不列，头像是 App 按自己的画法渲染好的图，群头像深浅色各一张。扩展不编译 `BotCharacter`，改了头像画法不用动扩展。
 - 扩展的文案在 `app/Shared/Localizable.xcstrings`，`scripts/sync-strings.sh` 会一起收进来。扩展不认 `NSAccentColorName`，主色在 `ShareView` 里显式指定。
 - 发行签名多了一个 bundle ID：`com.wsw.dsh-ios.Share`，要有 App Group。
-- 拉起 App 的链接前缀是工程变量 `DSH_URL_SCHEME`（正式版 `dsh`）。用别的 Bundle ID 并排装测试包时，`DSH_APP_GROUP` 和它都要换成测试包自己的，不然链接可能打开正式包，正式包读不到测试包的 App Group。
+- 拉起 App 的链接前缀是工程变量 `DSH_URL_SCHEME`（正式版 `fishpocket`），App 生成的链接都用它。用别的 Bundle ID 并排装测试包时，`DSH_APP_GROUP` 和它都要换成测试包自己的，不然链接可能打开正式包，正式包读不到测试包的 App Group。
+
+## 链接前缀：`fishpocket`，`dsh` 只作兼容
+
+App 的链接前缀是 `fishpocket://`（`DSH_URL_SCHEME`）。早先用的 `dsh://` 太通用，可能和别的 App（比如 DeepSeek 官方的 DSH App）撞上，几个 App 注册同一个前缀时 iOS 打开哪一个是不确定的，所以换成了独占的前缀。路由都在 `app/Shared/DshLink.swift`：`session`、`new`、`share`、`app`、`web`。
+
+- **`dsh` 永久保留，只用来兼容。**它写在 `DSH_LEGACY_URL_SCHEME`，主 App 同时注册两个前缀，`DshLink(url:)` 两个都认，`handlesExternalEvents` 两个都交给已开的窗口。用户桌面上已有的网页版和 Mini App 图标网址里写死了 `scheme=dsh`，快捷指令、NFC 自动化、旧聊天记录里也可能有 `dsh://`，所以不能删。
+- **新生成的链接一律用 `fishpocket`**（`DshLink.scheme`）：小组件、灵动岛、分享扩展、主屏幕图标（官网 `/add-to-home/` 的 `scheme=`）、iCTRL 回调、引擎拿到的 `FISH_POCKET_URL_SCHEME`。不要在代码、skill 或文案里新写 `dsh://`。
+- **并排装的测试包把 `DSH_LEGACY_URL_SCHEME` 设成空**，否则它也注册 `dsh`，会抢走正式包的旧链接。空值时 `CFBundleURLSchemes` 里留下一个空字符串，系统不当成前缀，`DshLink` 也会跳过它。
+- 官网 `/add-to-home/` 页面按 `scheme=` 跳回 App，它对前缀的校验要同时认 `fishpocket`、`dsh` 和测试包的前缀。
 
 ## Bot：只用 DS Bot 的后端
 
