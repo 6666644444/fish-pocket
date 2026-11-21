@@ -218,7 +218,7 @@ struct NamespaceFormView: View {
                 Section { ProgressView() }
             }
         }
-        .tint(Palette.ink)
+        .inkTint()
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
         .keyboardDoneButton()
@@ -385,7 +385,7 @@ private struct SchemaGroupLink: View {
         } else {
             NavigationLink {
                 Form { SchemaObjectSections(context: context, node: node, path: path, depth: 1) }
-                    .tint(Palette.ink)
+                    .inkTint()
                     .navigationTitle(schemaLabel(key, node))
                     .navigationBarTitleDisplayMode(.inline)
                     .keyboardDoneButton()
@@ -511,7 +511,6 @@ struct SchemaField: View {
                         Toggle(isOn: Binding(get: { current?.bool ?? false }, set: { context.save(path, .bool($0)) })) {
                             FieldLabel(key: key, node: node)
                         }
-                        .toggleStyle(.mono)
                         FieldNotes(node: node)
                     }
                 case "number", "natural", "percent":
@@ -882,7 +881,7 @@ private struct CredentialRefField: View {
                     Text("密钥在本机存储中的名字，一般不用改。")
                 }
             }
-            .tint(Palette.ink)
+            .inkTint()
             .navigationTitle("凭据名")
             .navigationBarTitleDisplayMode(.inline)
             .keyboardDoneButton()
@@ -1052,7 +1051,6 @@ private struct BitsetField: View {
                 Toggle(humanize(name), isOn: Binding(get: { mask & bit != 0 }, set: { on in
                     context.save(path, .number(Double(on ? mask | bit : mask & ~bit)))
                 }))
-                .toggleStyle(.mono)
             }
         } label: {
             FieldLabel(key: key, node: node)
@@ -1103,7 +1101,7 @@ private struct DictEditor: View {
                 }
             }
         }
-        .tint(Palette.ink)
+        .inkTint()
         .disabled(context.disabled)
         .navigationTitle(schemaLabel(key, node))
         .navigationBarTitleDisplayMode(.inline)
@@ -1137,7 +1135,6 @@ private struct ArrayEditor: View {
                             if on { next.append(choice) } else { next.removeAll { $0 == choice } }
                             context.save(path, .array(next))
                         }))
-                        .toggleStyle(.mono)
                     }
                 } footer: { FieldNotes(node: node) }
             } else if ["string", "number", "natural"].contains(inner.type) {
@@ -1183,7 +1180,7 @@ private struct ArrayEditor: View {
                 } footer: { FieldNotes(node: node) }
             }
         }
-        .tint(Palette.ink)
+        .inkTint()
         .disabled(context.disabled)
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
@@ -1230,7 +1227,7 @@ private struct TupleEditor: View {
                 }
             } footer: { FieldNotes(node: node) }
         }
-        .tint(Palette.ink)
+        .inkTint()
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
         .keyboardDoneButton()
@@ -1257,7 +1254,7 @@ private struct LocalValueEditor: View {
                 Section { SchemaField(context: local, key: "", node: node, path: []) }
             }
         }
-        .tint(Palette.ink)
+        .inkTint()
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
         .keyboardDoneButton()

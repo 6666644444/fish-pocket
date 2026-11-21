@@ -71,7 +71,7 @@ final class EngineClient: NSObject, @unchecked Sendable, URLSessionTaskDelegate 
         request.httpBody = try JSONEncoder().encode(envelope)
         let (data, response) = try await session.data(for: request)
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
-        guard let reply = try? JSONDecoder().decode(JSON.self, from: data) else {
+        guard let reply = try? JSON.parse(data) else {
             throw EngineError(code: "HTTP_\(status)", message: String(localized: "\(method) 返回了无法解析的响应（HTTP \(status)）"), detail: .null)
         }
         let result = reply["result"]

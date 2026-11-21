@@ -240,7 +240,7 @@ actor RemoteClient {
             }
             guard 200..<300 ~= http.statusCode else { throw RemoteError.server(status: http.statusCode, body: data) }
             if data.isEmpty { return .null }
-            guard let value = try? JSONDecoder().decode(JSON.self, from: data) else {
+            guard let value = try? JSON.parse(data) else {
                 throw RemoteError(kind: .invalid, status: http.statusCode, message: String(localized: "服务器返回了无法识别的内容"))
             }
             return value
@@ -332,7 +332,7 @@ actor RemoteClient {
                         case .string(let text): Data(text.utf8)
                         @unknown default: Data()
                         }
-                        guard case .object(var frame)? = try? JSONDecoder().decode(JSON.self, from: data) else { continue }
+                        guard case .object(var frame)? = try? JSON.parse(data) else { continue }
                         if frame["type"]?.string == "keepalive" { continue }
                         // When it arrived, for a reader that has to tell it from what it read since.
                         frame[RemoteClient.arrival] = .number(Date().timeIntervalSince1970)

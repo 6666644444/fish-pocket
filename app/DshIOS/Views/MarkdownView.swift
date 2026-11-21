@@ -14,6 +14,8 @@ struct MarkdownView: View {
     @Environment(\.fileMentions) private var fileMentions
     /// Formulas are drawn at the text's size, so they are redrawn when it changes.
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    /// A formula with colours of its own is drawn for each.
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -21,7 +23,7 @@ struct MarkdownView: View {
                 view(for: block)
             }
         }
-        .font(.callout)
+        .font(.body)
         .lineSpacing(4)
         .foregroundStyle(Palette.ink)
         .modifier(TextSelecting(enabled: selectable))
@@ -36,7 +38,11 @@ struct MarkdownView: View {
                 .font(level == 1 ? .title2.bold() : level == 2 ? .title3.bold() : .headline)
                 .padding(.top, 4)
         case .paragraph(let text):
-            inline(text)
+            if let linked = MiniAppCard.linkedApp(text) {
+                MiniAppCard(id: linked.id, title: linked.title)
+            } else {
+                inline(text)
+            }
         case .list(let items, let ordered):
             VStack(alignment: .leading, spacing: 4) {
                 ForEach(Array(items.enumerated()), id: \.offset) { index, item in
@@ -61,12 +67,12 @@ struct MarkdownView: View {
                 CodeBlockView(language: language, code: code)
             }
         case .table(let rows):
-            ScrollView(.horizontal, showsIndicators: false) {
+            SidewaysScroll {
                 Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 6) {
                     ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
                         GridRow {
                             ForEach(Array(row.enumerated()), id: \.offset) { _, cell in
-                                inline(cell, .subheadline).font(index == 0 ? .subheadline.bold() : .subheadline)
+                                inline(cell, .callout).font(index == 0 ? .callout.bold() : .callout)
                             }
                         }
                         if index == 0 { Divider() }
@@ -84,11 +90,11 @@ struct MarkdownView: View {
         }
     }
 
-    private func inline(_ text: String, _ style: UIFont.TextStyle = .callout) -> some View {
+    private func inline(_ text: String, _ style: UIFont.TextStyle = .body) -> some View {
         var string = cached ? MarkdownCache.inline(text) : MarkdownCache.render(text)
         if linksFiles && !fileMentions.isEmpty { string = Self.linkMentions(string, fileMentions) }
         // Links are blue, as in every chat app; the app's own tint is the text's ink.
-        return MathText.text(string, size: UIFont.preferredFont(forTextStyle: style).pointSize, linkMarks: true)
+        return MathText.text(string, size: UIFont.preferredFont(forTextStyle: style).pointSize, dark: colorScheme == .dark, linkMarks: true)
             .tint(Palette.link)
     }
 
@@ -182,7 +188,7 @@ enum MarkdownCache {
         // Inline code: a shade behind it, as in the design's `spawn` chip.
         for run in string.runs where run.inlinePresentationIntent?.contains(.code) == true {
             string[run.range].backgroundColor = Palette.bubble
-            string[run.range].font = .system(.subheadline, design: .monospaced)
+            string[run.range].font = .system(.callout, design: .monospaced)
         }
         linkify(&string)
         // A link is blue text on nothing, in the reply's own font, even an address written as code.
@@ -229,10 +235,12 @@ struct FileLinkScope: Equatable {
 extension EnvironmentValues {
     @Entry var fileLinkScope: FileLinkScope?
     @Entry var fileMentions: [String: String] = [:]
+    /// Drawn into a picture (「分享为图片」): nothing scrolls or folds away, and nothing is there to tap.
+    @Entry var drawnAsPicture = false
 }
 
 /// Where a conversation's web links open: its own browser (S-87), the page the agent drives too.
-struct BrowserLinks {
+struct BrowserLinks: Equatable {
     let sessionId: String
     let origin: URL
     /// The workbench shows that browser beside the conversation, so the page opens there.
@@ -261,7 +269,11 @@ struct LinkOpening: ViewModifier {
         content
             .environment(\.openURL, OpenURLAction { url in
                 guard let target = LinkTarget(url, scope: scope) else { return .systemAction }
-                if case .web(let url) = target { open(url) } else { self.target = target }
+                switch target {
+                case .web(let url): open(url)
+                case .app(let id): MiniAppPresenter.open(id)
+                case .file: self.target = target
+                }
                 return .handled
             })
             // From here, not from the conversation: a link can be tapped in a sheet over it. A sheet,
@@ -274,7 +286,7 @@ struct LinkOpening: ViewModifier {
             }
             .sheet(item: $target) { target in
                 switch target {
-                case .web:
+                case .web, .app:
                     EmptyView()
                 case .file(let path, let lines, let scope):
                     FilePreviewSheet(sessionId: scope.sessionId, path: path, root: scope.root, lines: lines)
@@ -301,11 +313,14 @@ struct LinkOpening: ViewModifier {
 enum LinkTarget: Identifiable {
     case web(URL)
     case file(path: String, lines: ClosedRange<Int>?, scope: FileLinkScope)
+    /// `fishapp://<id>`: an app of 我的应用.
+    case app(String)
 
     var id: String {
         switch self {
         case .web(let url): url.absoluteString
         case .file(let path, let lines, _): "\(path)#\(lines.map { "\($0)" } ?? "")"
+        case .app(let id): "app:\(id)"
         }
     }
 
@@ -315,6 +330,9 @@ enum LinkTarget: Identifiable {
         switch url.scheme?.lowercased() {
         case "http", "https":
             self = .web(url)
+        case MiniAppServer.scheme:
+            guard let id = url.host(), !id.isEmpty else { return nil }
+            self = .app(id)
         case nil, "file":
             let path = url.path(percentEncoded: false)
             guard let scope, !path.isEmpty else { return nil }
@@ -348,29 +366,35 @@ struct CodeBlockView: View {
     let code: String
     @State private var copied = false
     @State private var expanded = false
-    private let cap = 24
+    /// In a picture the code is whole and wraps, with nothing to tap.
+    @Environment(\.drawnAsPicture) private var picture
+    private var cap: Int { picture ? .max : 24 }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Text(language?.isEmpty == false ? language! : "code").font(.caption).foregroundStyle(Palette.secondary)
                 Spacer()
-                Button {
-                    copyToPasteboard(code)
-                    copied = true
-                    Task { try? await Task.sleep(for: .seconds(1.5)); copied = false }
-                } label: {
-                    Image(systemName: copied ? "checkmark" : "doc.on.doc").font(.caption).foregroundStyle(Palette.secondary).hitTarget()
+                if !picture {
+                    Button {
+                        copyToPasteboard(code)
+                        copied = true
+                        Task { try? await Task.sleep(for: .seconds(1.5)); copied = false }
+                    } label: {
+                        Image(systemName: copied ? "checkmark" : "doc.on.doc").font(.caption).foregroundStyle(Palette.secondary).hitTarget()
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("复制代码")
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("复制代码")
             }
             .padding(.leading, 14)
             .padding(.trailing, 2)
+            .padding(.vertical, picture ? 10 : 0)
             let lines = code.components(separatedBy: "\n")
-            ScrollView(.horizontal, showsIndicators: false) {
+            SidewaysScroll {
                 Text(expanded || lines.count <= cap ? code : lines.prefix(cap).joined(separator: "\n"))
-                    .font(.system(.footnote, design: .monospaced))
+                    // A size down in a picture, where long lines wrap instead of scrolling.
+                    .font(.system(picture ? .footnote : .subheadline, design: .monospaced))
                     .lineSpacing(2)
                     .padding(.horizontal, 14)
                     .padding(.bottom, lines.count > cap ? 4 : 12)
@@ -384,6 +408,21 @@ struct CodeBlockView: View {
             }
         }
         .background(Palette.field, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+}
+
+/// Wide content (a table, code) scrolls sideways on screen. In a picture it wraps instead: a
+/// scroll view draws nothing into one.
+struct SidewaysScroll<Content: View>: View {
+    @ViewBuilder let content: Content
+    @Environment(\.drawnAsPicture) private var picture
+
+    var body: some View {
+        if picture {
+            content.fixedSize(horizontal: false, vertical: true)
+        } else {
+            ScrollView(.horizontal, showsIndicators: false) { content }
+        }
     }
 }
 

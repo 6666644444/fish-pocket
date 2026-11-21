@@ -33,9 +33,75 @@ enum WhatsNew {
         }
     }
 
+    /// Said only by a build that has the account: one made without the service's address
+    /// (a fork, a local build) shows it nowhere, so has nothing to announce.
+    private static var fishPocketAccount: [Feature] {
+        guard FishPocketAPI.available else { return [] }
+        return [
+            Feature(symbol: "sparkles",
+                    title: "Fish Pocket 账号",
+                    detail: "不需要 DeepSeek 账号，也不需要 API Key：登录 Fish Pocket 账号，就能用账号里的额度对话，按用量扣积分。额度在 App Store 版本里购买，买了不会过期。入口在设置 → 连接方式。"),
+        ]
+    }
+
     /// Newest first. Until the app reaches an entry's version (and build, when it names one),
     /// the entry is not shown. Entries of one version are shown together, newest first.
     static let releases: [Release] = [
+        Release(version: "1.2.2", build: 124, features: [
+            Feature(symbol: "photo.badge.plus",
+                    title: "让智能体给你画图",
+                    detail: "在对话里说「画一张…」就能生成图片，也能改图、一次出一组。Gemini、OpenAI、即梦、通义、Grok、智谱和本地 ComfyUI 都能用；不想填 API Key，也可以登录 ChatGPT、Grok 或 Google 订阅账号。在设置 → 生图里配置。"),
+            Feature(symbol: "pencil.tip.crop.circle",
+                    title: "圈哪改哪",
+                    detail: "点开对话里的图片，用底部的「标注」圈出要改的地方，再说「把这里换成…」，智能体会照着你圈的位置改。"),
+        ]),
+        Release(version: "1.2.1", build: 114, features: [
+            Feature(symbol: "tray.and.arrow.down",
+                    title: "把 DeepSeek 的聊天记录搬过来",
+                    detail: "在 DeepSeek 官网导出聊天记录，新会话页点「导入 DeepSeek 会话」选中压缩包，以前的对话连同思考过程和图片都会出现在会话列表里，点开就能接着聊。"),
+            Feature(symbol: "person.3",
+                    title: "几个智能体分工协作",
+                    detail: "在输入框的「+」里打开「智能体团队协作」，复杂的任务会拆给多个智能体，用一张共享任务板分工推进。效果更好，token 也用得更多。"),
+            Feature(symbol: "hammer",
+                    title: "用对话定制 Fish Pocket",
+                    detail: "新会话选「创造模式」，让 Agent 替你写插件：加新工具、接入外部服务，或者把工具和提示词组合成一个自己的模式。"),
+            Feature(symbol: "doc.on.clipboard",
+                    title: "直接粘贴图片",
+                    detail: "在照片或别的 App 里拷贝一张图，回到输入框长按选「粘贴」，图片就放进附件里，和从相册选的一样。"),
+            Feature(symbol: "plus.app",
+                    title: "网页版也能放到主屏幕",
+                    detail: "在网页版右上角的「···」里选「添加到主屏幕」，以后点这个图标就进 Fish Pocket，直接打开网页版。"),
+        ]),
+        Release(version: "1.2.1", build: 112, features: [
+            Feature(symbol: "globe",
+                    title: "看懂模型的思考过程",
+                    detail: "在「插件」里启用官方的「思考过程翻译」后，点开思考全文默认显示译文，可以随时切回原文；思考还在进行时也会边出边译。"),
+        ]),
+        // 105 to 111 never went out on their own: one entry, its first build. 操控手机 leads.
+        Release(version: "1.2.1", build: 110, features: [
+            Feature(symbol: "hand.tap",
+                    title: "让智能体操控你的 iPhone、iPad",
+                    detail: "装好开源的 iCTRL 后，智能体能像你一样操控 iPhone、iPad：点按、输入、读取屏幕，在各个 App 之间替你办事。「探索」里的「操控手机」可以查看状态、一键启动，还有设置教程。"),
+            Feature(symbol: "rectangle.bottomthird.inset.filled",
+                    title: "底部标签栏",
+                    detail: "首页改成苹果的标签栏，会话、Bot、Mini Apps、探索一点就到，设置在探索页右上角。插件、连接器、本机能力、操控手机、远程控制都在「探索」里，搜索放进了会话列表。iPad 和 iPhone Duo 上，标签栏会自动放到顶部或变成侧边栏。"),
+            Feature(symbol: "apps.iphone",
+                    title: "做自己的 Mini App",
+                    detail: "在对话里让 Agent 做个小工具或小游戏，做好就放进「Mini Apps」里，点开就能用，也能放到主屏幕上。先试试自带的倒数日、番茄钟和水果翻翻。"),
+            Feature(symbol: "record.circle",
+                    title: "回看智能体的操作",
+                    detail: "智能体操作其他 App 时会把屏幕录下来，放在对话里，默认两倍速回看。分享时会生成一段带 Fish Pocket 外框的视频。"),
+            Feature(symbol: "photo.on.rectangle",
+                    title: "把对话分享成图片",
+                    detail: "点会话标题的菜单，或长按一条回复，选「分享为图片」。挑几轮对话画成一张长图，发给别人或存进相册，密钥会自动打码。"),
+        ] + fishPocketAccount + [
+            Feature(symbol: "app.badge",
+                    title: "换个 App 图标",
+                    detail: "设置 → App 图标里可以把主屏幕上的图标换成别的颜色或贴纸版的大肥鱼，也可以换成不带人物的鲸鱼图标，或者只写着 Fish Pocket 的字标。"),
+            Feature(symbol: "quote.opening",
+                    title: "引用消息再提问",
+                    detail: "长按一条消息选「引用」，也可以在「选择文本」里选中一段再引用。引用显示在输入框上方，和你的问题一起发给智能体。"),
+        ]),
         Release(version: "1.2.1", build: 103, features: [
             Feature(symbol: "character.bubble",
                     title: "界面支持繁体中文",

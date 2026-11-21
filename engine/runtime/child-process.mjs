@@ -135,6 +135,10 @@ function spawn(file, args, options) {
     child.exitCode = code;
     child.signalCode = signal;
     child.emit('exit', code, signal);
+    // Node destroys the stdin pipe of a child that has exited. execa waits for
+    // every stdio stream to settle, so one left open hangs it — pnpm resolving a
+    // git dependency (`git config --get core.sshCommand`) never got past it.
+    if (child.stdin && !child.stdin.destroyed) child.stdin.destroy();
     const open = [child.stdout, child.stderr].filter((s) => s && !s.readableEnded);
     for (const s of open) s.end();
     Promise.all(open.map((s) => new Promise((r) => { s.once('end', r); s.once('close', r); s.resume?.(); }))).then(() => child.emit('close', code, signal));

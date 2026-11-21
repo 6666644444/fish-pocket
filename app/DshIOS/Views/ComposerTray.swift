@@ -17,6 +17,7 @@ struct ComposerTray: View {
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
     @State private var confirmingPermission: String?
+    @State private var confirmingTeamOff = false
 
     private var composer: ComposerModel { model.composer }
 
@@ -86,8 +87,14 @@ struct ComposerTray: View {
             .groupedList()
             .toolbar(.hidden, for: .navigationBar)
         }
-        .tint(Palette.ink)
+        .inkTint()
         .permissionConfirmation($confirmingPermission, confirm: setPermission)
+        .alert("确认停用智能体团队协作？", isPresented: $confirmingTeamOff) {
+            Button("取消", role: .cancel) {}
+            Button("确认停用", role: .destructive) { composer.setTeam(false) }
+        } message: {
+            Text("停用后，共享任务工具和团队协调指令不再提供给智能体。这可能影响缓存复用、增加后续的 token 用量，并影响当前任务的协作效果。")
+        }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
         .sheetNotices()
@@ -100,7 +107,6 @@ struct ComposerTray: View {
                 Toggle(isOn: Binding(get: { composer.planActive }, set: { on in Haptics.select(); composer.setPlan(on) })) {
                     Label("计划模式", systemImage: "list.bullet.clipboard")
                 }
-                .toggleStyle(.mono)
                 .disabled(composer.planSwitching)
             }
             if let thinking = context.thinking(model) {
@@ -110,7 +116,22 @@ struct ComposerTray: View {
                 })) {
                     Label("思考", systemImage: "lightbulb")
                 }
-                .toggleStyle(.mono)
+            }
+            // A child is a member of its root's team, not a team of its own.
+            if let team = composer.teamEnabled, model.subagentAddress == nil {
+                Toggle(isOn: Binding(get: { team }, set: { chooseTeam($0) })) {
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("智能体团队协作")
+                            Text("用共享任务板协调多个智能体的分工，复杂任务表现更好，token 开销也更高。")
+                                .font(.caption).foregroundStyle(Palette.secondary)
+                        }
+                    } icon: {
+                        // The widest of the tray's symbols: a size down keeps it in the icon column.
+                        Image(systemName: "person.3").imageScale(.small)
+                    }
+                }
+                .disabled(composer.teamSwitching || composer.projection("modelSelection").isNull)
             }
             if !context.permissionOptions.isEmpty, model.permission != nil {
                 Picker(selection: Binding(get: { model.permission ?? "" }, set: { choosePermission($0) })) {
@@ -124,6 +145,15 @@ struct ComposerTray: View {
             }
         }
         .groupedRow()
+    }
+
+    private func chooseTeam(_ on: Bool) {
+        Haptics.select()
+        if !on, composer.teamDisableNeedsConfirmation {
+            confirmingTeamOff = true
+        } else {
+            composer.setTeam(on)
+        }
     }
 
     private func choosePermission(_ value: String) {

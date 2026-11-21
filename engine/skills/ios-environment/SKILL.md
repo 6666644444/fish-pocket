@@ -1,6 +1,6 @@
 ---
 name: ios-environment
-description: This session runs inside an iOS app, not on a desktop, and many commands do not exist. Load this skill before relying on a shell command you are unsure of, whenever one fails or behaves unexpectedly, and before writing or changing a DSH plugin, because the app's native interface does not run a plugin's browser code.
+description: This session runs inside an iOS app, not on a desktop, and many commands do not exist. Load this skill before relying on a shell command you are unsure of, whenever one fails or behaves unexpectedly, before writing or changing a DSH plugin, because the app's native interface does not run a plugin's browser code, so plugins here get no UI, and before operating another app on this phone.
 ---
 
 # Working on iOS
@@ -22,6 +22,7 @@ Anything not listed here should be assumed missing.
 - **Network:** `curl`
 - **Development:** `git node pnpm pnpx`
 - **Video and audio:** `ffmpeg ffprobe` (see the Video and audio section below)
+- **Links:** `open xdg-open` hand a URL to the phone, so code that opens the system browser (a plugin's sign-in, a CLI's docs link) works. URLs only, the same schemes as the open_url tool; a file path fails. To take the user somewhere yourself, use that tool
 - **Shell:** `bash sh env printenv which type command date sleep timeout time xargs yes true false expr whoami hostname pwd history alias unalias clear help`
 
 Python and pip also exist: see the Python section below.
@@ -63,15 +64,18 @@ Pipes, redirects, `&&`, `||`, variables, arrays, functions, loops, here-document
 
 - `$HOME` is `/home/dsh` and `$TMPDIR` is `/tmp`. Both are private to the app and writable, and these paths never change, so they are safe to store.
 - The first-use workspace is under `~/Documents`. Workspaces are not visible in the Files app.
+- `~/.ios/recovery/<time>-<step>/` holds the settings files (`~/.dsh/.credentials.yaml`, `~/.dsh/profiles/web/*`) that the app's launch-screen repair replaced when the engine would not start, at their paths relative to `~/.dsh`. When the user asks to get a key or setting back from there, copy what they want into the current file rather than the whole file back: the old one is what kept the engine down.
+- `~/apps` holds the user's mini apps (Mini Apps, a row near the top of the app's Explore tab), one folder each, which the app opens full screen. Load the `mini-apps` skill before creating or changing anything there.
 - `/` is the app's own tree: `home`, `tmp`, `opt`, plus anything you create. Writing to `/abc` or `/usr/local` works and stays inside the app.
 - `/etc`, `/usr/share` and `/System` are the real system and read-only. `/opt/dsh` is the app itself and read-only.
-- `/bin` and `/usr/bin` exist only in the shell, for its commands. A Node script does not see them.
+- `/bin` and `/usr/bin` exist only in the shell, for its commands. A Node script sees just one file there: `/usr/bin/node`, a placeholder so programs that look `node` up on `PATH` before spawning it find it.
 
 ## Node
 
 Node 24 runs in jitless mode: pure JavaScript is several times slower than on a desktop, and most work is unaffected.
 
 - `child_process` works, but it reaches this same emulated shell. Only the commands on this page can be spawned.
+- `process.execPath` is the app, not a binary named `node`. Spawning it, `node` or `/usr/bin/node` starts a Node child, which runs as a worker thread in the same process (its `process.pid` is the app's).
 - `http.createServer` works, and dev servers listen on `127.0.0.1`.
 - WebAssembly works but runs interpreted, so wasm tools are slow.
 - A plain `node` script can use the filesystem, network, `node:sqlite` and worker threads, and `node file.ts` runs TypeScript.
@@ -84,6 +88,7 @@ Python 3.15 is built into the app: `python`, `python3`, `python3.15`, `pip`, `pi
 - `python3 -m venv .venv` works, and so does `source .venv/bin/activate` (for that one command, or for the rest of a terminal session). Its `bin/python`, `bin/pip` and the commands pip installs (`bin/black`, `bin/pytest`…) run anywhere in a command line.
 - **Packages with compiled extensions do not work**: `numpy`, `pandas`, `Pillow`, `lxml`, `torch`, `cryptography` and the like. pip fails to build them, or they fail to import. Say so instead of retrying, and look for a pure-Python alternative.
 - **`subprocess` runs only Python.** From Python, `subprocess.run([sys.executable, …])` and `python3 …` work; any other program (`git`, `ls`, a shell) raises `FileNotFoundError`. So does `multiprocessing`. Use Python's own modules (`shutil`, `pathlib`, `glob`) instead of shelling out.
+- **Do not use `ctypes` to call system libraries.** Python runs inside the app's own process, so one wrong type or release crashes the whole app, not just the script.
 - **No interactive Python.** `python3` with no script reads its program from stdin; there is no prompt, and `input()` gets only what was piped in.
 - `uv`, `poetry` and `conda` are native programs and do not exist: use `pip` and `venv`.
 
@@ -110,9 +115,17 @@ FFmpeg 9.0 is built into the app: `ffmpeg` and `ffprobe` work as on a desktop fo
 
 ## DSH plugins
 
-The app's native interface, built in SwiftUI, does not run a plugin's browser code. Only a plugin's Host half (tools, settings) works there; its pages, panels and sidebar entries appear only in the web interface, the DSH 网页 row in the sidebar. **Before writing, changing or diagnosing a DSH plugin, read `references/plugins.md`**: what reaches which interface, what to tell the user before building, the built-in DS Bot plugin, and why device capabilities are not for plugins.
+The app's native interface, built in SwiftUI, does not run a plugin's browser code. Only a plugin's Host half (tools, settings, MCP connections, modes) works there, apart from a few official plugins the app draws itself; its pages, panels and sidebar entries appear only in the web interface, under 网页版 (Web version) on the app's 探索 (Explore) tab (in the sidebar on an iPad before iOS 18).
 
-Services the user has connected under 连接器 (Connectors) in the sidebar (GitHub, Notion and the like) are MCP tools in every session, named `mcp__<id>__*`. If a task needs one you do not have, ask the user to connect it there; you cannot connect one yourself.
+- **Plugins you build here are Host-only.** Write no browser half: no `dsh.client`, no `./client` export, no slots, pages, panels or decorations. Only write one when the user asks by name for something in the web interface. This overrides plugin guidance written for the Web UI, such as the UI plugin template in the `dsh-doc` skill: the user would never see it.
+- **Something to look at or tap is a mini app, not a plugin.** A page, chart, dashboard, widget or tool with buttons: tell the user a plugin cannot show it in this app, and offer a mini app instead (read the `mini-apps` skill). A change to the app's own interface, such as a theme or a panel beside the chat, cannot be built here at all; say so.
+- **What a plugin can add:** tools you can call, MCP connections, settings, timers, and modes (agent presets) that combine tools and prompts.
+
+**Before writing, changing or diagnosing a DSH plugin, read `references/plugins.md`**: what reaches which interface, what to tell the user before building, the built-in DS Bot and image generation plugins, and why device capabilities are not for plugins.
+
+**Image generation is built in** (the `dsh-image-gen` plugin): `generate_image`, `generate_images`, `edit_image` and `find_inspiration`. The user picks providers, saves API keys and signs in to ChatGPT, Grok or Google subscriptions under the app's Settings → 生图 (Image Generation), the top row of the 探索 (Explore) tab (at the bottom of the sidebar on an iPad before iOS 18); a tool error naming "Settings > Plugins > Image generation" means that page. The user can mark up a picture from the conversation (标注 in the image viewer) and send the marked copy. Its canvas, gallery and Studio are only in the web version.
+
+Services the user has connected under 连接器 (Connectors) on the app's 探索 (Explore) tab (in the sidebar on an iPad before iOS 18) (GitHub, Notion and the like) are MCP tools in every session, named `mcp__<id>__*`. If a task needs one you do not have, ask the user to connect it there; you cannot connect one yourself.
 
 ## git
 
@@ -148,9 +161,20 @@ You have tools onto the phone itself. They are not shell commands: `device_info`
 
 Three rules hold even before you read it:
 
-- A capability that needs permission starts switched off, and calling it does not turn it on. It comes back refused; tell the user they can switch it on under Connectors → Device capabilities in the app's sidebar, and stop.
+- A capability that needs permission starts switched off, and calling it does not turn it on. It comes back refused; tell the user they can switch it on under 本机能力 (Device capabilities) in 连接器 (Connectors) on the app's 探索 (Explore) tab (in the sidebar on an iPad before iOS 18), and stop.
 - A write just happens by default, with no confirmation, and the user can see it afterwards. Say which item you are about to delete before you delete it.
 - They are for you, not for plugins: do not build a plugin on them, and do not offer to.
+
+## Other apps
+
+You cannot tap through other apps by yourself. If the user has set up **iCTRL** (a separate automation app they install), you can: it taps, types and reads any app's screen through a service on `127.0.0.1:8200`. **Before operating another app, read `references/phone-control.md`**: how to check that it runs, connect and pair, what to tell the user when it does not, and how this app records what you do there.
+
+Rules that hold even before you read it:
+
+- Use it last: device capabilities, `open_url` and the `browser` tool come first, because they are faster and do not take over the screen.
+- Whenever you stop to talk to the user (done, a question, a go-ahead, something only they can do, an error), first return to this app (`${FISH_POCKET_URL_SCHEME:-fishpocket}://`, through the service's own `open_url`), then write. They are looking at the other app and cannot see this conversation.
+- Payments, deletions, sending messages and account changes need the user's go-ahead first. Passwords, codes and captchas are theirs.
+- Never switch on its remote access or nearby discovery.
 
 ## Web browser
 
@@ -176,4 +200,4 @@ The `browser` tool drives this conversation's own browser: real WebKit pages, th
 
 Tell the user plainly rather than attempting these: compiling native code, running containers or virtual machines, starting system services, background daemons that outlive the app, controlling other apps, or anything needing root. Work that needs them belongs on another machine.
 
-The device capabilities above are the exception to "controlling other apps": they are system frameworks the app is allowed to use, not other apps being driven.
+The device capabilities above are the exception to "controlling other apps": they are system frameworks the app is allowed to use, not other apps being driven. The other exception is iCTRL, when the user has set it up (see Other apps above).

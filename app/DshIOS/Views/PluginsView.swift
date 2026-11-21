@@ -14,14 +14,38 @@ extension EnvironmentValues {
 
     /// Open a session in the conversation area; the shell sets it. `让 Agent 创建插件`
     /// and the Agent presets' creator entry use it.
-    var openSession: ((String) -> Void)? {
+    var openSession: OpenSessionAction? {
         get { self[OpenSessionKey.self] }
         set { self[OpenSessionKey.self] = newValue }
     }
 }
 
 private struct OpenSessionKey: EnvironmentKey {
-    static let defaultValue: ((String) -> Void)? = nil
+    static let defaultValue: OpenSessionAction? = nil
+}
+
+/// The shell's way to open a session, for the environment. A closure there cannot be compared:
+/// every page reading it was told it had changed whenever the environment reached it again, and
+/// before iOS 26 a navigation stack sends it again to a pushed page each time a page is pushed
+/// from that one. 设置 pushed from the 探索 tab reads it and pushes 插件 and 自动化, which take
+/// it too: the two bodies and the stack kept updating one another and the app had to be killed.
+/// In a box that stays the same the value never changes.
+struct OpenSessionAction: Equatable {
+    final class Box {
+        var open: (String) -> Void = { _ in }
+    }
+
+    private let box: Box
+
+    /// The shell's latest way to do it, put in the box it keeps.
+    init(_ box: Box, open: @escaping (String) -> Void) {
+        box.open = open
+        self.box = box
+    }
+
+    func callAsFunction(_ session: String) { box.open(session) }
+
+    static func == (lhs: Self, rhs: Self) -> Bool { lhs.box === rhs.box }
 }
 
 extension View {
@@ -158,7 +182,7 @@ struct OfficialPluginItem: Identifiable {
             items.append(.init(page: .subagent, title: String(localized: "子智能体"), summary: String(localized: "设置子智能体的递归层级、数量和模型。"), glyph: "person.2"))
         }
         if mirror.serves("web") || mirror.serves("web-search-deepseek") {
-            items.append(.init(page: .webSearch, title: String(localized: "网页搜索"), summary: String(localized: "设置 DeepSeek 的搜索提供方。"), glyph: "magnifyingglass"))
+            items.append(.init(page: .webSearch, title: String(localized: "网页搜索与获取"), summary: String(localized: "选择搜索和读取网页各用哪个提供方。"), glyph: "magnifyingglass"))
         }
         if mirror.serves("agent-loop") {
             items.append(.init(page: .agentLoop, title: String(localized: "Agent 循环"), summary: String(localized: "控制 Agent 派发工具调用的方式。"), glyph: "arrow.triangle.2.circlepath"))
@@ -184,7 +208,7 @@ struct PluginsView: View {
 
     var body: some View {
         content
-            .navigationTitle("DSH 插件")
+            .navigationTitle("插件")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 if !showingMarket {
@@ -239,20 +263,17 @@ struct PluginsView: View {
                     Image(systemName: "shippingbox")
                 }
             }
-            // 创造模式 is held back on iOS (`CreatorMode`), and with it the entry that starts one.
-            if !CreatorMode.hidden {
-                Button {
-                    Task { await createWithAgent() }
-                } label: {
-                    Label {
-                        Text("让 Agent 创建插件")
-                        Text("进入创造模式，制作属于你的 DSH 插件")
-                    } icon: {
-                        Image(systemName: "sparkles")
-                    }
+            Button {
+                Task { await createWithAgent() }
+            } label: {
+                Label {
+                    Text("让 Agent 创建插件")
+                    Text("进入创造模式，制作属于你的 DSH 插件")
+                } icon: {
+                    Image(systemName: "sparkles")
                 }
-                .disabled(creating)
             }
+            .disabled(creating)
         } label: {
             Image(systemName: "plus")
         }
@@ -534,7 +555,7 @@ struct PluginDetailView: View {
                 if manager.isBusy(package) {
                     ProgressView()
                 } else if !package.switchLocked {
-                    MonoSwitch(isOn: Binding(get: { package.enabled }, set: { on in Task { await manager.setEnabled(package, on) } }), label: Text("启用 \(package.title)"))
+                    AppSwitch(isOn: Binding(get: { package.enabled }, set: { on in Task { await manager.setEnabled(package, on) } }), label: Text("启用 \(package.title)"))
                 }
             }
             .padding(.vertical, 3)
@@ -715,7 +736,7 @@ private struct PluginRowView: View {
                     if app.plugins.isBusy(row) {
                         ProgressView().controlSize(.small)
                     } else {
-                        MonoSwitch(isOn: Binding(get: { row.enabled }, set: { on in Task { await app.plugins.setRowEnabled(row, on) } }), label: Text("启用组件 \(row.title)"))
+                        AppSwitch(isOn: Binding(get: { row.enabled }, set: { on in Task { await app.plugins.setRowEnabled(row, on) } }), label: Text("启用组件 \(row.title)"))
                             .disabled(row.locked)
                             .opacity(row.locked ? 0.4 : 1)
                     }

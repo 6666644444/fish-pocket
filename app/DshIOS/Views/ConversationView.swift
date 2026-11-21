@@ -13,24 +13,34 @@ struct ConversationView: View {
     var switchWorkspace: (Workspace) -> Void = { _ in }
     /// A Bot's chat or a group chat: its own title in the bar and its cards above the composer.
     var bot: BotChrome?
+    @Environment(\.botTimeline) private var botTimeline
     /// The global automation page (the reminders sheet leads there).
     @Environment(AppModel.self) private var app
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.scenePhase) private var scenePhase
     /// The split view's sidebar, as far as the conversation reaches it: room for the workbench, and
     /// (in a Bot's chat, which is pushed and has no drawer button of its own) the sidebar's button.
     @Environment(\.splitSidebar) private var splitSidebar
+    @Environment(\.workbenchInSheet) private var workbenchInSheet
     @State private var model: SessionModel?
     @State private var context = ComposerContext()
     @State private var workbenchOpen = false
-    /// The tab last looked at, in any conversation: the workbench opens where it was left.
-    @AppStorage("dsh.workbench.tab") private var workbenchTab = WorkbenchTab.terminal
+    /// The workbench's tab, kept as the last one looked at in any conversation (`WorkbenchTab.last`).
+    /// A state of this view and not an `@AppStorage`: the binding of one is a new one on every
+    /// pass of this body, so the workbench beside the conversation was set again each time
+    /// (`WorkbenchBeside`), and what it shows was worked out again at every write to the
+    /// defaults, whichever key.
+    @State private var workbenchTab = WorkbenchTab.last
     /// The browser opened full screen from the chat.
     @State private var fullBrowser: BrowserModel?
     /// Interactions swiped away; they stay answerable from the 「等你允许」 line.
     @State private var deferred: Set<String> = []
     @State private var showNewWorkspace = false
+    @State private var showDeepSeekImport = false
     @State private var jobs = JobsModel()
     @State private var headerSheet: SessionHeaderSheet?
+    /// 「分享为图片」, from the title's menu (every round) or a reply's (its round).
+    @State private var sharing: ShareFocus?
     @State private var presets = AgentPresetCatalog()
     /// The reader is at the end of the timeline, so it follows new output (C-12).
     @State private var atBottom = true
@@ -39,11 +49,12 @@ struct ConversationView: View {
     /// What a timeline row opened. Up here, not on the row: a turn that closes folds its rows
     /// and would take the sheet along, and an approval arriving must be able to take over.
     @State private var detail: TimelineDetail?
+    @State private var actionsBox = ConversationActions.Box()
+    @State private var scrollBox = TimelineScroll.Box()
+    @State private var workbenchCommandsBox = WorkbenchCommands.Box()
     /// Approvals seen since none were waiting, for the 「1/3」 of the sheet.
     @State private var approvalBatch: Set<String> = []
     @State private var keyboardUp = false
-    /// The window keeps a strip under the dock for the home indicator tall enough for the AI label.
-    @State private var labelUnderDock = true
     @State private var composerFocused = false
     /// The new-conversation page's free height: a short one drops the headline.
     @State private var heroHeight: CGFloat = .infinity
@@ -86,8 +97,6 @@ struct ConversationView: View {
             app.localSessions.release(sessionId)
         }
         .trackKeyboard($keyboardUp)
-        // A phone's strip (34 pt) holds the line clear of the indicator; an iPad's (20 pt) does not.
-        .onAppear { labelUnderDock = Self.homeIndicatorStrip >= 30 }
         // A key saved or an account signed in changes what the model picker can offer.
         .task(id: app.revision("llm/adapters-updated", "settings/document-updated", "credentials/reference-updated", "credentials/record-updated")) {
             if let model { await context.load(model) }
@@ -96,6 +105,9 @@ struct ConversationView: View {
         .task {
             switch UserDefaults.standard.string(forKey: "dshOpen") {
             case "workbench": workbenchOpen = true
+            case "filesearch":
+                workbenchTab = .files
+                workbenchOpen = true
             case "approval": demoApproval = PendingApproval(id: "demo", toolName: "bash", callId: nil, reason: "允许本次操作使用 danger-full-access 权限：当前处于 workspace-write 模式，写不到工作区以外。这条命令会删除 build/ 下约 1.4 GB 的文件，再重新下载依赖，失败时不会自动恢复，需要手动重新构建一次才能继续。")
             case "question":
                 // `-dshDelay <s>` leaves time to focus the composer first.
@@ -140,7 +152,8 @@ struct ConversationView: View {
     }
 
     private func isBlank(_ model: SessionModel) -> Bool {
-        bot == nil && model.subagentAddress == nil && model.loaded && model.items.isEmpty && model.live.isEmpty && !model.running
+        bot == nil && model.subagentAddress == nil && model.loaded && !model.hasItems && model.live.isEmpty && !model.running
+            && model.composer.bubbles.isEmpty
     }
 
     @ViewBuilder
@@ -150,10 +163,11 @@ struct ConversationView: View {
         let started = !blank && model.subagentAddress == nil && !(!model.loaded && app.sessions[sessionId]?.blank == true)
         ScrollViewReader { proxy in
             ScrollView {
-                TimelineList(model: model)
-                    .modifier(LinkOpening())
-                // Room for the floating chips, so they never sit on the last row.
-                Color.clear.frame(height: activityShown(blank) ? 48 : 1).id(Self.bottomId)
+                TimelineRows {
+                    TimelineList(model: model)
+                        .modifier(LinkOpening())
+                    TimelineFoot(sessionId: sessionId, jobs: jobs, browserShown: browserBeside, chips: !blank && hasTools).id(Self.bottomId)
+                }
             }
             // Until the first read answers; a conversation known to be blank shows its own start.
             // The fade is the overlay's alone: animating the timeline's arrival would carry it past
@@ -170,16 +184,16 @@ struct ConversationView: View {
             .onChange(of: model.loaded) { _, loaded in
                 if loaded { atBottom = true; scrollToBottom(proxy, animated: false) }
             }
-            .environment(\.timelineScroll, TimelineScroll(keep: { id in
+            .environment(\.timelineScroll, TimelineScroll(scrollBox, top: timelineTop) { id in
                 Task { @MainActor in
                     // The rows above have to be laid out before their height can be kept.
                     try? await Task.sleep(for: .milliseconds(60))
                     proxy.scrollTo(id, anchor: .top)
                 }
-            }, top: timelineTop))
+            })
             .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).minY } action: { timelineTop = $0 }
             .modifier(TimelineAnchor())
-            .modifier(BottomFollow(atBottom: $atBottom) { scrollToBottom(proxy, animated: false) })
+            .modifier(BottomFollow(atBottom: $atBottom) { scrollToBottom(proxy, animated: $0) })
             // Any drag on the timeline hides the keyboard (`.interactively` only does when the finger reaches it),
             // even when the timeline is too short to scroll; so does a tap outside the composer.
             .scrollDismissesKeyboard(.immediately)
@@ -190,17 +204,25 @@ struct ConversationView: View {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { dismissKeyboard() }
             })
             // The bottom anchor only holds for the first layout; follow the user's own message and the start of a turn.
-            .onChange(of: model.items.last?.id) { _, _ in
-                if case .user? = model.items.last { atBottom = true; scrollToBottom(proxy) }
+            .background {
+                TimelineFollow(model: model) {
+                    atBottom = true
+                    scrollToBottom(proxy)
+                } turnStarted: {
+                    if atBottom { scrollToBottom(proxy) }
+                }
             }
-            .onChange(of: model.running) { _, running in if running, atBottom { scrollToBottom(proxy) } }
+            // A group round's replies are rows of the group's book (ds-bot 0.3.8), not events of this
+            // session, whose own turn ends at once: follow them as a running turn is followed.
+            .onChange(of: botTimeline?.room == true ? app.botTeam.relayRowCount : 0) { _, _ in if atBottom { scrollToBottom(proxy) } }
             .overlay(alignment: .bottomTrailing) {
                 // Animated here, not on the scroll view: its rows must not animate with the buttons.
                 ZStack {
                     if !atBottom && !blank {
                         VStack(spacing: 8) {
                             // The web's turn rail needs a wide window; here it is a list one tap away.
-                            if model.turnOutline.count >= 2 {
+                            // A Bot's chat or a group is a chat, not turns to jump between: ds-bot's window has none.
+                            if botTimeline == nil, model.turnOutline.count >= 2 {
                                 FloatingIcon(systemName: "list.bullet", label: "跳转到轮次") { showTurns = true }
                             }
                             FloatingIcon(systemName: "chevron.down", label: "回到底部") {
@@ -275,38 +297,23 @@ struct ConversationView: View {
                     )
                     .allowsHitTesting(presentedInteractionId(model) == nil)
                 }
-                // A Bot's title already carries a second line (what it is doing, its members), so the
-                // label goes under the input. Where the home indicator's strip is too thin for it
-                // (an iPad, a phone with a home button) it takes a row of its own.
-                if bot != nil && !labelUnderDock {
-                    AIContentLabel().frame(maxWidth: .infinity).padding(.top, 6)
-                }
             }
             .padding(.horizontal, 12)
             .padding(.top, 6)
             .padding(.bottom, 8)
-            // In the home indicator's strip under the dock: the input stays where it was. The
-            // keyboard covers it while up.
-            .overlay(alignment: .bottom) {
-                if bot != nil && labelUnderDock {
-                    AIContentLabel()
-                        .alignmentGuide(.bottom) { $0[.top] }
-                        // The bar's glass reaches a little past the dock's bottom padding.
-                        .offset(y: 10)
-                        .allowsHitTesting(false)
-                }
-            }
             .readableWidth()
+            // The starter prompts scroll past the dock's padding to the screen's edge, not into the
+            // safe area beside it: the status bar's column on iPhone Duo unfolded, the notch's side
+            // in landscape. Cut at the sides only.
+            .mask { Rectangle().padding(.vertical, -200) }
             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { app.composerHeight = $0 }
         }
         .modifier(ComposerDrop(composer: model.composer, enabled: model.subagentReadOnly(parentAvailable: parentAvailable(model)) == nil))
         // Under the toolbar: what is inside an inspector's main view does not reach the navigation bar.
-        .modifier(WorkbenchBeside(shown: workbenchShown(sizeClass == .regular), regular: sizeClass == .regular) {
-            workbenchPage(model)
-        })
+        .modifier(WorkbenchBeside(model: model, open: $workbenchOpen, tab: $workbenchTab, regular: workbenchBeside, inspector: !workbenchInSheet))
         // It names the window in the iPad app switcher. Not drawn while the title is the principal
         // item; with the title moved aside for the workbench it would show as a second one.
-        .navigationTitle(titleBesideWorkbench ? "" : app.durableTitle(of: sessionId) ?? "")
+        .modifier(WindowTitle(sessionId: sessionId, hidden: titleBesideWorkbench))
         .navigationBarTitleDisplayMode(.inline)
         .conversationBar()
         // Stated, not left to the default: the workbench's files and changes hide the bar of
@@ -323,7 +330,7 @@ struct ConversationView: View {
             }
             // As the web keeps 新会话 in its sidebar, the bar keeps it one tap away: no drawer
             // first. A blank conversation is already a new one, so it only shows on a started one.
-            if started && bot == nil {
+            if started && bot == nil && !barButtonsAway {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
                         Haptics.tap()
@@ -336,10 +343,12 @@ struct ConversationView: View {
             }
             // A Bot's chat has the Bot's own title instead of the session's.
             if bot == nil {
-                if let parent = app.sessions[sessionId]?.parentId, model.subagentAddress != nil {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button { app.open(session: parent) } label: { Image(systemName: "chevron.backward") }
-                            .accessibilityLabel("返回父会话")
+                if model.subagentAddress != nil, let parent = app.sessions[sessionId]?.parentId {
+                    if !barButtonsAway {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button { app.open(session: parent) } label: { Image(systemName: "chevron.backward") }
+                                .accessibilityLabel("返回父会话")
+                        }
                     }
                     ToolbarItem(placement: titlePlacement) { SubagentSwitcher(sessionId: sessionId) }
                 } else if blank || (!model.loaded && app.sessions[sessionId]?.blank == true) {
@@ -349,12 +358,13 @@ struct ConversationView: View {
                         SessionTitleMenu(
                             // 新会话 sits beside the drawer button on every started conversation,
                             // so on a phone the title always makes room for it.
-                            sessionId: sessionId, streamTitle: model.title, catalog: presets, crowded: true
+                            sessionId: sessionId, streamTitle: model.title, catalog: presets, crowded: true,
+                            shareImage: { sharing = ShareFocus(turn: nil) }
                         ) { headerSheet = .logExport }
                     }
                 }
             }
-            if !blank {
+            if !blank && !barButtonsAway {
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     // A Bot runs no subagents of DSH's, its scheduled tasks are on its own page, and
                     // its background jobs float over the chat's foot.
@@ -370,39 +380,42 @@ struct ConversationView: View {
                 }
             }
         }
-        .environment(\.conversationActions, ConversationActions(
+        .environment(\.conversationActions, ConversationActions(actionsBox, .init(
             openChanges: { openWorkbench(.changes) },
             openBrowser: openBrowser,
             regenerate: { text in Task { await model.send(text: text) } },
+            shareImage: { turn in sharing = ShareFocus(turn: turn) },
             fork: { turn in
                 Task { await app.fork(session: sessionId, atSeq: model.forkBoundary(turn: turn), from: .turn) }
             },
-            quote: { text in
-                let quoted = text.split(separator: "\n", omittingEmptySubsequences: false).prefix(12).map { "> \($0)" }.joined(separator: "\n")
-                let draft = model.composer.text.trimmingCharacters(in: .whitespacesAndNewlines)
-                model.composer.text = quoted + "\n\n" + draft
-                Haptics.tap()
-            },
+            quote: quoteAction(model),
             revealQuestion: { deferred.remove("q-\($0)") },
             present: { item in
                 // The timeline stays usable behind an approval: what is waiting steps aside, one tap away.
                 deferred.formUnion(interactions(model).map(\.id))
                 detail = item
             }
-        ))
+        )))
         // Over the conversation on a phone, beside it where there is room.
-        .sheet(isPresented: workbenchShown(sizeClass != .regular)) {
-            workbenchPage(model)
+        .sheet(isPresented: workbenchShown(!workbenchBeside)) {
+            WorkbenchView(model: model, tab: $workbenchTab) { workbenchOpen = false }
                 .presentationDetents([.large])
                 .presentationCornerRadius(36)
                 // A pull over the terminal is meant for its scrollback; ✕ closes the sheet.
                 .interactiveDismissDisabled(workbenchTab == .terminal)
         }
         .fullScreenCover(isPresented: Binding(get: { fullBrowser != nil }, set: { if !$0 { fullBrowser = nil } })) {
-            if let fullBrowser { FullScreenBrowser(model: fullBrowser) { self.fullBrowser = nil } }
+            if let fullBrowser {
+                FullScreenBrowser(model: fullBrowser) {
+                    // The chat's picture of the page is taken while the page is still on screen.
+                    fullBrowser.thumbnailStale(settle: 0)
+                    self.fullBrowser = nil
+                }
+            }
         }
-        .onChange(of: workbenchOpen) { _, open in if open, sizeClass == .regular { splitSidebar.makeRoom() } }
-        .focusedSceneValue(\.workbenchCommands, WorkbenchCommands(available: !blank && hasTools, toggle: toggleWorkbench, open: openWorkbench))
+        .onChange(of: workbenchOpen) { _, open in if open, workbenchBeside { splitSidebar.makeRoom() } }
+        .onChange(of: workbenchTab) { _, tab in WorkbenchTab.last = tab }
+        .focusedSceneValue(\.workbenchCommands, WorkbenchCommands(workbenchCommandsBox, available: !blank && hasTools, toggle: toggleWorkbench, open: openWorkbench))
         // The sheet leaves the background live, so the composer keeps its focus and the
         // keyboard would stay over the sheet; an answer comes first.
         .onChange(of: presentedInteractionId(model)) { _, id in if id != nil { dismissKeyboard() } }
@@ -416,13 +429,33 @@ struct ConversationView: View {
         .task(id: app.questionRequests[sessionId]?.map(\.eventId)) { model.syncQuestionWaits() }
         .sheet(item: interactionBinding(model)) { sheet(for: $0, model) }
         .sheet(isPresented: $showNewWorkspace) { NewWorkspaceView() }
+        .sheet(isPresented: $showDeepSeekImport) { DeepSeekImportSheet(workspaceId: app.workspace(of: sessionId)?.id) }
         .sheet(item: $headerSheet) { sheet in
             Group {
                 switch sheet {
                 case .subagents: SubagentCatalogSheet(rootId: sessionId)
                 case .jobs: JobsSheet(sessionId: sessionId, jobs: jobs)
+                case .reminders:
+                    SheetStack {
+                        SchedulesView(sessionId: sessionId) { id in
+                            headerSheet = nil
+                            selection = id
+                        }
+                    }
+                    .environment(\.systemLists, true)
                 case .logExport: SessionLogExportSheet(sessionId: sessionId)
                 }
+            }
+            .sheetNotices()
+        }
+        .sheet(item: $sharing) { focus in
+            let rounds = ShareRound.rounds(of: model)
+            SheetStack {
+                ConversationShareSheet(
+                    title: app.durableTitle(of: sessionId) ?? model.title ?? String(localized: "新会话"),
+                    rounds: rounds,
+                    focus: focus.turn.flatMap { turn in rounds.first { $0.turns.contains(turn) }?.id }
+                )
             }
             .sheetNotices()
         }
@@ -432,10 +465,16 @@ struct ConversationView: View {
             Text(model.error ?? "")
         }
         .environment(\.fileLinkScope, FileLinkScope(sessionId: sessionId, root: model.workingDirectory))
-        .environment(\.browserLinks, BrowserLinks(
-            sessionId: BrowserAgent.owner(of: sessionId, in: app), origin: app.client.origin, beside: browserBeside))
+        .modifier(BrowserLinkScope(sessionId: sessionId, beside: browserBeside))
         .environment(\.sessionModel, model)
     }
+
+    /// The bar's buttons are taken off it for the time the app is out of sight. iPhone Duo open shows
+    /// the bar buttons of a split view's detail in the column at its trailing edge. Off screen, iOS
+    /// draws the app folded and open again for the app switcher, and the buttons that column had
+    /// come back faded and take no tap, until another conversation is opened. Put on the bar again
+    /// as the app comes back, they are new to the column, which shows them as they are.
+    private var barButtonsAway: Bool { ThisDevice.isDuo && scenePhase == .background }
 
     // MARK: Workbench
 
@@ -444,18 +483,17 @@ struct ConversationView: View {
         titleBesideWorkbench ? .topBarLeading : .principal
     }
 
-    private var titleBesideWorkbench: Bool { sizeClass == .regular && workbenchOpen }
+    /// The workbench opens beside the conversation where there is room, over it otherwise.
+    private var workbenchBeside: Bool { sizeClass == .regular && !workbenchInSheet }
+
+    private var titleBesideWorkbench: Bool { workbenchBeside && workbenchOpen }
 
     /// The workbench's browser is already on screen beside the conversation.
-    private var browserBeside: Bool { sizeClass == .regular && workbenchOpen && workbenchTab == .browser }
+    private var browserBeside: Bool { workbenchBeside && workbenchOpen && workbenchTab == .browser }
 
     /// The conversation's tools (workbench, browser, background jobs) are reachable here: DSH's own
     /// conversations and a Bot's chat, not a group's session.
     private var hasTools: Bool { bot?.tools ?? true }
-
-    private func activityShown(_ blank: Bool) -> Bool {
-        !blank && hasTools && ConversationActivity.shows(sessionId: sessionId, jobs: jobs, browserShown: browserBeside, in: app)
-    }
 
     /// From the chat the browser opens full screen, the page alone: the workbench's other tabs are not
     /// what the user came for. A subagent's page is its parent conversation's.
@@ -470,6 +508,8 @@ struct ConversationView: View {
     }
 
     private func toggleWorkbench() {
+        // Where it was left, which may have been in another conversation since this one was made.
+        if !workbenchOpen { workbenchTab = .last }
         workbenchOpen.toggle()
     }
 
@@ -478,8 +518,13 @@ struct ConversationView: View {
         Binding(get: { here && workbenchOpen }, set: { if !$0 { workbenchOpen = false } })
     }
 
-    private func workbenchPage(_ model: SessionModel) -> some View {
-        WorkbenchView(model: model, tab: $workbenchTab) { workbenchOpen = false }
+    /// Quoting puts text in the draft (`MessageQuotes`): not offered where there is no input.
+    private func quoteAction(_ model: SessionModel) -> ((String) -> Void)? {
+        guard model.subagentReadOnly(parentAvailable: parentAvailable(model)) == nil else { return nil }
+        return { text in
+            model.composer.addQuote(text)
+            Haptics.tap()
+        }
     }
 
     /// A continuable child takes messages only through a live parent Agent.
@@ -547,9 +592,9 @@ struct ConversationView: View {
             HStack(spacing: 8) {
                 Button {
                     Haptics.tap()
-                    app.pluginStoreRequest = UUID()
+                    showDeepSeekImport = true
                 } label: {
-                    Label("发现插件", systemImage: "puzzlepiece.extension")
+                    Label("导入 DeepSeek 会话", systemImage: "square.and.arrow.down")
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(Palette.onInk)
                         .padding(.horizontal, 14)
@@ -576,8 +621,18 @@ struct ConversationView: View {
         .scrollClipDisabled()
     }
 
+    /// What it can do as an assistant on this phone: device capabilities, a mini app, another app
+    /// through phone control, a scheduled task. Each one works when sent as is; a capability that is
+    /// switched off, or phone control not set up, gets the agent's answer saying where to turn it on.
     private static var suggestions: [String] {
-        [String(localized: "看看这个工作区里有什么"), String(localized: "写一个小脚本并运行"), String(localized: "解释一段代码"), String(localized: "整理今天的待办")]
+        [
+            String(localized: "看看我今天有什么安排"),
+            String(localized: "帮我做一个记账小工具"),
+            String(localized: "打开淘宝，看看我的快递到哪了"),
+            String(localized: "每天早上 8 点给我整理一份新闻早报"),
+            String(localized: "20 分钟后提醒我关火"),
+            String(localized: "附近有什么好吃的"),
+        ]
     }
 
     // MARK: Approvals and questions
@@ -641,7 +696,7 @@ struct ConversationView: View {
         case .detail(.usage(let usage)):
             TurnUsageSheet(usage: usage)
         case .detail(.text(let text)):
-            SelectTextSheet(text: text)
+            SelectTextSheet(text: text, quote: quoteAction(model))
         }
     }
 
@@ -660,7 +715,7 @@ struct ConversationView: View {
 /// bottom counts as following, and growth then scrolls along; scrolling up lets go.
 /// iOS 17 has no scroll geometry: the view stays where the anchor leaves it.
 /// A long timeline opens at its end and grows from there; a short one sits at the top.
-/// iOS 17 has only the one anchor, so a short timeline sits at the bottom there.
+/// iOS 17 has only the one anchor, for every role (`TimelineRows` keeps a short timeline right under it).
 struct TimelineAnchor: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 18.0, *) {
@@ -674,9 +729,34 @@ struct TimelineAnchor: ViewModifier {
     }
 }
 
+/// What a timeline's scroll view holds: its rows, one under another, as the scroll view itself
+/// lays them out. Before iOS 18 they stand in a space never shorter than the room they scroll in.
+/// With the bottom anchor of that time (`TimelineAnchor`), rows that do not fill the screen are
+/// placed at its foot by SwiftUI at every change of their height, and put back at the top by
+/// the scroll view in the same pass, which SwiftUI does not hear of: the rows are drawn at the
+/// top and take their taps where they would be at the foot (a step tapped open could not be
+/// tapped again, nor anything in a short conversation once a reply had come) until a drag
+/// brings the two together. Filled out to the room, the foot is where the rows already end.
+struct TimelineRows<Rows: View>: View {
+    @ViewBuilder let rows: Rows
+
+    var body: some View {
+        if #available(iOS 18.0, *) {
+            rows
+        } else {
+            ZStack(alignment: .top) {
+                Color.clear.containerRelativeFrame(.vertical)
+                // At their own height: the stack would share the whole room out among them.
+                VStack { rows }.fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+}
+
 struct BottomFollow: ViewModifier {
     @Binding var atBottom: Bool
-    let follow: () -> Void
+    /// Scroll to the end: at once as the timeline grows, animated as the room for it shrinks.
+    let follow: (_ animated: Bool) -> Void
 
     func body(content: Content) -> some View {
         if #available(iOS 18.0, *) {
@@ -684,11 +764,20 @@ struct BottomFollow: ViewModifier {
                 // `containerSize` already leaves the insets out; the visible rect runs under them.
                 Metrics(
                     contentHeight: geometry.contentSize.height,
-                    distance: geometry.contentSize.height + geometry.contentInsets.bottom - geometry.visibleRect.maxY
+                    distance: geometry.contentSize.height + geometry.contentInsets.bottom - geometry.visibleRect.maxY,
+                    offset: geometry.contentOffset.y
                 )
             } action: { old, new in
                 if new.contentHeight > old.contentHeight, old.distance <= Self.threshold {
-                    follow()
+                    follow(false)
+                } else if atBottom, new.contentHeight == old.contentHeight, abs(new.offset - old.offset) < 0.5,
+                          new.distance > old.distance, new.distance > Self.threshold {
+                    // The end moved out of sight though nothing was added and nothing scrolled: the room
+                    // for the timeline shrank (the keyboard came up, the input grew). The system keeps
+                    // the end in view by itself only for a timeline that was scrolled to it; one that
+                    // fitted the screen sat at the top, and from iOS 26 it stayed there, its end covered.
+                    // `atBottom` is left as it was: the reader is still following.
+                    follow(true)
                 } else {
                     atBottom = new.distance <= Self.threshold
                 }
@@ -703,19 +792,53 @@ struct BottomFollow: ViewModifier {
     private struct Metrics: Equatable {
         var contentHeight: CGFloat
         var distance: CGFloat
+        /// How far the timeline is scrolled.
+        var offset: CGFloat
     }
 }
 
 /// Lets a row keep the reader's place after the rows above it change.
-struct TimelineScroll {
-    var keep: (String) -> Void = { _ in }
+struct TimelineScroll: Equatable {
+    /// The scroll view's latest way to do it. The closure is made again on every pass of the
+    /// conversation's body; in a box that stays the same, it no longer changes the environment
+    /// of every row of the timeline each time.
+    final class Box {
+        var keep: (String) -> Void = { _ in }
+    }
+
+    private let box: Box
     /// Where the visible timeline starts on screen, below the top bar.
-    var top: CGFloat = 0
+    let top: CGFloat
+
+    /// Outside a timeline. Every such value shares one box, so the environment's default is
+    /// the same value each time it is read.
+    init() {
+        box = Self.unset
+        top = 0
+    }
+
+    private static let unset = Box()
+
+    init(_ box: Box, top: CGFloat, keep: @escaping (String) -> Void) {
+        box.keep = keep
+        self.box = box
+        self.top = top
+    }
+
+    func keep(_ id: String) { box.keep(id) }
+
+    static func == (lhs: Self, rhs: Self) -> Bool { lhs.box === rhs.box && lhs.top == rhs.top }
 }
 
 extension EnvironmentValues {
     /// Set by the split view: what a conversation in its detail can do with the sidebar.
     @Entry var splitSidebar = SplitSidebar()
+    /// A conversation pushed onto a tab's stack on iPhone Duo (a Bot's chat, a group): no
+    /// inspector, and the workbench comes up as a sheet. Open, the Duo keeps a column at its
+    /// trailing edge for the system's controls, and there an inspector on a pushed page keeps the
+    /// push from showing at all (the path takes it, the list stays on screen, a link to it reports
+    /// no destination); the workbench beside it, with stacks of its own, takes the page away too.
+    @Entry var workbenchInSheet = false
     @Entry var timelineScroll = TimelineScroll()
     /// The user's own messages in a Bot's chat, in the Bot's colour; nil keeps the plain bubble.
     @Entry var userBubbleTint: BubbleTint?
@@ -747,18 +870,66 @@ extension View {
 }
 
 /// Actions a reply offers below it, provided by the conversation.
-struct ConversationActions {
-    var openChanges: () -> Void = {}
-    /// The workbench's browser, which the agent's browser tool drives.
-    var openBrowser: () -> Void = {}
-    var regenerate: (String) -> Void = { _ in }
-    var fork: (Int) -> Void = { _ in }
-    /// Quote a reply into the composer, to answer that part of it.
-    var quote: (String) -> Void = { _ in }
-    /// Bring a question swiped away back up, from its tool row.
-    var revealQuestion: (String) -> Void = { _ in }
-    /// Open what a row holds in the conversation's sheet.
-    var present: (TimelineDetail) -> Void = { _ in }
+///
+/// The closures are made again on every pass of the conversation's body. Handed down as plain
+/// values they made every row that reads them (each bubble, each reply) redraw with the
+/// conversation, a dozen times a second while a reply runs. So they sit in a box the
+/// conversation keeps for its whole life: two values are equal when they share that box and
+/// offer the same actions, and a row always calls the latest closures.
+@dynamicMemberLookup
+struct ConversationActions: Equatable {
+    struct Handlers {
+        var openChanges: () -> Void = {}
+        /// The workbench's browser, which the agent's browser tool drives.
+        var openBrowser: () -> Void = {}
+        var regenerate: (String) -> Void = { _ in }
+        /// 「分享为图片」, starting from a reply's round; nil where the conversation offers none (a Bot's chat).
+        var shareImage: ((Int?) -> Void)?
+        var fork: (Int) -> Void = { _ in }
+        /// Quote text into the composer (`MessageQuotes`); nil where nothing can be sent (a read-only child).
+        var quote: ((String) -> Void)?
+        /// Bring a question swiped away back up, from its tool row.
+        var revealQuestion: (String) -> Void = { _ in }
+        /// Open what a row holds in the conversation's sheet.
+        var present: (TimelineDetail) -> Void = { _ in }
+    }
+
+    final class Box {
+        var handlers = Handlers()
+    }
+
+    private let box: Box
+    /// What a row draws differently for: whether it offers 「引用」 and 「分享为图片」.
+    private let quotes: Bool
+    private let shares: Bool
+
+    /// No conversation around: nothing to ask of it. Every such value shares one box, so
+    /// the environment's default is the same value each time it is read.
+    init() {
+        box = Self.unset
+        quotes = false
+        shares = false
+    }
+
+    private static let unset = Box()
+
+    /// The conversation's latest handlers, put in the box it keeps.
+    init(_ box: Box, _ handlers: Handlers) {
+        box.handlers = handlers
+        self.box = box
+        quotes = handlers.quote != nil
+        shares = handlers.shareImage != nil
+    }
+
+    subscript<Value>(dynamicMember keyPath: KeyPath<Handlers, Value>) -> Value { box.handlers[keyPath: keyPath] }
+
+    static func == (lhs: Self, rhs: Self) -> Bool { lhs.box === rhs.box && lhs.quotes == rhs.quotes && lhs.shares == rhs.shares }
+}
+
+/// Which round the share sheet starts with: a reply's, or (nil) all of them.
+struct ShareFocus: Identifiable {
+    let turn: Int?
+    let id = UUID()
 }
 
 /// What a row of the timeline opens.
@@ -803,6 +974,12 @@ extension SessionModel {
         }
         return nil
     }
+
+    /// Whether this reasoning block is still growing: its last paragraph is not finished yet.
+    func reasoningStreaming(_ id: String) -> Bool {
+        if running, case .reasoning(id, _)? = live.last { return true }
+        return false
+    }
 }
 
 /// Its views in a row at their natural width when that fits, else one above the other, centred.
@@ -844,6 +1021,67 @@ private struct RowOrColumn: Layout {
     }
 }
 
+/// Where a link in the conversation opens: the browser of the session it belongs to, a subagent's
+/// being its parent's. That is looked up in the session list, so it is read in a modifier of its
+/// own: read in the conversation's body, every change to the list would redraw the whole page.
+private struct BrowserLinkScope: ViewModifier {
+    @Environment(AppModel.self) private var app
+    let sessionId: String
+    let beside: Bool
+
+    func body(content: Content) -> some View {
+        content.environment(\.browserLinks, BrowserLinks(
+            sessionId: BrowserAgent.owner(of: sessionId, in: app), origin: app.client.origin, beside: beside))
+    }
+}
+
+/// The foot of the timeline: room for the floating chips, so they never sit on the last row. A view
+/// of its own: whose browser a chip stands for is looked up in the session list, and read in the
+/// conversation's body every change to that list would redraw the whole page.
+private struct TimelineFoot: View {
+    @Environment(AppModel.self) private var app
+    let sessionId: String
+    let jobs: JobsModel
+    let browserShown: Bool
+    /// The conversation shows chips at all.
+    let chips: Bool
+
+    var body: some View {
+        Color.clear.frame(height: chips ? max(1, ConversationActivity.room(sessionId: sessionId, jobs: jobs, browserShown: browserShown, in: app)) : 1)
+    }
+}
+
+/// The conversation's name, for the app switcher. Read in a modifier of its own: where the name
+/// comes from the session list, every change to that list would redraw the whole conversation.
+private struct WindowTitle: ViewModifier {
+    @Environment(AppModel.self) private var app
+    let sessionId: String
+    let hidden: Bool
+
+    func body(content: Content) -> some View {
+        content.navigationTitle(hidden ? "" : app.durableTitle(of: sessionId) ?? "")
+    }
+}
+
+/// What the timeline brings that the conversation scrolls down for. A view of its own: read in the
+/// conversation's body, the timeline, the messages on their way and the running state would each
+/// redraw the whole page, bar and input included, at every change.
+private struct TimelineFollow: View {
+    let model: SessionModel
+    /// The user's own message came in: the engine's copy, or one just sent, on screen before that.
+    let ownMessage: () -> Void
+    let turnStarted: () -> Void
+
+    var body: some View {
+        Color.clear
+            .onChange(of: model.items.last?.id) { _, _ in
+                if case .user? = model.items.last { ownMessage() }
+            }
+            .onChange(of: model.composer.bubbles.last?.id) { _, id in if id != nil { ownMessage() } }
+            .onChange(of: model.running) { _, running in if running { turnStarted() } }
+    }
+}
+
 /// The timeline. Its own view so that projection and session-list updates, which
 /// redraw `ConversationView`, do not re-diff every row.
 private struct TimelineList: View {
@@ -854,6 +1092,9 @@ private struct TimelineList: View {
     var body: some View {
         // A Bot's chat leaves out the turns that answered another Bot (ds-bot draws none of them).
         let items = bot.map { bot in model.items.filter { !bot.hides($0) } } ?? model.items
+        // A message just sent comes last, in the row its durable message takes over (`SessionModel.rowId`).
+        let bubbles = model.composer.bubbles.map { TimelineItem.user(seq: .max, text: $0.text, attachments: $0.stored ?? [], requestId: $0.id) }
+        let rows = (items + bubbles).enumerated().map { Row(id: model.rowId($0.element), index: $0.offset, item: $0.element) }
         let lastAssistant = items.last { if case .assistant = $0 { true } else { false } }?.id
         // The turn being worked on: the streamed attempt joins it, under one step line (as the web does).
         // A turn that has ended is not it: right after a send the session already runs while the new
@@ -866,7 +1107,8 @@ private struct TimelineList: View {
             if model.hasMoreHistory { LoadOlderTrigger(model: model) }
             // A Bot's chat moves to a fresh part when it grows long; the earlier parts come from ds-bot.
             if !model.hasMoreHistory, model.loaded, let from = bot?.earlierFrom { BotEarlierParts(sessionId: from) }
-            ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+            ForEach(rows) { row in
+                let item = row.item
                 if bot?.room == true, case .assistant(_, let blocks, _, _) = item, let relay = RoomRelay(blocks: blocks) {
                     // A group round: its members' replies, under their names.
                     if !relay.empty { RoomRelayView(relay: relay, running: item.id == activeTurn).id(item.id) }
@@ -882,27 +1124,45 @@ private struct TimelineList: View {
                         model: model,
                         isLast: isLast,
                         inProgress: false,
-                        prompt: isLast ? Self.prompt(before: index, in: items) : nil,
+                        prompt: isLast ? Self.prompt(before: row.index, in: items) : nil,
                         info: Self.turn(of: item).flatMap { model.turnInfo[$0] },
                         arrives: arrives(item)
                     )
                     .equatable()
-                    .id(item.id)
+                    .id(row.id)
                 }
             }
-            // A message just sent comes first, then the line saying the reply is on its way: until the
-            // engine's copy of the message is in, the turn's loading line waits.
+            // A message just sent comes first, then the lines saying the reply is on its way: until the
+            // engine's copy of the message is in, they wait unseen. They hold their room from the send
+            // on, so the message rises once, to where it stays: with the room made only as the turn
+            // starts, the message settled and was then pushed up a second time.
             let sending = model.composer.pending.contains { $0.placement == .transcript }
-            if model.running && !sending && activeTurn == nil && bot?.room != true { LiveSection(model: model) }
+            if (model.running || sending) && activeTurn == nil && bot?.room != true {
+                LiveSection(model: model).modifier(Awaited(unseen: sending))
+            }
             // A group round says who is speaking in its own place; a Bot's own chat shows the Bot at work.
-            if model.running && !sending && bot?.room != true {
-                if case .bot(let id)? = botChat { BotActivityLine(botId: id, model: model) } else { RunningIndicator(since: model.runningSince) }
+            if (model.running || sending) && bot?.room != true {
+                Group {
+                    if case .bot(let id)? = botChat {
+                        // Made again as it shows: its mark grows out of a point then, not while unseen.
+                        BotActivityLine(botId: id, model: model).id(sending)
+                    } else {
+                        RunningIndicator(since: model.runningSince)
+                    }
+                }
+                .modifier(Awaited(unseen: sending))
             }
         }
         .padding(.horizontal, 20)
         .padding(.top, 20)
         .padding(.bottom, 12)
         .readableWidth()
+    }
+
+    private struct Row: Identifiable {
+        let id: String
+        let index: Int
+        let item: TimelineItem
     }
 
     /// A message sent while the conversation is open rises into place; what a snapshot brought
@@ -923,6 +1183,18 @@ private struct TimelineList: View {
             if case .user(_, let text, _, _) = item, !text.isEmpty { return text }
         }
         return nil
+    }
+}
+
+/// A line of the timeline that holds its place before it shows.
+private struct Awaited: ViewModifier {
+    let unseen: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(unseen ? 0 : 1)
+            .animation(.easeOut(duration: 0.15), value: unseen)
+            .accessibilityHidden(unseen)
     }
 }
 
@@ -984,11 +1256,18 @@ private struct TimelineRow: View, Equatable {
             UserBubble(text: text, attachments: attachments, model: model, via: IMPlatform.via(requestId), arrives: arrives)
         case .assistant(let turn, let blocks, let started, let ended):
             AssistantTurnView(blocks: blocks, turn: turn, inProgress: inProgress, startedAt: started, endedAt: ended, regeneratePrompt: inProgress ? nil : prompt, info: info)
-        case .notice(_, let text, let isError):
-            Label(text, systemImage: isError ? "exclamationmark.triangle" : "info.circle")
-                .font(.footnote)
-                .foregroundStyle(isError ? Palette.removed : Palette.secondary)
-                .frame(maxWidth: .infinity, alignment: .center)
+        case .notice(let seq, let text, let isError):
+            VStack(spacing: 10) {
+                Label(text, systemImage: isError ? "exclamationmark.triangle" : "info.circle")
+                    .font(.footnote)
+                    .foregroundStyle(isError ? Palette.removed : Palette.secondary)
+                // The web's send button turns into 继续生成 here; on a phone that button is the microphone.
+                if isError, model.canContinue(after: seq) {
+                    Button("继续生成") { Haptics.tap(); Task { await model.continueGeneration() } }
+                        .buttonStyle(.capsule(.outline, height: 44, fill: false))
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .center)
         case .maxTokens:
             MaxTokensNotice(model: model)
         case .credential(_, let problem):
@@ -1038,7 +1317,8 @@ private struct TurnJumpSheet: View {
 
     var body: some View {
         NavigationStack {
-            List(outline) { entry in
+            // Newest first: the button shows while reading back, so the way home is on top.
+            List(outline.sorted { $0.turn > $1.turn }) { entry in
                 Button { jump(entry) } label: {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("第 \(entry.turn) 轮").font(.caption).foregroundStyle(Palette.secondary)
@@ -1075,7 +1355,7 @@ private struct LoadOlderTrigger: View {
                 // The first layout has this in view until the bottom anchor takes hold.
                 try? await Task.sleep(for: .milliseconds(300))
                 guard !Task.isCancelled else { return }
-                let anchor = model.items.first?.id
+                let anchor = model.items.first.map(model.rowId)
                 // Its own task: scrolling on must not cancel the request halfway.
                 Task {
                     await model.loadOlder()
@@ -1134,26 +1414,25 @@ private struct UserBubble: View {
         VStack(alignment: .trailing, spacing: 6) {
             ImageGroup(attachments: attachments.filter(\.isImage), alignment: .trailing)
             ForEach(Array(attachments.filter { !$0.isImage }.enumerated()), id: \.offset) { _, attachment in
-                FileCard(name: attachment.name ?? String(localized: "附件"), bytes: attachment.bytes)
+                SentFileCard(attachment: attachment)
                     .frame(maxWidth: 280, alignment: .trailing)
             }
             if !text.isEmpty {
                 Group {
                     if let masked, !revealed {
-                        Text(masked).monospaced()
+                        Text(masked).monospaced().lineLimit(open ? nil : Self.foldedLines)
                     } else {
-                        Text(text)
+                        QuotedText(text: text, lineLimit: open ? nil : Self.foldedLines)
                     }
                 }
-                .lineLimit(open ? nil : Self.foldedLines)
                 .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { if !open { foldedHeight = $0 } }
                 .background(alignment: .topLeading) {
-                    Text(text)
+                    QuotedText(text: text)
                         .fixedSize(horizontal: false, vertical: true)
                         .hidden()
                         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { fullHeight = $0 }
                 }
-                .font(.callout)
+                .font(.body)
                 .lineSpacing(3)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
@@ -1163,6 +1442,9 @@ private struct UserBubble: View {
                     // Masked text stays masked until the reader asks: this would show it whole.
                     if masked == nil || revealed {
                         Button { actions.present(.text(text)) } label: { Label("选择文本", systemImage: "selection.pin.in.out") }
+                        if let quote = actions.quote {
+                            Button { quote(text) } label: { Label("引用", systemImage: "quote.opening") }
+                        }
                     }
                 }
                 if open || more {
@@ -1185,21 +1467,23 @@ private struct UserBubble: View {
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
         .padding(.leading, 60)
-        .opacity(arrives && !landed ? 0 : 1)
+        // Seen from its first frame, at the foot of its rise: the message is on screen in the pass
+        // that empties the input. Faded in, it was nowhere for the first frames after the tap.
         .scaleEffect(arrives && !landed && !reduceMotion ? 0.9 : 1, anchor: .bottomTrailing)
         .offset(y: arrives && !landed && !reduceMotion ? 36 : 0)
         .task {
             guard arrives, !landed else { return }
-            // After the pass that laid the new row out: started inside it, most of the rise is over before a frame is drawn.
+            // After the pass that laid the new row out: started inside it, the first of the rise is over before a frame is drawn.
             await Task.yield()
-            withAnimation(.spring(response: 0.42, dampingFraction: 0.74)) { landed = true }
+            withAnimation(.spring(response: 0.32, dampingFraction: 0.82)) { landed = true }
         }
     }
 }
 
 /// One assistant turn. Its work (reasoning and tool calls) sits under one grey line
 /// above the answer: what it is doing while it runs (open), and once done its title
-/// with 「已完成，用时…」 (folded, unless it failed, was stopped or was steered: C-32).
+/// with 「已完成，用时…」 (folded, unless it failed, was stopped or was steered: C-32). A Bot's
+/// finished reply has no such line.
 /// A finished turn adds its plan and file cards; its actions are a long press away (`TurnMenu`).
 struct AssistantTurnView: View {
     let blocks: [AssistantBlock]
@@ -1217,10 +1501,12 @@ struct AssistantTurnView: View {
     @State private var landed = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.conversationActions) private var actions
+    @Environment(AppModel.self) private var app
     /// A Bot's chat: its reasoning shows only when asked for, and what it did beyond its words is drawn.
     @Environment(\.botTimeline) private var bot
     /// A Bot's own chat: the Bot's mark at the tail is the one loading indicator.
     @Environment(\.botComposer) private var botChat
+    @Environment(\.fileLinkScope) private var linkScope
 
     private var stayOpen: Bool {
         inProgress || info?.steered == true || ["aborted", "interrupted", "error"].contains(info?.closedKind ?? "")
@@ -1241,70 +1527,101 @@ struct AssistantTurnView: View {
         let tailShown = !quiet || blocks.dropFirst(finalStart).contains { block in
             if case .tool(let call) = block { BotTurnEvents.cards.contains(call.displayName) } else { false }
         }
-        VStack(alignment: .leading, spacing: 8) {
-            // While working the step line always shows (the one loading indicator of the turn);
-            // a streamed answer with no work before it needs none.
-            if !quiet, finalStart > 0 || (inProgress && !ownChat && (blocks.isEmpty || liveCount == 0)) {
-                Button {
-                    withAnimation(.easeInOut(duration: 0.18)) { choice = !showWork }
-                } label: {
-                    HStack(spacing: 6) {
-                        if inProgress && !ownChat { ProgressView().controlSize(.mini) }
-                        Text(summaryLine).lineLimit(1).truncationMode(.middle)
-                        Image(systemName: "chevron.right")
-                            .font(.caption2.weight(.semibold))
-                            .foregroundStyle(Palette.faint)
-                            .rotationEffect(.degrees(showWork ? 90 : 0))
-                    }
-                    .font(.subheadline)
-                    .foregroundStyle(Palette.secondary)
-                    .frame(minHeight: 44)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityHint(showWork ? "收起步骤" : "展开步骤")
-                if showWork, finalStart > 0 {
-                    VStack(alignment: .leading, spacing: 0) {
-                        ForEach(Array(blocks.prefix(finalStart).enumerated()), id: \.element.id) { index, block in
-                            if bot?.hides(block) != true { BlockView(block: block, live: isLive(index)).equatable() }
-                        }
-                        if let bot, bot.showsThinking, let turn, finished { BotThinkingTime(turn: turn) }
-                    }
-                    .padding(.leading, 12)
-                    .overlay(alignment: .leading) { Rectangle().fill(Palette.stroke).frame(width: 2) }
-                }
-            }
-            // In a Bot's chat: what it did while working, above its words; a card it ended on, below them.
-            if bot != nil && !quiet { BotTurnEvents(blocks: Array(blocks.prefix(finalStart))) }
-            if tailShown {
-                VStack(alignment: .leading, spacing: 8) {
-                    ForEach(Array(blocks.enumerated().dropFirst(finalStart)), id: \.element.id) { index, block in
-                        if case .tool = block {} else {
-                            BlockView(block: block, live: isLive(index), closing: finished).equatable()
-                                .environment(\.fileMentions, finished ? mentions : [:])
+        // With nothing of the turn to show (a Bot at work in its own chat) there is no view at all. An
+        // empty stack would still be a row of the timeline: the spacing around it pushed the message
+        // above it up a little as the turn's first step came in.
+        // A Bot's finished reply has no step line, as in ds-bot's own window: what it did that a reader
+        // wants is drawn in the reply (`BotTurnEvents`), and opened, the line held little else.
+        // A reply cut short keeps it, for the 「已停止」「处理失败」 it carries.
+        let botReply = bot != nil && !inProgress && !["aborted", "interrupted", "error"].contains(info?.closedKind ?? "")
+        if tailShown {
+            VStack(alignment: .leading, spacing: 8) {
+                if botReply {
+                    // With 「显示思考过程」 on, its reasoning shows on its own, as ds-bot's thinking row does.
+                    if let bot, bot.showsThinking {
+                        let reasoning = Array(blocks.prefix(finalStart).filter { if case .reasoning = $0 { true } else { false } })
+                        if !reasoning.isEmpty {
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(reasoning, id: \.id) { block in BlockView(block: block, live: false).equatable() }
+                                if let turn, finished { BotThinkingTime(turn: turn) }
+                            }
                         }
                     }
-                    if bot != nil { BotTurnEvents(blocks: Array(blocks.dropFirst(finalStart))) }
+                    ForEach(madePictures, id: \.id) { call in ImageGenCard(call: call, live: false) }
                 }
-                .opacity(arrives && !landed ? 0 : 1)
-                .blur(radius: arrives && !landed && !reduceMotion ? 6 : 0)
-                .offset(y: arrives && !landed && !reduceMotion ? 14 : 0)
-                .task(id: arrives) {
-                    guard arrives, !landed else { return }
-                    // As the user's own bubble does: after the pass that laid the row out.
-                    await Task.yield()
-                    withAnimation(.smooth(duration: 0.45)) { landed = true }
+                // While working the step line always shows (the one loading indicator of the turn);
+                // a streamed answer with no work before it needs none.
+                if !botReply, !quiet, finalStart > 0 || (inProgress && !ownChat && (blocks.isEmpty || liveCount == 0)) {
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.18)) { choice = !showWork }
+                    } label: {
+                        HStack(spacing: 6) {
+                            if inProgress && !ownChat { ProgressView().controlSize(.mini) }
+                            Text(summaryLine).lineLimit(1).truncationMode(.middle)
+                            Image(systemName: "chevron.right")
+                                .font(.caption2.weight(.semibold))
+                                .foregroundStyle(Palette.faint)
+                                .rotationEffect(.degrees(showWork ? 90 : 0))
+                        }
+                        .font(.subheadline)
+                        .foregroundStyle(Palette.secondary)
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityHint(showWork ? "收起步骤" : "展开步骤")
+                    if showWork, finalStart > 0 {
+                        VStack(alignment: .leading, spacing: 0) {
+                            ForEach(Array(blocks.prefix(finalStart).enumerated()), id: \.element.id) { index, block in
+                                if bot?.hides(block) != true { BlockView(block: block, live: isLive(index)).equatable() }
+                            }
+                            if let bot, bot.showsThinking, let turn, finished { BotThinkingTime(turn: turn) }
+                        }
+                        .padding(.leading, 12)
+                        .overlay(alignment: .leading) { Rectangle().fill(Palette.stroke).frame(width: 2) }
+                    }
+                }
+                // Pictures the turn made are what it was for: they stay out when its work folds away.
+                if !botReply, !quiet, !showWork {
+                    ForEach(madePictures, id: \.id) { call in ImageGenCard(call: call, live: false) }
+                }
+                // In a Bot's chat: what it did while working, above its words; a card it ended on, below them.
+                if bot != nil && !quiet { BotTurnEvents(blocks: Array(blocks.prefix(finalStart))) }
+                if tailShown {
+                    VStack(alignment: .leading, spacing: 8) {
+                        ForEach(Array(blocks.enumerated().dropFirst(finalStart)), id: \.element.id) { index, block in
+                            if case .tool = block {} else {
+                                BlockView(block: block, live: isLive(index), closing: finished).equatable()
+                                    .environment(\.fileMentions, finished ? mentions : [:])
+                            }
+                        }
+                        if bot != nil { BotTurnEvents(blocks: Array(blocks.dropFirst(finalStart))) }
+                    }
+                    .opacity(arrives && !landed ? 0 : 1)
+                    .blur(radius: arrives && !landed && !reduceMotion ? 6 : 0)
+                    .offset(y: arrives && !landed && !reduceMotion ? 14 : 0)
+                    .task(id: arrives) {
+                        guard arrives, !landed else { return }
+                        // As the user's own bubble does: after the pass that laid the row out, and with
+                        // what the turn's end brings held back until the reply is in place.
+                        app.replyArrives()
+                        await Task.yield()
+                        withAnimation(.smooth(duration: 0.3)) { landed = true }
+                    }
+                }
+                if finished {
+                    ForEach(plans, id: \.plan) { plan in PlanCard(title: plan.title, plan: plan.plan) }
+                    if let files = info?.deliverables, !files.isEmpty { DeliverableCards(files: files) }
+                    let changes = FileChange.collect(blocks)
+                    if !changes.isEmpty { ChangeCapsule(changes: changes, open: actions.openChanges) }
+                    if let turn, let session = bot?.sessionId ?? linkScope?.sessionId {
+                        PhoneRecordingCards(session: session, turn: turn)
+                    }
+                    if let bot, let turn { BotReactionChip(key: BotReactions.key(session: bot.sessionId, turn: turn)) }
                 }
             }
-            if finished {
-                ForEach(plans, id: \.plan) { plan in PlanCard(title: plan.title, plan: plan.plan) }
-                if let files = info?.deliverables, !files.isEmpty { DeliverableCards(files: files) }
-                let changes = FileChange.collect(blocks)
-                if !changes.isEmpty { ChangeCapsule(changes: changes, open: actions.openChanges) }
-                if let bot, let turn { BotReactionChip(key: BotReactions.key(session: bot.sessionId, turn: turn)) }
-            }
+            .modifier(TurnMenu(enabled: finished, turn: turn, info: info, fallbackText: answerText, regeneratePrompt: regeneratePrompt))
         }
-        .modifier(TurnMenu(enabled: finished, turn: turn, info: info, fallbackText: answerText, regeneratePrompt: regeneratePrompt))
     }
 
     private var mentions: [String: String] {
@@ -1313,6 +1630,18 @@ struct AssistantTurnView: View {
 
     private var answerText: String {
         blocks.compactMap { if case .text(_, let text) = $0 { return text }; return nil }.joined()
+    }
+
+    /// The image tool calls of the folded work: those that made pictures, or the last failure
+    /// when none did (with its way to the settings).
+    private var madePictures: [ToolCall] {
+        let calls = blocks.prefix(finalAnswerStart).compactMap { block -> ToolCall? in
+            if case .tool(let call) = block, ImageGenCard.handles(call), call.finished { return call }
+            return nil
+        }
+        let made = calls.filter { !$0.isError }
+        if !made.isEmpty { return made }
+        return calls.last.map { [$0] } ?? []
     }
 
     private var plans: [(title: String, plan: String)] {
@@ -1427,7 +1756,14 @@ private struct BlockView: View, Equatable {
         case .text(_, let text):
             MarkdownView(text: text, cached: !live, linksFiles: closing, selectable: false)
         case .tool(let call):
-            ToolCallView(call: call, live: live)
+            if ImageGenCard.handles(call) {
+                VStack(alignment: .leading, spacing: 4) {
+                    ToolCallView(call: call, live: live)
+                    ImageGenCard(call: call, live: live)
+                }
+            } else {
+                ToolCallView(call: call, live: live)
+            }
         case .image(_, let attachment):
             ImageGroup(attachments: [attachment])
         }
@@ -1452,6 +1788,10 @@ private struct ReasoningView: View {
         .contentShape(.contextMenuPreview, RoundedRectangle(cornerRadius: 12, style: .continuous))
         .contextMenu {
             Button { copyToPasteboard(text) } label: { Label("复制", systemImage: "doc.on.doc") }
+            // Finished reasoning only: text still streaming is not settled enough to quote.
+            if !live, let quote = actions.quote {
+                Button { quote(text) } label: { Label("引用", systemImage: "quote.opening") }
+            }
         }
         .accessibilityLabel(Text("思考：\(summary)"))
     }
@@ -1465,25 +1805,47 @@ struct ReasoningSheet: View {
     /// The text as it stands now, where no session model holds it (a remote session).
     var current: ((String) -> String?)?
     @Environment(\.dismiss) private var dismiss
+    @Environment(AppModel.self) private var app
+    /// The 思考过程翻译 plugin's view of this block; only for this phone's sessions.
+    @State private var translation: ReasoningTranslation?
+    @State private var original = false
+
+    private var latest: String { model?.reasoningText(id) ?? current?(id) ?? text }
 
     var body: some View {
-        let text = model?.reasoningText(id) ?? current?(id) ?? text
+        let text = latest
+        let translated = translation?.setup == nil ? nil : translation
+        let shown = translated.map { original || $0.failed ? text : $0.text } ?? text
         NavigationStack {
             ScrollView {
-                MarkdownView(text: text, cached: false).padding(16).modifier(LinkOpening())
+                VStack(alignment: .leading, spacing: 12) {
+                    if let translated { ReasoningTranslationBar(translation: translated, original: $original) }
+                    MarkdownView(text: shown, cached: false).modifier(LinkOpening())
+                }
+                .padding(16)
             }
             .background(Palette.background)
             .navigationTitle("思考")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button { copyToPasteboard(text) } label: { Image(systemName: "doc.on.doc") }
+                    Button { copyToPasteboard(shown) } label: { Image(systemName: "doc.on.doc") }
                         .accessibilityLabel("复制")
                 }
             }
             .closeButton(dismiss)
         }
         .detailSheet()
+        .task {
+            guard let model else { return }
+            let translation = ReasoningTranslation(sessionId: model.sessionId, client: app.client)
+            self.translation = translation
+            translation.update(latest, running: model.reasoningStreaming(id))
+            await translation.prepare()
+        }
+        .onChange(of: text) { translation?.update(text, running: model?.reasoningStreaming(id) ?? false) }
+        .onChange(of: model?.reasoningStreaming(id)) { _, streaming in translation?.update(latest, running: streaming ?? false) }
+        .onDisappear { translation?.cancel() }
     }
 }
 
@@ -1637,51 +1999,69 @@ struct SplitSidebar: Equatable {
 
 /// The workbench beside the conversation. From iPadOS 26 on, an inspector. Before that an inspector
 /// on an upright iPad is laid over the conversation, dimmed under it, so there it is a column of its own.
-private struct WorkbenchBeside<Page: View>: ViewModifier {
-    @Binding var shown: Bool
+///
+/// Given the conversation's state and not a page built by it: built there, the page (its
+/// closures) was a new one on every pass of the conversation's body, and the inspector was set
+/// again each time. On iPadOS 26 that makes a sheet up from the list beside the conversation
+/// over again, as a focused value that changes does before it (`WorkbenchCommands.Box`).
+private struct WorkbenchBeside: ViewModifier {
+    let model: SessionModel
+    @Binding var open: Bool
+    @Binding var tab: WorkbenchTab
+    /// There is room for it beside the conversation; where there is not, it is the conversation's sheet.
     let regular: Bool
-    @ViewBuilder let page: () -> Page
+    /// iOS 26's inspector, unless the page is pushed where one breaks the push (`workbenchInSheet`).
+    var inspector = true
 
     func body(content: Content) -> some View {
-        if #available(iOS 26.0, *) {
-            content.inspector(isPresented: $shown) {
+        if #available(iOS 26.0, *), inspector {
+            content.inspector(isPresented: Binding(get: { regular && open }, set: { if !$0 { open = false } })) {
                 // Only where it is shown: on a phone this content stays built while closed, and its
                 // toolbar lands in the conversation's bar.
-                if regular { page().inspectorColumnWidth(min: 320, ideal: 420, max: 640) }
+                if regular { page.inspectorColumnWidth(min: 320, ideal: 420, max: 640) }
             }
         } else {
             HStack(spacing: 0) {
                 content
-                if shown && regular {
+                if open && regular {
                     HStack(spacing: 0) {
                         Divider()
-                        page().frame(width: 420)
+                        page.frame(width: 420)
                     }
                     .transition(.move(edge: .trailing))
                 }
             }
-            .animation(.snappy(duration: 0.3), value: shown && regular)
+            .animation(.snappy(duration: 0.3), value: open && regular)
         }
     }
-}
 
-extension ConversationView {
-    /// The key window's bottom inset: the home indicator's strip, 0 on a phone with a home button.
-    /// The window's own, so the keyboard does not count.
-    static var homeIndicatorStrip: CGFloat {
-        let windows = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.flatMap(\.windows)
-        return (windows.first(where: \.isKeyWindow) ?? windows.first)?.safeAreaInsets.bottom ?? 0
+    private var page: some View {
+        WorkbenchView(model: model, tab: $tab, beside: true) { open = false }
     }
 }
 
 /// The explicit label that the replies are AI generated (《人工智能生成合成内容标识办法》 第四条:
-/// a prompt on the interaction screen). Under a started conversation's title, as a subtitle;
-/// in a Bot's chat, whose title has a line of its own, in the strip under the input.
+/// a prompt on the interaction screen). Under the title, as its subtitle: a conversation's, and a
+/// Bot's chat's or a group's, after what that line already says (`AILabelledSubtitle`).
 struct AIContentLabel: View {
     var body: some View {
         Text("内容由 AI 生成")
             .font(.caption2)
             .foregroundStyle(Palette.secondary)
             .lineLimit(1)
+    }
+}
+
+/// A title's second line that already says something (what a Bot is doing, a group's members),
+/// with the AI label after it. The label never gives way: what comes before it is cut first.
+struct AILabelledSubtitle<Lead: View>: View {
+    @ViewBuilder var lead: Lead
+
+    var body: some View {
+        HStack(spacing: 4) {
+            lead.lineLimit(1)
+            Text(verbatim: "·").font(.caption2).foregroundStyle(Palette.secondary)
+            AIContentLabel().fixedSize()
+        }
     }
 }

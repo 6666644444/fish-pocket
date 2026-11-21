@@ -8,6 +8,7 @@ import { Bash, InMemoryFs, MountableFs, OverlayFs, ReadWriteFs, decodeBytesToUtf
 import { NODE_CLIS, parseNodeArgv, startNodeWorker } from './node-worker.mjs';
 import { gitAvailable, gitCommand } from './git/index.mjs';
 import { nativeCommandNames, nativeShellCommands } from './native-programs.mjs';
+import { OPEN_COMMANDS, openAvailable, openShellCommands } from './open-url.mjs';
 
 export const SHELLS = new Set(['bash', 'sh', 'dash', 'zsh']);
 export const BIN = '/bin';
@@ -41,13 +42,18 @@ function nodeLikeCommand(name, script) {
  * shims/ripgrep.mjs): just-bash's rg plus what it lacks — `--no-config`
  * (it reads no config anyway), `--` before the search paths, `--sort=modified`
  * for `--files` (oldest first, like ripgrep), root-level matches for globs
- * that start with a double-star directory, and `--max-columns` (Claude Code's
- * Grep passes it). Its default is smart case; ripgrep's is case-sensitive.
+ * that start with a double-star directory, `--max-columns` (Claude Code's
+ * Grep passes it), and `--path-separator=/` (dsh-api-workspace-files passes it
+ * for the file search; paths here use no other separator). An exclusion by
+ * plain name or path (`--glob=!build`, `--glob=!/a/b`: that search's excluded
+ * paths) also leaves out the directory of that name with what is under it, as
+ * ripgrep does; just-bash matches such a glob against files only. Its default
+ * is smart case; ripgrep's is case-sensitive.
  */
 function rgCommand() {
   return defineCommand('rg', async (args, ctx) => {
     const end = args.indexOf('--');
-    let options = (end >= 0 ? args.slice(0, end) : args).filter((a) => a !== '--no-config');
+    let options = (end >= 0 ? args.slice(0, end) : args).filter((a) => a !== '--no-config' && a !== '--path-separator=/');
     // A path after `--` may start with '-'; './' keeps it a path without the marker.
     const paths = end >= 0 ? args.slice(end + 1).map((p) => (p.startsWith('-') ? `./${p}` : p)) : [];
     let maxColumns = 0;
@@ -63,7 +69,13 @@ function rgCommand() {
     // directory level, so each such glob also gets its root-level form.
     const expanded = options.filter((a) => a !== '--sort=modified').flatMap((a) => {
       const glob = /^--glob=(!?)\*\*\/(.+)$/.exec(a);
-      return glob ? [a, `--glob=${glob[1]}${glob[2]}`] : [a];
+      if (glob) return [a, `--glob=${glob[1]}${glob[2]}`];
+      // A name or path with no wildcard: itself, and as a directory at the root or (a bare name) at any depth.
+      const literal = /^--glob=!(\/?)((?:\\.|[^*?[\]{}\\])+)$/.exec(a);
+      if (!literal) return [a];
+      const [, anchored, name] = literal;
+      const anywhere = anchored || name.includes('/') ? [] : [`--glob=!**/${name}`, `--glob=!**/${name}/**`];
+      return [`--glob=!${name}`, `--glob=!${name}/**`, ...anywhere];
     });
     const result = await ctx.origCommand([...expanded, ...paths]);
     const linesOut = !options.some((a) => /^(--json|--files|--files-with-matches|--files-without-match|--count|--count-matches|-[a-zA-Z]*[lLc][a-zA-Z]*)$/.test(a));
@@ -105,6 +117,7 @@ const custom = [
 export const COMMANDS = new Set([
   ...getCommandNames(), ...getNetworkCommandNames(), ...custom.map((c) => c.name),
   ...(gitAvailable() ? ['git'] : []), ...nativeCommandNames(),
+  ...(openAvailable() ? OPEN_COMMANDS : []),
 ]);
 
 // just-bash's real-directory filesystems rooted at "/" return realpath()
@@ -156,6 +169,8 @@ export function shell(writable) {
       ...(gitAvailable() ? [gitCommand(defineCommand, decodeBytesToUtf8, writable)] : []),
       // Python and ffmpeg, like node, run outside the interpreter's filesystem fence.
       ...nativeShellCommands(defineCommand, decodeBytesToUtf8),
+      // open / xdg-open hand URLs to the system (open-url.mjs).
+      ...(openAvailable() ? openShellCommands(defineCommand) : []),
     ],
     network: { dangerouslyAllowFullInternetAccess: true },
     executionLimitProfile: 'normal',

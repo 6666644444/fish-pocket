@@ -163,6 +163,19 @@ test('rg accepts the argv templates of dsh-tool-fs-search', async () => {
   assert.equal(glob.code, 0, glob.err);
   assert.deepEqual(glob.out.trim().split('\n').map((f) => path.basename(f)), ['old.ts', 'new.ts']);
   assert.equal((await run(['--json', '--regexp=nothing-here', '--', '.'])).code, 1);
+  // dsh-api-workspace-files (0.2.2-rc.3): the web UI's file search. It reads a failed
+  // listing as "no files", so an option rg refused here would only show as an empty result.
+  const listing = await run(['--files', '--sort=path', '--null', '--path-separator=/', '--hidden', '--no-ignore', '--glob=!**/.git']);
+  assert.equal(listing.code, 0, listing.err);
+  assert.deepEqual(listing.out.split('\0').filter(Boolean), ['src/new.ts', 'src/old.ts']);
+  // Its excluded paths are plain names (any depth) and root paths; each takes its directory with it.
+  for (const file of ['build/a.ts', 'src/build/b.ts', 'src/deep/dist/c.ts', 'vendor/kit/d.ts', 'src/vendor/kit/e.ts', 'src/Thumbs.db']) {
+    fs.mkdirSync(path.join(dir, path.dirname(file)), { recursive: true });
+    fs.writeFileSync(path.join(dir, file), 'x\n');
+  }
+  const pruned = await run(['--files', '--sort=path', '--null', '--path-separator=/', '--hidden', '--no-ignore', '--glob=!.git', '--glob=!build', '--glob=!dist', '--glob=!Thumbs.db', '--glob=!/vendor/kit']);
+  assert.equal(pruned.code, 0, pruned.err);
+  assert.deepEqual(pruned.out.split('\0').filter(Boolean), ['src/new.ts', 'src/old.ts', 'src/vendor/kit/e.ts']);
 });
 
 test('rg takes Claude Code Grep argv: --max-columns, ripgrep case rules', async () => {
@@ -221,5 +234,19 @@ test('a spawn adds to the parent environment: the bash tool passes only its over
     assert.equal(h.collected.stdout.readFrom(0).text, `yes ${process.env.HOME} dumb\n${process.env.HOME}\n`);
   } finally {
     delete process.env.IOS_TEST_INHERITED;
+  }
+});
+
+test('what the app passes the agent reaches its commands; dsh\'s own DSH_ variables do not', async () => {
+  const sp = await runtime();
+  process.env.FISH_POCKET_URL_SCHEME = 'dsh-test';
+  process.env.DSH_IOS_TEST_PRIVATE = 'hidden';
+  try {
+    const h = sp.spawn(spec(['bash', '-c', 'echo "${FISH_POCKET_URL_SCHEME:-none} ${DSH_IOS_TEST_PRIVATE:-none}"'], os.tmpdir()));
+    assert.equal((await h.done).exitCode, 0);
+    assert.equal(h.collected.stdout.readFrom(0).text, 'dsh-test none\n');
+  } finally {
+    delete process.env.FISH_POCKET_URL_SCHEME;
+    delete process.env.DSH_IOS_TEST_PRIVATE;
   }
 });

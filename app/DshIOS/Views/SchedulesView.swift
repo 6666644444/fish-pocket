@@ -40,7 +40,7 @@ final class ScheduleCatalog {
 ///
 /// `sessionId` narrows the list to one session (the session header's entry);
 /// `openSession` opens a session and leaves this page. Without it the page
-/// dismisses itself and opens `dsh://session/<id>`, which `RootView` hands to `MainView`.
+/// dismisses itself and opens `fishpocket://session/<id>`, which `RootView` hands to `MainView`.
 ///
 /// Unscoped, the page has a second half, 提醒: the alarms and notifications the agent set
 /// (`AgentRemindersList`). They are the other kind of "later" the agent leaves behind, and iOS
@@ -108,7 +108,7 @@ struct SchedulesView: View {
             }
         }
         .searchable(text: $query, prompt: kind == .tasks ? Text("搜索自动化任务") : Text("搜索提醒"))
-        .navigationTitle("自动化")
+        .navigationTitle(String(localized: "schedules.title", defaultValue: "自动化任务", comment: "The list page; the same words on a timeline card name one task"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if sessionId == nil {
@@ -791,18 +791,59 @@ private struct SavedPrompt: View {
 
 // MARK: Web fallback
 
-/// The engine's own web UI, for plugin interfaces that only exist in the browser.
+/// The engine's own web UI, for plugin interfaces that only exist in the browser. Its icon on the
+/// home screen (更多 → 添加到主屏幕) opens the app straight on it (`fishpocket://web`).
 struct WebFallbackView: View {
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    @State private var addingToHome = false
 
     var body: some View {
         NavigationStack {
             EngineWebView(url: app.client.launchURL)
-                .ignoresSafeArea(edges: .bottom)
-                .navigationTitle("DSH 网页")
+                .modifier(FloatingBar())
+                .navigationTitle("网页版")
                 .navigationBarTitleDisplayMode(.inline)
-                .closeButton(dismiss)
+                .toolbar {
+                    ToolbarItemGroup(placement: .topBarTrailing) {
+                        Group {
+                            Menu {
+                                Button("添加到主屏幕", systemImage: "plus.square.on.square") { addingToHome = true }
+                            } label: {
+                                Image(systemName: "ellipsis")
+                            }
+                            .accessibilityLabel("更多")
+                            Button { dismiss() } label: { Image(systemName: "xmark") }
+                                .accessibilityLabel("关闭")
+                        }
+                        // iPhone Duo keeps the bar buttons in the column at its trailing edge, folded and
+                        // open. At a fold SwiftUI puts a new view on each bar item it already had, and with
+                        // the title off the bar that column often goes on holding the old one: the capsule
+                        // is left empty, nothing in it takes a tap, and the page has no other way out. Made
+                        // anew at each fold, the buttons are new items to the column, and it takes those.
+                        .id(ThisDevice.isDuo ? sizeClass : nil)
+                    }
+                }
+        }
+        .sheet(isPresented: $addingToHome) { AddToHomeScreenSheet(target: .web) }
+    }
+}
+
+/// From iOS 26 the bar floats as a conversation's does: no title, the buttons on glass, the page
+/// running on under them and under the sides' safe area (a phone on its side, the column iPhone
+/// Duo keeps at its trailing edge for the buttons). WebKit lays the page out inside the safe area
+/// and paints the rest in the page's own background, so no strip of the window's colour frames it.
+/// Before, the bar stays as it was.
+private struct FloatingBar: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26, *) {
+            content
+                .ignoresSafeArea()
+                .toolbar(removing: .title)
+                .toolbarBackgroundVisibility(.hidden, for: .navigationBar)
+        } else {
+            content.ignoresSafeArea(edges: .bottom)
         }
     }
 }

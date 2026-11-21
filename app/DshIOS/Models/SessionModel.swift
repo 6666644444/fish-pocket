@@ -11,6 +11,9 @@ final class SessionModel {
     @ObservationIgnored private let app: AppModel
 
     private(set) var items: [TimelineItem] = []
+    /// Whether the timeline holds anything. For a view that asks only that: reading `items` there
+    /// would redraw it at every change to the timeline.
+    private(set) var hasItems = false
     private(set) var live: [AssistantBlock] = []
     private(set) var running = false
     private(set) var title: String?
@@ -48,7 +51,7 @@ final class SessionModel {
     private(set) var loadingOlder = false
     private(set) var loaded = false
     /// Every projection value of the latest snapshot or refresh, for the composer docks.
-    private(set) var projectionValues: [String: JSON] = [:]
+    @ObservationIgnored private var projectionValues: [String: Tracked<JSON?>] = [:]
     var error: String?
     /// A subagent's parent-scoped address; the Host refuses a plain session address
     /// for a child, and its messages and stops go through the parent. Set before `start()`.
@@ -76,6 +79,11 @@ final class SessionModel {
     @ObservationIgnored private let imageCache: NSCache<NSString, UIImage> = {
         let cache = NSCache<NSString, UIImage>()
         cache.countLimit = 60
+        return cache
+    }()
+    @ObservationIgnored private let previewCache: NSCache<NSString, UIImage> = {
+        let cache = NSCache<NSString, UIImage>()
+        cache.countLimit = 40
         return cache
     }()
 
@@ -106,7 +114,10 @@ final class SessionModel {
                             "turnWindow": ["minMessages": 50, "minTurns": 2],
                         ],
                     ])
-                    for try await frame in stream { self.apply(frame) }
+                    for try await frame in stream {
+                        await self.app.arrivalLanded()
+                        self.apply(frame)
+                    }
                 } catch {
                     if Task.isCancelled { return }
                     // The engine refusing the stream is worth saying. A dropped connection is not: the
@@ -133,6 +144,9 @@ final class SessionModel {
         switch frame["type"].string {
         case "snapshot":
             events = frame["records"].array.map { $0["event"] }
+            // A message sent as the stream dropped comes back in the snapshot, not as an event:
+            // its echo is done with here, or its bubble would show twice.
+            if !composer.pending.isEmpty { for event in events { composer.observe(event) } }
             hasMoreHistory = frame["hasMore"].bool ?? false
             // A long turn's start can lie before the window: the session list still knows it runs.
             refold(running: app.sessions[sessionId]?.running ?? false)
@@ -150,12 +164,25 @@ final class SessionModel {
             composer.observe(event)
             events.append(event)
             if timeline.apply(event) { publishTimeline() } else { publishTimelineState() }
+            // Live only: recording what the agent does in other apps starts and stops with its turn.
+            if subagentAddress == nil {
+                PhoneRecorder.shared.observe(event, session: sessionId, request: items.lastUserText)
+            }
             // Only a live turn end prompts for quota or support; history replays never do.
             if event["type"].string == "turn/end" {
                 if let failure = TurnFailure(reason: event["data"]["reason"]) {
-                    if failure.isQuota { app.account.reportQuota(code: failure.code ?? "QUOTA") }
+                    if failure.isQuota {
+                        // Fish Pocket credits are topped up in the app; DeepSeek balances on Platform.
+                        if modelCatalog?.selection(self)?.provider == FishPocketAPI.provider {
+                            app.fishPocket.reportQuota()
+                        } else {
+                            app.account.reportQuota(code: failure.code ?? "QUOTA")
+                        }
+                    }
                     // A key that stopped working is the conversation's card to explain; none at all is the first step.
-                    if failure.credentialProblem == .missing { app.requestCredentials(.start) }
+                    if failure.credentialProblem == .missing {
+                        app.requestCredentials(modelCatalog?.selection(self)?.provider == FishPocketAPI.provider ? .fishPocket : .start)
+                    }
                 } else if event["data"]["reason"]["kind"].string == "completed", subagentAddress == nil, hasReply,
                           queued.isEmpty, composer.text.isEmpty {
                     app.noteCompletedTurn()
@@ -246,6 +273,7 @@ final class SessionModel {
     /// unrelated observers are not invalidated.
     private func publishTimeline() {
         items = timeline.items
+        hasItems = !items.isEmpty
         if turnInfo != timeline.turnInfo { turnInfo = timeline.turnInfo }
         publishTimelineState()
     }
@@ -266,9 +294,19 @@ final class SessionModel {
         let index = items.firstIndex { if case .assistant(let turn, _, _, _) = $0 { return turn == entry.turn }; return false }
         guard let index else { return nil }
         // Start at its prompt.
-        if index > 0, case .user = items[index - 1] { return items[index - 1].id }
-        return items[index].id
+        if index > 0, case .user = items[index - 1] { return rowId(items[index - 1]) }
+        return rowId(items[index])
     }
+
+    /// The timeline row an item sits in, which is also what the timeline scrolls to. A message
+    /// that showed as a bubble the moment it was sent keeps that row when its durable message
+    /// arrives: the bubble is neither built nor animated a second time.
+    func rowId(_ item: TimelineItem) -> String {
+        if case .user(_, _, _, let requestId?) = item, composer.bubbleIds.contains(requestId) { return Self.bubbleRow(requestId) }
+        return item.id
+    }
+
+    static func bubbleRow(_ requestId: String) -> String { "e\(requestId)" }
 
     #if DEBUG
     /// `-dshOpen timeline`: show synthetic events instead of the session's, to look at every card.
@@ -329,8 +367,25 @@ final class SessionModel {
         }
     }
 
+    /// One projection value from the session's latest read (`session/projections`), observed by
+    /// itself like the live ones (`AppModel.control`).
+    func projectionValue(_ key: String) -> JSON? {
+        if let held = projectionValues[key] { return held.value }
+        let held = Tracked<JSON?>(nil)
+        projectionValues[key] = held
+        return held.value
+    }
+
     private func applyProjections(_ values: JSON) {
-        projectionValues = values.object
+        // This runs after every event of a turn and most of what it reads is the same each time.
+        // Setting an observed property to an equal value redraws nothing, so the plain writes below
+        // cost nothing; the tuples and the in-place removal cannot be compared that way, and check
+        // for themselves.
+        let latest = values.object
+        for (key, held) in projectionValues where latest[key] == nil { held.value = nil }
+        for (key, value) in latest {
+            if let held = projectionValues[key] { held.value = value } else { projectionValues[key] = Tracked(value) }
+        }
         if let value = values["title"].string { title = value }
         if let mode = values["subagent"]["mode"].string { subagentMode = mode }
         todos = values["todos"].array.map { TodoItem(content: $0["content"].string ?? "", status: $0["status"].string ?? "pending") }
@@ -342,23 +397,28 @@ final class SessionModel {
         continuedQuestions = active
             .filter { $0["state"].string == "continued" && !replied.contains($0["callId"].string ?? "") }
             .map(PendingQuestion.init(continued:))
-        detachedQuestions.removeAll { activeQuestionStates[$0.id] != "open" }
+        if detachedQuestions.contains(where: { activeQuestionStates[$0.id] != "open" }) {
+            detachedQuestions.removeAll { activeQuestionStates[$0.id] != "open" }
+        }
         settledAnswers = Dictionary(values["userQuestions"]["settled"].array.map { ($0["callId"].string ?? "", $0["answers"]) }, uniquingKeysWith: { $1 })
         turnOutline = values["turnOutline"].array.compactMap(TurnOutline.init)
         let selection = values["modelSelection"]["next"].isNull ? values["modelSelection"]["lastUsed"] : values["modelSelection"]["next"]
         if let provider = selection["provider"].string, let model = selection["model"].string {
-            modelSelection = (provider, model, selection["reasoningEffort"].string)
+            let next = (provider, model, selection["reasoningEffort"].string)
+            if modelSelection.map({ $0 == next }) != true { modelSelection = next }
         }
         permission = values["permissions"]["currentValue"].string ?? permission
         let usage = values["tokenUsage"]
-        tokens = ((usage["uncachedInputTokens"].int ?? 0) + (usage["cacheReadTokens"].int ?? 0), usage["outputTokens"].int ?? 0, usage["cacheReadTokens"].int ?? 0)
+        let used = ((usage["uncachedInputTokens"].int ?? 0) + (usage["cacheReadTokens"].int ?? 0), usage["outputTokens"].int ?? 0, usage["cacheReadTokens"].int ?? 0)
+        if tokens != used { tokens = used }
         contextWindow = values["contextPressure"]["contextWindow"].int ?? contextWindow
         contextTokens = values["contextPressure"]["projectedTokens"].int ?? values["contextPressure"]["pressureTokens"].int ?? contextTokens
         workingDirectory = values["workingDirectory"].string ?? workingDirectory
-        queued = values["inbox"]["next-turn"].array.filter { $0["source"]["kind"].string != "user-question-reply" }.map { item in
-            (item["itemId"].string ?? item["id"].string ?? UUID().uuidString,
-             item["content"].array.compactMap { $0["text"].string }.joined(separator: "\n"))
+        let waiting = values["inbox"]["next-turn"].array.filter { $0["source"]["kind"].string != "user-question-reply" }.map { item in
+            (id: item["itemId"].string ?? item["id"].string ?? UUID().uuidString,
+             text: item["content"].array.compactMap { $0["text"].string }.joined(separator: "\n"))
         }
+        if !waiting.elementsEqual(queued, by: ==) { queued = waiting }
     }
 
     // MARK: Actions
@@ -390,9 +450,7 @@ final class SessionModel {
         if let subagentAddress {
             try await client.call("subagents/prompt", ["request": [
                 "requestId": .string(requestId),
-                "parentSessionId": subagentAddress["parentSessionId"],
                 "childSessionId": subagentAddress["childSessionId"],
-                "mode": "continuable",
                 "delivery": .string(steer ? "steer" : "queue"),
                 "content": .array(content),
                 "clientTimeZone": .string(TimeZone.current.identifier),
@@ -408,15 +466,32 @@ final class SessionModel {
         ]])
     }
 
+    /// Whether the Host would run the failed turn that ended at `seq` again (`conversationContinuation`
+    /// names its `turn/end` after a rate limit, a server or transport failure, a timeout, an empty or
+    /// cut-off answer), and nothing else is on its way in.
+    func canContinue(after seq: Int) -> Bool {
+        composer.projection("conversationContinuation").int == seq && !running && subagentAddress == nil
+            && composer.isEmpty && composer.pending.isEmpty && queued.isEmpty
+    }
+
+    /// 继续生成: a prompt with no content, which the Host records as a retry of that turn.
+    func continueGeneration() async {
+        do {
+            try await prompt(content: [], steer: false, requestId: UUID().uuidString.lowercased())
+        } catch {
+            self.error = error.localizedDescription
+        }
+    }
+
     func toast(_ text: String, duration: Double = 4) { app.showToast(text, duration: duration) }
 
     func cancel() async {
         do {
             if let subagentAddress {
-                try await client.call("subagents/interruptByParent", [
+                // 0.2.2-rc.3 replaced interruptByParent: the Gateway authorizes on the child Session,
+                // so the parent address is no longer part of the request.
+                try await client.call("subagents/interruptByUser", [
                     "childSessionId": subagentAddress["childSessionId"],
-                    "parentSessionId": subagentAddress["parentSessionId"],
-                    "mode": "continuable",
                 ])
             } else {
                 try await client.call("session/cancel", ["request": ["sessionId": .string(sessionId)]])
@@ -638,6 +713,12 @@ final class SessionModel {
     }
 
     func cachedImage(_ attachmentId: String) -> UIImage? { imageCache.object(forKey: attachmentId as NSString) }
+
+    /// An image of a message just sent, as it was picked: its bubble shows this until the stored
+    /// copy is read (`AttachmentThumb`).
+    func keepPreview(_ preview: UIImage, for attachmentId: String) { previewCache.setObject(preview, forKey: attachmentId as NSString) }
+
+    func preview(_ attachmentId: String) -> UIImage? { previewCache.object(forKey: attachmentId as NSString) }
 }
 
 /// Kept between visits by `AppModel.localSessions`: opened again, the timeline is already there and
@@ -648,4 +729,12 @@ extension SessionModel: KeptSession {
     func park() { stop() }
     func suspend() { stop() }
     func close() { stop() }
+}
+
+private extension [TimelineItem] {
+    /// The user's latest message: what the running turn answers.
+    var lastUserText: String? {
+        for item in reversed() { if case .user(_, let text, _, _) = item { return text } }
+        return nil
+    }
 }

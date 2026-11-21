@@ -219,7 +219,7 @@ struct ComposerView: View {
     /// A question the shell wrote for the reader (询问 AI): sent as soon as the conversation shows.
     var pendingPrompt: String?
     var consumePrompt: () -> Void = {}
-    /// Take the keyboard once shown (`dsh://new` from a widget).
+    /// Take the keyboard once shown (`fishpocket://new` from a widget).
     var focusOnAppear = false
     var consumeFocus: () -> Void = {}
     /// `/export`: the web downloads the ZIP itself, so this opens the log sheet instead of executing.
@@ -244,6 +244,8 @@ struct ComposerView: View {
     @State private var confirmingPermission: String?
     /// The token whose 「全部」 sheet is open.
     @State private var browsing: TriggerHit?
+    /// What Return does while the candidate panel is up; the panel keeps it current.
+    @State private var panelReturn: CandidatePanel.ReturnChoice = .wait
     /// Runs once the open sheet is gone: the next picker can only present then.
     @State private var afterSheet: (() -> Void)?
     /// The keyboard comes back when the open sheet or picker closes: it was up when ＋ opened
@@ -262,7 +264,8 @@ struct ComposerView: View {
         let trigger = activeTrigger
         VStack(alignment: .leading, spacing: 8) {
             if let trigger {
-                CandidatePanel(model: model, context: context, hit: trigger, pick: { pick($0, over: trigger) }, showAll: { refocus = true; browsing = trigger })
+                CandidatePanel(model: model, context: context, hit: trigger, pick: { pick($0, over: trigger) }, showAll: { refocus = true; browsing = trigger },
+                               onReturn: { panelReturn = $0 })
             }
             field
                 // While held, the bar's own fill over the surface: the waveform's ink, red to cancel.
@@ -278,7 +281,14 @@ struct ComposerView: View {
         }
         .task(id: pendingDraft) {
             guard let pendingDraft else { return }
-            composer.text = composer.text.isEmpty ? pendingDraft : composer.text + "\n" + pendingDraft
+            // The same draft again (a Mini App's 让 Agent 修改 chosen twice before sending) is not added twice.
+            if pendingDraft.utf16.count > ComposerModel.longTextLimit {
+                composer.addLongText(pendingDraft)
+            } else if composer.text.isEmpty {
+                composer.text = pendingDraft
+            } else if !composer.text.contains(pendingDraft) {
+                composer.text += "\n" + pendingDraft
+            }
             voice.mode = false
             consumeDraft()
         }
@@ -322,7 +332,7 @@ struct ComposerView: View {
         .sheet(isPresented: $showModels) { ModelSearchSheet(model: model, context: context) }
         .sheet(isPresented: $voiceSetup) {
             NavigationStack {
-                VoiceSettingsPage { voiceSetup = false }
+                VoiceInputSettingsPage { voiceSetup = false }
                 .closeButton { voiceSetup = false }
             }
         }
@@ -400,12 +410,19 @@ struct ComposerView: View {
     /// One compact bar for a new conversation and an ongoing one: ＋, the text, the main button.
     private var field: some View {
         VStack(alignment: .leading, spacing: 8) {
+            // Held, the bar *is* the recording bar: one 54 pt capsule with the waveform in it.
+            // The attachments step aside with the text, so the fill stays that capsule instead of
+            // growing into a tall black box with a thumbnail stranded in its corner.
             if composer.editingQueue != nil {
                 queueEditBanner
-            } else {
+            } else if voice.phase == .idle {
                 AttachmentRail(composer: composer)
                     .padding(.horizontal, 13)
                     .padding(.top, composer.attachments.isEmpty ? 0 : 6)
+                // A queued message being edited is text only: the draft's quotes wait with the draft.
+                QuoteRail(quotes: composer.quotes) { composer.removeQuote(at: $0) }
+                    .padding(.horizontal, 13)
+                    .padding(.top, composer.quotes.isEmpty ? 0 : 6)
             }
             if let hint = commandHint {
                 Text(hint).font(.footnote).foregroundStyle(Palette.secondary)
@@ -424,6 +441,8 @@ struct ComposerView: View {
                 } else {
                     input
                         .padding(.vertical, 11)
+                        // Down to the bar's own edges.
+                        .focusesOnTap($focused, beyond: 5)
                 }
                 voiceToggle
                 mainButton.holdHidden(voice.phase != .idle)
@@ -437,12 +456,26 @@ struct ComposerView: View {
     /// three the expand button leads to a page with the room.
     private var input: some View {
         // Between three lines and four, whatever the text size.
-        let threeLines = UIFont.preferredFont(forTextStyle: .callout).lineHeight * 3.5
+        let threeLines = UIFont.preferredFont(forTextStyle: .body).lineHeight * 3.5
         return TextField(placeholder, text: Bindable(composer).text, axis: .vertical)
-            .font(.callout)
+            .font(.body)
             .lineLimit(1...5)
             .focused($focused)
-            .tint(Palette.ink)
+            .pastesAttachments(focused: focused, into: composer)
+            // Over the `/` or `@` panel, its first row (`CandidatePanel.ReturnChoice`); otherwise
+            // whatever the send button would do, and with nothing to send, nothing.
+            .returnKeySends(focused: focused) {
+                if let trigger = activeTrigger {
+                    switch panelReturn {
+                    case .pick(let candidate): return pick(candidate, over: trigger)
+                    case .wait: return
+                    case .send: break
+                    }
+                }
+                guard !composer.nothingToSend, !composer.executing, !composer.savingQueueEdit else { return }
+                send(.preferred)
+            }
+            .inkTint()
             .padding(.trailing, tall ? 30 : 0)
             .onGeometryChange(for: Bool.self) { $0.size.height > threeLines } action: { tall = $0 }
             .overlay(alignment: .topTrailing) {
@@ -670,7 +703,7 @@ struct ComposerView: View {
         }
         // Pending uploads still answer a tap, with the reason (C-87).
         .disabled(empty || working)
-        // Not plain Return: on a hardware keyboard that also ends a pinyin composition.
+        // Plain Return is the input's own (`returnKeySends`): it can tell a pinyin composition apart.
         .keyboardShortcut(.return, modifiers: .command)
         .contextMenu {
             if model.running && !editing {
@@ -920,12 +953,20 @@ private struct DraftEditor: View {
     var body: some View {
         let editingQueue = composer.editingQueue != nil
         NavigationStack {
-            TextEditor(text: $composer.text)
-                .font(.body)
-                .tint(Palette.ink)
-                .focused($focused)
-                .padding(.horizontal, 12)
-                .scrollContentBackground(.hidden)
+            VStack(alignment: .leading, spacing: 8) {
+                if !editingQueue {
+                    QuoteRail(quotes: composer.quotes) { composer.removeQuote(at: $0) }
+                        .padding(.horizontal, 17)
+                        .padding(.top, composer.quotes.isEmpty ? 0 : 8)
+                }
+                TextEditor(text: $composer.text)
+                    .font(.body)
+                    .inkTint()
+                    .focused($focused)
+                    .pastesAttachments(focused: focused, into: composer)
+                    .padding(.horizontal, 12)
+                    .scrollContentBackground(.hidden)
+            }
                 .background(Palette.background)
                 .navigationTitle(editingQueue ? "编辑排队消息" : "编辑消息")
                 .navigationBarTitleDisplayMode(.inline)

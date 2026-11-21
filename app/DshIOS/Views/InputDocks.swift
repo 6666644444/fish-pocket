@@ -283,7 +283,6 @@ struct ComposerStatusSheet: View {
                 }
                 if composer.planActive {
                     Toggle("计划模式", isOn: Binding(get: { composer.planActive }, set: { on in Haptics.select(); composer.setPlan(on) }))
-                        .toggleStyle(.mono)
                         .disabled(composer.planSwitching)
                 }
             }
@@ -415,7 +414,7 @@ private struct QueueSection: View {
                 ForEach(rows) { row in queueRow(row) }
                 ForEach(sending) { echo in
                     HStack(spacing: 8) {
-                        Text(echo.text.isEmpty ? echo.attachments.joined(separator: "、") : echo.text).lineLimit(2)
+                        Text(echo.text.isEmpty ? echo.attachments.joined(separator: "、") : MessageQuotes.preview(echo.text)).lineLimit(2)
                         Spacer(minLength: 8)
                         Text(echo.placement == .steering ? "插话发送中…" : "发送中…").font(.caption)
                     }
@@ -481,7 +480,7 @@ private struct QueueSection: View {
         .swipeActions(edge: .leading) {
             if model.running {
                 Button { act(row.id, .steer) } label: { Label("插话", systemImage: "bolt") }
-                    .tint(Palette.ink)
+                    .inkTint()
             }
         }
         .contextMenu {

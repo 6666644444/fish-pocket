@@ -97,7 +97,7 @@ final class StreamMux: NSObject, @unchecked Sendable, URLSessionWebSocketDelegat
                 case .data(let bytes): data = bytes
                 @unknown default: data = Data()
                 }
-                if let frame = try? JSONDecoder().decode(JSON.self, from: data) { self.dispatch(frame) }
+                if let frame = try? JSON.parse(data) { self.dispatch(frame) }
                 self.receive(on: task)
             case .failure(let error):
                 self.drop(task, error)

@@ -99,6 +99,15 @@ struct Attachment: Hashable {
     /// Image blocks render inline; file blocks show as a name. A file ref has no
     /// media type (`{attachmentId, name, bytes}`), so the block's type decides.
     var isImage: Bool { !isFile && (mediaType?.hasPrefix("image/") ?? true) }
+
+    /// Where the engine keeps an uploaded file, byte for byte under its own name
+    /// (`DSH_HOME/attachments/v1/files/<aa>/<sha256>/<name>`, as `dsh-attachment-local`
+    /// lays it out): the path the model is given, which the file preview reads too.
+    var storedPath: String? {
+        guard isFile, let name, !name.isEmpty, !name.contains("/"),
+              let digest = attachmentId?.wholeMatch(of: #/sha256:([0-9a-f]{64})/#)?.output.1 else { return nil }
+        return "\(EnginePaths.home)/.dsh/attachments/v1/files/\(digest.prefix(2))/\(digest)/\(name)"
+    }
 }
 
 enum TimelineItem: Identifiable, Hashable {
@@ -234,6 +243,8 @@ struct TurnTrigger: Hashable {
     /// A post past what a message holds came as a file with only its start: the file, and the whole length.
     var file: JSON?
     var length: Int?
+    /// 继续生成 left this: an empty message with nothing to open, drawn as one quiet line.
+    var receipt = false
 
     init(seq: Int, time: Date, source: JSON, body: String, content: JSON = .null) {
         self.seq = seq
@@ -251,10 +262,24 @@ struct TurnTrigger: Hashable {
             }
         }
         switch source["kind"].string {
+        case "retry" where body.isEmpty && content.array.isEmpty:
+            title = String(localized: "已请求继续生成"); symbol = "arrow.clockwise"
+            receipt = true
         case "goal": title = String(localized: "继续执行目标"); symbol = "flag"
         case "agent-message": title = String(localized: "收到任务消息"); symbol = "person"
         case "team-message": title = String(localized: "收到团队消息"); symbol = "person.2"
-        case "subagent-settled": title = String(localized: "子任务状态更新"); symbol = "person.2.circle"
+        case "subagent-settled":
+            // How the child's turn ended (`stopReason`); a Host before 0.2.2-rc.3 does not say.
+            switch source["stopReason"].string {
+            case nil, "": title = String(localized: "子任务状态更新")
+            case "completed": title = String(localized: "子智能体已完成任务")
+            case "aborted": title = String(localized: "子智能体任务已停止")
+            case "error": title = String(localized: "子智能体执行失败")
+            case "max-tokens": title = String(localized: "子智能体已达 token 上限")
+            case "refusal": title = String(localized: "子智能体拒绝执行")
+            default: title = String(localized: "子智能体异常结束")
+            }
+            symbol = "person.2.circle"
         case "webhook" where source["provider"].string == "github": title = String(localized: "收到 GitHub 事件"); symbol = "chevron.left.forwardslash.chevron.right"
         case "webhook": title = String(localized: "收到外部事件"); symbol = "link"
         case "schedule": title = String(localized: "自动化任务"); symbol = "clock"
@@ -291,7 +316,7 @@ struct TurnTrigger: Hashable {
     }
 
     /// Kinds that are notifications rather than harness context, for a claim whose ids fall before the window.
-    static let wakingKinds: Set<String> = ["goal", "agent-message", "team-message", "subagent-settled", "webhook", "schedule", "tool-jobs", "cordis-host-runner"]
+    static let wakingKinds: Set<String> = ["retry", "goal", "agent-message", "team-message", "subagent-settled", "webhook", "schedule", "tool-jobs", "cordis-host-runner"]
 }
 
 /// A slash command in the conversation (C-48).

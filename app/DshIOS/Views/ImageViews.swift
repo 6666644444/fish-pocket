@@ -198,7 +198,7 @@ struct AttachmentThumb: View {
             } else if failed {
                 Button { failed = false; attempt += 1 } label: {
                     VStack(spacing: 6) {
-                        Image(systemName: "photo.badge.exclamationmark")
+                        Image(systemName: "exclamationmark.triangle")
                         if size.width > 100 { Text("图片加载失败，轻点重试").font(.caption) }
                     }
                     .foregroundStyle(Palette.secondary)
@@ -207,6 +207,11 @@ struct AttachmentThumb: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("图片加载失败，轻点重试")
+            } else if let preview = attachment.attachmentId.flatMap({ model?.preview($0) }) {
+                // Just sent: the picture as it was picked, until the stored copy is read.
+                Image(uiImage: preview).resizable().scaledToFill()
+                    .frame(width: size.width, height: size.height)
+                    .clipped()
             } else {
                 Palette.field.overlay(ProgressView()).frame(width: size.width, height: size.height)
             }
@@ -223,11 +228,16 @@ struct AttachmentThumb: View {
     }
 }
 
-/// Full-screen image: pinch or double-tap to zoom, drag to pan, share or close.
+/// Full-screen image: pinch or double-tap to zoom, drag to pan, share or close. Opened from a
+/// conversation, 标注 draws on it and puts the marked copy into that conversation's draft.
 struct ImageViewer: View {
     let image: UIImage
     var name: String?
     @Environment(\.dismiss) private var dismiss
+    /// The conversation the picture is in; nil where there is no draft to add to.
+    @Environment(\.sessionModel) private var model
+    @Environment(AppModel.self) private var app: AppModel?
+    @State private var marking = false
     @State private var scale: CGFloat = 1
     @State private var lastScale: CGFloat = 1
     @State private var offset: CGSize = .zero
@@ -289,6 +299,29 @@ struct ImageViewer: View {
             .foregroundStyle(.white)
             .padding(.horizontal, 8)
         }
+        .overlay(alignment: .bottom) {
+            if model != nil {
+                Button { marking = true } label: {
+                    Label("标注", systemImage: "pencil.tip.crop.circle")
+                        .font(.body.weight(.semibold))
+                        .padding(.horizontal, 20)
+                        .frame(minHeight: 44)
+                        .background(.ultraThinMaterial, in: Capsule())
+                }
+                .foregroundStyle(.white)
+                .environment(\.colorScheme, .dark)
+                .padding(.bottom, 12)
+            }
+        }
         .statusBarHidden()
+        .fullScreenCover(isPresented: $marking) {
+            MarkupCanvas(picture: image) { marked in
+                if let refusal = model?.composer.addImage(marked, name: String(localized: "标注") + ".jpg") {
+                    app?.showToast(refusal)
+                }
+                // Back to the conversation, where the marked copy now waits in the draft.
+                DispatchQueue.main.async { dismiss() }
+            }
+        }
     }
 }

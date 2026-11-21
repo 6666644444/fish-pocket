@@ -4,7 +4,7 @@
 >
 > 功能 ID 引用自同目录三份清单：`C-` → [conversation.md](conversation.md)，`S-` → [shell.md](shell.md)，`G-/A-/M-/I-/AP-/O-/P-/PC-/F-/MK-/MS-` → [settings-plugins.md](settings-plugins.md)（其中设置外壳的 `S-01…S-07` 写作 `设置 S-0x`，与 shell.md 的 `S-xx` 区分）。那三份清单里的 ☐/☑ 状态已过时，**以本文为准**。
 >
-> 更新于 2026-11-06（引擎从 `0.2.1-rc.4` 升到 `0.2.2-rc.1`，新增 §3.2）。状态变化时同步更新本文。
+> 更新于 2026-11-18（引擎从 `0.2.2-rc.3` 升到 `0.2.2-rc.4`，网页端没有新功能，见 §3.3 末尾；`0.2.2-rc.3` 的对齐情况见 §3.3）。状态变化时同步更新本文。
 
 ## 1. 现状
 
@@ -14,7 +14,7 @@
 |---|---|
 | 消息流 | 图片与大图、回到底部、输出上限「继续」、加载更早、跳转轮次、工具专属卡片（C-56…C-71、C-79）、时间戳、本轮用量、重试条、命令与压缩卡、定时触发通知、计划卡、交付物卡、密钥遮罩、推理摘要、运行计时 |
 | 提问 | 经 `$events` 的 `user-questions/request` 作答、倒计时与「慢慢回答」、分页与跳过、计划审阅、迟到回复 |
-| 输入框 | 草稿持久化、发送中气泡与失败放回、Todo / 目标 / 上下文 Dock、计划模式、队列编辑、`/` 排名与分组、`@` 引用、相机与文件附件、`fileUploads` 上传、模型搜索、权限目录刷新、`busyEnter` |
+| 输入框 | 草稿持久化、发送中气泡与失败放回、Todo / 目标 / 上下文 Dock、计划模式、队列编辑、`/` 排名与分组、`@` 引用、消息引用（上游 `dsh-message-quotes`）、相机与文件附件、`fileUploads` 上传、模型搜索、权限目录刷新、`busyEnter` |
 | 壳层 | 统一 Toast、归档撤销、分叉命名、首启引导、子智能体目录与子会话、后台任务、Agent 预设、Session 日志、目录浏览加工作区、Cordis 面板、断线横幅、指数退避重连 |
 | 工作台 | 文件预览（Markdown / 图片 / PDF）、自动刷新、内置浏览器、终端协议重写（背压、序号、重连、重命名、接管输入）、改动页跳转 |
 | 自动化 | `schedule/catalog`、筛选与搜索、时区格式化、编辑（含 Cron、时区、未保存确认）、运行记录、按会话筛选 |
@@ -52,14 +52,13 @@
 | S-08 / C-01…C-03 | 没有审批按钮：Client 半部跑不了，`cordis/request-run` 立即回 `client-half-failed` 并提示 |
 | S-45 | 从 App 文稿目录起步，没有路径编辑 |
 | S-57 | 改动数据仍来自工具调用，没接 `api/changes.*`（要先取 `workspace/changes` 的 seq；git 支持已合入 main，可以再评估） |
-| S-77 | 文件搜索只筛当前文件夹 |
 | S-79 | Markdown 里的本地图片不显示，没有代码高亮 |
 | M-03 | 编辑改为 push 页，没有首启时直接展开的设置卡 |
 | AP-03 | 只隐藏 PTC / 极简，不重置已保存的默认值 |
 
 **没做**
 
-C-49 `/goal` 气泡 · C-90 原子 chip · C-16 鲸鱼动画与流光 · C-30 组体内层滚动 · S-15 / S-22 手动排序 · S-19 工作区树 · S-40 启动恢复（有意保持「打开即新对话」）· S-65 View 标签 · S-114 / G-02 多语言 · C-138 思维链翻译 · C-139 语音输入 · C-140 智能体团队 · P-16 版本兼容豁免（官方 Web 也没有界面）· F-35 折叠（用独立页面代替）
+C-49 `/goal` 气泡 · C-90 原子 chip · C-16 鲸鱼动画与流光 · C-30 组体内层滚动 · S-15 / S-22 手动排序 · S-19 工作区树 · S-40 启动恢复（有意保持「打开即新对话」）· S-65 View 标签 · S-114 / G-02 多语言 · C-138 思维链翻译 · C-139 语音输入 · P-16 版本兼容豁免（官方 Web 也没有界面）· F-35 折叠（用独立页面代替）
 
 **有意与官方不同**
 
@@ -78,7 +77,7 @@ C-49 `/goal` 气泡 · C-90 原子 chip · C-16 鲸鱼动画与流光 · C-30 �
 
 ## 3.1 iOS 化改造
 
-对照 Apple HIG 把网页式交互改成手机习惯（2026-11-04）：工具行 44pt、详情进 sheet；回复操作收进长按菜单；统一的「+」托盘（相机 / 照片 / 文件、引用、指令、模型、计划、思考、访问模式）；运行中有字时也能停止；多层 dock 合成一条状态条；顶栏显示会话名；抽屉默认按工作区分组（可切到按时间）、防左滑误归档；Toast 短文案放到拇指区；工作台不自动弹键盘；保存放工具栏；设置首页精简，开发者项收进「高级」；添加提供商分两步；`@` 引用在输入框和气泡里只显示 `@标题`。规格文档 `docs/webui/` 只用来确定协议和能力，界面以 `docs/design/README.md` 为准。
+对照 Apple HIG 把网页式交互改成手机习惯（2026-11-04）：工具行 44pt、详情进 sheet；回复操作收进长按菜单；统一的「+」托盘（相机 / 照片 / 文件、引用、指令、模型、计划、思考、访问模式）；运行中有字时也能停止；多层 dock 合成一条状态条；顶栏显示会话名；抽屉默认按工作区分组（可切到按时间）、防左滑误归档；Toast 短文案放到拇指区；工作台不自动弹键盘；保存放工具栏；设置首页精简，开发者项收进「高级」；添加提供商分两步；`@` 引用在输入框和气泡里只显示 `@标题`。消息引用（2026-11-16）：网页版在选中文字旁浮出按钮、引用块嵌在输入框文字中间；手机上改为长按消息「引用」整条，或在「选择文本」页选中一段后从编辑菜单「引用」，引用块排在输入框上方、各带 ✕，发送时排在正文前。发出去的仍是普通 Markdown blockquote，草稿里的 `quotes` 字段与网页版同形，气泡和排队预览按 `>` 行识别显示，与上游一致。规格文档 `docs/webui/` 只用来确定协议和能力，界面以 `docs/design/README.md` 为准。
 
 ## 3.2 上游 `0.2.2-rc.1` 新增（尚未移植）
 
@@ -86,7 +85,6 @@ C-49 `/goal` 气泡 · C-90 原子 chip · C-16 鲸鱼动画与流光 · C-30 �
 
 | 上游新增 | 原生现状 |
 |---|---|
-| 把聊天里的文本作为引用插入输入框，发送后显示紧凑预览 | 没有 |
 | 整段历史会话复制为 Markdown（含可用的原始日志路径） | 没有 |
 | 工作步骤收起后保留全部助手文字回复，可切换为仅最终回答 | 收起就是收起，没有这个切换 |
 | 插件管理的富文本详情（`pluginMarket/readEntryDetail`、`pluginManager/readBundleDetail`） | 插件页只有现有字段 |
@@ -103,7 +101,46 @@ C-49 `/goal` 气泡 · C-90 原子 chip · C-16 鲸鱼动画与流光 · C-30 �
 
 引擎侧的变化不需要原生改动：最低 Node 提到 24.9（内嵌 nodejs-mobile 是 24.20.0，满足）、Cordis 升到 4.1.0、pi-ai 升到 1.3.0、Search 给模型更长的摘要、远程连接默认开启 WebSocket 压缩（客户端协商，不开就不压）、Web 静态资源支持 ETag。「Git 工作树」插件已并入「变更请求与工作树」，本项目没有在 `dsh.profile.bundles` 里启用过它，不受影响。
 
-## 3.3 本项目自有扩展（官方 Web 没有）
+## 3.3 上游 `0.2.2-rc.3` 新增
+
+引擎 2026-11-17 从 `0.2.2-rc.1` 升到 `0.2.2-rc.3`。协议层的删除、改形和新增方法见 [protocol.md](protocol.md) §0.2。接口形状跟着变的有：`account/watch`（结果改成 `{type, state}` 信封）、`subagents/prompt`（去掉 `parentSessionId` 和 `mode`）、`subagents/interruptByUser`（取代 `interruptByParent`）、`pluginManager/updateBundle`（git 安装的包要带 `spec`）、网页搜索设置（`web-deepseek-api` 的 `baseURL`、`apiKeyEnv` 拆成 `searchBaseURL`、`fetchBaseURL`、`searchApiKeyEnv`、`fetchApiKeyEnv`）。Office 渲染（`office-kit`）和 Office 技能在 iOS 上关闭，见 `engine/ios.patch.yml`。
+
+官方网页版这一版新暴露给用户的功能，同一天逐项对齐。对照的办法：比两版 `dsh-web-app/cordis.patch.yml` 默认启用的 `client-ui` 包和各包界面文案的增删，再拿旧版的包核对哪些是真的新增。
+
+| 上游新增 | 原生现状 |
+|---|---|
+| 智能体团队改成内置，输入区有开关（`agentTeams/setEnabled`），共享任务板（C-140） | 已对齐。「+」托盘里的「智能体团队协作」开关，会话用过模型后停用要确认；子智能体面板多一节「共享任务」（进度、状态、描述、负责人），没有子智能体只有任务时顶栏入口是「任务板」。没做：`/team on`、`/team off` 的回执仍按普通命令卡显示 |
+| 失败的一轮可以「继续生成」（投影 `conversationContinuation`，发空内容的 `session/prompt`） | 已对齐。按钮在这一轮的失败提示下面，只在引擎说可以接着这一轮、输入框和队列都空时出现；时间线上记一行「已请求继续生成」 |
+| 模型的重试策略（`retryPolicy`：模式、最大重试次数、错误码、退避） | 已对齐。提供商 → 高级 → 重试策略，DeepSeek 和其他提供商都有；选回「默认」清掉覆盖 |
+| 自定义提供商的 Gemini 协议（`google-generative-ai`） | 已对齐。协议里多一项「Gemini API」，要先填 Key，推理档位只给 minimal、low、medium、high |
+| 网页搜索和网页获取各选提供方（`web/listProviders`），Search API、Fetch API 各有计费方式（`searchBilling`、`fetchBilling`） | 已对齐。插件 → 网页搜索与获取。iOS 上默认的搜索提供方是内置 Bot 插件注册的 `auto`，页面里叫「自动」；默认的获取提供方是 `http`「本机直接获取」。Search API、Fetch API 各自的地址和 Key 引用只读不改，设了就锁住计费方式并说明 |
+| 整个工作区的文件搜索（`workspaceFiles/search`） | 已对齐（原 S-77）。工作台 → 文件，路径右边的放大镜；可选显示隐藏项、跳过 `.gitignore` 忽略的文件。文件列表默认不显示点开头的条目，旁边的眼睛切换。没做：排除清单不能编辑，用的是官方默认那一份；这两个偏好全 App 共用，官方按工作区记 |
+| 账户通知卡片（`account/getNotifications`、`account/reportNotificationEvent`，取代赠金卡片），按 `nextPollAfterSeconds` 轮询 | 已对齐。登录期间按引擎给的间隔轮询，展示、点击、关闭各上报一次。没做：切换界面语言后重取文案（`account/getNotificationContent`），要到下一次轮询才换 |
+| 子智能体有名字（`subagentCatalog[].name`），结束通知带结束原因 | 已对齐。面板、详情和子会话切换里显示名字；通知标题按完成、中止、出错等区分 |
+| Agent 打开的终端在终端面板里可见、可接管（`terminal/watch`） | 已对齐。终端列表跟着引擎变，Agent 开的终端带「Agent」标记，连上后提示「你一输入就由你接管」。要先在插件页启用实验性的终端插件包 |
+| 新工具 `apply_patch`、`subagent_fork`、`wait_agent` | 卡片标题已对齐（编辑、派生子智能体、等待消息），内容仍是通用卡片 |
+| 插件清单：团队协作不再是实验插件包；新增 Computer Use 包 | 已对齐。实验性插件里去掉团队协作那一项；Computer Use 是桌面专属，不列出，`cuaAccess/*` 的 9 个方法不接 |
+| DeepSeek 会话导入（`deepseekChatImport/limits`） | 已对齐。新会话输入框上方的「导入 DeepSeek 会话」：选导出的 ZIP 和工作区，显示上传和写入进度；插件默认关闭，第一次导入时自动开启 |
+| MCP 管理（`mcpManager/probe`、`mcpManager/restart`、`mcpManager/watch`） | 官方网页版这一版没有对应界面，不做 |
+| 变更请求与工作树新增的 12 个方法（`forgePanel/*`，见 [protocol.md](protocol.md) §0.2） | 不移植；整块「变更请求与工作树」没做（§3.2） |
+| 共享会话的多会话与按插件授权（`liveshareShares/addSessions`，结果里的 `sessionIds` / `viewerPluginAccess` / `viewerPlugins`） | 不移植（§3.2） |
+
+和官方不同的一处：子智能体的父会话没在运行时，子会话的输入框仍然只读并说明原因。引擎这时确实拒收（`subagent/delivery-unavailable`），所以提示保留。
+
+**验证**（2026-11-17，iOS 27 模拟器，真实 DeepSeek Key）：团队开关和停用确认、一次真实的团队协作（建共享任务、起子智能体认领）、任务板、「继续生成」（把 API 地址指到连不上的端口造出失败，恢复后点按钮续上）、重试策略的保存与清除（「所有错误」模式下断开服务会一直重试到恢复）、Gemini 协议（本机起一个模拟的 Gemini 服务，读模型列表和对话都走通）、搜索提供方切换并用 Search API 真搜一次、文件搜索、Agent 终端的标记和接管提示，都走过一遍。`scripts/smoke-matrix.sh` 的全部页面另在 iOS 18 的 iPhone、iOS 26 和 iOS 27 的 iPad、iPhone Duo 上截图看过，其中文件搜索页是这次加进去的（`-dshOpen filesearch`）。没有验证：账户通知卡片，要真实的 DeepSeek 账号并且服务端正好有通知；团队开关、任务板、重试策略和搜索设置这几页只在 iOS 27 的 iPhone 上点过。
+
+### 上游 `0.2.2-rc.4`
+
+引擎 2026-11-18 从 `0.2.2-rc.3` 升到 `0.2.2-rc.4`。这一版只改了三个包的源码，网页界面、Remote 方法表（39 个包逐个比对）和发给模型的工具清单（54 个，名字和定义都没变）都和 rc.3 一样，没有需要对齐的新功能。
+
+| 上游变化 | 原生现状 |
+|---|---|
+| DeepSeek 内容拒答（`stop_reason: "refusal"`）的错误码从 `MALFORMED_RESPONSE` 改成 `CONTENT_REFUSED`，消息里带上 DeepSeek 给的原因；拒答前用掉的 token 照样记入用量。不在默认的重试列表里 | 已对齐。会话和 Bot 私聊里这一轮的失败提示是「内容没有通过 DeepSeek 的安全审核，模型拒绝回答」，有原因时接在冒号后面；群聊成员停下时说「内容没有通过 DeepSeek 的安全审核」。只影响 DeepSeek 账号和 DeepSeek API Key 两条线路，Fish Pocket 线路走 pi-ai，不经过这个适配器 |
+| 共享会话在桌面版 Electron 里启动隧道进程的修复 | 桌面专属，和 iOS 无关 |
+
+**验证**（2026-11-18，自建模拟器）：iOS 27 iPhone 上先装 rc.3 的包，建带工具调用的会话、起过子智能体的会话、两个 Bot、一个群并各说几句，再覆盖安装 rc.4：老会话读得出来、能接着聊，子智能体在父会话运行时能追问、能中断（结束原因 `aborted / user`），Bot 记得之前的话，群里新发一条后两位成员的回复都显示出来。新建会话跑 bash 用例，工具卡片、回复、自动标题正常。拒答提示用一个本机假 DeepSeek 服务（`DEEPSEEK_BASE_URL` 指过去，返回 `refusal`）在会话、Bot 私聊和群聊里各看了一遍。`SMOKE_SCREENS=full scripts/smoke-matrix.sh` 在 iOS 27 的 iPhone、iPad、iPhone Duo，iOS 18 和 iOS 26 的 iPhone 上全部通过，截图逐张看过。
+
+## 3.4 本项目自有扩展（官方 Web 没有）
 
 **本机能力**（`docs/native-services.md`）：把 iOS 的系统框架以工具的形式交给智能体——设备状态、本地通知、朗读、日历、提醒事项、地图、图像识别、剪贴板、位置、文本分析。官方 Web 没有对应物，因为浏览器够不到这些东西。
 

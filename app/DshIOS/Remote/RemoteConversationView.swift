@@ -15,6 +15,8 @@ struct RemoteConversationView: View {
     @State private var atBottom = true
     @State private var timelineTop: CGFloat = 0
     @State private var detail: TimelineDetail?
+    @State private var actionsBox = ConversationActions.Box()
+    @State private var scrollBox = TimelineScroll.Box()
     /// Requests swiped away; they stay answerable from the line above the composer.
     @State private var deferred: Set<String> = []
     @State private var panel: Panel?
@@ -62,19 +64,21 @@ struct RemoteConversationView: View {
     private func content(_ model: RemoteSessionModel) -> some View {
         ScrollViewReader { proxy in
             ScrollView {
-                RemoteTimelineList(model: model)
-                    .modifier(LinkOpening())
-                Color.clear.frame(height: 1).id(Self.bottomId)
+                TimelineRows {
+                    RemoteTimelineList(model: model)
+                        .modifier(LinkOpening())
+                    Color.clear.frame(height: 1).id(Self.bottomId)
+                }
             }
-            .environment(\.timelineScroll, TimelineScroll(keep: { id in
+            .environment(\.timelineScroll, TimelineScroll(scrollBox, top: timelineTop) { id in
                 Task { @MainActor in
                     try? await Task.sleep(for: .milliseconds(60))
                     proxy.scrollTo(id, anchor: .top)
                 }
-            }, top: timelineTop))
+            })
             .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).minY } action: { timelineTop = $0 }
             .modifier(TimelineAnchor())
-            .modifier(BottomFollow(atBottom: $atBottom) { scrollToBottom(proxy, animated: false) })
+            .modifier(BottomFollow(atBottom: $atBottom) { scrollToBottom(proxy, animated: $0) })
             .scrollDismissesKeyboard(.immediately)
             .scrollBounceBehavior(.always)
             .simultaneousGesture(TapGesture().onEnded { dismissKeyboard() })
@@ -115,7 +119,9 @@ struct RemoteConversationView: View {
             if let openDrawer {
                 ToolbarItem(placement: .topBarLeading) { DrawerButton(action: openDrawer) }
             }
-            if let meta = model.meta {
+            // Off the bar while the app is out of sight on iPhone Duo, as the conversation's
+            // (`ConversationView.barButtonsAway`).
+            if let meta = model.meta, !barButtonsAway {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
                         Haptics.tap()
@@ -127,15 +133,18 @@ struct RemoteConversationView: View {
                 }
             }
             ToolbarItem(placement: .principal) { RemoteTitleMenu(model: model) }
-            ToolbarItem(placement: .topBarTrailing) { moreMenu(model) }
+            if !barButtonsAway {
+                ToolbarItem(placement: .topBarTrailing) { moreMenu(model) }
+            }
         }
-        .environment(\.conversationActions, ConversationActions(
+        .environment(\.conversationActions, ConversationActions(actionsBox, .init(
             openChanges: { panel = .changes },
+            quote: quoteAction(model),
             present: { item in
                 deferred.formUnion(interactions(model).map(\.id))
                 detail = item
             }
-        ))
+        )))
         .onChange(of: presented(model)?.id) { _, id in if id != nil { dismissKeyboard() } }
         .onChange(of: waiting(model)?.id) { old, new in if let new, new != old { Haptics.warning() } }
         .onChange(of: model.optionsRequest) { panel = .options }
@@ -234,6 +243,18 @@ struct RemoteConversationView: View {
         }
     }
 
+    /// Quoting puts text in the draft: offered while the input is there to take it.
+    private func quoteAction(_ model: RemoteSessionModel) -> ((String) -> Void)? {
+        guard model.loaded, model.sendBlock == nil else { return nil }
+        return { text in
+            model.addQuote(text)
+            Haptics.tap()
+        }
+    }
+
+    /// Whether the bar's buttons are off it: while the app is out of sight on iPhone Duo.
+    private var barButtonsAway: Bool { ThisDevice.isDuo && scenePhase == .background }
+
     private func moreMenu(_ model: RemoteSessionModel) -> some View {
         Menu {
             Section {
@@ -318,7 +339,7 @@ struct RemoteConversationView: View {
         case .detail(.usage(let usage)):
             TurnUsageSheet(usage: usage)
         case .detail(.text(let text)):
-            SelectTextSheet(text: text)
+            SelectTextSheet(text: text, quote: quoteAction(model))
         }
     }
 }
@@ -428,6 +449,8 @@ private struct RemoteRowView: View, Equatable {
                 .font(.footnote)
                 .foregroundStyle(isError ? Palette.removed : Palette.secondary)
                 .frame(maxWidth: .infinity, alignment: .center)
+        case .file(_, let path):
+            RemoteMadeFile(path: path, model: model)
         }
     }
 }
@@ -469,13 +492,13 @@ private struct RemoteUserBubble: View {
         VStack(alignment: .trailing, spacing: 6) {
             let images = attachments.filter(\.isImage)
             if !images.isEmpty {
-                HStack(spacing: 6) { ForEach(images) { RemoteImageThumb(attachment: $0) } }
+                HStack(spacing: 6) { ForEach(images) { RemoteImageThumb(attachment: $0, model: model) } }
             }
             ForEach(attachments.filter { !$0.isImage }) { attachment in
-                Label(attachment.name, systemImage: "paperclip").font(.caption)
+                RemoteAttachmentCard(attachment: attachment, model: model)
             }
             if !text.isEmpty {
-                Text(text)
+                QuotedText(text: text)
                     .font(.callout)
                     .lineSpacing(3)
                     .padding(.horizontal, 16)
@@ -484,6 +507,9 @@ private struct RemoteUserBubble: View {
                     .contextMenu {
                         Button { copyToPasteboard(text) } label: { Label("复制", systemImage: "doc.on.doc") }
                         Button { actions.present(.text(text)) } label: { Label("选择文本", systemImage: "selection.pin.in.out") }
+                        if let quote = actions.quote {
+                            Button { quote(text) } label: { Label("引用", systemImage: "quote.opening") }
+                        }
                     }
             }
             // On its way: said in words, not by dimming the message (which read as a failure).
@@ -505,9 +531,11 @@ private struct RemoteUserBubble: View {
     }
 }
 
-/// A picture a message carries: fetched from the account's server, opened full screen on a tap.
+/// A picture a message carries: fetched from the account's server, or from the computer when
+/// it was pasted in there; opened full screen on a tap.
 private struct RemoteImageThumb: View {
     let attachment: RemoteAttachment
+    let model: RemoteSessionModel
     @Environment(AppModel.self) private var app
     @State private var image: UIImage?
     @State private var failed = false
@@ -530,15 +558,57 @@ private struct RemoteImageThumb: View {
         .background(Palette.field)
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .accessibilityLabel(Text(attachment.name))
-        .task(id: attachment.id) {
-            if let data = attachment.data { image = UIImage(data: data); failed = image == nil; return }
-            guard let link = attachment.link, let client = app.remote.client,
-                  let data = try? await client.data(at: link), let loaded = UIImage(data: data) else { failed = true; return }
+        // Again when the computer comes back: a picture pasted in there is read from it.
+        .task(id: "\(attachment.id)-\(model.meta?.deviceOnline ?? true)") {
+            guard image == nil else { return }
+            failed = false
+            if case .local(let data) = attachment.source { image = UIImage(data: data); failed = image == nil; return }
+            guard let client = app.remote.client,
+                  let data = try? await RemoteFileFetch.data(attachment, client: client, deviceId: model.meta?.deviceId, cwd: model.cwd, online: model.meta?.deviceOnline ?? true),
+                  let loaded = UIImage(data: data) else { failed = true; return }
             image = loaded
         }
         .fullScreenCover(isPresented: $viewing) {
             if let image { ImageViewer(image: image, name: attachment.name) }
         }
+    }
+}
+
+/// A document a message carries, opened in Quick Look on a tap.
+private struct RemoteAttachmentCard: View {
+    let attachment: RemoteAttachment
+    let model: RemoteSessionModel
+    @Environment(AppModel.self) private var app
+
+    var body: some View {
+        RemoteFileButton(name: attachment.name, mediaType: attachment.mediaType) {
+            guard let client = app.remote.client else { throw RemoteError(kind: .unauthorized, message: String(localized: "尚未登录")) }
+            return try await RemoteFileFetch.data(attachment, client: client, deviceId: model.meta?.deviceId, cwd: model.cwd, online: model.meta?.deviceOnline ?? true)
+        } label: { loading in
+            RemoteFileCard(name: attachment.name, bytes: attachment.size, loading: loading)
+        }
+    }
+}
+
+/// A file the agent made on the computer: read from there when tapped.
+private struct RemoteMadeFile: View {
+    let path: String
+    let model: RemoteSessionModel
+    @Environment(AppModel.self) private var app
+
+    private var name: String { (path as NSString).lastPathComponent }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("生成了文件").font(.footnote).foregroundStyle(Palette.secondary)
+            RemoteFileButton(name: name) {
+                guard let client = app.remote.client else { throw RemoteError(kind: .unauthorized, message: String(localized: "尚未登录")) }
+                return try await RemoteFileFetch.device(path: path, root: model.cwd, client: client, deviceId: model.meta?.deviceId, online: model.meta?.deviceOnline ?? true)
+            } label: { loading in
+                RemoteFileCard(name: name, loading: loading)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 

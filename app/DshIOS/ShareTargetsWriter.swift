@@ -61,7 +61,8 @@ final class ShareTargetsWriter {
         let team = app.botTeam
         let targets = ShareTargets(
             bots: bots.map { ShareTargets.Bot(id: $0.id, name: $0.name, role: $0.role) },
-            rooms: rooms.map { ShareTargets.Room(id: $0.id, name: team.name(of: $0), memberCount: $0.members.count) }
+            rooms: rooms.map { ShareTargets.Room(id: $0.id, name: team.name(of: $0), memberCount: $0.members.count) },
+            order: (bots.map(BotListEntry.bot) + rooms.map(BotListEntry.room)).sorted(by: team.listOrder).map(\.id)
         )
         try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         var kept: Set<String> = []
@@ -92,6 +93,8 @@ final class ShareTargetsWriter {
             .filter { !listedNow.contains($0) })
         written = targets
         targets.write()
+        // Siri's phrases that name a Bot (Shortcuts' 打开 Bot).
+        DshShortcuts.updateAppShortcutParameters()
     }
 
     /// What a Bot's avatar is drawn from: when it changes, the picture is drawn again.

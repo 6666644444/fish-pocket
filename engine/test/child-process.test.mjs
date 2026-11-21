@@ -183,3 +183,14 @@ test('execSync / execFileSync return stdout and throw on failure like Node', () 
   assert.throws(() => cp.execSync('echo boom >&2; exit 3', { cwd: dir, stdio: 'pipe' }), (error) => error.status === 3 && /boom/.test(error.stderr.toString()));
   assert.throws(() => cp.execFileSync('no-such-command'), { code: 'ENOENT' });
 });
+
+test('an exited child\'s stdin is destroyed, so execa-style waits on every stream settle', async () => {
+  const { finished } = await import('node:stream/promises');
+  // Left open, stdin kept execa (pnpm resolving a git dependency) waiting forever.
+  const child = cp.spawn('false');
+  const settled = finished(child.stdin).then(() => 'finished', (error) => error.code);
+  const [code] = await new Promise((r) => child.on('close', (...a) => r(a)));
+  assert.equal(code, 1);
+  assert.equal(child.stdin.destroyed, true);
+  assert.equal(await settled, 'ERR_STREAM_PREMATURE_CLOSE');
+});

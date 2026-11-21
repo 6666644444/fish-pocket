@@ -2,7 +2,7 @@ import SwiftUI
 
 /// The sheets the conversation's top bar opens.
 enum SessionHeaderSheet: String, Identifiable {
-    case subagents, jobs, logExport
+    case subagents, jobs, reminders, logExport
     var id: String { rawValue }
 }
 
@@ -15,6 +15,7 @@ struct SessionTitleMenu: View {
     let catalog: AgentPresetCatalog
     /// More icons share the bar: on a phone the title narrows so it stays between them.
     var crowded = false
+    let shareImage: () -> Void
     let exportLog: () -> Void
     @Environment(AppModel.self) private var app
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -39,6 +40,7 @@ struct SessionTitleMenu: View {
                 if let preset = app.presetId(of: sessionId) { Text(catalog.name(of: preset)) }
             }
             Section {
+                Button(action: shareImage) { Label("分享为图片", systemImage: "photo.on.rectangle") }
                 Button(action: exportLog) { Label("导出日志", systemImage: "square.and.arrow.up") }
                 Button { app.copySessionId(sessionId) } label: { Label("复制会话 ID", systemImage: "doc.on.doc") }
             }
@@ -61,9 +63,9 @@ struct SessionTitleMenu: View {
     }
 }
 
-/// Top-bar entries that only appear when there is something to show: subagents
-/// (`conversation.session.header.actions`, `.utilities`); a running one carries a dot.
-/// Automations have one place, the sidebar's 自动化 row, not an icon per conversation. Background jobs float over the conversation instead (`ConversationActivity`).
+/// Top-bar entries that only appear when there is something to show: subagents and this
+/// session's reminders (`conversation.session.header.actions`, `.utilities`); a running one
+/// carries a dot. Background jobs float over the conversation instead (`ConversationActivity`).
 struct SessionHeaderActions: View {
     let sessionId: String
     let open: (SessionHeaderSheet) -> Void
@@ -81,8 +83,18 @@ struct SessionHeaderActions: View {
         var entries: [Entry] = []
         let subagents = app.subagentEntries(of: sessionId)
         let running = app.runningSubagentCount(of: sessionId)
+        let schedules = app.activeSchedules(of: sessionId)
         if !subagents.isEmpty {
             entries.append(Entry(sheet: .subagents, icon: "person.2", dot: running > 0, label: running > 0 ? Text("\(subagents.count) 个子智能体，正在运行") : Text("\(subagents.count) 个子智能体")))
+        } else {
+            // A team's task board lives under the subagents; with tasks and no member yet, it is the entry.
+            let board = app.teamBoard(of: sessionId)
+            if !board.tasks.isEmpty || board.failure != nil {
+                entries.append(Entry(sheet: .subagents, icon: "checklist", dot: false, label: Text("任务板")))
+            }
+        }
+        if !schedules.isEmpty {
+            entries.append(Entry(sheet: .reminders, icon: "clock", dot: false, label: Text("\(schedules.count) 个提醒")))
         }
         return entries
     }

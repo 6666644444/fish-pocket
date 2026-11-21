@@ -68,7 +68,7 @@ struct BotEarlierParts: View {
         let team = app.botTeam
         switch item["kind"].string {
         case "user":
-            Text(item["text"].string ?? "").font(.callout)
+            QuotedText(text: item["text"].string ?? "").font(.callout)
                 .padding(.horizontal, 16).padding(.vertical, 10)
                 .userBubble()
                 .frame(maxWidth: .infinity, alignment: .trailing)
@@ -83,7 +83,7 @@ struct BotEarlierParts: View {
         case "answer":
             note(String(localized: "你回答了卡片"), symbol: "checkmark.bubble")
         case "closed":
-            note(String(localized: "卡片没有回答"), symbol: "xmark.bubble")
+            note(String(localized: "卡片没有回答"), symbol: "xmark.circle")
         case "view":
             note(item["title"].string.flatMap { $0.isEmpty ? nil : $0 } ?? String(localized: "表单"), symbol: "rectangle.on.rectangle")
         case "event":

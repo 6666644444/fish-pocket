@@ -194,12 +194,13 @@ final class PluginManagerModel {
     /// already enables them (then they stay, so the user can turn them off).
     /// voice-input: its SenseVoice half only supports desktop platforms and needs
     /// the sherpa-onnx addon, which build-engine.sh prunes.
+    /// cua: Computer Use drives a macOS or Windows desktop.
     static let unavailableBundles: Set<String> = [
         "@deepseek-ai/dsh-experimental-voice-input-bundle",
+        "@deepseek-ai/dsh-cua-bundle",
     ]
     /// Optional bundles the main list always holds, in this order.
     static let extensionBundles = [
-        "@deepseek-ai/dsh-experimental-agent-team-profile",
         "@deepseek-ai/dsh-experimental-auto-review",
         "@deepseek-ai/dsh-experimental-inspector-profile",
     ]

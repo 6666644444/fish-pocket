@@ -37,6 +37,30 @@ struct BotInfo: Identifiable, Hashable {
 }
 
 /// One group chat.
+/// A row of the Bot page's list: a Bot's chat or a group, listed together.
+enum BotListEntry: Identifiable {
+    case bot(BotInfo), room(RoomInfo)
+
+    var id: String {
+        switch self {
+        case .bot(let bot): "bot:\(bot.id)"
+        case .room(let room): "room:\(room.id)"
+        }
+    }
+    var pinned: Bool {
+        switch self {
+        case .bot(let bot): bot.pinned
+        case .room(let room): room.pinned
+        }
+    }
+    var sessionId: String {
+        switch self {
+        case .bot(let bot): bot.sessionId
+        case .room(let room): room.sessionId
+        }
+    }
+}
+
 struct RoomInfo: Identifiable, Hashable {
     let json: JSON
     var id: String { json["id"].string ?? "" }
@@ -107,6 +131,12 @@ final class BotModel {
     /// The running rounds of the open group chat (`room-progress`): `{callId, replies, speaking}`.
     /// A round's call settles only once every member has spoken; these carry the replies so far.
     private(set) var rounds: [JSON] = []
+    /// The group whose rounds `rounds` follows.
+    private(set) var roundsRoom: String?
+    /// The rows of group rounds read from the group's book (`group-rows`), by the round's call id:
+    /// `{rows, open, active, speaking}`. `open` is the newest round, whose rows grow as the group
+    /// goes on; `active` says its members are at work, `speaking` who is answering.
+    private(set) var relayRows: [String: JSON] = [:]
     /// Open the scheduled tasks of the Bot or group whose chat asked (its ＋ tray).
     var scheduleRequest: BotComposer?
     /// Open a side question on the Bot whose chat asked (its ＋ tray).
@@ -117,8 +147,14 @@ final class BotModel {
     var openRequest: BotOpenRequest?
     /// Approvals already announced, so each rings once.
     @ObservationIgnored private var announcedApprovals: Set<String> = []
-    /// The chat on screen (a Bot's or a group's id): what waits there needs no announcement.
+    /// The chat on screen (a Bot's or a group's id), kept by the root view: what waits there
+    /// needs no announcement.
     var visibleChat: String?
+    /// Its session: a turn that ends there is read as it lands.
+    var visibleSession: String? {
+        guard let visibleChat else { return nil }
+        return bot(visibleChat)?.sessionId ?? room(visibleChat)?.sessionId
+    }
 
     @ObservationIgnored private var revision: Double?
     @ObservationIgnored private var liveKey: String?
@@ -165,12 +201,12 @@ final class BotModel {
         if a.pinned != b.pinned { return a.pinned }
         return (app.sessions[a.sessionId]?.updatedAt ?? .distantPast) > (app.sessions[b.sessionId]?.updatedAt ?? .distantPast)
     }
-    /// The Bot list's order: pinned first, then the main Bots in their order, then the most recently active.
-    func listOrder(_ a: BotInfo, _ b: BotInfo) -> Bool {
+    /// The Bot list's order: pinned first, then the most recently active.
+    func listOrder(_ a: BotInfo, _ b: BotInfo) -> Bool { listOrder(.bot(a), .bot(b)) }
+    /// The Bot page's one list, Bots and groups together in the same order: pinned first, then
+    /// the most recently active, whichever kind it is. A main Bot has no place of its own.
+    func listOrder(_ a: BotListEntry, _ b: BotListEntry) -> Bool {
         if a.pinned != b.pinned { return a.pinned }
-        let main = mainBotIds
-        let ia = main.firstIndex(of: a.id) ?? .max, ib = main.firstIndex(of: b.id) ?? .max
-        if ia != ib { return ia < ib }
         return (app.sessions[a.sessionId]?.updatedAt ?? .distantPast) > (app.sessions[b.sessionId]?.updatedAt ?? .distantPast)
     }
     /// The models this DSH serves: `{ref, name, providerName, needsKey?}`.
@@ -350,7 +386,7 @@ final class BotModel {
         request.httpBody = try JSONEncoder().encode(["endpoint": .string(endpoint), "payload": payload] as JSON)
         let (data, response) = try await client.session.data(for: request)
         let status = (response as? HTTPURLResponse)?.statusCode ?? 0
-        guard let reply = try? JSONDecoder().decode(JSON.self, from: data), reply["ok"].bool != nil else {
+        guard let reply = try? JSON.parse(data), reply["ok"].bool != nil else {
             if status == 404 { throw Unreachable() }
             throw EngineError(code: "HTTP_\(status)", message: String(localized: "Bot 插件返回了无法解析的响应（HTTP \(status)）"), detail: .null)
         }
@@ -396,6 +432,8 @@ final class BotModel {
         if let key = team["modelsKey"].string { payload["models"] = .string(key) }
         do {
             let value = try await call("state", .object(payload))
+            // A reply fading into the chat on screen is not stalled by what its turn's end changed here.
+            await app.arrivalLanded()
             // Each write tells every view that reads it, so only a change is written.
             if !reachable { reachable = true }
             if value["unchanged"].bool != true, team != value { team = value }
@@ -426,7 +464,7 @@ final class BotModel {
                 event = line.dropFirst(6).trimmingCharacters(in: .whitespaces)
             } else if line.hasPrefix("data:") {
                 let data = Data(line.dropFirst(5).utf8)
-                let value = (try? JSONDecoder().decode(JSON.self, from: data)) ?? .null
+                let value = (try? JSON.parse(data)) ?? .null
                 handle(event, value)
                 event = ""
             }
@@ -503,7 +541,11 @@ final class BotModel {
 
     /// Follow a group chat's rounds while it is open: every second while one runs.
     func followRounds(of roomId: String) async {
-        defer { if !rounds.isEmpty { rounds = [] } }
+        roundsRoom = roomId
+        defer {
+            if !rounds.isEmpty { rounds = [] }
+            if roundsRoom == roomId { roundsRoom = nil }
+        }
         while !Task.isCancelled {
             if let value = try? await call("room-progress", ["roomId": .string(roomId)]), value.array != rounds { rounds = value.array }
             try? await Task.sleep(for: .seconds(rounds.isEmpty ? 3 : 1))
@@ -522,7 +564,39 @@ final class BotModel {
     }
 
     func round(_ callId: String) -> JSON? { rounds.first { $0["callId"].string == callId } }
+
+    /// Read a ranged round's rows from the group's book. `roomId` may be the group's Session.
+    func loadRows(of relay: RoomRelay, roomId: String) async {
+        guard var payload = relay.range else { return }
+        payload["roomId"] = .string(roomId)
+        guard let value = try? await call("group-rows", .object(payload)), value != relayRows[relay.call.id] else { return }
+        relayRows[relay.call.id] = value
+    }
+
+    /// What a round shows: its rows from the book, or the replies an older result carries.
+    func replies(of relay: RoomRelay) -> [JSON] {
+        relay.range == nil ? relay.replies : relayRows[relay.call.id]?["rows"].array ?? []
+    }
+
+    /// How many rows the rounds read so far hold: it grows as members speak.
+    var relayRowCount: Int { relayRows.values.reduce(0) { $0 + $1["rows"].array.count } }
+
+    /// A ranged round is read and closed, and nobody spoke in it: there is nothing to draw.
+    func rowsEmpty(_ relay: RoomRelay) -> Bool {
+        guard relay.range != nil, let view = relayRows[relay.call.id] else { return false }
+        return view["open"].bool == false && view["rows"].array.isEmpty
+    }
     var speaking: [String] { rounds.flatMap { $0["speaking"].array.compactMap(\.string) } }
+
+    /// The tool a member runs in the open group's round, and what it works on. Not the words
+    /// it said: the group already shows them. Nothing when its work is elsewhere (ds-bot
+    /// reports one turn per Bot, and its own chat wins over a group).
+    func roundTool(_ botId: String) -> (name: String, target: String?)? {
+        let entry = work["bots"][botId]
+        guard let roundsRoom, entry["roomId"].string == roundsRoom, let name = entry["tool"].string else { return nil }
+        let target = entry["target"].string?.trimmingCharacters(in: .whitespacesAndNewlines)
+        return (name, target?.isEmpty == false ? target : nil)
+    }
 
     /// A tool call waits for the user where they are not looking: say so once.
     private func announceApprovals() {

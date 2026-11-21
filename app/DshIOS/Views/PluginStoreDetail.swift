@@ -6,8 +6,12 @@ struct StoreEntryDetail: View {
     let listing: StoreEntry
     let model: PluginStoreModel
     let install: (MarketChoice) -> Void
+    @State private var reporting = false
 
     private var entry: StoreEntry { model.latest(listing) }
+    /// Under review or taken down by Fish Pocket (`PluginReports`).
+    private var takedown: PluginReports.Takedown? { PluginReports.shared.takedown(listing.name) }
+    private var removed: Bool { takedown == .removed }
 
     /// Whether the installed plugin is switched on and running, as the plugin list reports it.
     private var runState: (text: String, problem: Bool)? {
@@ -31,7 +35,7 @@ struct StoreEntryDetail: View {
         if onDevice {
             // A finished install's log answers nothing here and only makes the reply slower.
             let listed = app.plugins.package(listing.name)?.questionDetails ?? [String(localized: "插件：\(entry.name)")]
-            let interface = String(localized: "说明：插件自带的界面不在 App 的原生界面里显示，要在侧边栏的「DSH 网页」里看。")
+            let interface = String(localized: "说明：插件自带的界面不在 App 的原生界面里显示，要在网页版里看（设置 → 高级 → 网页版）。")
             return ("找不到或用不了？新开会话问问", PluginQuestion.installed(entry.displayName, details: listed + facts + [interface]))
         }
         if let record = records.first(where: { $0.outcome != .done }) {
@@ -44,14 +48,15 @@ struct StoreEntryDetail: View {
     }
     /// The plugin list answers first after an install; the market's next read says the same.
     private var onDevice: Bool {
-        app.plugins.package(listing.name)?.installed == true || ["installed", "update-available", "provided"].contains(entry.status ?? "")
+        app.plugins.package(listing.name)?.installed == true || ["installed", "update-available", "provided"].contains(model.status(entry, app) ?? "")
     }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 header.padding(.horizontal, 20).padding(.top, 12)
-                if let version = entry.version, !entry.installable { compatibilityNote(version["compatibility"]) }
+                if let takedown { takedownNote(takedown).padding(.horizontal, 16).padding(.top, 16) }
+                if let version = entry.version, !entry.installable, !removed { compatibilityNote(version["compatibility"]) }
                 StoreWebUINote().padding(.horizontal, 16).padding(.top, 20)
                 StoreCaption("介绍")
                 readme
@@ -61,6 +66,7 @@ struct StoreEntryDetail: View {
                     StoreCaption("版本")
                     versions
                 }
+                if PluginReports.shared.available { reportRow.padding(.top, 28) }
             }
             .padding(.bottom, 32)
             .readableWidth()
@@ -68,6 +74,7 @@ struct StoreEntryDetail: View {
         .background(Palette.background)
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $reporting) { PluginReportSheet(entry: entry, market: model.market.url) }
     }
 
     private var header: some View {
@@ -93,7 +100,7 @@ struct StoreEntryDetail: View {
 
     /// The market's newer version, when this DSH takes it and the app doesn't pin the plugin elsewhere.
     private var update: JSON? {
-        guard entry.status == "update-available", entry.installable, let version = entry.version,
+        guard model.status(entry, app) == "update-available", entry.installable, let version = entry.version,
               PluginPins.note(package: entry.name, version: entry.versionNumber) == nil else { return nil }
         return version
     }
@@ -112,7 +119,9 @@ struct StoreEntryDetail: View {
         let installed = entry.json["installation"]["installedVersion"].string ?? app.plugins.package(entry.name)?.version ?? ""
         app.pluginInstall.updateTo(
             name: entry.name, title: entry.displayName, from: installed,
-            to: version["version"].string ?? "", registry: version["install"]["registry"].string
+            to: version["version"].string ?? "", registry: version["install"]["registry"].string,
+            // A `github:` install updates from that spec; a registry one must not send it.
+            spec: version["install"]["spec"].string
         )
     }
 
@@ -149,8 +158,8 @@ struct StoreEntryDetail: View {
                             .contentTransition(.opacity)
                         }
                         .buttonStyle(.capsule(height: 48))
-                        .disabled(!updatingThis && (updating || model.market.fromCache))
-                        .opacity(!updatingThis && (updating || model.market.fromCache) ? 0.4 : 1)
+                        .disabled(!updatingThis && (updating || !model.installable(app)))
+                        .opacity(!updatingThis && (updating || !model.installable(app)) ? 0.4 : 1)
                         .transition(.opacity.combined(with: .scale(scale: 0.96)))
                     }
                     NavigationLink {
@@ -167,11 +176,11 @@ struct StoreEntryDetail: View {
             .animation(.snappy(duration: 0.25), value: updatingThis)
             .animation(.snappy(duration: 0.25), value: update == nil)
             .onChange(of: updated) { _, version in if let version { refreshListing(until: version) } }
-        } else if entry.installable, let version = entry.version {
+        } else if entry.installable, !removed, let version = entry.version {
             Button("安装 \(entry.versionNumber)") { install(MarketChoice(entry: entry.json, version: version)) }
                 .buttonStyle(.capsule(height: 48))
-                .disabled(model.market.fromCache)
-                .opacity(model.market.fromCache ? 0.4 : 1)
+                .disabled(!model.installable(app))
+                .opacity(model.installable(app) ? 1 : 0.4)
         }
     }
 
@@ -181,6 +190,57 @@ struct StoreEntryDetail: View {
             .foregroundStyle(Palette.waiting)
             .padding(.horizontal, 20)
             .padding(.top, 16)
+    }
+
+    /// What Fish Pocket's review made of this plugin. A plugin taken down installs no more; one already
+    /// here keeps running until the user switches it off, which this offers.
+    private func takedownNote(_ takedown: PluginReports.Takedown) -> some View {
+        let package = app.plugins.package(listing.name).flatMap { $0.installed && $0.enabled ? $0 : nil }
+        return HStack(alignment: .top, spacing: 10) {
+            Image(systemName: takedown == .removed ? "nosign" : "hourglass")
+                .font(.subheadline)
+                .foregroundStyle(takedown == .removed ? Palette.removed : Palette.waiting)
+            VStack(alignment: .leading, spacing: 6) {
+                Text(takedown == .removed ? "已下架" : "审核中").font(.subheadline.weight(.medium)).foregroundStyle(Palette.ink)
+                Text(takedown == .removed
+                     ? "经 Fish Pocket 审核，这个插件存在问题，已从插件市场下架，不能再安装。"
+                     : "这个插件被举报，正在审核。安装前请确认你信任它的来源。")
+                    .font(.footnote)
+                    .foregroundStyle(Palette.secondary)
+                    .lineSpacing(3)
+                if takedown == .removed, let package {
+                    Button("停用插件") { Task { await app.plugins.setEnabled(package, false) } }
+                        .font(.footnote.weight(.medium))
+                        .foregroundStyle(Palette.ink)
+                        .disabled(app.plugins.busy.contains(package.name))
+                        .padding(.top, 2)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(14)
+        .background(Palette.grouped, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+    }
+
+    /// 举报: the way to tell Fish Pocket a plugin breaks the rules or does harm.
+    private var reportRow: some View {
+        Button {
+            Haptics.tap()
+            reporting = true
+        } label: {
+            HStack(spacing: 10) {
+                Image(systemName: "flag").font(.callout).foregroundStyle(Palette.secondary)
+                Text("举报此插件").font(.callout).foregroundStyle(Palette.ink)
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(Palette.faint)
+            }
+            .padding(.horizontal, 18)
+            .frame(minHeight: 52)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .background(Palette.grouped, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .padding(.horizontal, 16)
     }
 
     // MARK: Documents and facts
@@ -261,7 +321,7 @@ struct StoreEntryDetail: View {
                     if installed { PluginTag(text: String(localized: "当前已安装")) }
                     if !allowed { PluginTag(text: String(localized: "不兼容"), tone: Palette.removed) }
                     Spacer(minLength: 0)
-                    if allowed, !installed, entry.status != "provided" {
+                    if allowed, !installed, !removed, model.status(entry, app) != "provided" {
                         Button("安装") {
                             // An update goes only forward (`updateBundle`), as on the web; an older version
                             // goes through the install sheet, which says what the Host makes of it.
@@ -436,7 +496,7 @@ struct StoreInstallConfirm: View {
                     }
                 }
                 .buttonStyle(.capsule())
-                .disabled(pinned != nil)
+                .disabled(pinned != nil || PluginReports.shared.removed(entry.name))
             }
         }
         .padding(20)
@@ -445,7 +505,7 @@ struct StoreInstallConfirm: View {
         .frame(maxHeight: .infinity, alignment: .top)
         .background(Palette.background)
         .presentationDetents([.height(height)])
-        .tint(Palette.ink)
+        .inkTint()
     }
 
     private func line(_ title: LocalizedStringKey, _ value: Text) -> some View {
@@ -467,21 +527,21 @@ struct StoreWebUINote: View {
         HStack(alignment: compact ? .center : .top, spacing: 10) {
             Image(systemName: "info.circle").font(.subheadline).foregroundStyle(Palette.secondary)
             if compact {
-                Text("插件自带的界面不会在 App 里显示，可在 DSH 网页中查看。")
+                Text("插件自带的界面不会在 App 里显示，可在网页版中查看。")
                     .font(.footnote)
                     .foregroundStyle(Palette.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                Button("DSH 网页") { showWeb = true }
+                Button("网页版") { showWeb = true }
                     .font(.footnote.weight(.medium))
                     .foregroundStyle(Palette.ink)
             } else {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("插件界面不在 App 里显示").font(.subheadline.weight(.medium)).foregroundStyle(Palette.ink)
-                    Text("按 App Store 审核要求，插件自带的界面不会出现在 App 的原生界面中，但插件本身可能仍在运行。要查看它的界面，请打开侧边栏的「DSH 网页」。")
+                    Text("按 App Store 审核要求，插件自带的界面不会出现在 App 的原生界面中，但插件本身可能仍在运行。要查看它的界面，请打开网页版（设置 → 高级 → 网页版）。")
                         .font(.footnote)
                         .foregroundStyle(Palette.secondary)
                         .lineSpacing(3)
-                    Button("打开 DSH 网页") { showWeb = true }
+                    Button("打开网页版") { showWeb = true }
                         .font(.footnote.weight(.medium))
                         .foregroundStyle(Palette.ink)
                         .padding(.top, 2)
@@ -533,7 +593,7 @@ private struct StoreWebButton: ViewModifier {
         content
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button { showWeb = true } label: { Label("DSH 网页", systemImage: "globe") }
+                    Button { showWeb = true } label: { Label("网页版", systemImage: "globe") }
                 }
             }
             .fullScreenCover(isPresented: $showWeb) { WebFallbackView() }

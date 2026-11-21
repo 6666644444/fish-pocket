@@ -41,6 +41,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>$(DSH_URL_SCHEME)</string>
+				<string>$(DSH_LEGACY_URL_SCHEME)</string>
 			</array>
 		</dict>
 	</array>
@@ -48,10 +49,18 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>DshAppGroup</key>
 	<string>$(DSH_APP_GROUP)</string>
+	<key>DshLegacyURLScheme</key>
+	<string>$(DSH_LEGACY_URL_SCHEME)</string>
 	<key>DshURLScheme</key>
 	<string>$(DSH_URL_SCHEME)</string>
+	<key>FishPocketAPIURL</key>
+	<string>$(FISH_POCKET_API_URL)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>ictrl</string>
+	</array>
 	<key>NSAlarmKitUsageDescription</key>
 	<string>让智能体按你的要求设真正的闹钟。闹钟会穿透静音和专注模式，响到你关掉为止。</string>
 	<key>NSAppTransportSecurity</key>
@@ -114,8 +123,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>

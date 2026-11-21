@@ -366,7 +366,7 @@ private struct StatusCard: View {
 }
 
 /// Title first, the icon after it: the arrow says the button leaves the app.
-private struct TrailingIconLabel: LabelStyle {
+struct TrailingIconLabel: LabelStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: 6) {
             configuration.title

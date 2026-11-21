@@ -138,7 +138,7 @@ extension SessionModel {
                 parts.append("**\(String(localized: "你"))**\n\n\(text)")
             case .assistant(_, let blocks, _, _):
                 if let relay = RoomRelay(blocks: blocks) {
-                    for reply in relay.replies where reply["kind"].isNull {
+                    for reply in team.replies(of: relay) where reply["kind"].isNull {
                         let name = reply["botId"].string.flatMap(team.bot)?.name ?? reply["name"].string ?? "Bot"
                         parts.append("**\(name)**\n\n\(BotEarlierParts.withoutLongNote(reply["text"].string ?? ""))")
                     }
