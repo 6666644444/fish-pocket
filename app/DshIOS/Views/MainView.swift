@@ -505,6 +505,12 @@ struct MainView: View {
         case "topup": app.fishPocket.quotaPrompt = true
         case "miniapps": if usesTabs { tab = .apps } else { sheet = .miniApps }
         case "miniapp": MiniAppPresenter.open(UserDefaults.standard.string(forKey: "dshApp") ?? "")
+        // The call screen over whatever is open, without a conversation behind it (`call` is a real one).
+        case "callscreen":
+            Task {
+                try? await Task.sleep(for: .seconds(2))
+                CallCenter.shared.start(sessionId: "call-screen-check", botId: nil, title: String(localized: "语音通话"), app: app)
+            }
         default: break
         }
     }
@@ -1191,6 +1197,8 @@ struct MainView: View {
             MiniAppPresenter.open(id)
         case .web:
             webOpen = true
+        case .call:
+            CallCenter.shared.expand()
         }
     }
 

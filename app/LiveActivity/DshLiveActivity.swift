@@ -7,6 +7,7 @@ import WidgetKit
 struct DshWidgets: WidgetBundle {
     var body: some Widget {
         DshLiveActivity()
+        CallLiveActivity()
         SessionsWidget()
         NewConversationWidget()
         MiniAppsWidget()

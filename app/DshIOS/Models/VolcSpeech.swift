@@ -11,7 +11,7 @@ final class VolcSpeech {
     static let shared = VolcSpeech()
 
     /// The two-way streaming endpoint, optimized version: text comes back while the user speaks.
-    static let endpoint = URL(string: "wss://openspeech.bytedance.com/api/v3/sauc/bigmodel_async")!
+    nonisolated static let endpoint = URL(string: "wss://openspeech.bytedance.com/api/v3/sauc/bigmodel_async")!
     static let consoleURL = URL(string: "https://console.volcengine.com/speech/new")!
     static let keysURL = URL(string: "https://console.volcengine.com/speech/new/setting/apikeys")!
     static let docsURL = URL(string: "https://www.volcengine.com/docs/6561/1354869")!
@@ -344,6 +344,8 @@ enum VolcFrame {
         var errorCode: Int?
         var message: String?
         var text: String?
+        /// `result.utterances`, when the request asked for them (`show_utterances`).
+        var utterances: [VolcUtterance] = []
     }
 
     static func request(sequence: Int32, json: Data) -> Data {
@@ -394,6 +396,7 @@ enum VolcFrame {
         if compression == 0b0001, let inflated = Gzip.decompress(payload) { payload = inflated }
         if serialization == 0b0001, let json = try? JSONSerialization.jsonObject(with: payload) as? [String: Any] {
             parsed.text = Self.text(in: json["result"])
+            parsed.utterances = Self.utterances(in: json["result"])
             if parsed.errorCode != nil { parsed.message = json["error"] as? String ?? json["message"] as? String }
         }
         if parsed.errorCode != nil, parsed.message == nil { parsed.message = String(data: payload, encoding: .utf8) }
@@ -406,6 +409,29 @@ enum VolcFrame {
         if let results = result as? [[String: Any]] { return results.compactMap { $0["text"] as? String }.joined() }
         return nil
     }
+
+    private static func utterances(in result: Any?) -> [VolcUtterance] {
+        let results = (result as? [[String: Any]]) ?? (result as? [String: Any]).map { [$0] } ?? []
+        return results.flatMap { ($0["utterances"] as? [[String: Any]]) ?? [] }.compactMap { item in
+            guard let text = item["text"] as? String else { return nil }
+            return VolcUtterance(
+                text: text,
+                definite: item["definite"] as? Bool ?? false,
+                start: (item["start_time"] as? NSNumber)?.intValue ?? 0,
+                end: (item["end_time"] as? NSNumber)?.intValue ?? 0
+            )
+        }
+    }
+}
+
+/// One sentence of a recognition result. `definite` once Volcengine has heard its end (a pause
+/// of its own judging) and recognized it a second time; until then it may still change.
+struct VolcUtterance: Equatable, Sendable {
+    let text: String
+    let definite: Bool
+    /// Milliseconds from the start of the connection's audio.
+    let start: Int
+    let end: Int
 }
 
 private extension Data {

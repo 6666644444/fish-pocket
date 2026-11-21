@@ -86,6 +86,8 @@ targets:
       # Static libgit2 (scripts/build-libgit2.sh); HTTPS through Security.framework.
       - framework: ../vendor/libgit2/Libgit2.xcframework
         embed: false
+      # WebRTC's echo canceller for the voice call (native/aec3).
+      - target: DshAec3
       - sdk: Security.framework
       - sdk: ImageIO.framework
       - sdk: CoreGraphics.framework
@@ -256,7 +258,7 @@ targets:
         # The icons people can switch to in Settings (DshIOS/Views/AppIconPage.swift); drawn by docs/design/brand (make-icons.py and the make-*-icons.swift scripts).
         ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES: AppIcon-Pink AppIcon-Mint AppIcon-Violet AppIcon-Sticker AppIcon-Geometric AppIcon-Pixel AppIcon-Whale AppIcon-WordPixel AppIcon-WordPoster AppIcon-WordMono
         ENABLE_USER_SCRIPT_SANDBOXING: NO
-        HEADER_SEARCH_PATHS: ["$(SRCROOT)/../vendor/nodejs-mobile/ios/include/node", "$(SRCROOT)/../vendor/libgit2/ios-arm64/include", "$(SRCROOT)/../native/ios-native", "$(SRCROOT)/../native/root"]
+        HEADER_SEARCH_PATHS: ["$(SRCROOT)/../vendor/nodejs-mobile/ios/include/node", "$(SRCROOT)/../vendor/libgit2/ios-arm64/include", "$(SRCROOT)/../native/ios-native", "$(SRCROOT)/../native/root", "$(SRCROOT)/../native/aec3/include"]
         # Lets SwiftUI read the addon's capability table (DshNativeCapabilities.h).
         SWIFT_OBJC_BRIDGING_HEADER: "$(SRCROOT)/DshIOS/DshIOS-Bridging-Header.h"
         GCC_PREPROCESSOR_DEFINITIONS: ["$(inherited)", "DSH_GIT_LINKED=1", "DSH_IMAGE_LINKED=1", "DSH_IOS_NATIVE_LINKED=1"]
@@ -277,6 +279,30 @@ targets:
         DEFINES_MODULE: NO
         SKIP_INSTALL: YES
         OTHER_LDFLAGS: ["$(inherited)", "-Wl,-reexport-lSystem"]
+  # WebRTC's echo canceller (AEC3) for the voice call: the sources scripts/vendor-aec3.sh copied
+  # into native/aec3 and the C bridge in front of them, linked into the app.
+  DshAec3:
+    type: library.static
+    platform: iOS
+    sources:
+      - path: ../native/aec3
+        # Headers stay where they are (the search paths below); a static library copies none.
+        headerVisibility: project
+        excludes:
+          - "**/LICENSE"
+          - "**/PATENTS"
+    settings:
+      base:
+        HEADER_SEARCH_PATHS: ["$(SRCROOT)/../native/aec3/include", "$(SRCROOT)/../native/aec3/webrtc", "$(SRCROOT)/../native/aec3/abseil"]
+        CLANG_CXX_LANGUAGE_STANDARD: c++17
+        # Release-grade in every configuration: WebRTC's debug checks are far too slow for real time.
+        GCC_PREPROCESSOR_DEFINITIONS: ["NDEBUG", "WEBRTC_POSIX", "WEBRTC_MAC", "WEBRTC_IOS", "WEBRTC_APM_DEBUG_DUMP=0", "RTC_DISABLE_LOGGING", "WEBRTC_LIBRARY_IMPL"]
+        "GCC_PREPROCESSOR_DEFINITIONS[arch=arm64]": ["NDEBUG", "WEBRTC_POSIX", "WEBRTC_MAC", "WEBRTC_IOS", "WEBRTC_APM_DEBUG_DUMP=0", "RTC_DISABLE_LOGGING", "WEBRTC_LIBRARY_IMPL", "WEBRTC_ARCH_ARM64", "WEBRTC_HAS_NEON"]
+        GCC_OPTIMIZATION_LEVEL: "2"
+        GCC_WARN_INHIBIT_ALL_WARNINGS: YES
+        # RTC_CHECK puts __FILE__ into the binary: not the build machine's home directory.
+        OTHER_CFLAGS: ["$(inherited)", "-fmacro-prefix-map=$(SRCROOT:dir:standardizepath)=."]
+        SKIP_INSTALL: YES
   # The widget extension: the Live Activity (the app starts and updates it) and the
   # home and lock screen widgets (they draw the snapshot the app writes).
   DshLiveActivity:

@@ -97,6 +97,8 @@ struct RootView: View {
         content
             .background(WindowAppearance(style: ThemePreference.style(themePreference)))
             .onOpenURL { url in
+                // The call's own link brings its screen back over whatever is open.
+                if DshLink(url: url) == .call { CallCenter.shared.expand(); return }
                 if let parsed = DshLink(url: url) { follow(LinkRequest(link: parsed)) }
             }
             .onChange(of: inbox.request?.token, initial: true) {

@@ -8,12 +8,14 @@ import Foundation
 /// - `dsh://share/<id>`: what the share extension left in `ShareInbox`, into the composer it chose.
 /// - `dsh://app/<id>`: an app of 我的应用, opened full screen; it needs no engine.
 /// - `dsh://web`: the 网页版, opened full screen; its home-screen icon (`HomeScreenShortcut`) opens it.
+/// - `dsh://call`: the voice call on now, full screen (its Live Activity opens it).
 enum DshLink: Hashable {
     case session(String)
     case new(workspace: String? = nil, preset: String? = nil, draft: String? = nil)
     case share(String)
     case app(String)
     case web
+    case call
 
     /// `DshURLScheme` in Info.plist (`DSH_URL_SCHEME` in project.yml): `dsh`, or a test build's own.
     static let scheme = Bundle.main.object(forInfoDictionaryKey: "DshURLScheme") as? String ?? "dsh"
@@ -38,6 +40,8 @@ enum DshLink: Hashable {
             self = .app(id)
         case "web":
             self = .web
+        case "call":
+            self = .call
         default:
             return nil
         }
@@ -63,6 +67,8 @@ enum DshLink: Hashable {
             components.path = "/" + id
         case .web:
             components.host = "web"
+        case .call:
+            components.host = "call"
         }
         return components.url!
     }

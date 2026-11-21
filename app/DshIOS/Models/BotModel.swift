@@ -326,6 +326,12 @@ final class BotModel {
         return bot.id == mainBotId && (shape == nil || shape == "whale") && bot.json["avatar"]["image"].isNull
     }
 
+    /// The Bot shows a picture (a photo the user gave it, or the app's own 大肥鱼), not one of the
+    /// drawn characters.
+    func showsPicture(_ bot: BotInfo) -> Bool {
+        usesAppMark(bot) || bot.avatarImage.flatMap(BotPicture.image) != nil
+    }
+
     /// The card a Bot is waiting on, in its own chat: `{id, question, detail?, options:[{label, description?}], multiSelect}`.
     func question(of bot: BotInfo) -> JSON? { team["questions"][bot.sessionId].nonNull }
 

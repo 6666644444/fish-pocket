@@ -104,6 +104,11 @@ struct ConversationView: View {
         #if DEBUG
         .task {
             switch UserDefaults.standard.string(forKey: "dshOpen") {
+            case "call":
+                // A voice call on this conversation, as its button would start it (`DSH_CALL_AUDIO` feeds it).
+                try? await Task.sleep(for: .seconds(2))
+                let botId = botTimeline.flatMap { timeline in app.botTeam.bots.first { $0.sessionId == timeline.sessionId }?.id }
+                CallCenter.shared.start(sessionId: sessionId, botId: botId, title: botId.flatMap { app.botTeam.bot($0)?.name } ?? app.title(of: sessionId), app: app)
             case "workbench": workbenchOpen = true
             case "filesearch":
                 workbenchTab = .files
