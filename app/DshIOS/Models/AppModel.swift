@@ -171,6 +171,8 @@ final class AppModel {
     var connectorsRequest: UUID?
     /// Open 操控手机, the iCTRL switch (the root view consumes it).
     var phoneControlRequest: UUID?
+    /// Open the 快捷指令 guide, the sidebar's row before iOS 18 on iPad (the root view consumes it).
+    var shortcutsRequest: UUID?
     /// The drawer's 我的应用 row: the shell opens the page.
     var miniAppsRequest: UUID?
     /// A credential step to open (set through `requestCredentials`; the root view consumes it).

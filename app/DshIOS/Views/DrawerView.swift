@@ -125,6 +125,7 @@ struct DrawerView: View {
                 connectorsRow
                 capabilitiesRow
                 webRow
+                shortcutsRow
                 remoteControlRow
                 sessionsHeader
                 if app.remote.expired { remoteExpiredRow }
@@ -480,6 +481,24 @@ struct DrawerView: View {
                 Text("网页版").font(.subheadline).foregroundStyle(Palette.ink)
                 Spacer()
                 Text("插件界面").font(.footnote).foregroundStyle(Palette.secondary)
+            }
+            .padding(.horizontal, 12)
+            .frame(minHeight: 46)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .padding(.bottom, 2)
+        .plainRow()
+    }
+
+    /// 快捷指令: what Siri and the Shortcuts app can open, and how to make an automation of it.
+    private var shortcutsRow: some View {
+        Button { Haptics.tap(); app.shortcutsRequest = UUID() } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "square.2.layers.3d").font(.callout).foregroundStyle(Palette.ink).frame(width: 22)
+                Text("快捷指令").font(.subheadline).foregroundStyle(Palette.ink)
+                Spacer()
+                Text("Siri 和自动化").font(.footnote).foregroundStyle(Palette.secondary)
             }
             .padding(.horizontal, 12)
             .frame(minHeight: 46)

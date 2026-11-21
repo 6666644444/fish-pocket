@@ -9,12 +9,16 @@ import Foundation
 /// - `fishpocket://share/<id>`: what the share extension left in `ShareInbox`, into the composer it chose.
 /// - `fishpocket://app/<id>`: an app of 我的应用, opened full screen; it needs no engine.
 /// - `fishpocket://web`: the 网页版, opened full screen; its home-screen icon (`HomeScreenShortcut`) opens it.
+/// - `fishpocket://bot/<id>`: that Bot's chat (Shortcuts).
+/// - `fishpocket://balance`: the page with the balance of the account in use (Shortcuts).
 enum DshLink: Hashable {
     case session(String)
     case new(workspace: String? = nil, preset: String? = nil, draft: String? = nil)
     case share(String)
     case app(String)
     case web
+    case bot(String)
+    case balance
 
     /// `DshURLScheme` in Info.plist (`DSH_URL_SCHEME` in project.yml): `fishpocket`, or a test
     /// build's own. Every link the app makes uses it.
@@ -48,6 +52,11 @@ enum DshLink: Hashable {
             self = .app(id)
         case "web":
             self = .web
+        case "bot":
+            guard let id = url.pathComponents.dropFirst().first, !id.isEmpty else { return nil }
+            self = .bot(id)
+        case "balance":
+            self = .balance
         default:
             return nil
         }
@@ -73,6 +82,11 @@ enum DshLink: Hashable {
             components.path = "/" + id
         case .web:
             components.host = "web"
+        case .bot(let id):
+            components.host = "bot"
+            components.path = "/" + id
+        case .balance:
+            components.host = "balance"
         }
         return components.url!
     }

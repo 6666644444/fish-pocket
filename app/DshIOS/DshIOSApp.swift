@@ -12,6 +12,8 @@ struct DshIOSApp: App {
         WhatsNew.noteLaunch()
         // Siri, Shortcuts and the Control Center button: the window in front follows the link.
         DshIntentBridge.open = { LinkInbox.shared.request = LinkRequest(link: $0) }
+        // The phrases that name a Bot or a Mini App, from the lists the app last wrote.
+        DshShortcuts.updateAppShortcutParameters()
         WatchLink.shared.activate()
         // 我的应用: the compiler is ready before the first app opens.
         MiniAppCompiler.shared.warmUp()
