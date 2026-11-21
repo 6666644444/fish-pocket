@@ -10,7 +10,7 @@ import SwiftUI
 /// narrow a drawer that slides in from the left.
 struct MainView: View {
     /// The phone's tabs.
-    enum HomeTab: Hashable { case sessions, bot, apps, explore }
+    enum HomeTab: Hashable { case sessions, bot, explore }
 
     enum Sheet: String, Identifiable { case settings, plugins, store, schedules, signIn, cordis, share, watch, capabilities, connectors, phoneControl, remote, fishPocket, deepSeekAccount, miniApps, imageGen, shortcuts; var id: String { rawValue } }
 
@@ -226,12 +226,6 @@ struct MainView: View {
             if #available(iOS 18.0, *) { botPath = pages } else { Task { botPath = pages } }
             setDrawer(false)
         }
-        // The sidebar's own row; the page is also still under Settings.
-        .onChange(of: app.nativeCapabilitiesRequest) { _, token in
-            guard token != nil, scenePhase != .background else { return }
-            app.nativeCapabilitiesRequest = nil
-            sheet = .capabilities
-        }
         .onChange(of: app.remoteRequest) { _, token in
             guard token != nil, scenePhase != .background else { return }
             app.remoteRequest = nil
@@ -315,11 +309,11 @@ struct MainView: View {
         }
         // Which store this copy came from: only an App Store install is asked for a rating.
         .task { await AppDistribution.refresh() }
-        // The sidebar's 我的应用 row; on the tab bar the page is a tab.
+        // The sidebar's Mini Apps row; with the tab bar the page is a row of 探索.
         .onChange(of: app.miniAppsRequest) { _, token in
             guard token != nil, scenePhase != .background else { return }
             app.miniAppsRequest = nil
-            if usesTabs { tab = .apps } else { sheet = .miniApps }
+            openMiniApps()
         }
         // The sidebar's 快捷指令 row (an iPad before iOS 18); elsewhere the page is under 探索.
         .onChange(of: app.shortcutsRequest) { _, token in
@@ -529,7 +523,7 @@ struct MainView: View {
         case "start": Task { await openCredentials(.start) }
         case "fishpocket": sheet = .fishPocket
         case "topup": app.fishPocket.quotaPrompt = true
-        case "miniapps": if usesTabs { tab = .apps } else { sheet = .miniApps }
+        case "miniapps": openMiniApps()
         case "miniapp": MiniAppPresenter.open(UserDefaults.standard.string(forKey: "dshApp") ?? "")
         default: break
         }
@@ -868,6 +862,15 @@ struct MainView: View {
         } else if layoutWidth == .regular { storeOpen = true } else { sheet = .store }
     }
 
+    /// Mini Apps: a page of 探索 with the tab bar, a sheet over the iPad's sidebar before iOS 18.
+    private func openMiniApps() {
+        if usesTabs {
+            sheet = nil
+            tab = .explore
+            if explorePath.last != .miniApps { explorePath = [.miniApps] }
+        } else { sheet = .miniApps }
+    }
+
     private func setDrawer(_ open: Bool) {
         if open { dismissKeyboard() }
         withAnimation(.snappy(duration: 0.25)) { drawerOpen = open }
@@ -914,12 +917,6 @@ struct MainView: View {
                 tabLabel(Text(verbatim: "Bot"), "fp.bot", custom: true)
             }
             .badge(badges.botPending)
-            // 我的应用: the user's own tools and games, opened as often as a home screen's.
-            Tab(value: HomeTab.apps) {
-                NavigationStack { MiniAppsPage(asTab: true) }
-            } label: {
-                tabLabel(Text(MiniAppsPage.tabTitle), "square.on.circle")
-            }
             Tab(value: HomeTab.explore) {
                 ExploreTabView(path: $explorePath)
             } label: {
@@ -949,9 +946,6 @@ struct MainView: View {
                 .tabItem { tabLabel(Text(verbatim: "Bot"), "fp.bot", custom: true) }
                 .tag(HomeTab.bot)
                 .badge(badges.botPending)
-            NavigationStack { MiniAppsPage(asTab: true) }
-                .tabItem { tabLabel(Text(MiniAppsPage.tabTitle), "square.on.circle") }
-                .tag(HomeTab.apps)
             ExploreTabView(path: $explorePath)
                 .tabItem { tabLabel(Text("探索"), "square.grid.2x2") }
                 .tag(HomeTab.explore)

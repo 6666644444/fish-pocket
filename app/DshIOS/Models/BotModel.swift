@@ -37,6 +37,30 @@ struct BotInfo: Identifiable, Hashable {
 }
 
 /// One group chat.
+/// A row of the Bot page's list: a Bot's chat or a group, listed together.
+enum BotListEntry: Identifiable {
+    case bot(BotInfo), room(RoomInfo)
+
+    var id: String {
+        switch self {
+        case .bot(let bot): "bot:\(bot.id)"
+        case .room(let room): "room:\(room.id)"
+        }
+    }
+    var pinned: Bool {
+        switch self {
+        case .bot(let bot): bot.pinned
+        case .room(let room): room.pinned
+        }
+    }
+    var sessionId: String {
+        switch self {
+        case .bot(let bot): bot.sessionId
+        case .room(let room): room.sessionId
+        }
+    }
+}
+
 struct RoomInfo: Identifiable, Hashable {
     let json: JSON
     var id: String { json["id"].string ?? "" }
@@ -177,12 +201,12 @@ final class BotModel {
         if a.pinned != b.pinned { return a.pinned }
         return (app.sessions[a.sessionId]?.updatedAt ?? .distantPast) > (app.sessions[b.sessionId]?.updatedAt ?? .distantPast)
     }
-    /// The Bot list's order: pinned first, then the main Bots in their order, then the most recently active.
-    func listOrder(_ a: BotInfo, _ b: BotInfo) -> Bool {
+    /// The Bot list's order: pinned first, then the most recently active.
+    func listOrder(_ a: BotInfo, _ b: BotInfo) -> Bool { listOrder(.bot(a), .bot(b)) }
+    /// The Bot page's one list, Bots and groups together in the same order: pinned first, then
+    /// the most recently active, whichever kind it is. A main Bot has no place of its own.
+    func listOrder(_ a: BotListEntry, _ b: BotListEntry) -> Bool {
         if a.pinned != b.pinned { return a.pinned }
-        let main = mainBotIds
-        let ia = main.firstIndex(of: a.id) ?? .max, ib = main.firstIndex(of: b.id) ?? .max
-        if ia != ib { return ia < ib }
         return (app.sessions[a.sessionId]?.updatedAt ?? .distantPast) > (app.sessions[b.sessionId]?.updatedAt ?? .distantPast)
     }
     /// The models this DSH serves: `{ref, name, providerName, needsKey?}`.

@@ -61,7 +61,8 @@ final class ShareTargetsWriter {
         let team = app.botTeam
         let targets = ShareTargets(
             bots: bots.map { ShareTargets.Bot(id: $0.id, name: $0.name, role: $0.role) },
-            rooms: rooms.map { ShareTargets.Room(id: $0.id, name: team.name(of: $0), memberCount: $0.members.count) }
+            rooms: rooms.map { ShareTargets.Room(id: $0.id, name: team.name(of: $0), memberCount: $0.members.count) },
+            order: (bots.map(BotListEntry.bot) + rooms.map(BotListEntry.room)).sorted(by: team.listOrder).map(\.id)
         )
         try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         var kept: Set<String> = []

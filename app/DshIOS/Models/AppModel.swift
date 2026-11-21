@@ -164,9 +164,6 @@ final class AppModel {
     var pluginStoreRequest: UUID?
     /// Open the engine's web version, where plugin interfaces live (the root view consumes it).
     var webRequest: UUID?
-    /// Open the device-capability screen, where the user grants and reviews them
-    /// (the root view consumes it).
-    var nativeCapabilitiesRequest: UUID?
     /// Open the connectors (the root view consumes it).
     var connectorsRequest: UUID?
     /// Open 操控手机, the iCTRL switch (the root view consumes it).

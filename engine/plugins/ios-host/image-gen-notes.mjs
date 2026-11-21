@@ -23,7 +23,7 @@ export const IMAGE_CONTEXT = 'dsh-image-gen:image-defaults';
 export const WEB_SETTINGS_PATH = 'Settings > Plugins > Image generation';
 export const SETTINGS_CONTEXT = 'fish-pocket:image-settings';
 export const SETTINGS_NOTE = [
-  'In the Fish Pocket app, image generation is set up in the app\'s Settings → Image Generation (the gear on the Explore tab; at the bottom of the sidebar on an iPad before iOS 18): the default provider, API keys, subscription sign-in and ComfyUI workflows.',
+  'In the Fish Pocket app, image generation is set up in the app\'s Settings → Image Generation (the top row of the Explore tab; at the bottom of the sidebar on an iPad before iOS 18): the default provider, API keys, subscription sign-in and ComfyUI workflows.',
   `Image tool errors that say "${WEB_SETTINGS_PATH}" mean that page.`,
 ].join(' ');
 
