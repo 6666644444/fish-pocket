@@ -106,7 +106,8 @@ enum TimelineFixture {
             user("{\"kind\":\"answer_to_pending_question\",\"tool\":\"ask_user_question\",\"callId\":\"c9\",\"questions\":[{\"id\":\"q\",\"header\":\"方案\",\"question\":\"用哪个？\",\"options\":[{\"label\":\"甲\",\"description\":\"快\"},{\"label\":\"乙\"}]}],\"answers\":[{\"id\":\"q\",\"selected\":[\"甲\"]}]}", source: ["kind": "user-question-reply", "callId": "c9", "outcome": "answered"]),
         ]
         // Formulas: both inline and both display forms, inside emphasis and list items, ones
-        // SwiftMath needs adapting for, ones it cannot typeset, and `$` that is not a formula.
+        // SwiftMath needs adapting for, ones only KaTeX typesets, one neither can, and `$` that is
+        // not a formula.
         let math: [JSON] = [
             user("求根公式和旋转矩阵怎么写？"),
             event("turn/start", ["turn": 4]),
@@ -129,11 +130,38 @@ enum TimelineFixture {
 
                 - 样本均值 \(\bar{x}=\frac{1}{n}\sum_{i=1}^{n}x_i\)，样本为 $x_1,x_2,\dots,x_n$
                 - 多行推导 $$\begin{align} f(x) &= x^2 + 2x + 1 \\ &= (x+1)^2 \end{align}$$
-                - 排不出来的保留原文：$\underbrace{a+b}_{n}$，带中文的也是：$\frac{路程}{时间}$
+                - 交给 KaTeX 的：$\underbrace{a+b}_{n}$，带中文的：$\frac{路程}{时间}$，都排不了的保留原文：$\frac{a}{b$
 
                 套餐 $5 一个月，高级版 $10，`echo $HOME` 不是公式。
                 """#)]]),
             event("turn/end", ["turn": 4, "reason": ["kind": "completed"]]),
+            // What SwiftMath cannot typeset and the web version (KaTeX) can: Chinese in
+            // `\text{}`, extensible arrows, `\boxed` inside a formula, `\Big|`, `\underbrace`.
+            user("曲线积分这道题怎么做？"),
+            event("turn/start", ["turn": 5]),
+            assistant(5, id: "m6", [["type": "text", "text": .string(#"""
+                **(2) 路径 $A(-1,0)\xrightarrow{\text{下半圆}}B(1,0)\xrightarrow{\text{直线}}C(-1,2)$**
+
+                用挖洞法：补上直线段 $CA$（从 $C(-1,2)$ 到 $A(-1,0)$，即 $x=-1$），构成闭曲线。该闭曲线包围原点，故
+
+                $$\oint_{A\to B\to C\to A} = \pi$$
+
+                计算补足段 $CA$（$x=-1,\ dx=0,\ y:2\to 0$）：
+
+                $$I_{CA}=\int_2^0\frac{(-1)\,dy}{4+y^2}=\int_0^2\frac{dy}{4+y^2}=\frac{1}{2}\arctan\frac{y}{2}\Big|_0^2=\frac{\pi}{8}$$
+
+                因此
+
+                $$I=I_{AB}+I_{BC}=\pi-I_{CA}=\pi-\frac{\pi}{8}=\boxed{\frac{7\pi}{8}}$$
+
+                - 速度 $v=\dfrac{\text{路程}}{\text{时间}}$，$\overset{\text{def}}{=}$ 与 $\stackrel{?}{=}$，$\underbrace{1+\cdots+1}_{n}=n$
+                - $f(x)=\begin{cases} x^2, & x\ge 0 \\ -x, & x<0 \end{cases}$，$\therefore\ a\equiv b \pmod{3}$
+                - 比一行还长的在关系符和运算符后折行：$S_{10}=a_1+a_2+a_3+a_4+a_5+a_6+a_7+a_8+a_9+a_{10}\xrightarrow{\text{等差}}5(a_1+a_{10})$
+                - 自带颜色的按原色画，深色模式另画一份：$\color{red}{x^2}+\textcolor{blue}{y}$，$\colorbox{yellow}{重点}=1$，$\cancel{x}+\vec{v}\cdot\overrightarrow{AB}$
+
+                $$\begin{pmatrix} a & b \\ c & d \end{pmatrix}^{-1}=\frac{1}{ad-bc}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix}\tag{1}$$
+                """#)]]),
+            event("turn/end", ["turn": 5, "reason": ["kind": "completed"]]),
             // More images than fit across a phone: the thumbnails wrap.
             user("这几张截图里的蓝牙设备都是什么？", images: 7),
         ]
