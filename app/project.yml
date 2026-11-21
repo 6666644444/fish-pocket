@@ -33,9 +33,14 @@ settings:
     LOCALIZATION_PREFERS_STRING_CATALOGS: YES
     # The container the app and the widget extension share (widget snapshot). Rename it with the bundle ID.
     DSH_APP_GROUP: group.com.wsw.dsh-ios
-    # The app's link scheme (Shared/DshLink.swift): the widgets and the share extension open the app with it.
-    # A side-by-side test build takes its own, or its links can land in the installed app.
-    DSH_URL_SCHEME: dsh
+    # The app's link scheme (Shared/DshLink.swift): every link the app makes uses it, the widgets and
+    # the share extension open the app with it. A side-by-side test build takes its own, or its links
+    # can land in the installed app.
+    DSH_URL_SCHEME: fishpocket
+    # The scheme before `fishpocket`, still registered so old links open the app: home-screen icons
+    # (`scheme=dsh`), Shortcuts, NFC automations, links in old chats. The app never makes one.
+    # A side-by-side test build sets it empty, or it takes `dsh://` links from the installed app.
+    DSH_LEGACY_URL_SCHEME: dsh
 targets:
   DshIOS:
     type: application
@@ -220,15 +225,17 @@ targets:
         BGTaskSchedulerPermittedIdentifiers: ["$(PRODUCT_BUNDLE_IDENTIFIER).task.*"]
         # Agent status on the lock screen and in the Dynamic Island (LiveActivityController).
         NSSupportsLiveActivities: true
-        # dsh://session/<id> and dsh://new: the Live Activity and the widgets (Shared/DshLink.swift).
+        # fishpocket://session/<id>, fishpocket://new and the rest (Shared/DshLink.swift); `dsh` only
+        # for old links. An empty legacy scheme (a test build) registers nothing.
         CFBundleURLTypes:
           - CFBundleURLName: com.wsw.dsh-ios
-            CFBundleURLSchemes: ["$(DSH_URL_SCHEME)"]
+            CFBundleURLSchemes: ["$(DSH_URL_SCHEME)", "$(DSH_LEGACY_URL_SCHEME)"]
         # Fish Pocket credits (FishPocketAPI): the service's https origin; empty hides the feature.
         FishPocketAPIURL: $(FISH_POCKET_API_URL)
         # Shared/WidgetSnapshot.swift reads the group from here.
         DshAppGroup: $(DSH_APP_GROUP)
         DshURLScheme: $(DSH_URL_SCHEME)
+        DshLegacyURLScheme: $(DSH_LEGACY_URL_SCHEME)
         # 本机能力 → 操控其他 App asks whether iCTRL is installed (Views/PhoneControlView.swift).
         LSApplicationQueriesSchemes: [ictrl]
         # The messages it reports sending to Bots and groups (DshIOS/ShareSuggestions.swift).

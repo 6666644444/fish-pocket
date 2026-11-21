@@ -40,7 +40,7 @@ final class ScheduleCatalog {
 ///
 /// `sessionId` narrows the list to one session (the session header's entry);
 /// `openSession` opens a session and leaves this page. Without it the page
-/// dismisses itself and opens `dsh://session/<id>`, which `RootView` hands to `MainView`.
+/// dismisses itself and opens `fishpocket://session/<id>`, which `RootView` hands to `MainView`.
 struct SchedulesView: View {
     var sessionId: String? = nil
     var openSession: ((String) -> Void)? = nil
@@ -755,7 +755,7 @@ private struct SavedPrompt: View {
 // MARK: Web fallback
 
 /// The engine's own web UI, for plugin interfaces that only exist in the browser. Its icon on the
-/// home screen (更多 → 添加到主屏幕) opens the app straight on it (`dsh://web`).
+/// home screen (更多 → 添加到主屏幕) opens the app straight on it (`fishpocket://web`).
 struct WebFallbackView: View {
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss

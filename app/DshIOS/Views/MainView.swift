@@ -74,7 +74,7 @@ struct MainView: View {
     /// The launch went back to a Bot page: the blank conversation made under it does not take its place.
     @State private var launchedUnderBot = false
 
-    /// A `dsh://` link this window received (`RootView`), until it is followed.
+    /// A `fishpocket://` link this window received (`RootView`), until it is followed.
     @Binding private var link: LinkRequest?
 
     /// `session`: the one this window opened on, when it opened on one.
@@ -1171,7 +1171,7 @@ struct MainView: View {
         }
     }
 
-    /// `dsh://session/<id>` opens the session; `dsh://new` a new conversation with the keyboard up,
+    /// `fishpocket://session/<id>` opens the session; `fishpocket://new` a new conversation with the keyboard up,
     /// once the workspaces are known and the launch's own blank conversation is in place.
     private func follow(_ link: DshLink) async {
         // Taken already (by another window, or found waiting as the app came to the front): nothing to do.
