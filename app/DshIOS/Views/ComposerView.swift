@@ -438,13 +438,10 @@ struct ComposerView: View {
             // Held, the bar *is* the recording bar: one 54 pt capsule with the waveform in it.
             // The attachments step aside with the text, so the fill stays that capsule instead of
             // growing into a tall black box with a thumbnail stranded in its corner.
-            if composer.editingQueue != nil {
-                queueEditBanner
-            } else if voice.phase == .idle {
+            if voice.phase == .idle {
                 AttachmentRail(composer: composer)
                     .padding(.horizontal, 13)
                     .padding(.top, composer.attachments.isEmpty ? 0 : 6)
-                // A queued message being edited is text only: the draft's quotes wait with the draft.
                 QuoteRail(quotes: composer.quotes) { composer.removeQuote(at: $0) }
                     .padding(.horizontal, 13)
                     .padding(.top, composer.quotes.isEmpty ? 0 : 6)
@@ -497,7 +494,7 @@ struct ComposerView: View {
                     case .send: break
                     }
                 }
-                guard !composer.nothingToSend, !composer.executing, !composer.savingQueueEdit else { return }
+                guard !composer.nothingToSend, !composer.executing else { return }
                 send(.preferred)
             }
             .inkTint()
@@ -528,25 +525,6 @@ struct ComposerView: View {
               text[space...].trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
               let (descriptor, _) = context.resolve(line: String(text[..<space])) else { return nil }
         return context.hint(for: descriptor, hasGoal: composer.goal != nil)
-    }
-
-    /// A queued message is in the input: the main button saves it back into its place.
-    private var queueEditBanner: some View {
-        HStack(spacing: 6) {
-            Image(systemName: "pencil")
-            Text("编辑排队消息")
-            Spacer(minLength: 8)
-            Button("取消") {
-                if focused { clearFocusedTextInput() }
-                composer.cancelQueueEdit()
-            }
-            .foregroundStyle(Palette.ink)
-            .hitTarget()
-        }
-        .font(.footnote)
-        .foregroundStyle(Palette.secondary)
-        .padding(.leading, 13)
-        .padding(.trailing, 6)
     }
 
     // MARK: Controls
@@ -596,10 +574,9 @@ struct ComposerView: View {
     @ViewBuilder
     private var mainButton: some View {
         let empty = composer.nothingToSend
-        let editing = composer.editingQueue != nil
         HStack(spacing: 0) {
-            if model.running { stopButton(prominent: (empty || voice.mode) && !editing) }
-            if !voice.mode && (!empty || editing || (!model.running && !micOffered)) { sendButton(empty: empty) }
+            if model.running { stopButton(prominent: empty || voice.mode) }
+            if !voice.mode && (!empty || (!model.running && !micOffered)) { sendButton(empty: empty) }
             if callOffered { callButton }
         }
     }
@@ -657,9 +634,9 @@ struct ComposerView: View {
 
     // MARK: Voice
 
-    /// Nothing typed and no queued message open: the microphone is offered.
+    /// Nothing typed: the microphone is offered.
     private var micOffered: Bool {
-        composer.editingQueue == nil && composer.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        composer.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     /// The bar's fill while held: the waveform's ink, red once letting go would cancel.
@@ -770,9 +747,8 @@ struct ComposerView: View {
     }
 
     private func sendButton(empty: Bool) -> some View {
-        let editing = composer.editingQueue != nil
-        let working = composer.executing || composer.savingQueueEdit
-        let ready = !empty && !working && (editing || !composer.uploadsPending)
+        let working = composer.executing
+        let ready = !empty && !working && !composer.uploadsPending
         return Button { send(.preferred) } label: {
             Group {
                 if working { ProgressView().controlSize(.small).tint(Palette.onInk) }
@@ -788,9 +764,13 @@ struct ComposerView: View {
         // Plain Return is the input's own (`returnKeySends`): it can tell a pinyin composition apart.
         .keyboardShortcut(.return, modifiers: .command)
         .contextMenu {
-            if model.running && !editing {
-                Button { send(.queue) } label: { Label("排队发送", systemImage: "clock") }
-                Button { send(.steer) } label: { Label("插话发送", systemImage: "bolt") }
+            // The other way, a long press away.
+            if model.running {
+                if context.busyEnter == "steer" {
+                    Button { send(.queue) } label: { Label("排队发送", systemImage: "clock") }
+                } else {
+                    Button { send(.steer) } label: { Label("插话发送", systemImage: "arrow.up") }
+                }
             }
         }
         .accessibilityLabel(sendLabel)
@@ -802,26 +782,17 @@ struct ComposerView: View {
         model.running && !composer.text.trimmingCharacters(in: .whitespaces).hasPrefix("/")
     }
 
-    private var sendLabel: LocalizedStringKey {
-        if composer.editingQueue != nil { return "保存排队消息" }
-        guard goesToBusyAgent else { return "发送消息" }
-        return context.busyEnter == "steer" ? "插话发送" : "排队发送"
-    }
+    /// Steering is just talking to the agent while it works: the plain send. Only a send that
+    /// will wait for the turn to end (the person chose 「排队」) looks different.
+    private var queues: Bool { goesToBusyAgent && context.busyEnter != "steer" }
 
-    private var sendIcon: String {
-        if composer.editingQueue != nil { return "checkmark" }
-        guard goesToBusyAgent else { return "arrow.up" }
-        return context.busyEnter == "steer" ? "bolt.fill" : "clock"
-    }
+    private var sendLabel: LocalizedStringKey { queues ? "排队发送" : "发送消息" }
+
+    private var sendIcon: String { queues ? "clock" : "arrow.up" }
 
     // MARK: Sending
 
     private func send(_ gesture: ComposerModel.Gesture) {
-        if composer.editingQueue != nil {
-            Haptics.tap()
-            composer.saveQueueEdit { if focused { clearFocusedTextInput() } }
-            return
-        }
         let trimmed = composer.text.trimmingCharacters(in: .whitespacesAndNewlines)
         // The client's own commands, typed bare.
         if composer.attachments.isEmpty, trimmed == "/model" || trimmed == "/file" {
@@ -1033,14 +1004,11 @@ private struct DraftEditor: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        let editingQueue = composer.editingQueue != nil
         NavigationStack {
             VStack(alignment: .leading, spacing: 8) {
-                if !editingQueue {
-                    QuoteRail(quotes: composer.quotes) { composer.removeQuote(at: $0) }
-                        .padding(.horizontal, 17)
-                        .padding(.top, composer.quotes.isEmpty ? 0 : 8)
-                }
+                QuoteRail(quotes: composer.quotes) { composer.removeQuote(at: $0) }
+                    .padding(.horizontal, 17)
+                    .padding(.top, composer.quotes.isEmpty ? 0 : 8)
                 TextEditor(text: $composer.text)
                     .font(.body)
                     .inkTint()
@@ -1050,12 +1018,12 @@ private struct DraftEditor: View {
                     .scrollContentBackground(.hidden)
             }
                 .background(Palette.background)
-                .navigationTitle(editingQueue ? "编辑排队消息" : "编辑消息")
+                .navigationTitle("编辑消息")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) { Button("收起") { dismiss() } }
                     ToolbarItem(placement: .confirmationAction) {
-                        Button(editingQueue ? "保存" : "发送", action: send).disabled(composer.nothingToSend)
+                        Button("发送", action: send).disabled(composer.nothingToSend)
                     }
                 }
                 .onAppear { focused = true }

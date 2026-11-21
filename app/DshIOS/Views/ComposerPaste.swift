@@ -27,8 +27,7 @@ private struct ImagePasteModifier: ViewModifier {
             // The text view becomes first responder as focus lands: one turn later it is there to find.
             DispatchQueue.main.async {
                 guard let view = UIResponder.focusedTextView else { return }
-                // A queued message being edited is text only.
-                ImagePaste.attach(to: view, accepts: { [composer] in composer.editingQueue == nil }) { pasted in
+                ImagePaste.attach(to: view, accepts: { true }) { pasted in
                     switch pasted {
                     case .image(let data):
                         if let refusal = composer.addImage(data: data) { app.showToast(refusal) }
