@@ -62,6 +62,9 @@ final class SessionModel {
     @ObservationIgnored weak var modelCatalog: ComposerContext?
     /// Composer state (draft, local echoes, attachments): one per open conversation.
     @ObservationIgnored private(set) lazy var composer = ComposerModel(session: self, app: app)
+    /// The voice call on this conversation hears its turns here: each start and end, and the
+    /// answer's text as it streams, every delta as it comes (the view's own copy waits 80 ms).
+    @ObservationIgnored var callListener: ((CallSignal) -> Void)?
 
     /// Durable events folded so far (the source of `items`).
     @ObservationIgnored private var timeline = TimelineBuilder()
@@ -188,6 +191,13 @@ final class SessionModel {
                     app.noteCompletedTurn()
                 }
             }
+            if let callListener {
+                switch event["type"].string {
+                case "turn/start": callListener(.turnStarted)
+                case "turn/end": callListener(.turnEnded(failed: TurnFailure(reason: event["data"]["reason"]) != nil))
+                default: break
+                }
+            }
             switch event["type"].string {
             case "turn/end", "session/title", "tool/result", "user/message", "turn/start":
                 refreshProjections()
@@ -219,6 +229,7 @@ final class SessionModel {
                 var partial = livePartials[index] ?? (kind, "", nil, nil)
                 partial.text += chunk["text"].string ?? ""
                 livePartials[index] = partial
+                if kind == "text", let text = chunk["text"].string, !text.isEmpty { callListener?(.text(text)) }
             case "tool-call-delta":
                 var partial = livePartials[index] ?? ("tool", "", nil, nil)
                 partial.toolId = chunk["id"].string ?? partial.toolId
@@ -731,7 +742,7 @@ extension SessionModel: KeptSession {
     func close() { stop() }
 }
 
-private extension [TimelineItem] {
+extension [TimelineItem] {
     /// The user's latest message: what the running turn answers.
     var lastUserText: String? {
         for item in reversed() { if case .user(_, let text, _, _) = item { return text } }

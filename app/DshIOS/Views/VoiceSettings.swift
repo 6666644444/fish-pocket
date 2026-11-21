@@ -7,9 +7,7 @@ import SwiftUI
 /// Volcengine is chosen without a key; `onReady` then runs once a working service is set up.
 struct VoiceInputSettingsPage: View {
     var onReady: (() -> Void)?
-    @State private var speech = VolcSpeech.shared
     @State private var preferences = VoicePreferences.shared
-    @State private var draft = ""
     @State private var checking = false
     @State private var status: Status?
 
@@ -55,12 +53,21 @@ struct VoiceInputSettingsPage: View {
                     .buttonStyle(.capsule(height: 50))
                     .disabled(checking)
                 } footer: {
-                    statusFooter
+                    switch status {
+                    case .passed:
+                        Label("连接成功，可以按住说话了", systemImage: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                            .frame(maxWidth: .infinity)
+                    case .failed(let message):
+                        Text(message).foregroundStyle(.red).frame(maxWidth: .infinity).multilineTextAlignment(.center)
+                    case nil:
+                        EmptyView()
+                    }
                 }
                 .listRowBackground(Color.clear)
                 .listRowInsets(EdgeInsets())
             } else {
-                volcengine
+                VolcKeySection(purpose: .input, onReady: onReady)
             }
         }
         .groupedList()
@@ -69,22 +76,48 @@ struct VoiceInputSettingsPage: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    @ViewBuilder
-    private var statusFooter: some View {
-        switch status {
-        case .passed:
-            Label("连接成功，可以按住说话了", systemImage: "checkmark.circle.fill")
-                .foregroundStyle(.green)
-                .frame(maxWidth: .infinity)
-        case .failed(let message):
-            Text(message).foregroundStyle(.red).frame(maxWidth: .infinity).multilineTextAlignment(.center)
-        case nil:
-            EmptyView()
+    /// Half a second of silence through DeepSeek: an empty answer means the key works.
+    private func checkDeepSeek() {
+        Haptics.tap()
+        checking = true
+        status = nil
+        Task {
+            do {
+                _ = try await DeepSeekSpeech.transcribe(wav: DeepSeekSpeech.wave(pcm: Data(count: 16_000), sampleRate: 16_000))
+                status = .passed
+                Haptics.success()
+                if let onReady {
+                    try? await Task.sleep(for: .milliseconds(600))
+                    onReady()
+                }
+            } catch {
+                status = .failed(error.localizedDescription)
+                Haptics.error()
+            }
+            checking = false
         }
     }
+}
 
-    @ViewBuilder
-    private var volcengine: some View {
+/// The user's Volcengine (豆包语音) key: where it goes, the billing it was opened with, a check
+/// that it works for what it is for, and how to get one. Hold-to-talk needs streaming
+/// recognition; a call needs synthesis 2.0 as well, and the check tries both.
+struct VolcKeySection: View {
+    enum Purpose { case input, call }
+
+    let purpose: Purpose
+    var onReady: (() -> Void)?
+    @State private var speech = VolcSpeech.shared
+    @State private var draft = ""
+    @State private var checking = false
+    @State private var status: Status?
+
+    private enum Status: Equatable {
+        case passed
+        case failed(String)
+    }
+
+    var body: some View {
         // The key comes first, in the top half of the page, where the keyboard never covers it.
         Section {
             if let key = speech.key, !key.isEmpty {
@@ -118,7 +151,12 @@ struct VoiceInputSettingsPage: View {
         } header: {
             Text("火山引擎")
         } footer: {
-            Text("识别用的是豆包流式语音识别模型 2.0。计费方式要和你在控制台开通的一致，没特别选过就用「小时版」。录音直接发给火山引擎识别，App 不保存录音。")
+            switch purpose {
+            case .input:
+                Text("识别用的是豆包流式语音识别模型 2.0。计费方式要和你在控制台开通的一致，没特别选过就用「小时版」。录音直接发给火山引擎识别，App 不保存录音。")
+            case .call:
+                Text("听你说话用豆包流式语音识别模型 2.0，回答的声音用豆包语音合成模型 2.0，两个都要在控制台开通，费用由火山引擎按你的用量收取。计费方式指识别的计费方式，要和控制台开通的一致，没特别选过就用「小时版」。通话的声音直接发给火山引擎，App 不保存录音。API Key 和按住说话共用，只保存在这台设备本地。")
+            }
         }
         .groupedRow()
         .onChange(of: speech.resource) { status = nil }
@@ -143,7 +181,10 @@ struct VoiceInputSettingsPage: View {
         if !speech.configured {
             Section {
                 step(1, "登录火山引擎的豆包语音控制台，没有账号先注册并完成实名认证。")
-                step(2, "开通「豆包流式语音识别模型 2.0」。")
+                switch purpose {
+                case .input: step(2, "开通「豆包流式语音识别模型 2.0」。")
+                case .call: step(2, "开通「豆包流式语音识别模型 2.0」和「豆包语音合成模型 2.0」。")
+                }
                 step(3, "在「API Key 管理」里创建一个 Key 并复制，回到这里粘贴到上面。")
                 Link(destination: VolcSpeech.keysURL) {
                     Label("打开豆包语音控制台", systemImage: "arrow.up.right.square")
@@ -176,20 +217,22 @@ struct VoiceInputSettingsPage: View {
         check()
     }
 
-    /// Half a second of silence through DeepSeek: an empty answer means the key works.
-    private func checkDeepSeek() {
-        Haptics.tap()
-        checking = true
-        status = nil
-        Task {
-            do {
-                _ = try await DeepSeekSpeech.transcribe(wav: DeepSeekSpeech.wave(pcm: Data(count: 16_000), sampleRate: 16_000))
-                passed()
-            } catch {
-                status = .failed(error.localizedDescription)
-                Haptics.error()
+    @ViewBuilder
+    private var statusFooter: some View {
+        switch status {
+        case .passed:
+            Group {
+                switch purpose {
+                case .input: Label("连接成功，可以按住说话了", systemImage: "checkmark.circle.fill")
+                case .call: Label("连接成功，可以打电话了", systemImage: "checkmark.circle.fill")
+                }
             }
-            checking = false
+            .foregroundStyle(.green)
+            .frame(maxWidth: .infinity)
+        case .failed(let message):
+            Text(message).foregroundStyle(.red).frame(maxWidth: .infinity).multilineTextAlignment(.center)
+        case nil:
+            EmptyView()
         }
     }
 
@@ -210,9 +253,11 @@ struct VoiceInputSettingsPage: View {
         checking = true
         status = nil
         let resource = speech.resource
+        let purpose = purpose
         Task {
             do {
                 try await VolcSpeech.check(key: key, resource: resource)
+                if purpose == .call { try await CallSynthesizer.check(key: key) }
                 passed()
             } catch {
                 status = .failed(error.localizedDescription)

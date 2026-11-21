@@ -11,6 +11,7 @@ import Foundation
 /// - `fishpocket://web`: the 网页版, opened full screen; its home-screen icon (`HomeScreenShortcut`) opens it.
 /// - `fishpocket://bot/<id>`: that Bot's chat (Shortcuts).
 /// - `fishpocket://balance`: the page with the balance of the account in use (Shortcuts).
+/// - `fishpocket://call`: the voice call on now, full screen (its Live Activity opens it).
 enum DshLink: Hashable {
     case session(String)
     case new(workspace: String? = nil, preset: String? = nil, draft: String? = nil)
@@ -19,6 +20,7 @@ enum DshLink: Hashable {
     case web
     case bot(String)
     case balance
+    case call
 
     /// `DshURLScheme` in Info.plist (`DSH_URL_SCHEME` in project.yml): `fishpocket`, or a test
     /// build's own. Every link the app makes uses it.
@@ -57,6 +59,8 @@ enum DshLink: Hashable {
             self = .bot(id)
         case "balance":
             self = .balance
+        case "call":
+            self = .call
         default:
             return nil
         }
@@ -87,6 +91,8 @@ enum DshLink: Hashable {
             components.path = "/" + id
         case .balance:
             components.host = "balance"
+        case .call:
+            components.host = "call"
         }
         return components.url!
     }

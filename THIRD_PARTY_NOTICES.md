@@ -25,8 +25,12 @@
 | [ai-motion](https://www.npmjs.com/package/ai-motion) | 0.4.8 | MIT | Copyright (c) 2025 Simon | page-agent 遮罩层的动态光效 |
 | [React](https://github.com/facebook/react)（`react`、`react-dom`、`scheduler`） | 18.3.1 | MIT | Copyright (c) Meta Platforms, Inc. and affiliates | 「我的应用」里的小应用用的 React |
 | [Sucrase](https://github.com/alangpierce/sucrase) | 3.35.1 | MIT（打包进来的依赖 `ts-interface-checker` 为 Apache-2.0，其余为 MIT） | Copyright (c) 2012-2018 various contributors | 在手机上把小应用的 JSX、TypeScript 编译成 JavaScript |
+| [WebRTC AudioProcessing](https://gitlab.freedesktop.org/pulseaudio/webrtc-audio-processing)（WebRTC 的回声消除 AEC3） | 2.1 | BSD-3-Clause（另有 WebRTC 的专利授权，见 `PATENTS`） | Copyright (c) 2011 The WebRTC project authors | 语音通话里把她自己的声音从麦克风里消掉，未修改源码，静态链接 |
+| [Abseil](https://github.com/abseil/abseil-cpp) | 20240722.0 | Apache-2.0 | Copyright The Abseil Authors | AEC3 用到的 C++ 头文件 |
 
 Simple Icons 是上面这句话的例外：用到的 28 个图标以 SVG 文件直接放在仓库里（`app/DshIOS/Assets.xcassets/Connectors`）。CC0 只覆盖图标文件本身，各图标仍是其品牌方的商标，App 里只用来标明连接的是哪家服务。
+
+AEC3 也是例外：`scripts/vendor-aec3.sh` 从这两个官方发布包（脚本里钉死了 sha256）里只挑出 AEC3 的源码和它包含的头文件，原样放在 `native/aec3`（`webrtc/`、`abseil/`），由 App 自己编译。许可证全文随源码放在 `native/aec3/webrtc/LICENSE`、`native/aec3/webrtc/PATENTS` 和 `native/aec3/abseil/LICENSE`。
 
 page-agent 也是例外：`scripts/build-page-controller.sh` 把它的 page controller、遮罩层（自动操作时罩在页面上的光效和指针）、状态面板，连同遮罩层依赖的 ai-motion 和本仓库的一小段包装打成一个脚本，提交在 `app/DshIOS/Browser/PageController.js`，文件开头保留了 page-agent 和 ai-motion 的 MIT 许可证全文。没有改动它们的源码，只是在页面上加了一条样式，让遮罩层不挡用户的点按，用户随时可以接手。它的页面结构提取移植自 [browser-use](https://github.com/browser-use/browser-use)（MIT）。
 

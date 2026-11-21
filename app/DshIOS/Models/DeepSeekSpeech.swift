@@ -54,7 +54,8 @@ enum DeepSeekSpeech {
             } else if line.hasPrefix("data:") {
                 let value = (try? JSONDecoder().decode(JSON.self, from: Data(line.dropFirst(5).utf8))) ?? .null
                 switch event {
-                case "say": if let text = value["text"].string { ReadAloud.shared.enqueue(text) }
+                // On a call the answer is already spoken, in the call's own voice.
+                case "say": if let text = value["text"].string, !CallCenter.shared.active { ReadAloud.shared.enqueue(text) }
                 case "stop": ReadAloud.shared.stop()
                 default: break
                 }
@@ -395,6 +396,11 @@ final class ReadAloud {
     func enqueue(_ text: String) {
         let plain = Self.plain(text)
         guard !plain.isEmpty else { return }
+        // A call holds the audio: reading aloud would take it over.
+        if CallCenter.shared.active {
+            onError?(String(localized: "通话中不能朗读"))
+            return
+        }
         queue.append(plain)
         guard task == nil else { return }
         speaking = true

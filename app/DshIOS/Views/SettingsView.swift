@@ -118,6 +118,9 @@ private struct SettingsList: View {
                 NavigationLink { ReadAloudSettingsPage() } label: {
                     row("朗读", "speaker.wave.2", VoicePreferences.shared.readingVoice.title)
                 }
+                NavigationLink { VoiceCallSettingsPage() } label: {
+                    row("语音通话", "waveform", VolcSpeech.shared.configured ? CallVoice.chosen.name : String(localized: "未设置"))
+                }
                 // dsh-image-gen, built into the engine: shown once the engine serves its settings.
                 if mirror.serves(ImageGenModel.namespace) {
                     NavigationLink { ImageGenSettingsPage() } label: {
