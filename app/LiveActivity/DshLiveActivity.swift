@@ -11,6 +11,7 @@ struct DshWidgets: WidgetBundle {
         SessionsWidget()
         NewConversationWidget()
         MiniAppsWidget()
+        WebWidget()
         if #available(iOS 18.0, *) {
             NewConversationControl()
         }

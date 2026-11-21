@@ -58,23 +58,23 @@ struct ShareView: View {
                         }
                     }
                 }
-                if !model.targets.bots.isEmpty {
-                    Section("Bot") {
-                        ForEach(model.targets.bots) { bot in
-                            Button { model.send(to: .bot(bot.id)) } label: {
-                                TargetRow(title: Text(verbatim: bot.name), detail: bot.role.isEmpty ? nil : Text(verbatim: bot.role)) {
-                                    BotPicture(bot: bot)
+                // One list, in the Bot page's order: a Bot's chat and a group side by side.
+                let entries = model.targets.entries
+                if !entries.isEmpty {
+                    Section("Bot 和群聊") {
+                        ForEach(entries) { entry in
+                            switch entry {
+                            case .bot(let bot):
+                                Button { model.send(to: .bot(bot.id)) } label: {
+                                    TargetRow(title: Text(verbatim: bot.name), detail: bot.role.isEmpty ? nil : Text(verbatim: bot.role)) {
+                                        BotPicture(bot: bot)
+                                    }
                                 }
-                            }
-                        }
-                    }
-                }
-                if !model.targets.rooms.isEmpty {
-                    Section("群聊") {
-                        ForEach(model.targets.rooms) { room in
-                            Button { model.send(to: .room(room.id)) } label: {
-                                TargetRow(title: Text(verbatim: room.name), detail: room.memberCount > 0 ? Text("\(room.memberCount) 个 Bot") : nil) {
-                                    RoomPicture(room: room)
+                            case .room(let room):
+                                Button { model.send(to: .room(room.id)) } label: {
+                                    TargetRow(title: Text(verbatim: room.name), detail: room.memberCount > 0 ? Text("\(room.memberCount) 个 Bot") : nil) {
+                                        RoomPicture(room: room)
+                                    }
                                 }
                             }
                         }

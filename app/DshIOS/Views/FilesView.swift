@@ -528,7 +528,14 @@ struct FileContentView: View {
                 case .image: if let localURL { ZoomableImage(url: localURL).id(revision) }
                 case .webImage: if let localURL { InlineImageWebView(url: localURL).id(revision) }
                 case .pdf: if let localURL { PDFPreview(url: localURL).id(revision) }
-                case .unsupported: unsupported
+                case .unsupported:
+                    // Office documents, spreadsheets, audio, video: shown in place by the system's
+                    // own viewer when it knows the format.
+                    if let localURL, QLPreviewController.canPreview(localURL as NSURL) {
+                        QuickLookView(url: localURL).id(revision).ignoresSafeArea(edges: .bottom)
+                    } else {
+                        unsupported
+                    }
                 }
             }
         }
@@ -1111,4 +1118,31 @@ private struct PDFKitView: UIViewRepresentable {
     }
 
     func updateUIView(_ view: PDFView, context: Context) {}
+}
+
+/// One file in the system's Quick Look viewer, inside the page instead of over it: Word,
+/// Excel, PowerPoint, iWork, audio and video read here as they do in Files.
+struct QuickLookView: UIViewControllerRepresentable {
+    let url: URL
+
+    func makeCoordinator() -> Source { Source(url: url) }
+
+    func makeUIViewController(context: Context) -> QLPreviewController {
+        let controller = QLPreviewController()
+        controller.dataSource = context.coordinator
+        return controller
+    }
+
+    func updateUIViewController(_ controller: QLPreviewController, context: Context) {
+        guard context.coordinator.url != url else { return }
+        context.coordinator.url = url
+        controller.reloadData()
+    }
+
+    final class Source: NSObject, QLPreviewControllerDataSource {
+        var url: URL
+        init(url: URL) { self.url = url }
+        func numberOfPreviewItems(in controller: QLPreviewController) -> Int { 1 }
+        func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem { url as NSURL }
+    }
 }

@@ -107,7 +107,8 @@ struct MiniAppQuery: EntityStringQuery {
     }
 }
 
-/// Opens one app of 我的应用. Added to the home screen from Shortcuts, it is the app's own icon there.
+/// Opens one app of 我的应用. Added to the home screen from Shortcuts, it goes straight into the
+/// app, with no web page on the way (`DshShortcuts` lists one for each app).
 struct OpenMiniAppIntent: AppIntent {
     static var title: LocalizedStringResource = "打开 Mini App"
     static var description = IntentDescription("打开一个 Mini App。在快捷指令里把它添加到主屏幕，就是这个 Mini App 的图标。")

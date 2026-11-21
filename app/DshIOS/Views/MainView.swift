@@ -10,9 +10,9 @@ import SwiftUI
 /// narrow a drawer that slides in from the left.
 struct MainView: View {
     /// The phone's tabs.
-    enum HomeTab: Hashable { case sessions, bot, apps, explore }
+    enum HomeTab: Hashable { case sessions, bot, explore }
 
-    enum Sheet: String, Identifiable { case settings, plugins, store, schedules, signIn, cordis, share, watch, capabilities, connectors, phoneControl, remote, fishPocket, miniApps; var id: String { rawValue } }
+    enum Sheet: String, Identifiable { case settings, plugins, store, schedules, signIn, cordis, share, watch, capabilities, connectors, phoneControl, remote, fishPocket, deepSeekAccount, miniApps, imageGen, shortcuts; var id: String { rawValue } }
 
     @Environment(AppModel.self) private var app
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -44,6 +44,8 @@ struct MainView: View {
     @State private var explorePath: [ExploreTabView.Route] = []
     /// The 会话 tab's own split view, where it is wide: the list can make way for the workbench.
     @State private var sessionsColumns = NavigationSplitViewVisibility.all
+    /// 「已归档」 in the list's place, in that split view.
+    @State private var listShowsArchive = false
     /// The Bot tab's, as the 会话 tab's: the Bot list beside the chat.
     @State private var botColumns = NavigationSplitViewVisibility.all
     @State private var drag: CGFloat = 0
@@ -74,7 +76,7 @@ struct MainView: View {
     /// The launch went back to a Bot page: the blank conversation made under it does not take its place.
     @State private var launchedUnderBot = false
 
-    /// A `dsh://` link this window received (`RootView`), until it is followed.
+    /// A `fishpocket://` link this window received (`RootView`), until it is followed.
     @Binding private var link: LinkRequest?
 
     /// `session`: the one this window opened on, when it opened on one.
@@ -224,12 +226,6 @@ struct MainView: View {
             if #available(iOS 18.0, *) { botPath = pages } else { Task { botPath = pages } }
             setDrawer(false)
         }
-        // The sidebar's own row; the page is also still under Settings.
-        .onChange(of: app.nativeCapabilitiesRequest) { _, token in
-            guard token != nil, scenePhase != .background else { return }
-            app.nativeCapabilitiesRequest = nil
-            sheet = .capabilities
-        }
         .onChange(of: app.remoteRequest) { _, token in
             guard token != nil, scenePhase != .background else { return }
             app.remoteRequest = nil
@@ -285,6 +281,10 @@ struct MainView: View {
             guard usesTabs else { return }
             botOpen = tab == .bot
             app.currentSession = shownSession
+            // Away from the 会话 tab, the archive leaves the list's place: back, the tab shows the list.
+            // Shown again over the archive, iPadOS 18 put the list's search field away once the list
+            // came back.
+            if tab != .sessions { listShowsArchive = false }
         }
         .onChange(of: botOpen) { _, open in if usesTabs, open { tab = .bot } }
         // Back to the list (or the archive) on the 会话 tab: no conversation on screen any more.
@@ -309,11 +309,17 @@ struct MainView: View {
         }
         // Which store this copy came from: only an App Store install is asked for a rating.
         .task { await AppDistribution.refresh() }
-        // The sidebar's 我的应用 row; on the tab bar the page is a tab.
+        // The sidebar's Mini Apps row; with the tab bar the page is a row of 探索.
         .onChange(of: app.miniAppsRequest) { _, token in
             guard token != nil, scenePhase != .background else { return }
             app.miniAppsRequest = nil
-            if usesTabs { tab = .apps } else { sheet = .miniApps }
+            openMiniApps()
+        }
+        // The sidebar's 快捷指令 row (an iPad before iOS 18); elsewhere the page is under 探索.
+        .onChange(of: app.shortcutsRequest) { _, token in
+            guard token != nil, scenePhase != .background else { return }
+            app.shortcutsRequest = nil
+            sheet = .shortcuts
         }
         .task(id: canAnnounce) {
             guard canAnnounce else { return }
@@ -392,10 +398,18 @@ struct MainView: View {
             // blank conversation already selected, and then no change of selection closes them.
             botOpen = false
             launchedUnderBot = false
-            let target = request.workspaceId.flatMap { id in app.workspaces.first { $0.id == id } } ?? workspace
-            if let target { workspaceId = target.id }
-            newConversation(in: target, agentPreset: request.agentPreset, draft: request.draft, prompt: request.prompt)
             setDrawer(false)
+            Task {
+                // As a link does: a request made as the app comes up (one typed in the Mini Apps bar)
+                // waits for the workspaces and the launch's own blank conversation, not dropped.
+                let deadline = ContinuousClock.now + .seconds(10)
+                while app.workspaces.isEmpty || creating, ContinuousClock.now < deadline {
+                    try? await Task.sleep(for: .milliseconds(100))
+                }
+                let target = request.workspaceId.flatMap { id in app.workspaces.first { $0.id == id } } ?? workspace
+                if let target { workspaceId = target.id }
+                newConversation(in: target, agentPreset: request.agentPreset, draft: request.draft, prompt: request.prompt)
+            }
         }
         .onChange(of: app.credentialRequest?.token) { _, token in
             guard token != nil, scenePhase != .background, let step = app.credentialRequest?.step else { return }
@@ -462,6 +476,10 @@ struct MainView: View {
             sessionsColumns = .all
             botColumns = .all
         }
+        // Narrow, the archive leaves the list's place: the split view made again starts on the list.
+        // Made with the archive in front and the list after it, iOS 18 put the list's search field
+        // away until the list was pulled down.
+        if size != .regular { listShowsArchive = false }
     }
 
     /// `selection` on the tab bar: a session is pushed on the 会话 tab, in front; none, it is popped.
@@ -480,7 +498,7 @@ struct MainView: View {
     }
 
     #if DEBUG
-    /// Screenshots and UI checks: `simctl launch … -dshOpen drawer|workbench|approval|question|timeline|settings|plugins|store|schedules|signin|support|share|watch|connectors|whatsnew|capabilities|phonecontrol|remote|start|fishpocket|topup|miniapps|miniapp`.
+    /// Screenshots and UI checks: `simctl launch … -dshOpen drawer|workbench|approval|question|timeline|settings|imagegen|plugins|store|schedules|signin|support|share|watch|connectors|whatsnew|capabilities|phonecontrol|shortcuts|remote|start|fishpocket|topup|miniapps|miniapp`.
     /// `miniapp` opens the tool `-dshApp <id>` names.
     /// The conversation takes `workbench|filesearch|approval|question|timeline` itself; `filesearch` is the workbench's
     /// file search, with `-dshQuery <text>` to start it on a search.
@@ -496,14 +514,16 @@ struct MainView: View {
         case "share": sheet = .share
         case "watch": sheet = .watch
         case "connectors": sheet = .connectors
+        case "imagegen": sheet = .imageGen
         case "whatsnew": whatsNew = WhatsNew.current
         case "capabilities": sheet = .capabilities
         case "phonecontrol": sheet = .phoneControl
+        case "shortcuts": if usesTabs { tab = .explore; explorePath = [.shortcuts] } else { sheet = .shortcuts }
         case "remote": sheet = .remote
         case "start": Task { await openCredentials(.start) }
         case "fishpocket": sheet = .fishPocket
         case "topup": app.fishPocket.quotaPrompt = true
-        case "miniapps": if usesTabs { tab = .apps } else { sheet = .miniApps }
+        case "miniapps": openMiniApps()
         case "miniapp": MiniAppPresenter.open(UserDefaults.standard.string(forKey: "dshApp") ?? "")
         // The call screen over whatever is open, without a conversation behind it (`call` is a real one).
         case "callscreen":
@@ -535,7 +555,12 @@ struct MainView: View {
         case .phoneControl: SheetStack { PhoneControlView() }.environment(\.systemLists, true)
         case .remote: SheetStack { RemoteControlPage() }.environment(\.systemLists, true)
         case .fishPocket: SheetStack { FishPocketPage() }
+        // 设置 → DeepSeek 账号, opened from Shortcuts' 查看余额.
+        case .deepSeekAccount: SheetStack { AccountPage() }.settingsStyle()
         case .miniApps: SheetStack { MiniAppsPage() }
+        // 设置 → 生图, opened straight from a failed image in a conversation.
+        case .imageGen: SheetStack { ImageGenSettingsPage() }.settingsStyle()
+        case .shortcuts: SheetStack { ShortcutsGuidePage() }
         }
     }
 
@@ -608,6 +633,7 @@ struct MainView: View {
         sheet = nil
         if case .settings = step { sheet = .settings; return }
         if case .fishPocket = step { sheet = .fishPocket; return }
+        if case .imageGen = step { sheet = .imageGen; return }
         guard let ref = await app.officialKeyRef() else {
             if case .officialKey = step { sheet = .settings } else { sheet = .signIn }
             return
@@ -617,7 +643,7 @@ struct MainView: View {
             if case .signIn = step { onboarding = .signIn(ref: ref, autoStart: true) } else { onboarding = .signIn(ref: ref) }
         case .officialKey:
             onboarding = .key(ref: ref)
-        case .settings, .fishPocket:
+        case .settings, .fishPocket, .imageGen:
             break
         }
     }
@@ -842,6 +868,15 @@ struct MainView: View {
         } else if layoutWidth == .regular { storeOpen = true } else { sheet = .store }
     }
 
+    /// Mini Apps: a page of 探索 with the tab bar, a sheet over the iPad's sidebar before iOS 18.
+    private func openMiniApps() {
+        if usesTabs {
+            sheet = nil
+            tab = .explore
+            if explorePath.last != .miniApps { explorePath = [.miniApps] }
+        } else { sheet = .miniApps }
+    }
+
     private func setDrawer(_ open: Bool) {
         if open { dismissKeyboard() }
         withAnimation(.snappy(duration: 0.25)) { drawerOpen = open }
@@ -849,7 +884,7 @@ struct MainView: View {
 
     private var drawer: some View { drawer(.sidebar) }
 
-    private func drawer(_ style: DrawerView.Style) -> some View {
+    private func drawer(_ style: DrawerView.Style, openArchive: (() -> Void)? = nil, closeArchive: (() -> Void)? = nil) -> some View {
         DrawerView(
             selection: selection,
             workspace: workspace,
@@ -863,7 +898,9 @@ struct MainView: View {
             openSignIn: { sheet = .signIn },
             searchRequest: searchRequest,
             openInWindow: supportsMultipleWindows ? { openWindow(id: DshIOSApp.window, value: SessionWindow(session: $0)) } : nil,
-            style: style
+            style: style,
+            openArchive: openArchive,
+            closeArchive: closeArchive
         )
     }
 
@@ -886,12 +923,6 @@ struct MainView: View {
                 tabLabel(Text(verbatim: "Bot"), "fp.bot", custom: true)
             }
             .badge(badges.botPending)
-            // 我的应用: the user's own tools and games, opened as often as a home screen's.
-            Tab(value: HomeTab.apps) {
-                NavigationStack { MiniAppsPage(asTab: true) }
-            } label: {
-                tabLabel(Text(MiniAppsPage.tabTitle), "square.on.circle")
-            }
             Tab(value: HomeTab.explore) {
                 ExploreTabView(path: $explorePath)
             } label: {
@@ -921,9 +952,6 @@ struct MainView: View {
                 .tabItem { tabLabel(Text(verbatim: "Bot"), "fp.bot", custom: true) }
                 .tag(HomeTab.bot)
                 .badge(badges.botPending)
-            NavigationStack { MiniAppsPage(asTab: true) }
-                .tabItem { tabLabel(Text(MiniAppsPage.tabTitle), "square.on.circle") }
-                .tag(HomeTab.apps)
             ExploreTabView(path: $explorePath)
                 .tabItem { tabLabel(Text("探索"), "square.grid.2x2") }
                 .tag(HomeTab.explore)
@@ -947,17 +975,25 @@ struct MainView: View {
     /// split view's: with none selected (at launch, after archiving) a blank one opens.
     private var sessionsSplit: some View {
         NavigationSplitView(columnVisibility: $sessionsColumns) {
-            drawer(.sessions)
-                .navigationDestination(for: DrawerView.Route.self) { route in
-                    switch route {
-                    case .archived: drawer(.archived)
-                    case .session(let id): pushedConversation(id)
-                    }
+            // 「已归档」 takes the list's place in its column, with a way back, and the conversation
+            // beside it stays. As a link it went to the conversation's column, and nothing took it
+            // away again: no back button, and a session picked in the list did not show (#284).
+            // Not pushed on a stack of the column's own: back from there iPadOS 18 put the system's
+            // sidebar button in the list's bar for good (`toolbar(removing:)` no longer took it
+            // away), and the list put away with it came back with an empty bar.
+            Group {
+                if listShowsArchive {
+                    drawer(.archived, closeArchive: { withAnimation(.snappy(duration: 0.3)) { listShowsArchive = false } })
+                        .transition(.move(edge: .trailing))
+                } else {
+                    drawer(.sessions, openArchive: { withAnimation(.snappy(duration: 0.3)) { listShowsArchive = true } })
+                        .transition(.move(edge: .leading))
                 }
-                // Widths as the split view's (`split`): a width that follows the fold hangs it.
-                .navigationSplitViewColumnWidth(min: 280, ideal: 320, max: 360)
-                .modifier(SidebarToggle(system: systemSidebarButton))
-                .modifier(BelowFloatingTabBar())
+            }
+            // Widths as the split view's (`split`): a width that follows the fold hangs it.
+            .navigationSplitViewColumnWidth(min: 280, ideal: 320, max: 360)
+            .modifier(SidebarToggle(system: systemSidebarButton))
+            .modifier(BelowFloatingTabBar())
         } detail: {
             NavigationStack {
                 if let selection { pushedConversation(selection) } else { conversation(openDrawer: nil) }
@@ -1165,7 +1201,7 @@ struct MainView: View {
         }
     }
 
-    /// `dsh://session/<id>` opens the session; `dsh://new` a new conversation with the keyboard up,
+    /// `fishpocket://session/<id>` opens the session; `fishpocket://new` a new conversation with the keyboard up,
     /// once the workspaces are known and the launch's own blank conversation is in place.
     private func follow(_ link: DshLink) async {
         // Taken already (by another window, or found waiting as the app came to the front): nothing to do.
@@ -1197,9 +1233,37 @@ struct MainView: View {
             MiniAppPresenter.open(id)
         case .web:
             webOpen = true
+        case .bot(let id):
+            // A cold launch: the team arrives a moment after the engine.
+            let deadline = ContinuousClock.now + .seconds(10)
+            while app.botTeam.bot(id) == nil, ContinuousClock.now < deadline {
+                try? await Task.sleep(for: .milliseconds(100))
+            }
+            if app.botTeam.bot(id) != nil {
+                app.botTeam.openRequest = BotOpenRequest(route: .bot(id))
+            } else {
+                app.botTeam.openRequest = BotOpenRequest(route: nil)
+                app.showToast(String(localized: "找不到这个 Bot 了"), tone: .warning)
+            }
+        case .balance:
+            sheet = await balancePage()
         case .call:
             CallCenter.shared.expand()
         }
+    }
+
+    /// Where 查看余额 goes: the Fish Pocket account when signed in to it, else the DeepSeek account
+    /// when signed in to that; with neither, Fish Pocket's page (it signs in and sells credits)
+    /// when this build has the service.
+    private func balancePage() async -> Sheet {
+        guard app.fishPocket.available else { return .deepSeekAccount }
+        if app.fishPocket.signedIn { return .fishPocket }
+        // A cold launch: the account's state arrives a moment after the engine.
+        let deadline = ContinuousClock.now + .seconds(3)
+        while app.account.view == nil, ContinuousClock.now < deadline {
+            try? await Task.sleep(for: .milliseconds(100))
+        }
+        return app.account.signedIn ? .deepSeekAccount : .fishPocket
     }
 
     /// What another app shared (the share extension): into the composer of the Bot, the group or

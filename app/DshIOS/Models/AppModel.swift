@@ -156,7 +156,7 @@ final class AppModel {
     var pendingPrompts: [String: String] = [:]
     /// Files another app shared, waiting for a session's composer to attach them.
     var pendingFiles: [String: SharedFiles] = [:]
-    /// Sessions whose composer takes the keyboard when it appears (`dsh://new`).
+    /// Sessions whose composer takes the keyboard when it appears (`fishpocket://new`).
     var pendingFocus: Set<String> = []
     /// A session to open in the main view (set through `open(session:)`; the root view consumes it).
     var openRequest: (id: String, token: UUID)?
@@ -164,13 +164,12 @@ final class AppModel {
     var pluginStoreRequest: UUID?
     /// Open the engine's web version, where plugin interfaces live (the root view consumes it).
     var webRequest: UUID?
-    /// Open the device-capability screen, where the user grants and reviews them
-    /// (the root view consumes it).
-    var nativeCapabilitiesRequest: UUID?
     /// Open the connectors (the root view consumes it).
     var connectorsRequest: UUID?
     /// Open 操控手机, the iCTRL switch (the root view consumes it).
     var phoneControlRequest: UUID?
+    /// Open the 快捷指令 guide, the sidebar's row before iOS 18 on iPad (the root view consumes it).
+    var shortcutsRequest: UUID?
     /// The drawer's 我的应用 row: the shell opens the page.
     var miniAppsRequest: UUID?
     /// A credential step to open (set through `requestCredentials`; the root view consumes it).

@@ -6,7 +6,7 @@ import WidgetKit
 
 /// A voice call outside the app: in the Dynamic Island a voice mark (vermilion while she speaks)
 /// and the call's length; expanded and on the lock screen, who is on the line, what the call is
-/// doing, and 静音 and 结束. A tap opens the call's screen (`dsh://call`).
+/// doing, and 静音 and 结束. A tap opens the call's screen (`fishpocket://call`).
 struct CallLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: CallActivityAttributes.self) { context in

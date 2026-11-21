@@ -99,6 +99,15 @@ struct Attachment: Hashable {
     /// Image blocks render inline; file blocks show as a name. A file ref has no
     /// media type (`{attachmentId, name, bytes}`), so the block's type decides.
     var isImage: Bool { !isFile && (mediaType?.hasPrefix("image/") ?? true) }
+
+    /// Where the engine keeps an uploaded file, byte for byte under its own name
+    /// (`DSH_HOME/attachments/v1/files/<aa>/<sha256>/<name>`, as `dsh-attachment-local`
+    /// lays it out): the path the model is given, which the file preview reads too.
+    var storedPath: String? {
+        guard isFile, let name, !name.isEmpty, !name.contains("/"),
+              let digest = attachmentId?.wholeMatch(of: #/sha256:([0-9a-f]{64})/#)?.output.1 else { return nil }
+        return "\(EnginePaths.home)/.dsh/attachments/v1/files/\(digest.prefix(2))/\(digest)/\(name)"
+    }
 }
 
 enum TimelineItem: Identifiable, Hashable {

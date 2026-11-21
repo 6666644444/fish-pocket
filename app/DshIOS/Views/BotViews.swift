@@ -399,7 +399,7 @@ struct BotHomeView: View {
         hits = Array(found.sorted { $0.time > $1.time }.prefix(30))
     }
 
-    /// Pinned first, then the main Bots in their order, then the most recently active. The list
+    /// Pinned first, then the most recently active. The list
     /// passes no words: what is typed on the search page filters that page only.
     private func bots(matching needle: String = "") -> [BotInfo] {
         let team = app.botTeam
@@ -474,8 +474,8 @@ struct BotHomeView: View {
     private var rows: some View {
         let team = app.botTeam
         let hiddenCount = team.bots.filter(\.hidden).count + team.rooms.filter(\.hidden).count
-        let botList = bots()
-        let roomList = rooms()
+        // One list, as a chat app's: a Bot's chat and a group side by side, in the same order.
+        let entries = (bots().map(BotListEntry.bot) + rooms().map(BotListEntry.room)).sorted(by: team.listOrder)
         if let reason = team.readOnly {
             Section {
                 Label("另一个 DSH 正在管理这支团队，这里暂时只能看。", systemImage: "lock")
@@ -483,40 +483,16 @@ struct BotHomeView: View {
                     .accessibilityHint(reason)
             }
         }
-        if !botList.isEmpty { Section {
-            ForEach(botList) { bot in
-                row(.bot(bot.id)) { botRow(bot) }
-                // Only a left swipe: a right swipe is the one that opens the sidebar.
-                .swipeActions(edge: .trailing) {
-                    if !team.isMain(bot) { hideButton(bot.id, hidden: bot.hidden) }
-                    pinButton(bot.id, pinned: bot.pinned)
+        if !entries.isEmpty { Section {
+            ForEach(entries) { entry in
+                switch entry {
+                case .bot(let bot): botListRow(bot)
+                case .room(let room): roomListRow(room)
                 }
-                .contextMenu {
-                    pinButton(bot.id, pinned: bot.pinned)
-                    // A main Bot takes the user's work, so it stays in sight.
-                    if !team.isMain(bot) { hideButton(bot.id, hidden: bot.hidden) }
-                    sessionButtons(bot.sessionId)
-                }
-                .listRowBackground(pickedFill(.bot(bot.id)))
             }
-        } header: { Text("Bot") } }
-        if !roomList.isEmpty {
-            Section {
-                ForEach(roomList) { room in
-                    row(.room(room.id)) { roomRow(room) }
-                    .swipeActions(edge: .trailing) {
-                        hideButton(room.id, hidden: room.hidden)
-                        pinButton(room.id, pinned: room.pinned)
-                    }
-                    .contextMenu {
-                        pinButton(room.id, pinned: room.pinned)
-                        hideButton(room.id, hidden: room.hidden)
-                        sessionButtons(room.sessionId)
-                    }
-                    .listRowBackground(pickedFill(.room(room.id)))
-                }
-            } header: { Text("群聊") }
         }
+        // No title over it, so no line over its first row either.
+        .listSectionSeparator(.hidden, edges: .top) }
         if hiddenCount > 0 {
             Section {
                 Button(showHidden ? String(localized: "收起已隐藏的") : String(localized: "显示 \(hiddenCount) 个已隐藏的")) {
@@ -526,6 +502,39 @@ struct BotHomeView: View {
                 .foregroundStyle(Palette.secondary)
             }
         }
+    }
+
+    /// A Bot's row: it can be pinned, and hidden unless it is a main Bot.
+    private func botListRow(_ bot: BotInfo) -> some View {
+        let team = app.botTeam
+        return row(.bot(bot.id)) { botRow(bot) }
+            // Only a left swipe: a right swipe is the one that opens the sidebar.
+            .swipeActions(edge: .trailing) {
+                if !team.isMain(bot) { hideButton(bot.id, hidden: bot.hidden) }
+                pinButton(bot.id, pinned: bot.pinned)
+            }
+            .contextMenu {
+                pinButton(bot.id, pinned: bot.pinned)
+                // A main Bot takes the user's work, so it stays in sight.
+                if !team.isMain(bot) { hideButton(bot.id, hidden: bot.hidden) }
+                sessionButtons(bot.sessionId)
+            }
+            .listRowBackground(pickedFill(.bot(bot.id)))
+    }
+
+    /// A group's row: it can be pinned and hidden.
+    private func roomListRow(_ room: RoomInfo) -> some View {
+        row(.room(room.id)) { roomRow(room) }
+            .swipeActions(edge: .trailing) {
+                hideButton(room.id, hidden: room.hidden)
+                pinButton(room.id, pinned: room.pinned)
+            }
+            .contextMenu {
+                pinButton(room.id, pinned: room.pinned)
+                hideButton(room.id, hidden: room.hidden)
+                sessionButtons(room.sessionId)
+            }
+            .listRowBackground(pickedFill(.room(room.id)))
     }
 
     private func botRow(_ bot: BotInfo) -> some View {

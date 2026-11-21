@@ -102,7 +102,7 @@ The engine runs on the phone, so the agent can use what your iPhone already has.
 
 **Calendar · Reminders · Alarms · Contacts · Health · Photos · Files · Music · Location · Maps · Smart Home · Mail & Messages**, plus on-device recognition such as image reading and transcription.
 
-You turn on each one yourself under Explore → Device capabilities (in the sidebar on an iPad before iOS 18), and the agent cannot use what is off. Once on, plugins you install can use it too, and there is a record of what was used.
+You turn on each one yourself under Explore → Connectors → Device capabilities (in the sidebar on an iPad before iOS 18), and the agent cannot use what is off. Once on, plugins you install can use it too, and there is a record of what was used.
 
 ## Phone control
 
