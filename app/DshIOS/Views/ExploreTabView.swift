@@ -7,7 +7,7 @@ import WatchConnectivity
 /// at its top. On an iPad before iOS 18 these are rows of the sidebar, Apple Watch and sharing
 /// stay in 设置, and 设置 is a sheet.
 struct ExploreTabView: View {
-    enum Route: Hashable { case plugins, connectors, capabilities, phoneControl, remote, watch, share, settings }
+    enum Route: Hashable { case plugins, connectors, capabilities, phoneControl, remote, watch, shortcuts, share, settings }
 
     @Environment(AppModel.self) private var app
     @Environment(\.scenePhase) private var scenePhase
@@ -43,6 +43,7 @@ struct ExploreTabView: View {
                     Text("更多设备")
                 }
                 Section {
+                    row(.shortcuts, "快捷指令", .shortcuts, "用 Siri 和自动化打开 Bot、Mini App")
                     // Opens over everything: the mark of the links that leave the page.
                     Button { Haptics.tap(); app.webRequest = UUID() } label: {
                         label("网页版", .web, "插件自带的界面在这里打开") {
@@ -71,6 +72,7 @@ struct ExploreTabView: View {
                 case .phoneControl: PhoneControlView().environment(\.systemLists, true)
                 case .remote: RemoteControlPage().environment(\.systemLists, true)
                 case .watch: WatchSetupPage()
+                case .shortcuts: ShortcutsGuidePage()
                 case .share: ShareAppPage()
                 case .settings: SettingsView(pushed: true)
                 }

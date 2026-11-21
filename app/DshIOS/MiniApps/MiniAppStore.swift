@@ -125,6 +125,8 @@ final class MiniAppStore {
         let images = Dictionary(uniqueKeysWithValues: apps.compactMap { app in app.iconImage.map { (app.id, $0) } })
         if MiniAppCatalog.write(apps.map(\.catalogEntry), images: images) {
             WidgetCenter.shared.reloadTimelines(ofKind: MiniAppCatalog.widgetKind)
+            // Siri's phrases that name a Mini App.
+            DshShortcuts.updateAppShortcutParameters()
         }
     }
 

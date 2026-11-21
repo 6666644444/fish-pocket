@@ -179,6 +179,16 @@ Agent 用的 `browser` 工具有哪些动作、各要什么参数、给模型看
 - 构建主 App 时不要给 `xcodebuild` 传 `-sdk iphonesimulator`：它会让内嵌的手表 App 也按 iOS 的 SDK 编译，直接失败。用 `-destination` 选平台就够了。
 - 手表 App 的 bundle ID 必须以主 App 的 bundle ID 开头，`WKCompanionAppBundleIdentifier` 要和主 App 的一致，改主 App 的 bundle ID 时一起改。
 
+## 快捷指令和 Siri
+
+App 给系统提供四个操作：新对话、打开 Bot、打开 Mini App、查看余额。用户装好 App 就能在「快捷指令」里看到，也能对 Siri 说，不用设置。
+
+- 操作在 `app/DshIOS/ShortcutIntents.swift`，「新对话」和「打开 Mini App」在 `app/Shared`（小组件和控制中心也用）。Siri 说法和「快捷指令」首页的格子在 `app/DshIOS/AppShortcuts.swift`，说法的译文在 `app/DshIOS/AppShortcuts.xcstrings`，`scripts/sync-strings.sh` 不管它，要手动补齐各语言；每句说法都必须带上 App 名。
+- Bot 和 Mini App 的列表来自 App Group 里 App 写好的文件（`Share/targets.json`、`mini-apps.json`），系统读它们不需要引擎。列表变了要调 `DshShortcuts.updateAppShortcutParameters()`，Siri 才认得新名字。
+- 「打开 Bot」「打开 Mini App」的参数必须是必填。改成选填后，系统在「快捷指令」首页就不再按 Bot、按 Mini App 展开格子。
+- iOS 26 及以前，新建自动化时那排 App 格子只列基础操作，选不了具体是哪个 Bot，所以要走「新建空白自动化」（iOS 26 叫「创建新快捷指令」）再搜「Bot」：iOS 18 起搜索结果直接列出每个 Bot，iOS 17 只有「打开 Bot」，加上后再点参数选。iOS 27 起自动化并进了普通快捷指令：先点「自动化」设触发条件，再搜「Bot」点选，返回即保存。这些步骤写在探索页的「快捷指令」教程里（`ShortcutsGuidePage`），按系统版本各一套。系统改了这套界面，或者新增、改名了操作，就去 iOS 17、18、26、27 的模拟器上照着走一遍，再改教程。
+- 模拟器上定时自动化不会真的触发，「到点打开」只能在真机上验证。
+
 ## 系统分享（分享扩展）
 
 别的 App 点「分享」选 Fish Pocket，内容进新对话、某个 Bot 或群聊的输入框，不自动发送。扩展是 `app/ShareExtension`（target `DshShare`），引擎不在扩展里，扩展什么都不发。

@@ -5665,6 +5665,74 @@
         }
       }
     },
+    "Siri 也能直接用，比如说「用 Fish Pocket 打开大肥鱼」。Bot 或 Mini App 改了名字，过一会儿 Siri 就认得新名字。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri works too, for example: “Open 大肥鱼 in Fish Pocket.” When a Bot or mini app is renamed, Siri picks up the new name after a little while."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri también sirve, por ejemplo: «Abre 大肥鱼 en Fish Pocket». Si cambias el nombre de un Bot o una miniapp, Siri lo reconoce al poco rato."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri でも使えます。たとえば「Fish Pocket で 大肥鱼 を開く」と話しかけます。Bot やミニアプリの名前を変えると、少しして Siri も新しい名前を覚えます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri로도 바로 쓸 수 있어요. 예를 들어 “Fish Pocket에서 大肥鱼 열기”라고 말해 보세요. Bot이나 미니 앱 이름을 바꾸면 잠시 후 Siri도 새 이름을 알아들어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri 也能直接用，比如說「用 Fish Pocket 打開大肥魚」。Bot 或 Mini App 改了名字，過一會兒 Siri 就認得新名字。"
+          }
+        }
+      }
+    },
+    "Siri 和自动化" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri and automations"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri y automatizaciones"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri とオートメーション"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri와 자동화"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri 和自動化"
+          }
+        }
+      }
+    },
     "TestFlight 版" : {
       "localizations" : {
         "en" : {
@@ -5838,6 +5906,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "一支常駐的 Bot 團隊：可以私訊，可以拉群組一起商量，也能時間到了自己開工。入口在側邊欄。"
+          }
+        }
+      }
+    },
+    "一步打开常用的地方" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Get where you go most in one step"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Llega en un paso a lo que más usas"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "よく使う場所をワンステップで"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자주 쓰는 곳을 한 번에 열기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一步打開常用的地方"
+          }
+        }
+      }
+    },
+    "不要点下面列表里的 Fish Pocket：那里选不了具体是哪个 Bot。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Don’t tap Fish Pocket in the list below: there you can’t choose which Bot."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No toques Fish Pocket en la lista de abajo: ahí no puedes elegir qué Bot."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下のリストの Fish Pocket はタップしないでください。そこではどの Bot かを選べません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아래 목록의 Fish Pocket은 탭하지 마세요. 거기서는 어떤 Bot인지 고를 수 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不要點下面列表裡的 Fish Pocket：那裡選不了具體是哪個 Bot。"
           }
         }
       }
@@ -6386,6 +6522,40 @@
         }
       }
     },
+    "全屏打开某个 Mini App。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens a mini app full screen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre una miniapp a pantalla completa."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ミニアプリを全画面で開きます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "미니 앱을 전체 화면으로 열어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全螢幕打開某個 Mini App。"
+          }
+        }
+      }
+    },
     "再做一个 Mini App…" : {
       "localizations" : {
         "en" : {
@@ -6586,6 +6756,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "分享錄影"
+          }
+        }
+      }
+    },
+    "列表里只写「打开 Bot」，点进去能看到选的是哪个。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The list only says “Open Bot”; open it to see which Bot you chose."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En la lista solo pone «Abrir Bot»; ábrela para ver qué Bot elegiste."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "リストには「Bot を開く」としか表示されません。開くと選んだ Bot を確認できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "목록에는 ‘Bot 열기’라고만 나와요. 눌러 보면 어떤 Bot을 골랐는지 볼 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列表裡只寫「打開 Bot」，點進去能看到選的是哪個。"
           }
         }
       }
@@ -6862,6 +7066,40 @@
         }
       }
     },
+    "在「快捷指令」里用 Fish Pocket 的操作，或者设成自动化，到点、到地方就打开某个 Bot 或 Mini App。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use Fish Pocket’s actions in Shortcuts, or set up an automation that opens a Bot or a mini app at a set time or place."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa las acciones de Fish Pocket en Atajos o crea una automatización que abra un Bot o una miniapp a una hora o en un lugar."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「ショートカット」で Fish Pocket のアクションを使ったり、オートメーションにして決まった時刻や場所で Bot やミニアプリを開いたりできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "단축어에서 Fish Pocket의 동작을 쓰거나, 자동화로 만들어 정한 시간이나 장소에서 Bot이나 미니 앱을 열 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在「捷徑」裡用 Fish Pocket 的動作，或者設成自動化，到點、到地方就打開某個 Bot 或 Mini App。"
+          }
+        }
+      }
+    },
     "在「我的手表」里往下滑" : {
       "localizations" : {
         "en" : {
@@ -6896,6 +7134,74 @@
         }
       }
     },
+    "在「资料库」的「自动化」里能找到它。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You’ll find it under Automations in the Library."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo encontrarás en «Automatizaciones», dentro de la Biblioteca."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「ライブラリ」の「オートメーション」にあります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‘보관함’의 ‘자동화’에서 찾을 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在「資料庫」的「自動化」裡能找到它。"
+          }
+        }
+      }
+    },
+    "在下方搜索框底下的那排标签里。比如选「特定时间」再设好时间，选「到达」要选好地点；没设好的话不会自动运行。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It’s in the row of tags under the search field at the bottom. For example, choose a time of day and set the time, or choose Arrive and pick the place. If it isn’t set, it won’t run on its own."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Está en la fila de etiquetas bajo el campo de búsqueda de abajo. Por ejemplo, elige una hora y ajústala, o elige «Llegar» y escoge el lugar. Si no lo configuras, no se ejecutará solo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下の検索フィールドの下に並ぶタグの中にあります。たとえば時刻を選んだら時刻を設定し、「到着」を選んだら場所を選びます。設定しないと自動では実行されません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아래 검색창 밑에 있는 태그 줄에 있어요. 예를 들어 특정 시간을 골랐다면 시간을 정하고, ‘도착’을 골랐다면 장소를 고르세요. 설정하지 않으면 자동으로 실행되지 않아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在下方搜尋欄位底下的那排標籤裡。比如選「特定時間」再設好時間，選「抵達」要選好地點；沒設好的話不會自動執行。"
+          }
+        }
+      }
+    },
     "在会话工作台的浏览器里打开网页、读内容、截图、点按钮和填表，还能带着登录状态发请求、读写 Cookie、下载和上传文件、给网页加常驻脚本，你可以在工作台里看着它操作。登录过的网站会一直记住，和 Safari 分开；智能体读得到这些网站的登录凭据" : {
       "localizations" : {
         "en" : {
@@ -6926,6 +7232,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在對話工作台的瀏覽器裡打開網頁、讀內容、截圖、點按鈕和填表單，還能帶著登入狀態傳送請求、讀寫 Cookie、下載和上傳檔案、給網頁加常駐指令碼，你可以在工作台裡看著它操作。登入過的網站會一直記住，和 Safari 分開；AI 代理讀得到這些網站的登入憑證"
+          }
+        }
+      }
+    },
+    "在屏幕底部。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It’s at the bottom of the screen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Está en la parte inferior de la pantalla."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "画面の下部にあります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "화면 아래쪽에 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在螢幕底部。"
           }
         }
       }
@@ -7576,6 +7916,40 @@
         }
       }
     },
+    "快捷指令" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shortcuts"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Atajos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ショートカット"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "단축어"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "捷徑"
+          }
+        }
+      }
+    },
     "怎么装" : {
       "localizations" : {
         "en" : {
@@ -7606,6 +7980,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "怎麼安裝"
+          }
+        }
+      }
+    },
+    "想打开 Mini App 就搜「Mini App」。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For a mini app, search for “Mini App.”"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para una miniapp, busca «Mini App»."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ミニアプリを開くなら「Mini App」で検索します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "미니 앱을 열려면 ‘Mini App’을 검색하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "想打開 Mini App 就搜尋「Mini App」。"
           }
         }
       }
@@ -7742,6 +8150,318 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "截圖會傳給模型服務商"
+          }
+        }
+      }
+    },
+    "打开 Bot" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Bot"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir Bot"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot を開く"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot 열기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打開 Bot"
+          }
+        }
+      }
+    },
+    "打开 Fish Pocket 的余额页面。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens the balance page in Fish Pocket."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre la página de saldo de Fish Pocket."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket の残高ページを開きます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket의 잔액 페이지를 열어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打開 Fish Pocket 的餘額頁面。"
+          }
+        }
+      }
+    },
+    "打开${bot}" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open ${bot}"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir ${bot}"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "${bot}を開く"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "${bot} 열기"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开${bot}"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打開${bot}"
+          }
+        }
+      }
+    },
+    "打开「快捷指令」" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Shortcuts"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir Atajos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「ショートカット」を開く"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "단축어 열기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打開「捷徑」"
+          }
+        }
+      }
+    },
+    "打开「快捷指令」，切到「自动化」" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Shortcuts and go to Automation"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre Atajos y ve a «Automatización»"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「ショートカット」を開き、「オートメーション」に切り替える"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "단축어를 열고 ‘자동화’로 이동하세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打開「捷徑」，切到「自動化」"
+          }
+        }
+      }
+    },
+    "打开「快捷指令」，点下面的 ＋" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Shortcuts and tap ＋ at the bottom"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre Atajos y toca ＋ abajo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「ショートカット」を開き、下の ＋ をタップ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "단축어를 열고 아래의 ＋를 탭하세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打開「捷徑」，點一下下方的 ＋"
+          }
+        }
+      }
+    },
+    "打开一个新对话，可以带上一段草稿。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens a new conversation, optionally with a draft."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre una conversación nueva, con un borrador si quieres."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい会話を開きます。下書きを入れておくこともできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새 대화를 열어요. 초안을 함께 넣을 수도 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打開一個新對話，可以帶上一段草稿。"
+          }
+        }
+      }
+    },
+    "打开余额页面。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens the balance page."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre la página de saldo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "残高ページを開きます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "잔액 페이지를 열어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打開餘額頁面。"
+          }
+        }
+      }
+    },
+    "打开和一个 Bot 的聊天。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens your chat with a Bot."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre tu chat con un Bot."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot とのチャットを開きます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot과의 채팅을 열어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打開和一個 Bot 的聊天。"
           }
         }
       }
@@ -8188,6 +8908,40 @@
         }
       }
     },
+    "找不到这个 Bot 了" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That Bot is gone"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ese Bot ya no está"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Bot が見つかりません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Bot을 찾을 수 없습니다"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "找不到這個 Bot 了"
+          }
+        }
+      }
+    },
     "找到「可用 App」一栏里的 Fish Pocket。" : {
       "localizations" : {
         "en" : {
@@ -8460,6 +9214,108 @@
         }
       }
     },
+    "搜索「Bot」，点「打开 Bot」" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search for “Bot” and tap Open Bot"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Busca «Bot» y toca «Abrir Bot»"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「Bot」で検索し、「Bot を開く」をタップ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‘Bot’을 검색하고 ‘Bot 열기’를 탭하세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜尋「Bot」，點一下「打開 Bot」"
+          }
+        }
+      }
+    },
+    "搜索「Bot」，点你要打开的 Bot" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search for “Bot” and tap the Bot you want"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Busca «Bot» y toca el Bot que quieras"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「Bot」で検索し、開きたい Bot をタップ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‘Bot’을 검색하고 열고 싶은 Bot을 탭하세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜尋「Bot」，點一下你要打開的 Bot"
+          }
+        }
+      }
+    },
+    "搜索结果里直接列出了你的每个 Bot。想打开 Mini App 就搜「Mini App」。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each of your Bots is listed right in the results. For a mini app, search for “Mini App.”"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada uno de tus Bots aparece directamente en los resultados. Para una miniapp, busca «Mini App»."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "検索結果にあなたの Bot がそれぞれ表示されます。ミニアプリを開くなら「Mini App」で検索します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "검색 결과에 내 Bot이 하나씩 바로 나와요. 미니 앱을 열려면 ‘Mini App’을 검색하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "搜尋結果裡直接列出了你的每個 Bot。想打開 Mini App 就搜尋「Mini App」。"
+          }
+        }
+      }
+    },
     "播放操作录像" : {
       "localizations" : {
         "en" : {
@@ -8626,6 +9482,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "新對話選「創造模式」，請 Agent 幫你寫外掛：加入新工具、串接外部服務，或把工具和提示詞組合成一個自己的模式。"
+          }
+        }
+      }
+    },
+    "新建一个快捷指令。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This creates a new shortcut."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Así creas un atajo nuevo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しいショートカットを作成します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새 단축어를 만들어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增一個捷徑。"
+          }
+        }
+      }
+    },
+    "新建自动化，选什么时候运行" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create an automation and choose when it runs"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea una automatización y elige cuándo se ejecuta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オートメーションを作成し、いつ実行するかを選ぶ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자동화를 만들고 언제 실행할지 고르세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增自動化，選什麼時候執行"
           }
         }
       }
@@ -9546,6 +10470,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "放開取消"
+          }
+        }
+      }
+    },
+    "查看余额" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check Balance"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver saldo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "残高を確認"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "잔액 확인"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看餘額"
           }
         }
       }
@@ -10502,6 +11460,108 @@
         }
       }
     },
+    "点「创建新快捷指令」" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap Create New Shortcut"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca «Crear atajo nuevo»"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「新規ショートカットを作成」をタップ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‘새로운 단축어 생성’을 탭하세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點一下「建立新捷徑」"
+          }
+        }
+      }
+    },
+    "点「新建空白自动化」" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap New Blank Automation"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca «Nueva automatización vacía»"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「新規の空のオートメーション」をタップ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‘새로운 빈 자동화’를 탭하세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點一下「新增空白自動化」"
+          }
+        }
+      }
+    },
+    "点「自动化」，选什么时候运行" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap Automation and choose when it runs"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca «Automatización» y elige cuándo se ejecuta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「オートメーション」をタップして、いつ実行するかを選ぶ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‘자동화’를 탭하고 언제 실행할지 고르세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點一下「自動化」，選什麼時候執行"
+          }
+        }
+      }
+    },
     "点击" : {
       "localizations" : {
         "en" : {
@@ -10536,6 +11596,176 @@
         }
       }
     },
+    "点右上角的 ✓ 存好" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap ✓ in the top-right corner to save"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca ✓ arriba a la derecha para guardarlo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右上の ✓ をタップして保存"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오른쪽 위의 ✓를 탭해 저장하세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點一下右上角的 ✓ 存好"
+          }
+        }
+      }
+    },
+    "点右上角的 ＋（还没有自动化时点页面中间的蓝色按钮），选一个条件，比如「特定时间」。想到点直接打开，在这一页最下面选「立即运行」，然后点「下一步」。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap ＋ in the top-right corner (or the blue button in the middle if you have no automations yet) and pick a trigger, such as a time of day. To have it open on its own, choose Run Immediately at the bottom of that page, then tap Next."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca ＋ arriba a la derecha (o el botón azul del centro si aún no tienes automatizaciones) y elige un desencadenante, como una hora del día. Para que se abra solo, elige «Ejecutar inmediatamente» al final de esa página y toca «Siguiente»."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右上の ＋（まだオートメーションがないときは画面中央の青いボタン）をタップし、時刻などの条件を選びます。時間になったらそのまま開くようにするには、そのページの一番下で「すぐに実行」を選び、「次へ」をタップします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오른쪽 위의 ＋(아직 자동화가 없으면 화면 가운데의 파란 버튼)를 탭하고 특정 시간 같은 조건을 고르세요. 때가 되면 바로 열리게 하려면 그 페이지 맨 아래에서 ‘즉시 실행’을 고른 뒤 ‘다음’을 탭하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點一下右上角的 ＋（還沒有自動化時點畫面中間的藍色按鈕），選一個條件，比如「特定時間」。想到點直接打開，在這一頁最下面選「立即執行」，然後點一下「下一步」。"
+          }
+        }
+      }
+    },
+    "点右上角的「完成」" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap Done in the top-right corner"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca «OK» arriba a la derecha"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "右上の「完了」をタップ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오른쪽 위의 ‘완료’를 탭하세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點一下右上角的「完成」"
+          }
+        }
+      }
+    },
+    "点左上角返回，就存好了" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap Back in the top-left corner to save"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca Atrás arriba a la izquierda para guardarlo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左上の戻るボタンをタップすれば保存されます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "왼쪽 위의 뒤로를 탭하면 저장돼요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點一下左上角返回，就存好了"
+          }
+        }
+      }
+    },
+    "点浅蓝色的「Bot」，选一个" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap the light blue “Bot” and choose one"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca «Bot» en azul claro y elige uno"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "薄い青の「Bot」をタップして 1 つ選ぶ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연한 파란색 ‘Bot’을 탭하고 하나를 고르세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點一下淺藍色的「Bot」，選一個"
+          }
+        }
+      }
+    },
     "生成视频并分享" : {
       "localizations" : {
         "en" : {
@@ -10566,6 +11796,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "產生影片並分享"
+          }
+        }
+      }
+    },
+    "用 Siri 和自动化打开 Bot、Mini App" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Bots and mini apps with Siri and automations"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre Bots y miniapps con Siri y automatizaciones"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri やオートメーションで Bot やミニアプリを開く"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri와 자동화로 Bot, 미니 앱 열기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用 Siri 和自動化打開 Bot、Mini App"
           }
         }
       }
@@ -10674,6 +11938,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "直接貼上圖片"
+          }
+        }
+      }
+    },
+    "直接进入和某个 Bot 的聊天。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Goes straight to your chat with a Bot."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Va directo a tu chat con un Bot."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot とのチャットに直接入ります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot과의 채팅으로 바로 들어가요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直接進入和某個 Bot 的聊天。"
           }
         }
       }
@@ -11888,6 +13186,40 @@
         }
       }
     },
+    "设成自动化" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make It an Automation"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crear una automatización"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オートメーションにする"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "자동화로 만들기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設成自動化"
+          }
+        }
+      }
+    },
     "设置 → App 图标里可以把主屏幕上的图标换成别的颜色或贴纸版的大肥鱼，也可以换成不带人物的鲸鱼图标，或者只写着 Fish Pocket 的字标。" : {
       "localizations" : {
         "en" : {
@@ -12360,6 +13692,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "連接外部服務要等內建的 Bot 外掛啟動之後。"
+          }
+        }
+      }
+    },
+    "选好后点右上角的「完成」。列表里只写「打开 Bot」，点进去能看到选的是哪个。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Then tap Done in the top-right corner. The list only says “Open Bot”; open it to see which Bot you chose."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Después toca «OK» arriba a la derecha. En la lista solo pone «Abrir Bot»; ábrela para ver qué Bot elegiste."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選んだら右上の「完了」をタップします。リストには「Bot を開く」としか表示されません。開くと選んだ Bot を確認できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "고른 뒤 오른쪽 위의 ‘완료’를 탭하세요. 목록에는 ‘Bot 열기’라고만 나와요. 눌러 보면 어떤 Bot을 골랐는지 볼 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選好後點一下右上角的「完成」。列表裡只寫「打開 Bot」，點進去能看到選的是哪個。"
           }
         }
       }

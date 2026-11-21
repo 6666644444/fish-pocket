@@ -7,7 +7,7 @@ import SwiftUI
 ///
 /// Every icon is drawn on a 38-point grid and scaled to `size`.
 struct ExploreGlyph: View {
-    enum Kind { case plugins, connectors, capabilities, phoneControl, remote, watch, web, share }
+    enum Kind { case plugins, connectors, capabilities, phoneControl, remote, watch, shortcuts, web, share }
 
     let kind: Kind
     var size: CGFloat = 38
@@ -23,6 +23,7 @@ struct ExploreGlyph: View {
             case .phoneControl: pen.phoneControl()
             case .remote: pen.remote()
             case .watch: pen.watch()
+            case .shortcuts: pen.shortcuts()
             case .web: pen.web()
             case .share: pen.share()
             }
@@ -110,6 +111,16 @@ private struct Pen {
         stroke(box(11, 11, 16, 16, 5))
         stroke(lines([(14.5, 11), (15.5, 5.5), (22.5, 5.5), (23.5, 11)], [(14.5, 27), (15.5, 32.5), (22.5, 32.5), (23.5, 27)]))
         fill(dot(19, 19, 3.5))
+    }
+
+    /// A tile of the Shortcuts app, and the spark that runs it.
+    mutating func shortcuts() {
+        stroke(box(5, 10, 22, 22, 6))
+        stroke(lines([(10.5, 19), (21.5, 19)], [(10.5, 24.5), (17, 24.5)]))
+        var bolt = lines([(28.5, 4), (22.5, 14.5), (27.5, 14.5), (25, 22.5), (32.5, 11.5), (27.5, 11.5), (30.5, 4)])
+        bolt.closeSubpath()
+        fill(bolt)
+        context.stroke(bolt, with: spot, style: StrokeStyle(lineWidth: 1, lineJoin: .round))
     }
 
     /// A browser window with a page in it.

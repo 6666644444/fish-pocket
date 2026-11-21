@@ -12,7 +12,7 @@ struct MainView: View {
     /// The phone's tabs.
     enum HomeTab: Hashable { case sessions, bot, apps, explore }
 
-    enum Sheet: String, Identifiable { case settings, plugins, store, schedules, signIn, cordis, share, watch, capabilities, connectors, phoneControl, remote, fishPocket, miniApps, imageGen; var id: String { rawValue } }
+    enum Sheet: String, Identifiable { case settings, plugins, store, schedules, signIn, cordis, share, watch, capabilities, connectors, phoneControl, remote, fishPocket, deepSeekAccount, miniApps, imageGen, shortcuts; var id: String { rawValue } }
 
     @Environment(AppModel.self) private var app
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -315,6 +315,12 @@ struct MainView: View {
             app.miniAppsRequest = nil
             if usesTabs { tab = .apps } else { sheet = .miniApps }
         }
+        // The sidebar's 快捷指令 row (an iPad before iOS 18); elsewhere the page is under 探索.
+        .onChange(of: app.shortcutsRequest) { _, token in
+            guard token != nil, scenePhase != .background else { return }
+            app.shortcutsRequest = nil
+            sheet = .shortcuts
+        }
         .task(id: canAnnounce) {
             guard canAnnounce else { return }
             if let actions = NodeEngine.shared.takeRecoveryReport() {
@@ -488,7 +494,7 @@ struct MainView: View {
     }
 
     #if DEBUG
-    /// Screenshots and UI checks: `simctl launch … -dshOpen drawer|workbench|approval|question|timeline|settings|imagegen|plugins|store|schedules|signin|support|share|watch|connectors|whatsnew|capabilities|phonecontrol|remote|start|fishpocket|topup|miniapps|miniapp`.
+    /// Screenshots and UI checks: `simctl launch … -dshOpen drawer|workbench|approval|question|timeline|settings|imagegen|plugins|store|schedules|signin|support|share|watch|connectors|whatsnew|capabilities|phonecontrol|shortcuts|remote|start|fishpocket|topup|miniapps|miniapp`.
     /// `miniapp` opens the tool `-dshApp <id>` names.
     /// The conversation takes `workbench|filesearch|approval|question|timeline` itself; `filesearch` is the workbench's
     /// file search, with `-dshQuery <text>` to start it on a search.
@@ -508,6 +514,7 @@ struct MainView: View {
         case "whatsnew": whatsNew = WhatsNew.current
         case "capabilities": sheet = .capabilities
         case "phonecontrol": sheet = .phoneControl
+        case "shortcuts": if usesTabs { tab = .explore; explorePath = [.shortcuts] } else { sheet = .shortcuts }
         case "remote": sheet = .remote
         case "start": Task { await openCredentials(.start) }
         case "fishpocket": sheet = .fishPocket
@@ -538,9 +545,12 @@ struct MainView: View {
         case .phoneControl: SheetStack { PhoneControlView() }.environment(\.systemLists, true)
         case .remote: SheetStack { RemoteControlPage() }.environment(\.systemLists, true)
         case .fishPocket: SheetStack { FishPocketPage() }
+        // 设置 → DeepSeek 账号, opened from Shortcuts' 查看余额.
+        case .deepSeekAccount: SheetStack { AccountPage() }.settingsStyle()
         case .miniApps: SheetStack { MiniAppsPage() }
         // 设置 → 生图, opened straight from a failed image in a conversation.
         case .imageGen: SheetStack { ImageGenSettingsPage() }.settingsStyle()
+        case .shortcuts: SheetStack { ShortcutsGuidePage() }
         }
     }
 
@@ -1203,7 +1213,35 @@ struct MainView: View {
             MiniAppPresenter.open(id)
         case .web:
             webOpen = true
+        case .bot(let id):
+            // A cold launch: the team arrives a moment after the engine.
+            let deadline = ContinuousClock.now + .seconds(10)
+            while app.botTeam.bot(id) == nil, ContinuousClock.now < deadline {
+                try? await Task.sleep(for: .milliseconds(100))
+            }
+            if app.botTeam.bot(id) != nil {
+                app.botTeam.openRequest = BotOpenRequest(route: .bot(id))
+            } else {
+                app.botTeam.openRequest = BotOpenRequest(route: nil)
+                app.showToast(String(localized: "找不到这个 Bot 了"), tone: .warning)
+            }
+        case .balance:
+            sheet = await balancePage()
         }
+    }
+
+    /// Where 查看余额 goes: the Fish Pocket account when signed in to it, else the DeepSeek account
+    /// when signed in to that; with neither, Fish Pocket's page (it signs in and sells credits)
+    /// when this build has the service.
+    private func balancePage() async -> Sheet {
+        guard app.fishPocket.available else { return .deepSeekAccount }
+        if app.fishPocket.signedIn { return .fishPocket }
+        // A cold launch: the account's state arrives a moment after the engine.
+        let deadline = ContinuousClock.now + .seconds(3)
+        while app.account.view == nil, ContinuousClock.now < deadline {
+            try? await Task.sleep(for: .milliseconds(100))
+        }
+        return app.account.signedIn ? .deepSeekAccount : .fishPocket
     }
 
     /// What another app shared (the share extension): into the composer of the Bot, the group or
