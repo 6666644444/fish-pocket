@@ -2,7 +2,7 @@ import Foundation
 
 /// What other apps share to Fish Pocket, on its way from the share extension (app/ShareExtension)
 /// to a composer. The extension copies what it was given into a folder of the App Group
-/// container, writes where it goes, and opens `dsh://share/<id>`; the app takes the folder and
+/// container, writes where it goes, and opens `fishpocket://share/<id>`; the app takes the folder and
 /// puts its text and files in that composer, where they wait to be sent.
 ///
 /// A delivery the link did not bring over (the system would not open the app) is taken the

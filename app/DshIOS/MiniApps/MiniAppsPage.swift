@@ -8,6 +8,7 @@ import SwiftUI
 struct MiniAppsPage: View {
     @State private var store = MiniAppStore.shared
     @State private var deleting: MiniApp?
+    @State private var addingToHome: AddToHomeScreenSheet.Target?
     /// The page's width (the grid's columns and spacing follow from it) and the height it shows
     /// between its bars (the note goes to the foot of that).
     @State private var page: CGSize = .zero
@@ -57,7 +58,6 @@ struct MiniAppsPage: View {
         .simultaneousGesture(TapGesture().onEnded {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { dismissKeyboard() }
         })
-        .refreshable { store.refresh() }
         .background(Palette.background)
         .tabBarEdgeSoftened()
         // The ideas are for a first one; once there is one of their own, the bar alone.
@@ -66,6 +66,7 @@ struct MiniAppsPage: View {
         .toolbarTitleDisplayMode(.inline)
         .onAppear { store.refresh() }
         .onChange(of: scenePhase) { _, phase in if phase == .active { store.refresh() } }
+        .sheet(item: $addingToHome) { AddToHomeScreenSheet(target: $0) }
         .confirmationDialog("删除「\(deleting?.name ?? "")」？", isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }), titleVisibility: .visible) {
             Button("删除 Mini App", role: .destructive) {
                 guard let app = deleting else { return }
@@ -125,7 +126,7 @@ struct MiniAppsPage: View {
     private func menu(_ app: MiniApp) -> some View {
         Button("打开", systemImage: "arrow.up.forward.app") { open(app) }
         Button("让 Agent 修改", systemImage: "wand.and.stars") { ask(MiniAppPresenter.editDraft(app)) }
-        Button("添加到主屏幕", systemImage: "plus.square.on.square") { MiniAppHomeScreen.add(app) }
+        Button("添加到主屏幕", systemImage: "plus.square.on.square") { addingToHome = .miniApp(app) }
         Divider()
         Button("删除", systemImage: "trash", role: .destructive) { deleting = app }
     }

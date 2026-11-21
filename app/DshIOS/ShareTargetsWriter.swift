@@ -93,6 +93,8 @@ final class ShareTargetsWriter {
             .filter { !listedNow.contains($0) })
         written = targets
         targets.write()
+        // Siri's phrases that name a Bot (Shortcuts' 打开 Bot).
+        DshShortcuts.updateAppShortcutParameters()
     }
 
     /// What a Bot's avatar is drawn from: when it changes, the picture is drawn again.

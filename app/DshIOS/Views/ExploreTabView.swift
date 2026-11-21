@@ -3,11 +3,11 @@ import WatchConnectivity
 
 /// The 探索 tab: 设置 first, then Mini Apps, then what the agent can be given beyond a
 /// conversation of its own — plugins, connectors (with this device's capabilities), phone control,
-/// the computers of remote control — then Apple Watch, the web version and sharing the app. On an
-/// iPad before iOS 18 these are rows of the sidebar, Apple Watch and sharing stay in 设置, and
-/// Mini Apps and 设置 are sheets.
+/// the computers of remote control — then Apple Watch, Shortcuts, the web version and sharing the
+/// app. On an iPad before iOS 18 these are rows of the sidebar, Apple Watch and sharing stay in
+/// 设置, and Mini Apps and 设置 are sheets.
 struct ExploreTabView: View {
-    enum Route: Hashable { case miniApps, plugins, connectors, phoneControl, remote, watch, share, settings }
+    enum Route: Hashable { case miniApps, plugins, connectors, phoneControl, remote, watch, shortcuts, share, settings }
 
     @Environment(AppModel.self) private var app
     @Environment(\.scenePhase) private var scenePhase
@@ -57,6 +57,7 @@ struct ExploreTabView: View {
                         row(.watch, Text("Apple Watch"), .watch, "在手腕上看会话、做确认",
                             status: watch == .installed ? String(localized: "已安装") : nil)
                     }
+                    row(.shortcuts, Text("快捷指令"), .shortcuts, "用 Siri 和自动化打开 Bot、Mini App")
                     // Opens over everything: the mark of the links that leave the page.
                     Button { Haptics.tap(); app.webRequest = UUID() } label: {
                         label(Text("网页版"), .web, "插件自带的界面在这里打开") {
@@ -79,6 +80,7 @@ struct ExploreTabView: View {
                 case .phoneControl: PhoneControlView().environment(\.systemLists, true)
                 case .remote: RemoteControlPage().environment(\.systemLists, true)
                 case .watch: WatchSetupPage()
+                case .shortcuts: ShortcutsGuidePage()
                 case .share: ShareAppPage()
                 case .settings: SettingsView(pushed: true)
                 }

@@ -153,3 +153,113 @@ enum ImagePaste {
         class_replaceMethod(cls, selector, imp_implementationWithBlock(block), method_getTypeEncoding(method))
     }
 }
+
+/// A hardware keyboard's Return sends, as it does on the web: Shift- or Option-Return adds a
+/// line, and a Return that ends an input method's composition (pinyin's letters, kana) stays
+/// the input method's. The on-screen keyboard's return key types a line break as before: it
+/// never comes as a key press. ⌘-Return is left to the send button's own shortcut.
+extension View {
+    func returnKeySends(focused: Bool, _ send: @escaping () -> Void) -> some View {
+        modifier(ReturnKeySends(focused: focused, send: send))
+    }
+}
+
+private struct ReturnKeySends: ViewModifier {
+    let focused: Bool
+    let send: () -> Void
+    /// The text view keeps this box, and every update puts the newest action in it: the key acts
+    /// on the draft and panel as they are when it is pressed, not as they were when focus landed.
+    @State private var box = ReturnKey.Action()
+
+    func body(content: Content) -> some View {
+        box.run = send
+        return content.onChange(of: focused, initial: true) { _, now in
+            guard now else { return }
+            // As for pasting: the text view is first responder one turn after focus lands.
+            DispatchQueue.main.async {
+                guard let view = UIResponder.focusedTextView else { return }
+                ReturnKey.attach(to: view, action: box)
+            }
+        }
+    }
+}
+
+/// Left to SwiftUI, a hardware Return ends editing: the keyboard folds and nothing is sent, and
+/// its key-press handler sees the key without keeping it from the text view. Taken where the text
+/// view receives the press, the key never reaches it. Patched on SwiftUI's private class like the
+/// paste above; text views without a target keep the class's own handling.
+enum ReturnKey {
+    final class Action {
+        var run: () -> Void = {}
+    }
+
+    private final class Target {
+        let action: Action
+        /// Presses whose start went to the action: their end is not the text view's either.
+        var taken: Set<ObjectIdentifier> = []
+        /// Presses that ended a composition: their end goes where their start went.
+        var composing: Set<ObjectIdentifier> = []
+        init(action: Action) { self.action = action }
+    }
+
+    nonisolated(unsafe) private static var targetKey: UInt8 = 0
+    nonisolated(unsafe) private static var patched: Set<ObjectIdentifier> = []
+
+    @MainActor
+    static func attach(to view: UITextView, action: Action) {
+        objc_setAssociatedObject(view, &targetKey, Target(action: action), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        let cls: AnyClass? = object_getClass(view)
+        guard let cls, patched.insert(ObjectIdentifier(cls)).inserted else { return }
+        patch(cls, #selector(UIResponder.pressesBegan(_:with:))) { this, presses, plain in
+            guard let target = objc_getAssociatedObject(this, &targetKey) as? Target,
+                  let textView = this as? UITextView,
+                  presses.count == 1, let press = presses.anyObject() as? UIPress,
+                  let key = press.key, key.keyCode == .keyboardReturnOrEnter || key.keyCode == .keypadEnter else { return false }
+            if textView.markedTextRange != nil {
+                // Return during a composition is the input method's: pinyin puts the letters in,
+                // as on a Mac. SwiftUI's own handling would take it as a submit, end editing and
+                // drop the composition, so it goes where a plain text view (Messages) sends it.
+                plain()
+                target.composing.insert(ObjectIdentifier(press))
+                return true
+            }
+            let held = key.modifierFlags.intersection([.shift, .alternate, .command, .control])
+            if held.isEmpty {
+                target.action.run()
+            } else if held.isSubset(of: [.shift, .alternate]) {
+                // What the on-screen return key does.
+                textView.insertText("\n")
+            } else {
+                return false
+            }
+            target.taken.insert(ObjectIdentifier(press))
+            return true
+        }
+        for selector in [#selector(UIResponder.pressesEnded(_:with:)), #selector(UIResponder.pressesCancelled(_:with:))] {
+            patch(cls, selector) { this, presses, plain in
+                guard let target = objc_getAssociatedObject(this, &targetKey) as? Target,
+                      presses.count == 1, let press = presses.anyObject() as? UIPress else { return false }
+                if target.composing.remove(ObjectIdentifier(press)) != nil {
+                    plain()
+                    return true
+                }
+                return target.taken.remove(ObjectIdentifier(press)) != nil
+            }
+        }
+    }
+
+    /// `take` answers whether the presses are dealt with; otherwise the class's own handling runs.
+    /// It may instead hand them, once, to `UITextView`'s own handling, the one SwiftUI's overrides,
+    /// through the closure it is given.
+    private static func patch(_ cls: AnyClass, _ selector: Selector, take: @escaping (AnyObject, NSSet, () -> Void) -> Bool) {
+        typealias Presses = @convention(c) (AnyObject, Selector, NSSet, UIPressesEvent?) -> Void
+        guard let method = class_getInstanceMethod(cls, selector),
+              let baseMethod = class_getInstanceMethod(UITextView.self, selector) else { return }
+        let original = unsafeBitCast(method_getImplementation(method), to: Presses.self)
+        let plain = unsafeBitCast(method_getImplementation(baseMethod), to: Presses.self)
+        let block: @convention(block) (AnyObject, NSSet, UIPressesEvent?) -> Void = { this, presses, event in
+            if !take(this, presses, { plain(this, selector, presses, event) }) { original(this, selector, presses, event) }
+        }
+        class_replaceMethod(cls, selector, imp_implementationWithBlock(block), method_getTypeEncoding(method))
+    }
+}

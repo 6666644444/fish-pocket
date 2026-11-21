@@ -65,6 +65,7 @@ struct MiniAppScreen: View {
     @State private var page = MiniAppPage()
     /// The published copy is in place (made now the first time, or after the agent changed it).
     @State private var ready = false
+    @State private var addingToHome = false
 
     var body: some View {
         NavigationStack {
@@ -101,7 +102,7 @@ struct MiniAppScreen: View {
                         Menu {
                             Button("重新载入", systemImage: "arrow.clockwise") { page.reload() }
                             Button("让 Agent 修改", systemImage: "wand.and.stars") { MiniAppPresenter.askAgent(MiniAppPresenter.editDraft(app)) }
-                            Button("添加到主屏幕", systemImage: "plus.square.on.square") { MiniAppHomeScreen.add(app) }
+                            Button("添加到主屏幕", systemImage: "plus.square.on.square") { addingToHome = true }
                         } label: {
                             Image(systemName: "ellipsis")
                         }
@@ -111,6 +112,7 @@ struct MiniAppScreen: View {
                     }
                 }
         }
+        .sheet(isPresented: $addingToHome) { AddToHomeScreenSheet(target: .miniApp(app)) }
     }
 
     private static var underBar: Bool {
