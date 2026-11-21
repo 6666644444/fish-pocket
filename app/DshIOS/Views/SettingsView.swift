@@ -4,7 +4,7 @@ import WatchConnectivity
 
 /// Settings: only what people come here for (账号, 模型, 访问模式, 插件, 自动化, 后台运行: 静音音频,
 /// 任务续跑, 小组件), then the rarely touched 外观, App 图标 and 语言. Developer pages sit behind 高级, versions and
-/// engine status behind 关于. 本机能力 (under 连接器) and 远程控制 are on the 探索 tab (in the sidebar on an iPad before iOS 18), not here.
+/// engine status behind 关于, and 已归档会话 on its own below them. 本机能力 (under 连接器) and 远程控制 are on the 探索 tab (in the sidebar on an iPad before iOS 18), not here.
 /// 分享 Fish Pocket and Apple Watch open the list (pushed from the 探索 tab they are on that page instead); the star, rating, website, source, feedback and author links,
 /// then the WeChat group's QR code and the Discord server, close it.
 /// The engine card shows here only while the engine is not running. Every page reads the shared
@@ -204,6 +204,14 @@ private struct SettingsList: View {
             Section {
                 NavigationLink { AdvancedSettingsPage() } label: { row("高级", "wrench.and.screwdriver") }
                 NavigationLink { AboutPage(engineVersion: engineVersion) } label: { row("关于", "info.circle", aboutValue) }
+            }
+
+            // Out of the sessions list: a tap there is to open a conversation, and an archived one does not open.
+            Section {
+                NavigationLink { DrawerView.archive() } label: {
+                    let count = DrawerView.archivedCount(app)
+                    row("已归档会话", "archivebox", count > 0 ? "\(count)" : "")
+                }
             }
 
             Section {
