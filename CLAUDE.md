@@ -130,6 +130,15 @@
 
 写法上保持现在的风格：英文、短句、先说能不能用再说替代办法；「Commands that exist」之外的命令都会被当成不存在，所以新增命令一定要列进去。
 
+## 回复里的公式
+
+公式先用 SwiftMath 排（同步，`Views/MathFormula.swift`），它排不了的交给 KaTeX（`Views/MathKaTeX.swift`）：带中文的、`\xrightarrow`、公式中间的 `\boxed`、`\overset`、`\underbrace` 等等。网页版所有公式都用 KaTeX，所以原生用同一个版本，排出来和网页版一样。
+
+- KaTeX 在一个不显示的网页里跑（`Math/MathPage.html`），每条公式由 WebKit 画成 PDF 再转成图，按源码和字号缓存。第一次出现时要等一下，这期间显示源码。
+- 行内公式按 KaTeX 允许断行的位置（关系符、运算符之后）切成几段图，段间插零宽空格，长公式才能像网页版一样折行。
+- 公式图平时按文字颜色染色显示。带自己颜色的（`\color`、`\colorbox`，以及 KaTeX 标红的不支持命令）一律交给 KaTeX，按原色显示，深色模式另画一份；彩色底框里没指定颜色的字，按底色深浅选深色或浅色墨水。
+- KaTeX 的文件在 `Math/KaTeX`，由 `scripts/build-katex.sh` 生成并提交。**升级 `@deepseek-ai/dsh` 后看一眼网页版用的 KaTeX 版本**（`dsh-web-frontend/dist/assets/vendor-*.js` 里的 `"0.x.y"`），变了就改脚本里的版本重跑，更新 `THIRD_PARTY_NOTICES.md`，再用 `-dshOpen timeline` 看一遍样例里的公式，iOS 17 也看（字体没加载完时 iOS 17 会漏画字符）。
+
 ## 浏览器能力
 
 Agent 用的 `browser` 工具有哪些动作、各要什么参数、给模型看的说明，全写在 `app/DshIOS/Browser/BrowserCatalog.swift` 一处：引擎按它生成工具（`describe`），原生层按它放行动作，参数也按它检查。
