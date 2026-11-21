@@ -14,6 +14,8 @@ struct MarkdownView: View {
     @Environment(\.fileMentions) private var fileMentions
     /// Formulas are drawn at the text's size, so they are redrawn when it changes.
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    /// A formula with colours of its own is drawn for each.
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -92,7 +94,7 @@ struct MarkdownView: View {
         var string = cached ? MarkdownCache.inline(text) : MarkdownCache.render(text)
         if linksFiles && !fileMentions.isEmpty { string = Self.linkMentions(string, fileMentions) }
         // Links are blue, as in every chat app; the app's own tint is the text's ink.
-        return MathText.text(string, size: UIFont.preferredFont(forTextStyle: style).pointSize, linkMarks: true)
+        return MathText.text(string, size: UIFont.preferredFont(forTextStyle: style).pointSize, dark: colorScheme == .dark, linkMarks: true)
             .tint(Palette.link)
     }
 
