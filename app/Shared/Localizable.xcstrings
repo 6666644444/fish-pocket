@@ -4815,6 +4815,40 @@
         }
       }
     },
+    "API 余额不足" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API Balance Too Low"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saldo de la API insuficiente"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API の残高が不足しています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API 잔액 부족"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "API 餘額不足"
+          }
+        }
+      }
+    },
     "API 协议" : {
       "localizations" : {
         "en" : {
@@ -5671,6 +5705,40 @@
         }
       }
     },
+    "DeepSeek 账号余额不足" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek Account Balance Too Low"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saldo insuficiente en la cuenta DeepSeek"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek アカウントの残高が不足しています"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek 계정 잔액 부족"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek 帳號餘額不足"
+          }
+        }
+      }
+    },
     "Fish Pocket 的引擎要用到处理器的一组指令，A10 系列芯片的设备没有，比如 iPad（第 6、7 代）和 iPad Pro（第 2 代）。引擎在这类设备上一启动就会闪退，所以这次没有启动它。" : {
       "localizations" : {
         "en" : {
@@ -5701,6 +5769,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fish Pocket 的引擎需要用到處理器的一組指令，搭載 A10 系列晶片的裝置沒有這組指令，例如 iPad（第 6、7 代）和 iPad Pro（第 2 代）。引擎在這類裝置上一啟動就會閃退，所以這次沒有啟動它。"
+          }
+        }
+      }
+    },
+    "Fish Pocket 额度已用完" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Out of Fish Pocket Credits"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin créditos de Fish Pocket"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket のクレジット切れ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket 크레딧 소진"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket 額度已用完"
           }
         }
       }
@@ -7022,6 +7124,74 @@
         }
       }
     },
+    "到 DeepSeek 充值后重新发送，或者改用 Fish Pocket 额度继续。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top up on DeepSeek and send again, or continue with Fish Pocket credits."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recarga en DeepSeek y vuelve a enviar, o continúa con créditos de Fish Pocket."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek でチャージしてから再送信するか、Fish Pocket のクレジットで続けてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek에서 충전한 뒤 다시 보내거나, Fish Pocket 크레딧으로 계속하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "到 DeepSeek 儲值後重新傳送，或改用 Fish Pocket 額度繼續。"
+          }
+        }
+      }
+    },
+    "到 DeepSeek 充值后，把刚才的消息重新发送一次。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top up on DeepSeek, then send the message again."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recarga en DeepSeek y vuelve a enviar el mensaje."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek でチャージしたら、直前のメッセージをもう一度送信してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek에서 충전한 뒤 마지막 메시지를 다시 보내세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "到 DeepSeek 儲值後，把剛才的訊息重新傳送一次。"
+          }
+        }
+      }
+    },
     "原速" : {
       "localizations" : {
         "en" : {
@@ -7052,6 +7222,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "原速"
+          }
+        }
+      }
+    },
+    "去 DeepSeek 充值" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top Up on DeepSeek"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recargar en DeepSeek"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek でチャージ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek에서 충전"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "去 DeepSeek 儲值"
           }
         }
       }
@@ -9646,6 +9850,40 @@
         }
       }
     },
+    "改用 Fish Pocket 发送" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send with Fish Pocket"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar con Fish Pocket"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket で送信"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket으로 보내기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "改用 Fish Pocket 傳送"
+          }
+        }
+      }
+    },
     "新会话选「创造模式」，让 Agent 替你写插件：加新工具、接入外部服务，或者把工具和提示词组合成一个自己的模式。" : {
       "localizations" : {
         "en" : {
@@ -10122,6 +10360,74 @@
         }
       },
       "extractionState" : "stale"
+    },
+    "服务商提示额度已用完。到服务商那里充值后重新发送，或者改用 Fish Pocket 额度继续。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The provider says your balance has run out. Top up with the provider and send again, or continue with Fish Pocket credits."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El proveedor indica que se agotó tu saldo. Recarga con el proveedor y vuelve a enviar, o continúa con créditos de Fish Pocket."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロバイダから残高切れと通知されました。プロバイダでチャージしてから再送信するか、Fish Pocket のクレジットで続けてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "서비스 제공자가 잔액이 소진됐다고 알려 왔어요. 제공자에서 충전한 뒤 다시 보내거나, Fish Pocket 크레딧으로 계속하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服務商表示額度已用完。到服務商那裡儲值後重新傳送，或改用 Fish Pocket 額度繼續。"
+          }
+        }
+      }
+    },
+    "服务商返回：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The provider said: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El proveedor respondió: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロバイダの応答：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "제공자 응답: %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "服務商回應：%@"
+          }
+        }
+      }
     },
     "查看" : {
       "localizations" : {
@@ -11558,6 +11864,40 @@
         }
       }
     },
+    "没能切换到 Fish Pocket，请稍后再试。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t switch to Fish Pocket. Try again later."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo cambiar a Fish Pocket. Inténtalo más tarde."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket に切り替えられませんでした。しばらくしてからもう一度お試しください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket으로 전환하지 못했어요. 잠시 후 다시 시도하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "無法切換到 Fish Pocket，請稍後再試。"
+          }
+        }
+      }
+    },
     "没能打开，请在主屏幕上找到它" : {
       "localizations" : {
         "en" : {
@@ -12200,6 +12540,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "產生影片並分享"
+          }
+        }
+      }
+    },
+    "用 Fish Pocket 继续" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue with Fish Pocket"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar con Fish Pocket"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket で続ける"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket으로 계속"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用 Fish Pocket 繼續"
           }
         }
       }

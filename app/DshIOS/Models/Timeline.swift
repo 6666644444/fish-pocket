@@ -117,7 +117,10 @@ enum TimelineItem: Identifiable, Hashable {
     /// The turn stopped at the output token limit; its text stays, the user can ask to go on.
     case maxTokens(seq: Int)
     /// The turn had no working credential: what to do about it, in place of the engine's error.
-    case credential(seq: Int, problem: TurnFailure.CredentialProblem)
+    /// `reason` is the provider's refusal of a key it was given, in its own words.
+    case credential(seq: Int, problem: TurnFailure.CredentialProblem, reason: String?)
+    /// The turn ran out of balance; `text` is how the failure reads.
+    case quota(seq: Int, text: String)
     case questionReply(QuestionReply)
     case trigger(TurnTrigger)
     case command(CommandRun)
@@ -131,7 +134,8 @@ enum TimelineItem: Identifiable, Hashable {
         case .assistant(let turn, _, let started, _): return "a\(turn)-\(started?.timeIntervalSince1970 ?? 0)"
         case .notice(let seq, _, _): return "n\(seq)"
         case .maxTokens(let seq): return "m\(seq)"
-        case .credential(let seq, _): return "k\(seq)"
+        case .credential(let seq, _, _): return "k\(seq)"
+        case .quota(let seq, _): return "b\(seq)"
         case .questionReply(let reply): return "q\(reply.seq)"
         case .trigger(let trigger): return "t\(trigger.seq)"
         case .command(let command): return "c\(command.id)"
@@ -773,7 +777,10 @@ struct TimelineBuilder {
         }
         if let failure = TurnFailure(reason: data["reason"]) {
             if let problem = failure.credentialProblem {
-                items.append(.credential(seq: seq, problem: problem))
+                let reason = failure.code == "AUTH" ? failure.providerMessage : ""
+                items.append(.credential(seq: seq, problem: problem, reason: reason.isEmpty ? nil : reason))
+            } else if failure.isQuota {
+                items.append(.quota(seq: seq, text: failure.message))
             } else {
                 items.append(.notice(seq: seq, text: failure.message, isError: true))
             }

@@ -582,17 +582,7 @@ struct MainView: View {
             }
         }
         .animation(.snappy, value: supportDialog)
-        // A live turn ran out of account balance: offer Platform's top-up page, then re-read balances.
-        .alert("当前无可用余额", isPresented: Binding(get: { app.account.quotaPrompt }, set: { app.account.quotaPrompt = $0 })) {
-            Button("取消", role: .cancel) {}
-            Button("去充值") {
-                guard let url = app.account.topUpURL else { return }
-                InAppSafari.open(url) { Task { await app.account.refreshDetails() } }
-            }
-        } message: {
-            Text("充值后才能开始新会话，也可稍后在「设置 → 账号与余额」充值。")
-        }
-        // A live turn ran out of Fish Pocket credits: the packs, bought in the app.
+        // The Fish Pocket packs, opened from a conversation's out-of-balance card (QuotaNotice).
         .sheet(isPresented: Binding(get: { app.fishPocket.quotaPrompt }, set: { app.fishPocket.quotaPrompt = $0 })) {
             FishPocketTopUpSheet().sheetNotices()
         }

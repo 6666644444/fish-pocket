@@ -5,6 +5,8 @@ import SwiftUI
 struct CredentialNotice: View {
     let id: String
     let problem: TurnFailure.CredentialProblem
+    /// The provider's refusal in its own words; nil when the key never reached it.
+    let reason: String?
     let model: SessionModel
     @Environment(AppModel.self) private var app
     /// Some provider can answer now; nil until asked.
@@ -76,8 +78,10 @@ struct CredentialNotice: View {
                     }
                 case (.missing, true?):
                     card("已经配置好了", "把刚才的消息重新发送一次。") { resendButton }
+                // A refusal can mean more than a bad key (a relay's spent balance, a banned
+                // account): with the provider's words in hand, say those rather than guess.
                 case (.invalid, _):
-                    card("API Key 无法使用", "这个 API Key 无效或已失效，换一个再试。") {
+                    card("API Key 无法使用", reason.map { (said: String) -> LocalizedStringKey in "服务商返回：\(String(said.prefix(300)))" } ?? "这个 API Key 无效或已失效，换一个再试。") {
                         Button("更换 API Key") { app.requestCredentials(keyStep) }
                             .buttonStyle(.capsule(.outline, height: 44))
                         resendButton
@@ -117,14 +121,34 @@ struct CredentialNotice: View {
     }
 
     private func card<Actions: View>(_ title: LocalizedStringKey, _ detail: LocalizedStringKey, @ViewBuilder actions: () -> Actions) -> some View {
-        card(title, detail, actions: actions) { EmptyView() }
+        ConversationCard(title, detail, actions: actions)
     }
 
-    /// `below` is a row of its own under the actions.
     private func card<Actions: View, Below: View>(
         _ title: LocalizedStringKey, _ detail: LocalizedStringKey,
         @ViewBuilder actions: () -> Actions, @ViewBuilder below: () -> Below
     ) -> some View {
+        ConversationCard(title, detail, actions: actions, below: below)
+    }
+}
+
+/// A card in the conversation for something the user is to act on: a title, a line on it,
+/// a row of capsule buttons, and optionally a row of its own under them.
+struct ConversationCard<Actions: View, Below: View>: View {
+    let title: LocalizedStringKey
+    let detail: LocalizedStringKey
+    let actions: Actions
+    let below: Below
+
+    init(_ title: LocalizedStringKey, _ detail: LocalizedStringKey,
+         @ViewBuilder actions: () -> Actions, @ViewBuilder below: () -> Below) {
+        self.title = title
+        self.detail = detail
+        self.actions = actions()
+        self.below = below()
+    }
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title).font(.subheadline.weight(.semibold)).foregroundStyle(Palette.ink)
@@ -132,8 +156,8 @@ struct CredentialNotice: View {
             }
             // A longer translation shrinks to stay on the one line of its capsule.
             VStack(alignment: .leading, spacing: 10) {
-                HStack(spacing: 8) { actions() }
-                below()
+                HStack(spacing: 8) { actions }
+                below
             }
             .lineLimit(1)
             .minimumScaleFactor(0.8)
@@ -141,5 +165,11 @@ struct CredentialNotice: View {
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Palette.grouped, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+    }
+}
+
+extension ConversationCard where Below == EmptyView {
+    init(_ title: LocalizedStringKey, _ detail: LocalizedStringKey, @ViewBuilder actions: () -> Actions) {
+        self.init(title, detail, actions: actions) { EmptyView() }
     }
 }
