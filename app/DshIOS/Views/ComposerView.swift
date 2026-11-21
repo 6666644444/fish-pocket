@@ -231,6 +231,10 @@ struct ComposerView: View {
     @Environment(AppModel.self) private var app
     @Environment(\.horizontalSizeClass) private var sizeClass
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.botComposer) private var botComposer
+    /// The call button found no Volcengine key: the call settings, as a sheet.
+    @State private var callSetup = false
+    @State private var callMicrophoneOff = false
     @State private var photos: [PhotosPickerItem] = []
     @State private var showPhotos = false
     @State private var showCamera = false
@@ -343,6 +347,27 @@ struct ComposerView: View {
             }
         } message: {
             Text("按住说话需要用麦克风，请在系统设置里打开。")
+        }
+        .alert("麦克风权限已关闭", isPresented: $callMicrophoneOff) {
+            Button("取消", role: .cancel) {}
+            Button("去设置") {
+                if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+            }
+        } message: {
+            Text("语音通话需要用麦克风，请在系统设置里打开。")
+        }
+        .sheet(isPresented: $callSetup) {
+            NavigationStack {
+                VoiceCallSettingsPage {
+                    callSetup = false
+                    Task {
+                        // After the sheet has gone: the call's screen comes up over the conversation.
+                        try? await Task.sleep(for: .milliseconds(450))
+                        startCall()
+                    }
+                }
+                .closeButton { callSetup = false }
+            }
         }
         .sheet(isPresented: trayShown(sizeClass != .regular), onDismiss: sheetClosed) { tray }
         .sheet(isPresented: $showEditor, onDismiss: sheetClosed) {
@@ -552,7 +577,59 @@ struct ComposerView: View {
         HStack(spacing: 0) {
             if model.running { stopButton(prominent: empty || voice.mode) }
             if !voice.mode && (!empty || (!model.running && !micOffered)) { sendButton(empty: empty) }
+            if callOffered { callButton }
         }
+    }
+
+    // MARK: Call
+
+    /// Where send would stand greyed out, with nothing typed and nothing running: a call. A
+    /// conversation or a Bot's own chat; not a group, whose members answer on their own, nor a
+    /// subagent, which answers its parent.
+    private var callOffered: Bool {
+        guard !voice.mode, micOffered, !model.running, composer.nothingToSend, model.subagentAddress == nil else { return false }
+        if case .room = botComposer { return false }
+        return true
+    }
+
+    private var callButton: some View {
+        Button(action: startCall) {
+            Image(systemName: "waveform")
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundStyle(Palette.onInk)
+                .frame(width: 38, height: 38)
+                .background(Palette.ink, in: Circle())
+                .hitTarget()
+        }
+        .accessibilityLabel("语音通话")
+        .transition(.scale(scale: 0.6).combined(with: .opacity))
+    }
+
+    /// A call needs the Volcengine key (its settings come up first without one) and the microphone.
+    private func startCall() {
+        guard VolcSpeech.shared.configured else {
+            Haptics.select()
+            focused = false
+            callSetup = true
+            return
+        }
+        switch MicrophoneAccess.state {
+        case .granted: break
+        case .denied:
+            callMicrophoneOff = true
+            return
+        case .undecided:
+            Task { if await MicrophoneAccess.request() { startCall() } }
+            return
+        }
+        focused = false
+        var botId: String?
+        var title = app.title(of: model.sessionId)
+        if case .bot(let id) = botComposer, let bot = app.botTeam.bot(id) {
+            botId = id
+            title = bot.name
+        }
+        CallCenter.shared.start(sessionId: model.sessionId, botId: botId, title: title, app: app)
     }
 
     // MARK: Voice
@@ -619,6 +696,11 @@ struct ComposerView: View {
     }
 
     private func beginHold() {
+        // The call has the microphone.
+        if CallCenter.shared.active {
+            app.showToast(String(localized: "通话中不能按住说话"))
+            return
+        }
         // The first press asks for the microphone; the system's prompt ends that press.
         switch MicrophoneAccess.state {
         case .granted: break

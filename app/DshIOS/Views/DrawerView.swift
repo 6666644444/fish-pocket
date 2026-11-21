@@ -23,13 +23,12 @@ struct DrawerView: View {
         }
     }
 
-    /// What it is drawn as: the sidebar on an iPad before iOS 18 (a drawer where the window is narrow), or on the tab
-    /// bar the 会话 tab's list (search included) and the archive pushed on it.
+    /// What it is drawn as: the sidebar on an iPad before iOS 18 (a drawer where the window is narrow), on the tab
+    /// bar the 会话 tab's list (search included), or 设置 → 已归档会话 (`archive()`).
     enum Style { case sidebar, sessions, archived }
 
-    /// The pages of the 会话 tab's stack (`MainView`); the sidebar's own stack pushes only the archive.
+    /// The pages of the 会话 tab's stack (`MainView`).
     enum Route: Hashable {
-        case archived
         case session(String)
 
         var session: String? {
@@ -57,10 +56,6 @@ struct DrawerView: View {
     /// Open a session in a window of its own, where the system has windows.
     var openInWindow: ((String) -> Void)?
     var style = Style.sidebar
-    /// In the 会话 tab's split view 「已归档」 takes the list's place in its column instead of being
-    /// pushed, and leads back from there (`MainView.sessionsSplit`).
-    var openArchive: (() -> Void)?
-    var closeArchive: (() -> Void)?
 
     @AppStorage("dsh.drawer.groupBy") private var groupBy = GroupBy.workspace
     /// Groups the user opened or closed, as JSON `{workspaceId: Bool}`.
@@ -129,7 +124,6 @@ struct DrawerView: View {
                 sessionsHeader
                 if app.remote.expired { remoteExpiredRow }
                 if grouping == .time { timeList } else { groupList }
-                archivedEntry
             }
             .sessionList()
             // Both bars float: the list scrolls under them, up to the screen's edges.
@@ -144,7 +138,6 @@ struct DrawerView: View {
                 }
             }
             .toolbar(.hidden, for: .navigationBar)
-            .navigationDestination(for: Route.self) { _ in archivedPage }
         }
         .onChange(of: searchRequest) { openSearch() }
         .fullScreenCover(isPresented: $searchOpen, onDismiss: { search = "" }) { searchPage }
@@ -166,7 +159,6 @@ struct DrawerView: View {
                 }
                 if app.remote.expired { remoteExpiredRow }
                 if grouping == .time { timeList } else { groupList }
-                archivedEntry
             }
         }
         .sessionList()
@@ -965,36 +957,19 @@ struct DrawerView: View {
         allSessions(includeArchived: true).filter { app.isArchived($0.id) }.sorted { $0.updatedAt > $1.updatedAt }
     }
 
-    /// The way to the archive, at the end of the list; nothing archived, nothing to see.
-    @ViewBuilder
-    private var archivedEntry: some View {
-        let count = archivedRows.count + remote.listed(archived: true).count
-        if count > 0 {
-            Group {
-                if let openArchive {
-                    Button(action: openArchive) {
-                        archivedLabel(count)
-                            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                } else {
-                    NavigationLink(value: Route.archived) { archivedLabel(count) }
-                }
-            }
-            .padding(.top, 8)
-            .plainRow()
-        }
+    /// 设置 → 已归档会话: the archive alone, local and remote. Its rows do not open (they offer to come back),
+    /// so nothing here selects or starts a conversation.
+    static func archive() -> DrawerView {
+        DrawerView(selection: nil, workspace: nil, rowFrames: DrawerRowFrames(),
+                   select: { _ in }, newConversation: { _ in }, openSettings: {}, openSchedules: {}, openCordis: {},
+                   openSignIn: {}, style: .archived)
     }
 
-    private func archivedLabel(_ count: Int) -> some View {
-        HStack(spacing: 10) {
-            Image(systemName: "archivebox").font(.system(size: 15)).foregroundStyle(Palette.secondary).frame(width: 22)
-            Text("已归档").font(.subheadline).foregroundStyle(Palette.ink)
-            Spacer(minLength: 4)
-            Text("\(count)").font(.caption).foregroundStyle(Palette.faint)
-        }
-        .padding(.leading, 12)
+    /// How many conversations are archived, here and on the user's computers.
+    @MainActor static func archivedCount(_ app: AppModel) -> Int {
+        let local = (app.workspaces.flatMap { app.sessions(in: $0, includeArchived: true) } + app.sessions(in: nil, includeArchived: true))
+            .filter { app.isArchived($0.id) }.count
+        return local + app.remote.listed(archived: true).count
     }
 
     private var archivedPage: some View {
@@ -1009,16 +984,9 @@ struct DrawerView: View {
         }
         .sessionList()
         .background(Palette.background)
-        .navigationTitle("已归档")
+        .navigationTitle("已归档会话")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(Palette.background, for: .navigationBar)
-        .toolbar {
-            if let closeArchive {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button(action: closeArchive) { Label(Self.sessionsTitle, systemImage: "chevron.backward") }
-                }
-            }
-        }
     }
 
     private func emptyRow(_ text: LocalizedStringKey) -> some View {
