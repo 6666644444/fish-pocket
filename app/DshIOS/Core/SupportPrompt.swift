@@ -79,12 +79,10 @@ enum AppLinks {
     static let appStore = URL(string: "https://apps.apple.com/app/id6830703602")!
     /// The same page with the App Store's review sheet already open.
     static let appStoreReview = URL(string: "https://apps.apple.com/app/id6830703602?action=write-review")!
-    /// The public beta's TestFlight invitation, at the foot of 设置 under the website.
-    static let testFlight = URL(string: "https://testflight.apple.com/join/2SCftb2M")!
-    /// The WeChat group's QR code at the bottom of 设置. It expires every 7 days; the website swaps
+    /// The WeChat group's QR code at the foot of the 探索 tab. It expires every 7 days; the website swaps
     /// the picture at this same path, so the app always shows the current one without an update.
     static let wechatGroupCode = site.appending(path: "wechat-group.png")
-    /// The community's Discord server, at the foot of 设置 next to the WeChat group.
+    /// The community's Discord server, next to the WeChat group.
     static let discord = URL(string: "https://discord.gg/VSzN4jUwWm")!
     /// 本机能力 → 操控其他 App: installing iCTRL (SideStore, iLoader, Developer Mode) and its FAQ.
     /// The page lives on the website so it can follow those tools' releases without an app update.
