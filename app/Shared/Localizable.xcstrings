@@ -9520,6 +9520,40 @@
         }
       }
     },
+    "新建快捷指令" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Shortcut"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuevo atajo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新規ショートカット"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새로운 단축어"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增捷徑"
+          }
+        }
+      }
+    },
     "新建自动化，选什么时候运行" : {
       "localizations" : {
         "en" : {
@@ -11728,6 +11762,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "點一下左上角返回，就存好了"
+          }
+        }
+      }
+    },
+    "点开直接进入，不经过网页。新建一个快捷指令，添加 Fish Pocket 的「打开 Mini App」动作并选上这个 Mini App，再点顶部的名称，选「添加到主屏幕」。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens straight into the app, with no web page in between. Create a new shortcut, add Fish Pocket’s Open Mini App action and pick this Mini App, then tap the name at the top and choose Add to Home Screen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre la app directamente, sin pasar por una página web. Crea un atajo nuevo, añade la acción Abrir miniapp de Fish Pocket y elige esta miniapp; después toca el nombre de arriba y elige Añadir a pantalla de inicio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web ページを経由せず、直接開きます。新しいショートカットを作成し、Fish Pocket の「ミニアプリを開く」アクションを追加してこのミニアプリを選んだら、上部の名前をタップして「ホーム画面に追加」を選びます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "웹 페이지를 거치지 않고 바로 열려요. 새로운 단축어를 만들고 Fish Pocket의 ‘미니 앱 열기’ 동작을 추가해 이 미니 앱을 고른 다음, 위쪽의 이름을 눌러 ‘홈 화면에 추가’를 고르세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點開直接進入，不經過網頁。新增一個捷徑，加入 Fish Pocket 的「打開 Mini App」動作並選好這個 Mini App，再點一下頂部的名稱，選「加入主畫面」。"
+          }
+        }
+      }
+    },
+    "点开直接进入，不经过网页。新建一个快捷指令，添加 Fish Pocket 的「打开网页版」动作，再点顶部的名称，选「添加到主屏幕」。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens straight into the app, with no web page in between. Create a new shortcut, add Fish Pocket’s Open Web UI action, then tap the name at the top and choose Add to Home Screen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre la app directamente, sin pasar por una página web. Crea un atajo nuevo y añade la acción Abrir versión web de Fish Pocket; después toca el nombre de arriba y elige Añadir a pantalla de inicio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web ページを経由せず、直接開きます。新しいショートカットを作成し、Fish Pocket の「Web 版を開く」アクションを追加したら、上部の名前をタップして「ホーム画面に追加」を選びます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "웹 페이지를 거치지 않고 바로 열려요. 새로운 단축어를 만들고 Fish Pocket의 ‘웹 버전 열기’ 동작을 추가한 다음, 위쪽의 이름을 눌러 ‘홈 화면에 추가’를 고르세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點開直接進入，不經過網頁。新增一個捷徑，加入 Fish Pocket 的「開啟網頁版」動作，再點一下頂部的名稱，選「加入主畫面」。"
           }
         }
       }
@@ -36280,6 +36382,74 @@
         }
       }
     },
+    "图标和这个 Mini App 的一样。经 Safari 添加，每次点开都会先加载一下网页，再进入 App。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uses this Mini App’s own icon. It’s added through Safari, so each tap loads a web page briefly before the app opens."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa el mismo icono que esta miniapp. Se añade desde Safari, así que cada vez que lo tocas se carga un momento una página web antes de abrir la app."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このミニアプリと同じアイコンです。Safari から追加するので、開くたびに Web ページを一瞬読み込んでから App に切り替わります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 미니 앱과 같은 아이콘이에요. Safari에서 추가하기 때문에 열 때마다 웹 페이지를 잠깐 불러온 뒤 앱으로 넘어가요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "圖示和這個 Mini App 相同。透過 Safari 加入，每次點開都會先載入一下網頁，再進入 App。"
+          }
+        }
+      }
+    },
+    "图标是 Fish Pocket 加一个地球。经 Safari 添加，每次点开都会先加载一下网页，再进入 App。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket’s icon with a globe. It’s added through Safari, so each tap loads a web page briefly before the app opens."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El icono de Fish Pocket con un globo terráqueo. Se añade desde Safari, así que cada vez que lo tocas se carga un momento una página web antes de abrir la app."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket のアイコンに地球のマークが付きます。Safari から追加するので、開くたびに Web ページを一瞬読み込んでから App に切り替わります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket 아이콘에 지구본이 붙은 모양이에요. Safari에서 추가하기 때문에 열 때마다 웹 페이지를 잠깐 불러온 뒤 앱으로 넘어가요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "圖示是 Fish Pocket 加上一個地球。透過 Safari 加入，每次點開都會先載入一下網頁，再進入 App。"
+          }
+        }
+      }
+    },
     "图片" : {
       "localizations" : {
         "en" : {
@@ -36650,6 +36820,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在 App 內切換語言"
+          }
+        }
+      }
+    },
+    "在 Safari 中添加" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add in Safari"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir en Safari"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safari で追加"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Safari에서 추가"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 Safari 中加入"
           }
         }
       }
@@ -51102,6 +51306,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "開啟 Fish Pocket 就能在輸入框裡看到，確認後再傳送。"
+          }
+        }
+      }
+    },
+    "打开 Fish Pocket 的网页版。在快捷指令里把它添加到主屏幕，点一下就进入。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens Fish Pocket’s Web UI. Add it to the Home Screen from Shortcuts to get there in one tap."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre la versión web de Fish Pocket. Añádela a la pantalla de inicio desde Atajos para entrar con un toque."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket の Web 版を開きます。ショートカットからホーム画面に追加すると、タップ 1 回で開けます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket의 웹 버전을 열어요. 단축어에서 홈 화면에 추가하면 한 번만 눌러 들어갈 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開啟 Fish Pocket 的網頁版。在捷徑裡把它加入主畫面，點一下就能進入。"
           }
         }
       }
@@ -66988,6 +67226,40 @@
         }
       }
     },
+    "桌面图标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Home Screen Icon"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Icono en la pantalla de inicio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ホーム画面のアイコン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "홈 화면 아이콘"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主畫面圖示"
+          }
+        }
+      }
+    },
     "档位" : {
       "localizations" : {
         "en" : {
@@ -74563,6 +74835,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "點一下就開始新對話。"
+          }
+        }
+      }
+    },
+    "点一下就打开网页版。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens the Web UI in one tap."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre la versión web con un toque."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タップするだけで Web 版を開きます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "한 번 눌러 웹 버전을 열어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點一下就開啟網頁版。"
           }
         }
       }
@@ -111976,6 +112282,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "點一下左側的圓圈，選擇要分享的對話"
+          }
+        }
+      }
+    },
+    "点开直接进入，不经过网页。长按主屏幕空白处，添加小组件，搜索 Fish Pocket，选「Mini Apps」。小号的放一个，加好后长按它，选「编辑小组件」挑这个 Mini App。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens straight into the app, with no web page in between. Touch and hold an empty spot on the Home Screen, add a widget, search for Fish Pocket and choose Mini Apps. The small size holds one: once it’s added, touch and hold it, choose Edit Widget and pick this Mini App."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre la app directamente, sin pasar por una página web. Mantén pulsado un espacio vacío de la pantalla de inicio, añade un widget, busca Fish Pocket y elige Miniapps. El tamaño pequeño muestra una: cuando lo hayas añadido, mantenlo pulsado, elige Editar widget y escoge esta miniapp."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web ページを経由せず、直接開きます。ホーム画面の何もないところを長押ししてウィジェットを追加し、Fish Pocket を検索して「ミニアプリ」を選びます。小サイズには 1 つ入ります。追加したら長押しして「ウィジェットを編集」を選び、このミニアプリを選んでください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "웹 페이지를 거치지 않고 바로 열려요. 홈 화면의 빈 곳을 길게 눌러 위젯을 추가하고, Fish Pocket을 검색해 ‘미니 앱’을 고르세요. 작은 크기에는 하나가 들어가요. 추가한 뒤 길게 눌러 ‘위젯 편집’을 고르고 이 미니 앱을 선택하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點開直接進入，不經過網頁。長按主畫面空白處，加入小工具，搜尋 Fish Pocket，選「Mini Apps」。小尺寸放一個，加好後長按它，選「編輯小工具」挑這個 Mini App。"
+          }
+        }
+      }
+    },
+    "点开直接进入，不经过网页。长按主屏幕空白处，添加小组件，搜索 Fish Pocket，选「网页版」。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens straight into the app, with no web page in between. Touch and hold an empty spot on the Home Screen, add a widget, search for Fish Pocket and choose Web UI."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre la app directamente, sin pasar por una página web. Mantén pulsado un espacio vacío de la pantalla de inicio, añade un widget, busca Fish Pocket y elige Web."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web ページを経由せず、直接開きます。ホーム画面の何もないところを長押ししてウィジェットを追加し、Fish Pocket を検索して「Web 版」を選びます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "웹 페이지를 거치지 않고 바로 열려요. 홈 화면의 빈 곳을 길게 눌러 위젯을 추가하고, Fish Pocket을 검색해 ‘웹 버전’을 고르세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點開直接進入，不經過網頁。長按主畫面空白處，加入小工具，搜尋 Fish Pocket，選「網頁版」。"
           }
         }
       }

@@ -156,7 +156,8 @@ Agent 用的 `browser` 工具有哪些动作、各要什么参数、给模型看
 - **开发版和发布版**：Agent 写的文件是开发版；用户打开的是发布版，即应用文件夹里的 `.build`：所有文件的完整快照，JSX、TS 已经编译好，打开时不编译、不依赖系统会清理的缓存。发布在 Agent 一轮结束（会话列表里不再有运行中的会话）、读应用列表、第一次打开时进行（`MiniAppPublisher.swift`），按文件的路径、大小、修改时间判断是否过期；有 Agent 在跑时，打开的是上一次发布的版本，不会打开改到一半的应用。上一版留在 `.build-previous`。
 - **加载**：`app/DshIOS/MiniApps/MiniAppServer.swift` 用自定义协议 `fishapp://<id>/` 提供文件，只给本应用文件夹里的东西；用户那边提供发布版，Agent 浏览器那边提供开发版、返回时用 Sucrase（JavaScriptCore 里跑，没有 JIT，所以只在创作时编译）编译；页面开头注入 import map（`react` 等指向内置的 React）和错误上报脚本。
 - **隔离**：每个应用一个独立的 `WKWebsiteDataStore`（按 id 派生），删应用时一起删；能联网，但用内容规则拦掉 localhost、127.x 等本机地址；不开放相机、麦克风等本机能力。
-- **入口**：「Mini Apps」Tab（iPhone 都有，iPad 从 iOS 18 起有；iOS 17 的 iPad 侧边栏是「Mini Apps」一行）、聊天里单独一行的 `[名字](fishapp://<id>)` 链接会显示成卡片、`fishpocket://app/<id>` 链接（旧的 `dsh://app/<id>` 也认）、「Mini Apps」小组件（`app/LiveActivity/MiniAppsWidget.swift`）、快捷指令里的「打开 Mini App」。
+- **入口**：「Mini Apps」Tab（iPhone 都有，iPad 从 iOS 18 起有；iOS 17 的 iPad 侧边栏是「Mini Apps」一行）、聊天里单独一行的 `[名字](fishapp://<id>)` 链接会显示成卡片、`fishpocket://app/<id>` 链接（旧的 `dsh://app/<id>` 也认）、「Mini Apps」小组件（`app/LiveActivity/MiniAppsWidget.swift`）、快捷指令里的「打开 Mini App」（见「快捷指令和 Siri」）。
+- **放到主屏幕**：Mini App 和网页版的「添加到主屏幕」弹出三选一（`AddToHomeScreenSheet`），按这个顺序排：小组件（「Mini Apps」「网页版」）、快捷指令（「打开 Mini App」「打开网页版」）、Safari 图标（`HomeScreenShortcut`，图标和 Mini App 一样，但每次点开都要先加载官网的 `/add-to-home/` 页面）。前两种直接进 App，不经过网页，但 App 没法替用户建好，只能写明步骤。以后加别的可放到主屏幕的东西，三种都要有。
 - **叫法**：界面上叫 Mini App。Tab、页面标题、小组件这类指一整组的地方用复数 Mini Apps，指其中一个时用单数 Mini App（「删除 Mini App」「3 个 Mini App」）。简体、繁体中文都直接写英文，不译成「小工具」「應用」：繁体里「小工具」是系统对小组件的叫法，「应用」又会让人以为是我们提供的 App；其他语言用各自的写法（Miniapps、ミニアプリ、미니 앱）。替用户写好、发给 Agent 的话（「帮我做一个记账小工具」）照口语写，不受这条限制。
 - **图标**：默认是 `app.json` 里的 emoji 配底色；文件夹里有 `icon.png`（方形、铺满、不带圆角）时用它。小组件读不到应用文件夹，主 App 写 `mini-apps.json` 时把图标一起拷进 App Group 的 `mini-app-icons/`。示例的图标是 `icon.svg` 画的，改了要重新导出同目录的 `icon.png`（360 像素）。
 - **全屏页的顶栏**：iOS 26 起网页一直铺到系统的透明顶栏下面，滚上去的内容由系统虚化（`MiniAppScreen.swift` 的 `PageWebView`）；页面仍从顶栏下方开始排，`100dvh` 是顶栏以下的高度，顶栏后面是页面自己的底色。更早的系统顶栏是实底的，网页不铺上去。
@@ -190,9 +191,9 @@ Agent 用的 `browser` 工具有哪些动作、各要什么参数、给模型看
 
 ## 快捷指令和 Siri
 
-App 给系统提供四个操作：新对话、打开 Bot、打开 Mini App、查看余额。用户装好 App 就能在「快捷指令」里看到，也能对 Siri 说，不用设置。
+App 给系统提供五个操作：新对话、打开 Bot、打开 Mini App、打开网页版、查看余额。用户装好 App 就能在「快捷指令」里看到，也能对 Siri 说，不用设置。
 
-- 操作在 `app/DshIOS/ShortcutIntents.swift`，「新对话」和「打开 Mini App」在 `app/Shared`（小组件和控制中心也用）。Siri 说法和「快捷指令」首页的格子在 `app/DshIOS/AppShortcuts.swift`，说法的译文在 `app/DshIOS/AppShortcuts.xcstrings`，`scripts/sync-strings.sh` 不管它，要手动补齐各语言；每句说法都必须带上 App 名。
+- 操作在 `app/DshIOS/ShortcutIntents.swift`，「新对话」「打开 Mini App」「打开网页版」在 `app/Shared`（小组件和控制中心也用）。「打开 Mini App」「打开网页版」也是把它们放到主屏幕、点开不经过网页的办法之一（见 Mini Apps 一节的「放到主屏幕」）。Siri 说法和「快捷指令」首页的格子在 `app/DshIOS/AppShortcuts.swift`，说法的译文在 `app/DshIOS/AppShortcuts.xcstrings`，`scripts/sync-strings.sh` 不管它，要手动补齐各语言；每句说法都必须带上 App 名。
 - Bot 和 Mini App 的列表来自 App Group 里 App 写好的文件（`Share/targets.json`、`mini-apps.json`），系统读它们不需要引擎。列表变了要调 `DshShortcuts.updateAppShortcutParameters()`，Siri 才认得新名字。
 - 「打开 Bot」「打开 Mini App」的参数必须是必填。改成选填后，系统在「快捷指令」首页就不再按 Bot、按 Mini App 展开格子。
 - iOS 26 及以前，新建自动化时那排 App 格子只列基础操作，选不了具体是哪个 Bot，所以要走「新建空白自动化」（iOS 26 叫「创建新快捷指令」）再搜「Bot」：iOS 18 起搜索结果直接列出每个 Bot，iOS 17 只有「打开 Bot」，加上后再点参数选。iOS 27 起自动化并进了普通快捷指令：先点「自动化」设触发条件，再搜「Bot」点选，返回即保存。这些步骤写在探索页的「快捷指令」教程里（`ShortcutsGuidePage`），按系统版本各一套。系统改了这套界面，或者新增、改名了操作，就去 iOS 17、18、26、27 的模拟器上照着走一遍，再改教程。
