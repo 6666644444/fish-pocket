@@ -211,7 +211,7 @@ App 给系统提供四个操作：新对话、打开 Bot、打开 Mini App、查
 
 ## 链接前缀：`fishpocket`，`dsh` 只作兼容
 
-App 的链接前缀是 `fishpocket://`（`DSH_URL_SCHEME`）。早先用的 `dsh://` 太通用，可能和别的 App（比如 DeepSeek 官方的 DSH App）撞上，几个 App 注册同一个前缀时 iOS 打开哪一个是不确定的，所以换成了独占的前缀。路由都在 `app/Shared/DshLink.swift`：`session`、`new`、`share`、`app`、`web`。
+App 的链接前缀是 `fishpocket://`（`DSH_URL_SCHEME`）。早先用的 `dsh://` 太通用，可能和别的 App（比如 DeepSeek 官方的 DSH App）撞上，几个 App 注册同一个前缀时 iOS 打开哪一个是不确定的，所以换成了独占的前缀。路由都在 `app/Shared/DshLink.swift`：`session`、`new`、`share`、`app`、`web`、`bot`、`balance`。
 
 - **`dsh` 永久保留，只用来兼容。**它写在 `DSH_LEGACY_URL_SCHEME`，主 App 同时注册两个前缀，`DshLink(url:)` 两个都认，`handlesExternalEvents` 两个都交给已开的窗口。用户桌面上已有的网页版和 Mini App 图标网址里写死了 `scheme=dsh`，快捷指令、NFC 自动化、旧聊天记录里也可能有 `dsh://`，所以不能删。
 - **新生成的链接一律用 `fishpocket`**（`DshLink.scheme`）：小组件、灵动岛、分享扩展、主屏幕图标（官网 `/add-to-home/` 的 `scheme=`）、iCTRL 回调、引擎拿到的 `FISH_POCKET_URL_SCHEME`。不要在代码、skill 或文案里新写 `dsh://`。
