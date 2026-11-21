@@ -6024,6 +6024,40 @@
         }
       }
     },
+    "下次发消息时一起送到" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Will go with your next message"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se enviará con tu próximo mensaje"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次のメッセージと一緒に届きます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음 메시지와 함께 전달돼요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下次傳訊息時一起送到"
+          }
+        }
+      }
+    },
     "不要点下面列表里的 Fish Pocket：那里选不了具体是哪个 Bot。" : {
       "localizations" : {
         "en" : {
@@ -7052,6 +7086,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "原速"
+          }
+        }
+      }
+    },
+    "取消失败：这条消息可能已经开始发送。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't cancel: this message may already be on its way."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo cancelar: es posible que este mensaje ya se esté enviando."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取り消せませんでした。このメッセージはすでに送信中の可能性があります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "취소하지 못했어요. 이 메시지가 이미 전송 중일 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消失敗：這則訊息可能已經開始傳送。"
           }
         }
       }
@@ -9408,6 +9476,40 @@
         }
       }
     },
+    "插话中，这一步做完就送到" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Steering — arrives when this step is done"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redirigiendo: llegará al terminar este paso"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "割り込み中。このステップが終わると届きます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "끼어드는 중, 이 단계가 끝나면 전달돼요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "插話中，這一步完成就送到"
+          }
+        }
+      }
+    },
     "搜索「Bot」，点「打开 Bot」" : {
       "localizations" : {
         "en" : {
@@ -9506,6 +9608,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "搜尋結果裡直接列出了你的每個 Bot。想打開 Mini App 就搜尋「Mini App」。"
+          }
+        }
+      }
+    },
+    "撤回这条消息，文字放回输入框" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Takes this message back and puts its text in the input"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retira este mensaje y devuelve su texto al campo de texto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このメッセージを取り消し、テキストを入力欄に戻します"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 메시지를 취소하고 텍스트를 입력창으로 되돌립니다"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "撤回這則訊息，文字放回輸入框"
           }
         }
       }
@@ -10732,6 +10868,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "放開取消"
+          }
+        }
+      }
+    },
+    "查看任务和目标" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View tasks and goal"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver tareas y objetivo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タスクと目標を表示"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "작업 및 목표 보기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "查看任務和目標"
           }
         }
       }
@@ -12512,6 +12682,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "空回應"
+          }
+        }
+      }
+    },
+    "立即发送" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send now"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar ahora"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今すぐ送信"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지금 보내기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "立即傳送"
           }
         }
       }
@@ -24236,40 +24440,6 @@
         }
       }
     },
-    "保存排队消息" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Save queued message"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Guardar mensaje en cola"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "キュー内のメッセージを保存"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "대기 중인 메시지 저장"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "儲存排隊中的訊息"
-          }
-        }
-      }
-    },
     "保存能力" : {
       "localizations" : {
         "en" : {
@@ -26952,40 +27122,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "全部外掛"
-          }
-        }
-      }
-    },
-    "全部插话" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Steer All"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Redirigir todo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "すべて割り込み"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "모두 끼어들기"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "全部插話"
           }
         }
       }
@@ -30591,40 +30727,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "刪除任務"
-          }
-        }
-      }
-    },
-    "删除失败：这条消息可能已经开始发送。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Removal failed: this message may have already started sending."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Error al eliminar: es posible que este mensaje ya haya comenzado a enviarse."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "削除に失敗しました：このメッセージはすでに送信が始まっている可能性があります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "삭제하지 못했어요: 이 메시지가 이미 전송되기 시작했을 수 있어요."
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "刪除失敗：這則訊息可能已經開始傳送。"
           }
         }
       }
@@ -83070,74 +83172,6 @@
         }
       }
     },
-    "编辑失败：这条消息可能已经开始发送。" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Edit failed: this message may have already started sending."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Error de edición: es posible que este mensaje ya haya comenzado a enviarse."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "編集に失敗しました：このメッセージはすでに送信が始まっている可能性があります。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "편집 실패: 이 메시지가 이미 전송되기 시작했을 수 있어요."
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "編輯失敗：這則訊息可能已經開始傳送。"
-          }
-        }
-      }
-    },
-    "编辑排队消息" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Edit Queued Message"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Editar mensaje en cola"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "キュー内のメッセージを編集"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "대기 중인 메시지 편집"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "編輯排隊中的訊息"
-          }
-        }
-      }
-    },
     "编辑消息" : {
       "localizations" : {
         "en" : {
@@ -100072,6 +100106,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "附件"
+          }
+        }
+      }
+    },
+    "附件没有放回输入框，需要的话重新添加。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Attachments weren't put back in the input. Add them again if you need them."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los archivos adjuntos no se devolvieron al campo de texto. Vuelve a añadirlos si los necesitas."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添付ファイルは入力欄に戻していません。必要なら追加し直してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "첨부 파일은 입력창으로 돌아오지 않았어요. 필요하면 다시 추가하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "附件沒有放回輸入框，需要的話請重新加入。"
           }
         }
       }

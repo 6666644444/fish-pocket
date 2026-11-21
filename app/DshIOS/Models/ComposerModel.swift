@@ -163,8 +163,10 @@ struct ImageLimits {
 /// A row of the queue dock: one `inbox['next-turn']` message.
 struct QueueRow: Identifiable, Equatable {
     let id: String
-    /// Text-only rows can be edited; nil when the row carries attachments.
-    var editableText: String?
+    /// Its text whole, to give back to the input when it is withdrawn.
+    var text: String
+    /// The request it came in with (`source.rpcId`): this client's echo of it, if any, goes with it.
+    var requestId: String?
     var preview: String
     var attachments: [String]
 }
@@ -208,9 +210,6 @@ final class ComposerModel {
     private(set) var compacting = false
     /// `agentTeams/setEnabled` on its way.
     private(set) var teamSwitching = false
-    /// A queued message loaded into the input to edit, and the draft it set aside.
-    private(set) var editingQueue: (id: String, setAside: String)?
-    private(set) var savingQueueEdit = false
     /// Bumped to ask the input for the keyboard (from outside it, or after a sheet).
     private(set) var focusRequest = 0
     /// Hold-to-talk: the bar's voice mode and the recording under the finger.
@@ -321,9 +320,16 @@ final class ComposerModel {
     }
 
     /// Queued messages, without the ones still showing as this client's transcript echo.
-    var queueRows: [QueueRow] {
+    var queueRows: [QueueRow] { inboxRows("next-turn") }
+
+    /// Messages steered into the running turn, waiting for its current step to end (a long
+    /// command can hold them a while). Answers to a question wait there too: they are not these.
+    var steerRows: [QueueRow] { inboxRows("next-step") }
+
+    private func inboxRows(_ lane: String) -> [QueueRow] {
         let inTranscript = Set(pending.filter { $0.placement == .transcript }.map(\.id))
-        return projection("inbox")["next-turn"].array.compactMap { item in
+        return projection("inbox")[lane].array.compactMap { item in
+            if item["source"]["kind"].string == "user-question-reply" { return nil }
             if let rpc = item["source"]["rpcId"].string, inTranscript.contains(rpc) { return nil }
             let content = item["content"].array
             let texts = content.filter { $0["type"].string == "text" }.compactMap { $0["text"].string }
@@ -333,7 +339,8 @@ final class ComposerModel {
             let joined = texts.joined()
             return QueueRow(
                 id: item["id"].string ?? item["itemId"].string ?? UUID().uuidString,
-                editableText: attachments.isEmpty ? joined : nil,
+                text: joined,
+                requestId: item["source"]["rpcId"].string,
                 preview: MessageQuotes.preview(joined),
                 attachments: attachments
             )
@@ -343,7 +350,8 @@ final class ComposerModel {
     /// Local echoes still waiting: queued ones until the queue row arrives, the others until their message.
     /// One that is on screen as its bubble has nothing left to say here.
     var visiblePending: [PendingSubmission] {
-        let queued = Set(projection("inbox")["next-turn"].array.compactMap { $0["source"]["rpcId"].string })
+        let inbox = projection("inbox")
+        let queued = Set((inbox["next-turn"].array + inbox["next-step"].array).compactMap { $0["source"]["rpcId"].string })
         return pending.filter { !$0.showsBubble && (!queued.contains($0.id) || $0.placement == .transcript) }
     }
 
@@ -352,8 +360,8 @@ final class ComposerModel {
 
     var uploadsPending: Bool { attachments.contains { if case .ready = $0.upload { false } else { $0.upload != nil } } }
     var isEmpty: Bool { text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && attachments.isEmpty && quotes.isEmpty }
-    /// Nothing the main button could send, or save: a queued message is text only.
-    var nothingToSend: Bool { editingQueue != nil ? text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty : isEmpty }
+    /// Nothing the main button could send.
+    var nothingToSend: Bool { isEmpty }
 
     func requestFocus() { focusRequest += 1 }
 
@@ -393,8 +401,6 @@ final class ComposerModel {
     }
 
     private func persistDraft() {
-        // A queued message in the input is not the draft: the draft waits in `setAside`.
-        guard editingQueue == nil else { return }
         guard !text.isEmpty || !quotes.isEmpty, text.utf16.count <= Self.draftLimit else { DraftStore.shared.write(nil, for: sessionId); return }
         let draft = DraftQuotes.store(quotes: quotes, text: text)
         var fields: [String: JSON] = ["text": .string(draft.text), "references": [], "mentions": .object(mentions.mapValues { .string($0) })]
@@ -692,79 +698,36 @@ final class ComposerModel {
 
     // MARK: Queue (C-95)
 
-    enum QueueAction { case edit(String), remove, steer }
-
-    /// One queue operation; returns false (after a toast) when it failed. A steer the
-    /// agent could no longer take (stopped, or already picked the row up) is silent.
-    @discardableResult
-    func updateQueue(_ id: String, _ action: QueueAction) async -> Bool {
-        let wire: JSON = switch action {
-        case .edit(let text): ["kind": "edit", "content": [["type": "text", "text": .string(text)]]]
-        case .remove: ["kind": "remove"]
-        case .steer: ["kind": "steer"]
-        }
+    /// 「立即发送」 on a message queued for the next turn: DSH's steer. One the agent could no
+    /// longer take (stopped, or already picked up) is silent.
+    func steerQueued(_ id: String) async {
         do {
-            try await session?.updateQueue(id, action: wire)
-            return true
+            try await session?.updateQueue(id, action: ["kind": "steer"])
         } catch {
             let code = (error as? EngineError)?.code
-            if case .steer = action, code == "session/steer-unavailable" || code == "session/queue-item-not-found" { return true }
-            switch action {
-            case .edit: app.showToast(String(localized: "编辑失败：这条消息可能已经开始发送。"))
-            case .remove: app.showToast(String(localized: "删除失败：这条消息可能已经开始发送。"))
-            case .steer: app.showToast(String(localized: "插话发送失败，请重试。"))
-            }
-            return false
+            if code == "session/steer-unavailable" || code == "session/queue-item-not-found" { return }
+            app.showToast(String(localized: "插话发送失败，请重试。"))
         }
     }
 
-    /// Put a queued message in the input to edit. The row keeps its place in the queue, and
-    /// the draft steps aside until the edit ends; attachments wait too (a queued edit is text only).
-    func beginQueueEdit(_ row: QueueRow) {
-        guard let editable = row.editableText else { return }
-        let setAside = editingQueue?.setAside ?? text
-        editingQueue = (row.id, setAside)
-        text = editable
-    }
-
-    func cancelQueueEdit() {
-        guard let editing = editingQueue else { return }
-        editingQueue = nil
-        text = editing.setAside
-    }
-
-    /// Save the edit into the queue row, and the draft returns. If the row has already gone
-    /// (the agent took it) the toast says so and the text stays, to send as a new message.
-    func saveQueueEdit(clearField: @escaping @MainActor () -> Void) {
-        guard let editing = editingQueue, !savingQueueEdit, !nothingToSend else { return }
-        savingQueueEdit = true
-        Task {
-            let saved = await updateQueue(editing.id, .edit(text))
-            savingQueueEdit = false
-            guard editingQueue?.id == editing.id else { return }
-            editingQueue = nil
-            if saved {
-                clearField()
-                text = editing.setAside
-            } else {
-                text = editing.setAside.isEmpty ? text : text + "\n\n" + editing.setAside
-            }
+    /// 「取消」 on a queued message: out of the queue and back into the input, ahead of whatever
+    /// is being typed. Its attachments do not come back (they are stored blocks, not drafts).
+    func withdrawQueued(_ row: QueueRow) async {
+        do {
+            try await session?.updateQueue(row.id, action: ["kind": "remove"])
+        } catch {
+            app.showToast(String(localized: "取消失败：这条消息可能已经开始发送。"))
+            return
         }
-    }
-
-    /// 「全部插话」: steer every queued message in order, stopping quietly once the agent can take no more.
-    func steerAll() async {
-        for row in queueRows {
-            do {
-                try await session?.updateQueue(row.id, action: ["kind": "steer"])
-            } catch {
-                let code = (error as? EngineError)?.code
-                if code != "session/steer-unavailable" && code != "session/queue-item-not-found" {
-                    app.showToast(String(localized: "插话发送失败，请重试。"))
-                }
-                return
-            }
+        // Sent from here: its echo waits for a message that will not come now.
+        if let request = row.requestId { retire(request) }
+        if !row.text.isEmpty {
+            text = text.isEmpty ? row.text : row.text + "\n" + text
         }
+        if !row.attachments.isEmpty {
+            app.showToast(String(localized: "附件没有放回输入框，需要的话重新添加。"))
+        }
+        requestFocus()
     }
 
     // MARK: Goal (C-121)
