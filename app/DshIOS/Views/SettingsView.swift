@@ -5,8 +5,8 @@ import WatchConnectivity
 /// Settings: only what people come here for (账号, 模型, 访问模式, 插件, 自动化, 后台运行: 静音音频,
 /// 任务续跑, 小组件), then the rarely touched 外观, App 图标 and 语言. Developer pages sit behind 高级, versions and
 /// engine status behind 关于, and 已归档会话 on its own below them. 本机能力 (under 连接器) and 远程控制 are on the 探索 tab (in the sidebar on an iPad before iOS 18), not here.
-/// 分享 Fish Pocket and Apple Watch open the list (pushed from the 探索 tab they are on that page instead); the star, rating, website, source, feedback and author links,
-/// then the WeChat group's QR code and the Discord server, close it.
+/// 分享 Fish Pocket and Apple Watch open the list and the rating, website, feedback and community
+/// links close it (`SupportLink`) only on an iPad before iOS 18: elsewhere they are on the 探索 tab.
 /// The engine card shows here only while the engine is not running. Every page reads the shared
 /// settings mirror, so a write anywhere shows everywhere.
 struct SettingsView: View {
@@ -217,21 +217,8 @@ private struct SettingsList: View {
                 }
             }
 
-            Section {
-                // The App Store page, from any install: rating it there is what helps most now.
-                linkRow("给个评分", "star", "App Store", AppLinks.appStore)
-                    .environment(\.openURL, OpenURLAction { _ in SupportPrompt.settle(); return .systemAction })
-                linkRow("官网", "safari", AppLinks.site.host() ?? "", AppLinks.site)
-                linkRow("加入公测", "paperplane","TestFlight", AppLinks.testFlight)
-                linkRow("开源仓库", "chevron.left.forwardslash.chevron.right", UpdateChecker.repository, Self.repositoryURL)
-                linkRow("问题反馈", "exclamationmark.bubble", "GitHub Issues", Self.issuesURL)
-                // The site's picture is swapped in place when the 7-day code expires: always the current one.
-                linkRow("微信交流群", "bubble.left.and.bubble.right", String(localized: "扫码加群"), AppLinks.wechatGroupCode)
-                linkRow("Discord 社区", "person.2.circle", "discord.gg", AppLinks.discord)
-                linkRow("作者", "at", "sai · imsai.cc", Self.authorURL)
-            } footer: {
-                Text("觉得好用的话，去 App Store 给个评分 ⭐️，这是对项目最大的支持。")
-            }
+            // On the 探索 tab when there is one; an iPad before iOS 18 has 设置 as a sheet and no such tab.
+            if !pushed { SupportLinksSection() }
 
         }
         .navigationTitle("设置")
@@ -256,25 +243,6 @@ private struct SettingsList: View {
     private var aboutValue: String {
         if case .available = UpdateChecker.shared.status { return String(localized: "有新版本") }
         return ""
-    }
-
-    private static let repositoryURL = AppLinks.repository
-    private static let issuesURL = repositoryURL.appending(path: "issues")
-    private static let authorURL = URL(string: "https://imsai.cc")!
-
-    /// Opens in the browser; the arrow says it leaves the app.
-    private func linkRow(_ title: LocalizedStringKey, _ icon: String, _ value: String, _ url: URL) -> some View {
-        Link(destination: url) {
-            LabeledContent {
-                HStack(spacing: 6) {
-                    Text(value).lineLimit(1)
-                    Image(systemName: "arrow.up.right").font(.caption).foregroundStyle(.tertiary)
-                }
-                .foregroundStyle(.secondary)
-            } label: {
-                Label(title, systemImage: icon)
-            }
-        }
     }
 
     private func row(_ title: LocalizedStringKey, _ icon: String, _ value: String = "") -> some View {
@@ -699,5 +667,80 @@ private struct ShareAppRow: View {
             Spacer(minLength: 0)
         }
         .padding(.vertical, 4)
+    }
+}
+
+/// The rating, website, feedback and community links that close the 探索 tab, drawn there as its
+/// other rows are (`ExploreTabView`), and 设置 in the system's look on an iPad before iOS 18,
+/// which has no such tab (`SupportLinksSection`). Each opens in the browser.
+struct SupportLink: Identifiable {
+    let title: LocalizedStringKey
+    let symbol: String
+    let glyph: ExploreGlyph.Kind
+    /// What it says on the right in 设置.
+    let value: String
+    /// The line under the name on the 探索 tab.
+    let detail: Text
+    let url: URL
+    /// The App Store page: opening it settles the rating ask (`SupportPrompt`).
+    var rates = false
+
+    var id: URL { url }
+
+    static var all: [SupportLink] {
+        let site = AppLinks.site.host() ?? ""
+        return [
+            // The App Store page, from any install: rating it there is what helps most now.
+            SupportLink(title: "给个评分", symbol: "star", glyph: .rate, value: "App Store",
+                        detail: Text("在 App Store 打分、写评价"), url: AppLinks.appStore, rates: true),
+            SupportLink(title: "官网", symbol: "safari", glyph: .site, value: site,
+                        detail: Text(verbatim: site), url: AppLinks.site),
+            SupportLink(title: "问题反馈", symbol: "exclamationmark.bubble", glyph: .feedback, value: "GitHub Issues",
+                        detail: Text("在 GitHub Issues 提问题和建议"), url: AppLinks.repository.appending(path: "issues")),
+            // The site's picture is swapped in place when the 7-day code expires: always the current one.
+            SupportLink(title: "微信交流群", symbol: "bubble.left.and.bubble.right", glyph: .wechat,
+                        value: String(localized: "扫码加群"), detail: Text("扫码加群"), url: AppLinks.wechatGroupCode),
+            SupportLink(title: "Discord 社区", symbol: "person.2.circle", glyph: .discord, value: "discord.gg",
+                        detail: Text(verbatim: "discord.gg"), url: AppLinks.discord),
+            SupportLink(title: "关注我们", symbol: "at", glyph: .follow, value: "imsai.cc",
+                        detail: Text(verbatim: "imsai.cc"), url: URL(string: "https://imsai.cc")!),
+        ]
+    }
+
+    static let footer = Text("觉得好用的话，去 App Store 给个评分 ⭐️，这是对项目最大的支持。")
+}
+
+extension View {
+    /// Opening the App Store page from a rating link settles the rating ask.
+    @ViewBuilder func settlesRating(_ rates: Bool) -> some View {
+        if rates {
+            environment(\.openURL, OpenURLAction { _ in SupportPrompt.settle(); return .systemAction })
+        } else {
+            self
+        }
+    }
+}
+
+/// `SupportLink`s in 设置 on an iPad before iOS 18; the arrow says each leaves the app.
+struct SupportLinksSection: View {
+    var body: some View {
+        Section {
+            ForEach(SupportLink.all) { link in
+                Link(destination: link.url) {
+                    LabeledContent {
+                        HStack(spacing: 6) {
+                            Text(link.value).lineLimit(1)
+                            Image(systemName: "arrow.up.right").font(.caption).foregroundStyle(.tertiary)
+                        }
+                        .foregroundStyle(.secondary)
+                    } label: {
+                        Label(link.title, systemImage: link.symbol)
+                    }
+                }
+                .settlesRating(link.rates)
+            }
+        } footer: {
+            SupportLink.footer
+        }
     }
 }

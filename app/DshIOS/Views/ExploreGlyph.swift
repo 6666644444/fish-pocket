@@ -7,7 +7,10 @@ import SwiftUI
 ///
 /// Every icon is drawn on a 38-point grid and scaled to `size`.
 struct ExploreGlyph: View {
-    enum Kind { case miniApps, plugins, connectors, phoneControl, remote, watch, shortcuts, web, share, settings }
+    enum Kind {
+        case miniApps, plugins, connectors, phoneControl, remote, watch, shortcuts, web, share, settings
+        case rate, site, feedback, wechat, discord, follow
+    }
 
     let kind: Kind
     var size: CGFloat = 38
@@ -27,6 +30,12 @@ struct ExploreGlyph: View {
             case .web: pen.web()
             case .share: pen.share()
             case .settings: pen.settings()
+            case .rate: pen.rate()
+            case .site: pen.site()
+            case .feedback: pen.feedback()
+            case .wechat: pen.wechat()
+            case .discord: pen.discord()
+            case .follow: pen.follow()
             }
         }
         .frame(width: size, height: size)
@@ -158,5 +167,79 @@ private struct Pen {
         head.closeSubpath()
         fill(head)
         context.stroke(head, with: spot, style: line)
+    }
+
+    /// A star, and the spark of the one just given.
+    mutating func rate() {
+        var star = Path()
+        for point in 0..<10 {
+            let radius: CGFloat = point.isMultiple(of: 2) ? 13 : 5.6
+            let angle = Double(point) * .pi / 5 - .pi / 2
+            let corner = CGPoint(x: 17 + radius * cos(angle), y: 21 + radius * sin(angle))
+            if point == 0 { star.move(to: corner) } else { star.addLine(to: corner) }
+        }
+        star.closeSubpath()
+        stroke(star)
+        var spark = lines([(31, 3.5), (32.3, 7.7), (36.5, 9), (32.3, 10.3), (31, 14.5), (29.7, 10.3), (25.5, 9), (29.7, 7.7)])
+        spark.closeSubpath()
+        fill(spark)
+    }
+
+    /// A compass, its needle set.
+    mutating func site() {
+        stroke(dot(19, 19, 13.5))
+        var needle = lines([(26.5, 11.5), (21.5, 21.5), (11.5, 26.5), (16.5, 16.5)])
+        needle.closeSubpath()
+        fill(needle)
+        context.fill(dot(19, 19, 1.6), with: ink)
+    }
+
+    /// A speech bubble with something to point out.
+    mutating func feedback() {
+        stroke(Path { path in
+            path.move(to: CGPoint(x: 13, y: 28))
+            path.addLine(to: CGPoint(x: 10, y: 33.5))
+            path.addLine(to: CGPoint(x: 19, y: 28))
+            path.addLine(to: CGPoint(x: 28, y: 28))
+            path.addArc(tangent1End: CGPoint(x: 33, y: 28), tangent2End: CGPoint(x: 33, y: 23), radius: 5)
+            path.addLine(to: CGPoint(x: 33, y: 10))
+            path.addArc(tangent1End: CGPoint(x: 33, y: 5), tangent2End: CGPoint(x: 28, y: 5), radius: 5)
+            path.addLine(to: CGPoint(x: 10, y: 5))
+            path.addArc(tangent1End: CGPoint(x: 5, y: 5), tangent2End: CGPoint(x: 5, y: 10), radius: 5)
+            path.addLine(to: CGPoint(x: 5, y: 23))
+            path.addArc(tangent1End: CGPoint(x: 5, y: 28), tangent2End: CGPoint(x: 10, y: 28), radius: 5)
+            path.closeSubpath()
+        })
+        fill(box(17.3, 9.5, 3.4, 10, 1.7).union(dot(19, 23.3, 1.9)))
+    }
+
+    /// A conversation: a bubble, and the answer in front of it.
+    mutating func wechat() {
+        stroke(Path { path in
+            path.addRoundedRect(in: CGRect(x: 4, y: 5, width: 22, height: 16), cornerSize: CGSize(width: 6, height: 6), style: .continuous)
+            path.move(to: CGPoint(x: 9, y: 21))
+            path.addLine(to: CGPoint(x: 7.5, y: 25.5))
+            path.addLine(to: CGPoint(x: 13, y: 21))
+        })
+        var tail = lines([(24, 28), (30.5, 34), (30, 26)])
+        tail.closeSubpath()
+        fill(box(14, 15, 20, 15, 6).union(tail))
+    }
+
+    /// A game controller, its buttons lit: a server to play and talk in.
+    mutating func discord() {
+        stroke(box(4, 10, 30, 19, 9.5))
+        stroke(lines([(9.5, 19.5), (16.5, 19.5)], [(13, 16), (13, 23)]))
+        fill(dot(24, 17, 2.3).union(dot(28.5, 21.5, 2.3)))
+    }
+
+    /// Someone, and the plus that follows them.
+    mutating func follow() {
+        stroke(dot(15, 13.5, 6))
+        stroke(Path { path in
+            path.addArc(center: CGPoint(x: 15, y: 33), radius: 11, startAngle: .degrees(180), endAngle: .degrees(360), clockwise: false)
+        })
+        context.stroke(lines([(30, 5), (30, 17)], [(24, 11), (36, 11)]), with: spot,
+                       style: StrokeStyle(lineWidth: 2.6, lineCap: .round))
     }
 }
