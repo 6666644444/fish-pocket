@@ -760,6 +760,7 @@ struct WebFallbackView: View {
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @State private var addingToHome = false
 
     var body: some View {
         NavigationStack {
@@ -771,7 +772,7 @@ struct WebFallbackView: View {
                     ToolbarItemGroup(placement: .topBarTrailing) {
                         Group {
                             Menu {
-                                Button("添加到主屏幕", systemImage: "plus.square.on.square") { HomeScreenShortcut.addWeb() }
+                                Button("添加到主屏幕", systemImage: "plus.square.on.square") { addingToHome = true }
                             } label: {
                                 Image(systemName: "ellipsis")
                             }
@@ -788,6 +789,7 @@ struct WebFallbackView: View {
                     }
                 }
         }
+        .sheet(isPresented: $addingToHome) { AddToHomeScreenSheet(target: .web) }
     }
 }
 

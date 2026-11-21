@@ -205,6 +205,40 @@
         }
       }
     },
+    "打开 ${applicationName} 网页版" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open ${applicationName} Web UI"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir ${applicationName} en la web"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "${applicationName} の Web 版を開く"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "${applicationName} 웹 버전 열기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開啟 ${applicationName} 網頁版"
+          }
+        }
+      }
+    },
     "查看 ${applicationName} 余额" : {
       "localizations" : {
         "en" : {
@@ -303,6 +337,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "用 ${applicationName} 打開 ${bot}"
+          }
+        }
+      }
+    },
+    "用 ${applicationName} 打开网页版" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the Web UI with ${applicationName}"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir la versión web con ${applicationName}"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "${applicationName} で Web 版を開く"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "${applicationName}에서 웹 버전 열기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用 ${applicationName} 開啟網頁版"
           }
         }
       }
