@@ -59,7 +59,6 @@ struct MiniAppsPage: View {
         .simultaneousGesture(TapGesture().onEnded {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { dismissKeyboard() }
         })
-        .refreshable { store.refresh() }
         .background(Palette.background)
         .tabBarEdgeSoftened()
         // The ideas are for a first one; once there is one of their own, the bar alone.
