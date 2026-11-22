@@ -12964,6 +12964,326 @@
         }
       }
     },
+    "和智能体打电话" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Call the agent"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Llama al agente"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントと通話"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트와 통화하기"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "和智能体打电话"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "和 AI 代理通話"
+          }
+        }
+      }
+    },
+    "会话和 Bot 私聊里，输入框空着时点右边的波形按钮就能通话：直接开口说，它用语音回答，它说话时你随时可以打断。用的是你自己的火山引擎 API Key，在设置 → 语音通话里配置。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In a session or a direct chat with a Bot, tap the waveform button beside the empty input box to start a call: just talk, it answers out loud, and you can cut in whenever it's speaking. It uses your own Volcengine API key, set up in Settings → Voice Call."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En una sesión o en un chat directo con un Bot, toca el botón de onda junto al cuadro de texto vacío para iniciar una llamada: habla sin más, te responde en voz alta y puedes interrumpirlo mientras habla. Usa tu propia clave de API de Volcengine, que se configura en Configuración → Llamada de voz."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セッションや Bot との個別チャットで、入力欄が空のときに右の波形ボタンをタップすると通話できます。そのまま話しかけると音声で答え、話している途中でもいつでも割り込めます。ご自身の Volcengine API キーを使い、設定 → 音声通話で設定します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "세션이나 Bot과의 1:1 채팅에서 입력창이 비어 있을 때 오른쪽 파형 버튼을 누르면 통화할 수 있어요. 그냥 말하면 음성으로 답하고, 말하는 도중에도 언제든 끼어들 수 있어요. 본인의 Volcengine API 키를 사용하며 설정 → 음성 통화에서 설정해요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会话和 Bot 私聊里，输入框空着时点右边的波形按钮就能通话：直接开口说，它用语音回答，它说话时你随时可以打断。用的是你自己的火山引擎 API Key，在设置 → 语音通话里配置。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "對話和 Bot 私訊裡，輸入框空著時點右邊的波形按鈕就能通話：直接開口說，它用語音回答，它說話時你隨時可以打斷。用的是你自己的火山引擎 API Key，在設定 → 語音通話裡設定。"
+          }
+        }
+      }
+    },
+    "干活时也能插话" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cut in while it works"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interviene mientras trabaja"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "作業中でも割り込める"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "작업 중에도 끼어들기"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "干活时也能插话"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "工作時也能插話"
+          }
+        }
+      }
+    },
+    "智能体正在干活时直接发消息，它做完手头这一步就会看到并调整，不用等它跑完。插话和排队的消息显示在对话里，送到之前可以取消。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send a message while the agent is working: it reads it as soon as it finishes the step at hand and adjusts, so you don't have to wait for it to finish. Messages steering in or waiting in line show in the conversation, and you can cancel them before they arrive."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envía un mensaje mientras el agente trabaja: lo leerá en cuanto termine el paso en curso y se ajustará, sin que tengas que esperar a que acabe. Los mensajes que redirigen o esperan en cola aparecen en la conversación y puedes cancelarlos antes de que lleguen."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントが作業中でもそのままメッセージを送れます。今のステップが終わるとすぐに読んで方針を調整するので、終わるまで待つ必要はありません。割り込み中や順番待ちのメッセージは会話に表示され、届く前ならキャンセルできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트가 작업 중일 때 바로 메시지를 보내면, 지금 하던 단계를 마치는 대로 읽고 방향을 조정해요. 끝날 때까지 기다릴 필요가 없어요. 끼어드는 중이거나 대기 중인 메시지는 대화에 표시되고, 전달되기 전에 취소할 수 있어요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "智能体正在干活时直接发消息，它做完手头这一步就会看到并调整，不用等它跑完。插话和排队的消息显示在对话里，送到之前可以取消。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 代理正在工作時直接傳訊息，它做完手邊這一步就會看到並調整，不用等它跑完。插話和排隊的訊息顯示在對話裡，送到之前可以取消。"
+          }
+        }
+      }
+    },
+    "Siri 和快捷指令" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri and Shortcuts"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri y Atajos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri とショートカット"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri와 단축어"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri 和快捷指令"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri 和捷徑"
+          }
+        }
+      }
+    },
+    "对 Siri 说「用 Fish Pocket 打开大肥鱼」，就能直接进入和这个 Bot 的聊天；也能在「快捷指令」里设成自动化，到点打开某个 Bot 或 Mini App。怎么设置见探索 → 快捷指令（iOS 17 的 iPad 上在侧边栏）。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Say “Open 大肥鱼 in Fish Pocket” to Siri to go straight to your chat with that Bot, or set up an automation in Shortcuts to open a Bot or mini app at a set time. See Explore → Shortcuts for how (in the sidebar on an iPad before iOS 18)."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dile a Siri «Abre 大肥鱼 en Fish Pocket» para ir directo al chat con ese Bot, o crea una automatización en Atajos para abrir un Bot o una miniapp a una hora fija. Consulta cómo en Explorar → Atajos (en la barra lateral en un iPad con una versión anterior a iOS 18)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri に「Fish Pocket で 大肥鱼 を開いて」と話しかけると、その Bot とのチャットに直接入れます。ショートカットでオートメーションを作れば、決まった時間に Bot やミニアプリを開くこともできます。設定方法は 探索 → ショートカット（iOS 18 より前の iPad ではサイドバー）をご覧ください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri에게 “Fish Pocket에서 大肥鱼 열기”라고 말하면 그 Bot과의 채팅으로 바로 들어가요. 단축어에서 자동화를 만들면 정해진 시간에 Bot이나 미니 앱을 열 수도 있어요. 설정 방법은 탐색 → 단축어에서 확인하세요(iOS 18 이전 iPad에서는 사이드바)."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对 Siri 说「用 Fish Pocket 打开大肥鱼」，就能直接进入和这个 Bot 的聊天；也能在「快捷指令」里设成自动化，到点打开某个 Bot 或 Mini App。怎么设置见探索 → 快捷指令（iOS 17 的 iPad 上在侧边栏）。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "對 Siri 說「用 Fish Pocket 打開大肥魚」，就能直接進入和這個 Bot 的聊天；也能在「捷徑」裡設成自動化，到點開啟某個 Bot 或 Mini App。怎麼設定見探索 → 捷徑（iOS 17 的 iPad 上在側邊欄）。"
+          }
+        }
+      }
+    },
+    "文件点开就能看" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open files right in the chat"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre los archivos en el chat"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ファイルをタップしてすぐ表示"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일을 눌러 바로 보기"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件点开就能看"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "檔案點開就能看"
+          }
+        }
+      }
+    },
+    "对话里的文件点一下就能预览：Word、Excel、PPT 直接显示内容，Markdown 排好版显示，文本带行号。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap a file in a conversation to preview it: Word, Excel and PowerPoint show their contents, Markdown is formatted, and plain text has line numbers."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca un archivo de la conversación para previsualizarlo: Word, Excel y PowerPoint muestran su contenido, el Markdown aparece con formato y el texto lleva números de línea."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会話の中のファイルはタップするとプレビューできます。Word、Excel、PowerPoint は中身をそのまま表示し、Markdown は整形され、テキストには行番号が付きます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화 속 파일을 누르면 미리 볼 수 있어요. Word, Excel, PowerPoint는 내용을 바로 보여 주고, Markdown은 서식을 갖춰 표시하며, 텍스트에는 줄 번호가 붙어요."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "对话里的文件点一下就能预览：Word、Excel、PPT 直接显示内容，Markdown 排好版显示，文本带行号。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "對話裡的檔案點一下就能預覽：Word、Excel、PPT 直接顯示內容，Markdown 排好版顯示，文字帶行號。"
+          }
+        }
+      }
+    },
     "直接进入和某个 Bot 的聊天。" : {
       "localizations" : {
         "en" : {
