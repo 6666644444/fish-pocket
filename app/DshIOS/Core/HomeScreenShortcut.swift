@@ -1,8 +1,11 @@
 import SwiftUI
 import UIKit
 
-/// Puts an icon on the home screen through Safari. iOS lets no app place one there itself, but
-/// Safari's 添加到主屏幕 does for a web page: the website's page (AppLinks.addToHomeScreen) takes the
+/// Puts an icon on the home screen through Safari. Offered nowhere for now: 添加到主屏幕 gives the
+/// widget and the shortcut only, which go straight into the app. The icons people already added
+/// keep working (`DshLink` takes both schemes, the website's page stays).
+///
+/// iOS lets no app place an icon there itself, but Safari's 添加到主屏幕 does for a web page: the website's page (AppLinks.addToHomeScreen) takes the
 /// name and icon from what follows its `#`, and when opened from the home screen goes on to one of
 /// the app's links: `fishpocket://app/<id>` for an app of 我的应用 (`id=`), `fishpocket://web` for the 网页版
 /// (`to=web`). The fragment never reaches the server. The icon is drawn here: Safari's canvas does
@@ -39,9 +42,10 @@ enum HomeScreenShortcut {
     }
 }
 
-/// 添加到主屏幕: the three ways onto the home screen, side by side. Safari's icon looks like the app
-/// but loads the website's page each time; a Shortcuts icon (`DshShortcuts`) and a widget go
-/// straight into the app. No app may add either itself, so those two are told, not done.
+/// 添加到主屏幕: the ways onto the home screen, side by side: a widget and a Shortcuts icon
+/// (`DshShortcuts`), both straight into the app. No app may add either itself, so they are told,
+/// not done. Safari's icon (`HomeScreenShortcut`), which loads the website's page each time, is not
+/// offered any more.
 struct AddToHomeScreenSheet: View {
     enum Target: Identifiable {
         case miniApp(MiniApp)
@@ -61,7 +65,6 @@ struct AddToHomeScreenSheet: View {
 
     var body: some View {
         NavigationStack {
-            // The two that go straight into the app first; Safari's, which loads a web page each time, last.
             List {
                 way("小组件", systemImage: "rectangle.3.group", text: widgetText)
                 way(
@@ -73,31 +76,12 @@ struct AddToHomeScreenSheet: View {
                     // Straight into a new shortcut's editor.
                     if let url = URL(string: "shortcuts://create-shortcut") { openURL(url) }
                 }
-                way(
-                    "桌面图标",
-                    systemImage: "plus.square.on.square",
-                    text: iconText,
-                    button: "在 Safari 中添加"
-                ) {
-                    dismiss()
-                    switch target {
-                    case .miniApp(let app): MiniAppHomeScreen.add(app)
-                    case .web: HomeScreenShortcut.addWeb()
-                    }
-                }
             }
             .navigationTitle("添加到主屏幕")
             .navigationBarTitleDisplayMode(.inline)
             .closeButton(dismiss)
         }
         .settingsStyle()
-    }
-
-    private var iconText: String {
-        switch target {
-        case .miniApp: String(localized: "图标和这个 Mini App 的一样。经 Safari 添加，每次点开都会先加载一下网页，再进入 App。")
-        case .web: String(localized: "图标是 Fish Pocket 加一个地球。经 Safari 添加，每次点开都会先加载一下网页，再进入 App。")
-        }
     }
 
     private var shortcutText: String {
