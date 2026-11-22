@@ -163,7 +163,7 @@ struct DrawerView: View {
         }
         .sessionList()
         .background(Palette.background)
-        .tabBarEdgeSoftened()
+        .tabEdgesSoftened()
         .navigationTitle(Self.sessionsTitle)
         // A small title, as every tab's: a large one only takes room.
         .navigationBarTitleDisplayMode(.inline)

@@ -422,7 +422,7 @@ struct BotHomeView: View {
         List { if needle.isEmpty { rows } else { searchRows } }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .tabBarEdgeSoftened()
+        .tabEdgesSoftened()
         .searchable(text: $query, isPresented: $searchActive, placement: .navigationBarDrawer(displayMode: .automatic), prompt: "搜索 Bot、群聊和私聊记录")
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled()

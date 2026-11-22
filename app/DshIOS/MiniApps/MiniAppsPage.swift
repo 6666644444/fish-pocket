@@ -59,7 +59,7 @@ struct MiniAppsPage: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { dismissKeyboard() }
         })
         .background(Palette.background)
-        .tabBarEdgeSoftened()
+        .tabEdgesSoftened()
         // The ideas are for a first one; once there is one of their own, the bar alone.
         .conversationDock { MiniAppRequestBar(first: mine.isEmpty) }
         .navigationTitle(Self.tabTitle)
