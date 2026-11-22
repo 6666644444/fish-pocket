@@ -86565,6 +86565,40 @@
         }
       }
     },
+    "至少保留一种，只剩一种时不能关。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep at least one. When only one is left, it can't be turned off."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deja al menos uno. Cuando solo queda uno, no se puede desactivar."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "少なくとも 1 つは残してください。1 つだけのときはオフにできません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최소 한 가지는 남겨야 합니다. 하나만 남으면 끌 수 없습니다."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "至少保留一種，只剩一種時不能關閉。"
+          }
+        }
+      }
+    },
     "至少添加一个 Off 以外的档位；不需要思考请关闭推理等级。" : {
       "localizations" : {
         "en" : {
