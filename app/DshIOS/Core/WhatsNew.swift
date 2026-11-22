@@ -47,6 +47,20 @@ enum WhatsNew {
     /// Newest first. Until the app reaches an entry's version (and build, when it names one),
     /// the entry is not shown. Entries of one version are shown together, newest first.
     static let releases: [Release] = [
+        Release(version: "1.2.2", build: 125, features: [
+            Feature(symbol: "phone.and.waveform",
+                    title: "和智能体打电话",
+                    detail: "会话和 Bot 私聊里，输入框空着时点右边的波形按钮就能通话：直接开口说，它用语音回答，它说话时你随时可以打断。用的是你自己的火山引擎 API Key，在设置 → 语音通话里配置。"),
+            Feature(symbol: "text.bubble",
+                    title: "干活时也能插话",
+                    detail: "智能体正在干活时直接发消息，它做完手头这一步就会看到并调整，不用等它跑完。插话和排队的消息显示在对话里，送到之前可以取消。"),
+            Feature(symbol: "square.2.layers.3d",
+                    title: "Siri 和快捷指令",
+                    detail: "对 Siri 说「用 Fish Pocket 打开大肥鱼」，就能直接进入和这个 Bot 的聊天；也能在「快捷指令」里设成自动化，到点打开某个 Bot 或 Mini App。怎么设置见探索 → 快捷指令（iOS 17 的 iPad 上在侧边栏）。"),
+            Feature(symbol: "doc.text.magnifyingglass",
+                    title: "文件点开就能看",
+                    detail: "对话里的文件点一下就能预览：Word、Excel、PPT 直接显示内容，Markdown 排好版显示，文本带行号。"),
+        ]),
         Release(version: "1.2.2", build: 124, features: [
             Feature(symbol: "photo.badge.plus",
                     title: "让智能体给你画图",
