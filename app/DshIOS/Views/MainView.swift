@@ -1287,6 +1287,10 @@ struct MainView: View {
                 if let files { app.pendingFiles[id] = files }
                 if let prompt { app.pendingPrompts[id] = prompt }
                 if focus { app.pendingFocus.insert(id) }
+                // iOS 17 drops a push made in the update that brings the new blank conversation into
+                // the session list (`createSession` refreshes it): the path holds the conversation and
+                // the list stays on screen, so 新对话 seemed to do nothing. A turn later it is shown.
+                if #unavailable(iOS 18) { try? await Task.sleep(for: .milliseconds(30)) }
                 selection = id
                 // The engine may hand back the blank conversation already selected: shown all the same.
                 if usesTabs { showInTabs(id) }

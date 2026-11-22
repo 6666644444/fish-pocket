@@ -315,7 +315,7 @@ struct ConversationView: View {
         }
         .modifier(ComposerDrop(composer: model.composer, enabled: model.subagentReadOnly(parentAvailable: parentAvailable(model)) == nil))
         // Under the toolbar: what is inside an inspector's main view does not reach the navigation bar.
-        .modifier(WorkbenchBeside(model: model, open: $workbenchOpen, tab: $workbenchTab, regular: workbenchBeside, inspector: !workbenchInSheet))
+        .modifier(WorkbenchBeside(model: model, open: $workbenchOpen, tab: $workbenchTab, regular: workbenchBeside, inspector: !workbenchInSheet && !ThisDevice.isDuo))
         // It names the window in the iPad app switcher. Not drawn while the title is the principal
         // item; with the title moved aside for the workbench it would show as a second one.
         .modifier(WindowTitle(sessionId: sessionId, hidden: titleBesideWorkbench))
@@ -2026,6 +2026,10 @@ private struct WorkbenchBeside: ViewModifier {
     /// There is room for it beside the conversation; where there is not, it is the conversation's sheet.
     let regular: Bool
     /// iOS 26's inspector, unless the page is pushed where one breaks the push (`workbenchInSheet`).
+    /// Never on iPhone Duo: turned while open, an inspector the system lays out again in the
+    /// rotation (a tab out of sight held one, even closed) crashed the app (`UISplitViewController
+    /// internal inconsistency: unexpected column dimension for resizing`), as it did on a big
+    /// iPhone turned upright before the iPhone was held upright only. The column of its own works there.
     var inspector = true
 
     func body(content: Content) -> some View {
