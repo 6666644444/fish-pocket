@@ -397,6 +397,12 @@ final class FishPocketAccount {
                 toast = String(localized: "已到账 \(granted) 积分")
                 quotaPrompt = false
             }
+        } catch let error as FishPocketError where error.status == 400 && transaction.environment != .production {
+            // A sandbox purchase (a development or TestFlight build) the server turned down: the
+            // production service credits only real ones (and App Review's demo account). Nothing
+            // was paid and it never goes through, so it is finished quietly: left unfinished,
+            // StoreKit handed it back at every launch, and every launch said it would retry.
+            await transaction.finish()
         } catch {
             // Left unfinished: StoreKit hands it back at the next launch or sign-in, and the
             // server's redemption is idempotent. Every consumable here is a Fish Pocket pack,
