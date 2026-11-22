@@ -138,7 +138,7 @@ check "ds-bot backend answers /api/bot" "r.ok === true && Array.isArray(r.value.
 
 check "image-gen settings are served" "r.result.ok === true && r.result.value.namespaces.some(n => n.ns === 'image-gen')" \
   "$(call settings/describe '{}')"
-health="$(curl -s -b "$jar" -X POST "http://$host/plugins/dsh-image-gen/settings-health")"
+health="$(curl -s -b "$jar" "http://$host/plugins/dsh-image-gen/settings-health")"
 check "dsh-image-gen answers its settings-health route" "typeof r === 'object' && r !== null" "$health"
 
 check "session list reads" "r.result.ok === true && Array.isArray(r.result.value.items)" \

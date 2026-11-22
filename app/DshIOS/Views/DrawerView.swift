@@ -1163,7 +1163,7 @@ struct DrawerView: View {
             } label: {
                 Label(archived ? "取消归档" : "归档", systemImage: archived ? "tray.and.arrow.up" : "archivebox")
             }
-            .inkTint()
+            .tint(Palette.swipe)
         }
         .contextMenu { menu(for: session) }
         .reportsFrame(session.id, to: rowFrames)
@@ -1236,7 +1236,7 @@ struct DrawerView: View {
             } label: {
                 Label(session.archived ? "取消归档" : "归档", systemImage: session.archived ? "tray.and.arrow.up" : "archivebox")
             }
-            .inkTint()
+            .tint(Palette.swipe)
         }
         .contextMenu {
             if let openInWindow, !session.archived {

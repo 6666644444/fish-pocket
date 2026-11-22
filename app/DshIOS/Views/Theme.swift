@@ -9,6 +9,11 @@ enum Palette {
     static let link = Color(uiColor: .link)
     static let onInk = Color("OnInk")
     static let secondary = Color("TextSecondary")
+    /// A swipe action's button. The system draws its label white, and the ink is near white in
+    /// dark mode, which hid 归档 and 取消归档: there it is the secondary grey, as 置顶 is.
+    static let swipe = Color(uiColor: UIColor { traits in
+        UIColor(named: traits.userInterfaceStyle == .dark ? "TextSecondary" : "Ink") ?? .label
+    })
     static let faint = Color("TextFaint")
     /// Composer and command blocks.
     static let field = Color("Field")
