@@ -1,9 +1,10 @@
 import SwiftUI
 
-/// The ＋ tray, one for the new-conversation and the conversation layouts: three
-/// large buttons for what goes into a message, then references, commands, the
-/// model and the session's modes. Everything typing `/` or `@` reaches is here,
-/// for keyboards where those characters sit a page away.
+/// The ＋ tray, one for the new-conversation and the conversation layouts: large
+/// buttons for what goes into a message and the connectors, then the model, thinking
+/// and access mode, then references, commands and the session's other modes.
+/// Everything typing `/` or `@` reaches is here, for keyboards where those
+/// characters sit a page away.
 struct ComposerTray: View {
     let model: SessionModel
     let context: ComposerContext
@@ -18,6 +19,7 @@ struct ComposerTray: View {
     @Environment(\.dismiss) private var dismiss
     @State private var confirmingPermission: String?
     @State private var confirmingTeamOff = false
+    @State private var showingConnectors = false
 
     private var composer: ComposerModel { model.composer }
 
@@ -30,10 +32,16 @@ struct ComposerTray: View {
                             .disabled(!UIImagePickerController.isSourceTypeAvailable(.camera))
                         TrayTile(title: "照片", systemImage: "photo.on.rectangle", action: photos)
                         TrayTile(title: "文件", systemImage: "folder", action: files)
+                        // Ordinary conversations and Bots both reach the connected services.
+                        // A button, not a link: a link would take the whole row's taps.
+                        TrayTile(title: "连接器", systemImage: "point.3.connected.trianglepath.dotted") { showingConnectors = true }
                     }
                     .listRowInsets(EdgeInsets())
                     .listRowBackground(Color.clear)
                 }
+                // A Bot's model, thinking level and permission are its own, set on its page;
+                // a group's members each answer on theirs.
+                if bot == nil { modelSettings }
                 Section {
                     NavigationLink {
                         CandidateList(model: model, context: context, trigger: "@", pick: pick)
@@ -67,25 +75,13 @@ struct ComposerTray: View {
                         }
                         .foregroundStyle(Palette.ink)
                     }
-                    // A Bot's model, thinking level and permission are its own, set on its page;
-                    // a group's members each answer on theirs.
-                    if bot == nil {
-                        NavigationLink {
-                            ModelSearchList(model: model, context: context)
-                        } label: {
-                            LabeledContent {
-                                Text(context.modelName(model)).lineLimit(1)
-                            } label: {
-                                Label("模型", systemImage: "cpu")
-                            }
-                        }
-                    }
                 }
                 .groupedRow()
                 if bot == nil { sessionModes }
             }
             .groupedList()
             .toolbar(.hidden, for: .navigationBar)
+            .navigationDestination(isPresented: $showingConnectors) { BotConnectorsPage().settingsStyle() }
         }
         .inkTint()
         .permissionConfirmation($confirmingPermission, confirm: setPermission)
@@ -100,14 +96,17 @@ struct ComposerTray: View {
         .sheetNotices()
     }
 
-    /// An ordinary conversation: this session's modes.
-    private var sessionModes: some View {
+    /// An ordinary conversation: the model it answers with, whether it thinks, and what it may touch.
+    private var modelSettings: some View {
         Section {
-            if context.hasPlanMode || composer.planActive {
-                Toggle(isOn: Binding(get: { composer.planActive }, set: { on in Haptics.select(); composer.setPlan(on) })) {
-                    Label("计划模式", systemImage: "list.bullet.clipboard")
+            NavigationLink {
+                ModelSearchList(model: model, context: context)
+            } label: {
+                LabeledContent {
+                    Text(context.modelName(model)).lineLimit(1)
+                } label: {
+                    Label("模型", systemImage: "cpu")
                 }
-                .disabled(composer.planSwitching)
             }
             if let thinking = context.thinking(model) {
                 Toggle(isOn: Binding(get: { thinking.isOn }, set: { on in
@@ -116,6 +115,29 @@ struct ComposerTray: View {
                 })) {
                     Label("思考", systemImage: "lightbulb")
                 }
+            }
+            if !context.permissionOptions.isEmpty, model.permission != nil {
+                Picker(selection: Binding(get: { model.permission ?? "" }, set: { choosePermission($0) })) {
+                    ForEach(context.permissionOptions, id: \.value) { option in
+                        Label(ComposerView.permissionTitle(option), systemImage: ComposerView.permissionIcon(option.value)).tag(option.value)
+                    }
+                } label: {
+                    Label("访问模式", systemImage: ComposerView.permissionIcon(model.permission ?? ""))
+                }
+                .pickerStyle(.menu)
+            }
+        }
+        .groupedRow()
+    }
+
+    /// An ordinary conversation: this session's other modes.
+    private var sessionModes: some View {
+        Section {
+            if context.hasPlanMode || composer.planActive {
+                Toggle(isOn: Binding(get: { composer.planActive }, set: { on in Haptics.select(); composer.setPlan(on) })) {
+                    Label("计划模式", systemImage: "list.bullet.clipboard")
+                }
+                .disabled(composer.planSwitching)
             }
             // A child is a member of its root's team, not a team of its own.
             if let team = composer.teamEnabled, model.subagentAddress == nil {
@@ -132,16 +154,6 @@ struct ComposerTray: View {
                     }
                 }
                 .disabled(composer.teamSwitching || composer.projection("modelSelection").isNull)
-            }
-            if !context.permissionOptions.isEmpty, model.permission != nil {
-                Picker(selection: Binding(get: { model.permission ?? "" }, set: { choosePermission($0) })) {
-                    ForEach(context.permissionOptions, id: \.value) { option in
-                        Label(ComposerView.permissionTitle(option), systemImage: ComposerView.permissionIcon(option.value)).tag(option.value)
-                    }
-                } label: {
-                    Label("访问模式", systemImage: ComposerView.permissionIcon(model.permission ?? ""))
-                }
-                .pickerStyle(.menu)
             }
         }
         .groupedRow()
@@ -178,7 +190,8 @@ private struct TrayTile: View {
         Button(action: action) {
             VStack(spacing: 6) {
                 Image(systemName: systemImage).font(.system(size: 22))
-                Text(title).font(.footnote)
+                // Four to a row: a longer word in another language shrinks a little rather than wraps.
+                Text(title).font(.footnote).lineLimit(1).minimumScaleFactor(0.8)
             }
             .foregroundStyle(enabled ? Palette.ink : Palette.faint)
             .frame(maxWidth: .infinity, minHeight: 76)
