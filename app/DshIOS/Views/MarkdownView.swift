@@ -391,14 +391,15 @@ struct CodeBlockView: View {
             .padding(.trailing, 2)
             .padding(.vertical, picture ? 10 : 0)
             let lines = code.components(separatedBy: "\n")
-            SidewaysScroll {
-                Text(expanded || lines.count <= cap ? code : lines.prefix(cap).joined(separator: "\n"))
-                    // A size down in a picture, where long lines wrap instead of scrolling.
-                    .font(.system(picture ? .footnote : .subheadline, design: .monospaced))
-                    .lineSpacing(2)
-                    .padding(.horizontal, 14)
-                    .padding(.bottom, lines.count > cap ? 4 : 12)
-            }
+            // Long lines wrap, as in the web app, rather than scrolling sideways.
+            Text(expanded || lines.count <= cap ? code : lines.prefix(cap).joined(separator: "\n"))
+                // A size down in a picture.
+                .font(.system(picture ? .footnote : .subheadline, design: .monospaced))
+                .lineSpacing(2)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 14)
+                .padding(.bottom, lines.count > cap ? 4 : 12)
             if lines.count > cap {
                 Button { expanded.toggle() } label: {
                     Text(expanded ? "收起" : "展开全部（\(lines.count) 行）").font(.caption).foregroundStyle(Palette.secondary).hitTarget()

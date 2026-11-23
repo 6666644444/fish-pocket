@@ -12,7 +12,6 @@ enum MiniAppPresenter {
             Haptics.warning()
             return
         }
-        MiniAppStore.shared.noteOpened(id)
         func present(tries: Int = 10) {
             // A cold launch from a widget: the window may not be up yet.
             guard let top = topController() else {
