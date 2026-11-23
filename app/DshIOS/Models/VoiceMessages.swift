@@ -110,16 +110,17 @@ final class VoiceMessageSync {
 }
 
 /// The speech a voice message is read in: Volcengine in the call's voice when its key is saved,
-/// else DeepSeek in the reading voice. Only that one: when it fails, the message fails, rather
+/// else DeepSeek in the reading voice, each the one picked for the Bot or the conversation it was
+/// sent in (`VoiceChoices`), else the default. Only that one: when it fails, the message fails, rather
 /// than another service reading it in a voice that does not match the rest.
 enum VoiceMessageVoice: Equatable {
     case volcengine(key: String, voice: String)
     case deepseek(DeepSeekSpeech.Voice)
 
     @MainActor
-    static func chosen() async -> VoiceMessageVoice? {
-        if let key = VolcSpeech.shared.key, !key.isEmpty { return .volcengine(key: key, voice: CallVoice.chosen.id) }
-        if await DeepSeekSpeech.ready() { return .deepseek(VoicePreferences.shared.readingVoice) }
+    static func chosen(for owner: VoiceOwner? = nil) async -> VoiceMessageVoice? {
+        if let key = VolcSpeech.shared.key, !key.isEmpty { return .volcengine(key: key, voice: VoiceChoices.shared.callVoice(for: owner).id) }
+        if await DeepSeekSpeech.ready() { return .deepseek(VoiceChoices.shared.readingVoice(for: owner)) }
         return nil
     }
 
@@ -200,8 +201,8 @@ final class VoiceMessagePlayer {
 
     func progress(of id: String) -> Double { current == id ? fraction : 0 }
 
-    /// Plays `text`, or stops it when it is the one playing.
-    func toggle(id: String, text: String) {
+    /// Plays `text` in `owner`'s voice, or stops it when it is the one playing.
+    func toggle(id: String, text: String, owner: VoiceOwner?) {
         if current == id { stop(); return }
         stop()
         if CallCenter.shared.active {
@@ -211,7 +212,7 @@ final class VoiceMessagePlayer {
         ReadAloud.shared.stop()
         current = id
         loading = true
-        task = Task { await play(id: id, text: text) }
+        task = Task { await play(id: id, text: text, owner: owner) }
     }
 
     func stop() {
@@ -234,9 +235,9 @@ final class VoiceMessagePlayer {
     }
 
     /// Seconds a message lasts: exact once it was made, else guessed from its words.
-    func seconds(id: String, text: String) -> Int {
+    func seconds(id: String, text: String, owner: VoiceOwner?) -> Int {
         if let known = durations[id] { return known }
-        if let url = cached(text), let size = (try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize {
+        if let url = cached(text, owner: owner), let size = (try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize {
             return max(1, Int((Double(size - 44) / Double(Self.sampleRate * 2)).rounded()))
         }
         return Self.estimate(text)
@@ -250,14 +251,14 @@ final class VoiceMessagePlayer {
         return max(1, Int((Double(cjk) / 4.5 + Double(words) / 2.6).rounded()))
     }
 
-    private func play(id: String, text: String) async {
+    private func play(id: String, text: String, owner: VoiceOwner?) async {
         do {
             try await Self.activateSession()
             try Task.checkCancellation()
-            if let url = cached(text) {
+            if let url = cached(text, owner: owner) {
                 try playFile(id: id, url: url)
             } else {
-                try await stream(id: id, text: text)
+                try await stream(id: id, text: text, owner: owner)
             }
         } catch is CancellationError {
             return
@@ -282,8 +283,8 @@ final class VoiceMessagePlayer {
     }
 
     /// A message heard for the first time: played as the speech comes in, then kept.
-    private func stream(id: String, text: String) async throws {
-        guard let voice = await VoiceMessageVoice.chosen() else { throw VoiceMessageError.noVoice }
+    private func stream(id: String, text: String, owner: VoiceOwner?) async throws {
+        guard let voice = await VoiceMessageVoice.chosen(for: owner) else { throw VoiceMessageError.noVoice }
         let streamer = try PCMPlayer()
         streamer.onHalt = { [weak self] in if self?.streamer === streamer { self?.stop() } }
         self.streamer = streamer
@@ -360,8 +361,8 @@ final class VoiceMessagePlayer {
     }()
 
     /// A file already made for `text` in the voice set up now.
-    private func cached(_ text: String) -> URL? {
-        let url = Self.folder.appendingPathComponent("\(Self.digest(text, tag: Self.currentTag())).wav")
+    private func cached(_ text: String, owner: VoiceOwner?) -> URL? {
+        let url = Self.folder.appendingPathComponent("\(Self.digest(text, tag: Self.currentTag(owner))).wav")
         return FileManager.default.fileExists(atPath: url.path) ? url : nil
     }
 
@@ -370,9 +371,9 @@ final class VoiceMessagePlayer {
     }
 
     /// The tag of the voice `VoiceMessageVoice.chosen` picks, without asking DeepSeek.
-    private static func currentTag() -> String {
-        if let key = VolcSpeech.shared.key, !key.isEmpty { return VoiceMessageVoice.volcengine(key: "", voice: CallVoice.chosen.id).tag }
-        return VoiceMessageVoice.deepseek(VoicePreferences.shared.readingVoice).tag
+    private static func currentTag(_ owner: VoiceOwner?) -> String {
+        if let key = VolcSpeech.shared.key, !key.isEmpty { return VoiceMessageVoice.volcengine(key: "", voice: VoiceChoices.shared.callVoice(for: owner).id).tag }
+        return VoiceMessageVoice.deepseek(VoiceChoices.shared.readingVoice(for: owner)).tag
     }
 
     // MARK: Audio session

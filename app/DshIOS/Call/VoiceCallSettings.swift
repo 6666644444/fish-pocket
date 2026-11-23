@@ -129,9 +129,13 @@ struct VoicePickerPage: View {
             } header: {
                 Text("朗读")
             } footer: {
-                switch owner {
-                case .bot: Text("朗读这个 Bot 的回复时用这里选的声音，群聊里它的发言也一样。跟随默认时，用「设置 → 朗读」里选的声音。")
-                case .session: Text("朗读这个会话的回复时用这里选的声音。跟随默认时，用「设置 → 朗读」里选的声音。")
+                VStack(alignment: .leading, spacing: 6) {
+                    switch owner {
+                    case .bot: Text("朗读这个 Bot 的回复时用这里选的声音，群聊里它的发言也一样。跟随默认时，用「设置 → 朗读」里选的声音。")
+                    case .session: Text("朗读这个会话的回复时用这里选的声音。跟随默认时，用「设置 → 朗读」里选的声音。")
+                    }
+                    // Voice messages are read by Volcengine when its key is saved, else by DeepSeek.
+                    if !speech.configured { Text("AI 发来的语音消息也用这里的声音。") }
                 }
             }
             .groupedRow()
@@ -151,6 +155,7 @@ struct VoicePickerPage: View {
                     case .session: Text("在这个会话里通话时用这里选的声音。跟随默认时，用「设置 → 语音通话」里选的声音。")
                     }
                     if speech.configured {
+                        Text("AI 发来的语音消息也用这里的声音。")
                         Text("试听按火山引擎的价格计费；通话中改了声音，下一通电话生效。")
                     } else {
                         Text("试听和通话要先在「设置 → 语音通话」里填好火山引擎的 API Key。")

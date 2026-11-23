@@ -9,6 +9,8 @@ struct VoiceMessageBubble: View {
     let live: Bool
 
     @State private var showsText = false
+    @Environment(\.sessionModel) private var session
+    @Environment(\.botComposer) private var botChat
 
     static let tool = "send_voice_message"
     /// A sent message, or one being written; a refused one stays among the turn's steps.
@@ -16,6 +18,11 @@ struct VoiceMessageBubble: View {
 
     private var text: String { call.arguments["text"].string ?? "" }
     private var player: VoiceMessagePlayer { .shared }
+    /// Read in the voice picked for this Bot or this conversation, else the default.
+    private var owner: VoiceOwner? {
+        if case .bot(let id)? = botChat { return .bot(id) }
+        return session.map { .session($0.sessionId) }
+    }
 
     var body: some View {
         if !call.finished {
@@ -61,9 +68,9 @@ struct VoiceMessageBubble: View {
     private var bubble: some View {
         let playing = player.current == call.id
         let loading = playing && player.loading
-        let seconds = player.seconds(id: call.id, text: text)
+        let seconds = player.seconds(id: call.id, text: text, owner: owner)
         return Button {
-            player.toggle(id: call.id, text: text)
+            player.toggle(id: call.id, text: text, owner: owner)
         } label: {
             HStack(spacing: 8) {
                 ZStack {

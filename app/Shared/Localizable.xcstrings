@@ -5631,6 +5631,40 @@
         }
       }
     },
+    "Bot 和会话可以单独选声音：Bot 详情页、会话标题菜单里的「声音」。没单独选的用这个。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bots and sessions can each have their own voice: see Voice on a Bot's details page or in a session's title menu. Those without one use this."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada Bot y cada sesión pueden tener su propia voz: búscala en Voz, en la página de detalles del Bot o en el menú del título de la sesión. Los que no tengan una usan esta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot やセッションごとに声を選べます。Bot の詳細ページやセッションのタイトルメニューにある「声」から選択します。選んでいないものはこの声を使います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot과 세션마다 목소리를 따로 고를 수 있어요. Bot 상세 페이지나 세션 제목 메뉴의 「목소리」에서 고르세요. 따로 고르지 않으면 이 목소리를 써요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot 和對話可以各自選聲音：Bot 詳細資訊頁、對話標題選單裡的「聲音」。沒有另外選的就用這個。"
+          }
+        }
+      }
+    },
     "Bot 和群聊" : {
       "localizations" : {
         "en" : {
@@ -118384,6 +118418,40 @@
     },
     "300" : {
       "shouldTranslate" : false
+    },
+    "AI 发来的语音消息也用这里的声音。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voice messages from the AI use this voice too."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los mensajes de voz de la IA también usan esta voz."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI から届く音声メッセージもこの声を使います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI가 보내는 음성 메시지도 이 목소리를 써요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 傳來的語音訊息也用這裡的聲音。"
+          }
+        }
+      }
     },
     "AI 生成水印" : {
       "localizations" : {

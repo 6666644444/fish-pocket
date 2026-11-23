@@ -47,6 +47,11 @@ final class VoiceChoices {
         callVoice(of: botId.map(VoiceOwner.bot) ?? .session(sessionId)) ?? CallVoice.chosen
     }
 
+    /// The call voice for `owner`, else the default.
+    func callVoice(for owner: VoiceOwner?) -> CallVoice {
+        owner.flatMap(callVoice(of:)) ?? CallVoice.chosen
+    }
+
     // MARK: Reading aloud
 
     /// The reading voice picked for `owner`; nil when it goes with the default.
@@ -65,6 +70,11 @@ final class VoiceChoices {
     func readingVoice(sessionId: String?, botId: String?) -> DeepSeekSpeech.Voice {
         let owner = botId.map(VoiceOwner.bot) ?? sessionId.map(VoiceOwner.session)
         return owner.flatMap(readingVoice(of:)) ?? VoicePreferences.shared.readingVoice
+    }
+
+    /// The reading voice for `owner`, else the default.
+    func readingVoice(for owner: VoiceOwner?) -> DeepSeekSpeech.Voice {
+        owner.flatMap(readingVoice(of:)) ?? VoicePreferences.shared.readingVoice
     }
 
     /// What 声音 shows for `owner`: the voices picked, or 跟随默认.
