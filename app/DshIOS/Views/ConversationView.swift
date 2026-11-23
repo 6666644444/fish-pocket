@@ -364,7 +364,8 @@ struct ConversationView: View {
                             // 新会话 sits beside the drawer button on every started conversation,
                             // so on a phone the title always makes room for it.
                             sessionId: sessionId, streamTitle: model.title, catalog: presets, crowded: true,
-                            shareImage: { sharing = ShareFocus(turn: nil) }
+                            shareImage: { sharing = ShareFocus(turn: nil) },
+                            chooseVoice: { headerSheet = .voice }
                         ) { headerSheet = .logExport }
                     }
                 }
@@ -449,6 +450,9 @@ struct ConversationView: View {
                     }
                     .environment(\.systemLists, true)
                 case .logExport: SessionLogExportSheet(sessionId: sessionId)
+                case .voice:
+                    SheetStack { VoicePickerPage(owner: .session(sessionId)) }
+                        .settingsStyle()
                 }
             }
             .sheetNotices()

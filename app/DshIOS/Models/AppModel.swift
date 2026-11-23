@@ -214,6 +214,9 @@ final class AppModel {
         cordis.attach(self)
         DeepSeekSpeech.client = client
         ReadAloud.shared.onError = { [weak self] message in self?.showToast(message, tone: .warning) }
+        ReadAloud.shared.voiceFor = { [weak self] session in
+            VoiceChoices.shared.readingVoice(sessionId: session, botId: session.flatMap { self?.botTeam.botOwning($0)?.id })
+        }
         VoiceMessagePlayer.shared.onError = { [weak self] message in self?.showToast(message, tone: .warning) }
     }
 

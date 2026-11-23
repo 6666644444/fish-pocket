@@ -311,7 +311,7 @@ struct ReadAloudSettingsPage: View {
                     if reading.speaking {
                         reading.stop()
                     } else {
-                        reading.enqueue(String(localized: "你好，我会用这个声音为你朗读。"))
+                        reading.enqueue(String(localized: "你好，我会用这个声音为你朗读。"), voice: preferences.readingVoice)
                     }
                 } label: {
                     Text(reading.speaking ? "停止" : "试听")

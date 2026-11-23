@@ -116,6 +116,9 @@ struct BotDetailView: View {
             } label: {
                 row("工作说明", "doc.text", bot.instructions.isEmpty ? String(localized: "未填写") : ToolCall.firstLine(bot.instructions))
             }
+            NavigationLink { VoicePickerPage(owner: .bot(bot.id)) } label: {
+                row("声音", "waveform", VoiceChoices.shared.summary(of: .bot(bot.id)))
+            }
         }
         Section {
             NavigationLink { BotModelPage(botId: bot.id) } label: {

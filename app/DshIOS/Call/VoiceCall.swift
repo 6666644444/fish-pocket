@@ -289,7 +289,7 @@ final class VoiceCall {
         recognizer.onEvent = { [weak self] event in Task { @MainActor in self?.recognized(event) } }
         self.recognizer = recognizer
 
-        let synthesizer = CallSynthesizer(key: key, voice: CallVoice.chosen.id)
+        let synthesizer = CallSynthesizer(key: key, voice: VoiceChoices.shared.callVoice(sessionId: sessionId, botId: botId).id)
         synthesizer.onEvent = { [weak self] event in Task { @MainActor in self?.synthesized(event) } }
         synthesizer.warmUp()
         self.synthesizer = synthesizer

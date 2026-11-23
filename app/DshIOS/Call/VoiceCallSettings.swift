@@ -41,44 +41,7 @@ struct VoiceCallSettingsPage: View {
     private var voices: some View {
         Section {
             ForEach(CallVoice.all) { item in
-                HStack(spacing: 12) {
-                    Button {
-                        Haptics.select()
-                        voice = item
-                    } label: {
-                        HStack(spacing: 12) {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(verbatim: item.name).foregroundStyle(Palette.ink)
-                                Text(item.kind).font(.caption).foregroundStyle(.secondary)
-                            }
-                            Spacer(minLength: 8)
-                            if voice == item {
-                                Image(systemName: "checkmark").font(.body.weight(.semibold)).foregroundStyle(Palette.ink)
-                            }
-                        }
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-                    Button {
-                        Haptics.tap()
-                        if preview.playing == item.id { preview.stop() } else { preview.play(item) }
-                    } label: {
-                        Group {
-                            if preview.loading == item.id {
-                                ProgressView().controlSize(.small)
-                            } else {
-                                Image(systemName: preview.playing == item.id ? "stop.circle.fill" : "play.circle")
-                                    .font(.system(size: 22))
-                                    .foregroundStyle(Palette.ink)
-                            }
-                        }
-                        .frame(width: 30, height: 30)
-                        .hitTarget()
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(!speech.configured || CallCenter.shared.active)
-                    .accessibilityLabel(preview.playing == item.id ? Text("停止试听") : Text("试听"))
-                }
+                CallVoiceRow(voice: item, selected: voice == item) { voice = item }
             }
         } header: {
             Text("声音")
@@ -86,6 +49,201 @@ struct VoiceCallSettingsPage: View {
             Text("回答用这个声音念出来，是豆包语音合成模型 2.0 的音色。试听也按火山引擎的价格计费；通话中改了声音，下一通电话生效。")
         }
         .groupedRow()
+    }
+}
+
+/// One voice to pick, with a button to hear it first.
+struct CallVoiceRow: View {
+    let voice: CallVoice
+    let selected: Bool
+    let select: () -> Void
+    @State private var speech = VolcSpeech.shared
+    @State private var preview = VoicePreview.shared
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button {
+                Haptics.select()
+                select()
+            } label: {
+                HStack(spacing: 12) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(verbatim: voice.name).foregroundStyle(Palette.ink)
+                        Text(voice.kind).font(.caption).foregroundStyle(.secondary)
+                    }
+                    Spacer(minLength: 8)
+                    if selected {
+                        Image(systemName: "checkmark").font(.body.weight(.semibold)).foregroundStyle(Palette.ink)
+                    }
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            Button {
+                Haptics.tap()
+                if preview.playing == voice.id { preview.stop() } else { preview.play(voice) }
+            } label: {
+                Group {
+                    if preview.loading == voice.id {
+                        ProgressView().controlSize(.small)
+                    } else {
+                        Image(systemName: preview.playing == voice.id ? "stop.circle.fill" : "play.circle")
+                            .font(.system(size: 22))
+                            .foregroundStyle(Palette.ink)
+                    }
+                }
+                .frame(width: 30, height: 30)
+                .hitTarget()
+            }
+            .buttonStyle(.plain)
+            .disabled(!speech.configured || CallCenter.shared.active)
+            .accessibilityLabel(preview.playing == voice.id ? Text("停止试听") : Text("试听"))
+        }
+    }
+}
+
+/// 声音 for one Bot or one conversation: voices of its own for reading aloud and for calls, or the
+/// defaults.
+struct VoicePickerPage: View {
+    let owner: VoiceOwner
+    @State private var choices = VoiceChoices.shared
+    @State private var speech = VolcSpeech.shared
+    @State private var preview = VoicePreview.shared
+    @State private var reading = ReadAloud.shared
+    /// The reading voice being tried here.
+    @State private var trying: DeepSeekSpeech.Voice?
+
+    var body: some View {
+        let readingPicked = choices.readingVoice(of: owner)
+        let callPicked = choices.callVoice(of: owner)
+        List {
+            Section {
+                DefaultVoiceRow(current: VoicePreferences.shared.readingVoice.title, selected: readingPicked == nil) {
+                    choices.setReadingVoice(nil, for: owner)
+                }
+                ForEach(DeepSeekSpeech.Voice.allCases) { voice in
+                    ReadingVoiceRow(voice: voice, selected: readingPicked == voice, trying: $trying) {
+                        choices.setReadingVoice(voice, for: owner)
+                    }
+                }
+            } header: {
+                Text("朗读")
+            } footer: {
+                switch owner {
+                case .bot: Text("朗读这个 Bot 的回复时用这里选的声音，群聊里它的发言也一样。跟随默认时，用「设置 → 朗读」里选的声音。")
+                case .session: Text("朗读这个会话的回复时用这里选的声音。跟随默认时，用「设置 → 朗读」里选的声音。")
+                }
+            }
+            .groupedRow()
+            Section {
+                DefaultVoiceRow(current: CallVoice.chosen.name, selected: callPicked == nil) {
+                    choices.setCallVoice(nil, for: owner)
+                }
+                ForEach(CallVoice.all) { item in
+                    CallVoiceRow(voice: item, selected: callPicked == item) { choices.setCallVoice(item, for: owner) }
+                }
+            } header: {
+                Text("通话")
+            } footer: {
+                VStack(alignment: .leading, spacing: 6) {
+                    switch owner {
+                    case .bot: Text("和这个 Bot 通话时用这里选的声音。跟随默认时，用「设置 → 语音通话」里选的声音。")
+                    case .session: Text("在这个会话里通话时用这里选的声音。跟随默认时，用「设置 → 语音通话」里选的声音。")
+                    }
+                    if speech.configured {
+                        Text("试听按火山引擎的价格计费；通话中改了声音，下一通电话生效。")
+                    } else {
+                        Text("试听和通话要先在「设置 → 语音通话」里填好火山引擎的 API Key。")
+                    }
+                }
+            }
+            .groupedRow()
+        }
+        .groupedList()
+        .navigationTitle("声音")
+        .navigationBarTitleDisplayMode(.inline)
+        // One voice heard at a time.
+        .onChange(of: preview.loading) { _, voice in
+            if voice != nil, trying != nil { reading.stop(); trying = nil }
+        }
+        .onDisappear {
+            preview.stop()
+            if trying != nil { reading.stop() }
+        }
+    }
+}
+
+/// A reading voice to pick, with a button to hear it first.
+private struct ReadingVoiceRow: View {
+    let voice: DeepSeekSpeech.Voice
+    let selected: Bool
+    @Binding var trying: DeepSeekSpeech.Voice?
+    let select: () -> Void
+    @State private var reading = ReadAloud.shared
+
+    private var playing: Bool { reading.speaking && trying == voice }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button {
+                Haptics.select()
+                select()
+            } label: {
+                HStack(spacing: 12) {
+                    Text(voice.title).foregroundStyle(Palette.ink)
+                    Spacer(minLength: 8)
+                    if selected {
+                        Image(systemName: "checkmark").font(.body.weight(.semibold)).foregroundStyle(Palette.ink)
+                    }
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            Button {
+                Haptics.tap()
+                let stopping = playing
+                reading.stop()
+                VoicePreview.shared.stop()
+                trying = stopping ? nil : voice
+                if !stopping { reading.enqueue(String(localized: "你好，我会用这个声音为你朗读。"), voice: voice) }
+            } label: {
+                Image(systemName: playing ? "stop.circle.fill" : "play.circle")
+                    .font(.system(size: 22))
+                    .foregroundStyle(Palette.ink)
+                    .frame(width: 30, height: 30)
+                    .hitTarget()
+            }
+            .buttonStyle(.plain)
+            .disabled(CallCenter.shared.active)
+            .accessibilityLabel(playing ? Text("停止试听") : Text("试听"))
+        }
+    }
+}
+
+/// 跟随默认, with the default it goes with now.
+private struct DefaultVoiceRow: View {
+    let current: String
+    let selected: Bool
+    let select: () -> Void
+
+    var body: some View {
+        Button {
+            Haptics.select()
+            select()
+        } label: {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("跟随默认").foregroundStyle(Palette.ink)
+                    Text(verbatim: current).font(.caption).foregroundStyle(.secondary)
+                }
+                Spacer(minLength: 8)
+                if selected {
+                    Image(systemName: "checkmark").font(.body.weight(.semibold)).foregroundStyle(Palette.ink)
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 }
 
