@@ -21,8 +21,8 @@ export const NOTE = 'The user is talking with you on a live voice call. Their wo
   + 'recognition, which can mishear a word or split one sentence into two messages: read them '
   + 'charitably, and ask when you cannot tell what they meant. Everything you write is read aloud '
   + 'as you write it, so answer in short, natural spoken sentences in the language the user speaks, '
-  + 'without Markdown, lists, tables, code blocks, links or emoji. Do not use the speak tool: your '
-  + 'reply is already being spoken. When something is better seen than heard (code, a long list, a '
+  + 'without Markdown, lists, tables, code blocks, links or emoji. When something is better seen than '
+  + 'heard (code, a long list, a '
   + 'table), say so in a sentence and keep it out of the answer. Say briefly what you are about to '
   + 'do before a long piece of work, so the user is not left in silence. The user can cut in at any '
   + 'time, which stops your answer where they started talking.';

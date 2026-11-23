@@ -25,45 +25,6 @@ enum DeepSeekSpeech {
         }
     }
 
-    /// What the agent's `speak` tool asks the app to read (`/api/ios-speech/feed`), for as long
-    /// as the connection lives. Each `say` is read like a reply the user asked to hear.
-    @MainActor
-    static func followAgent() {
-        guard agentFeed == nil else { return }
-        agentFeed = Task {
-            while !Task.isCancelled {
-                try? await readAgentFeed()
-                try? await Task.sleep(for: .seconds(2))
-            }
-        }
-    }
-
-    @MainActor private static var agentFeed: Task<Void, Never>?
-
-    @MainActor
-    private static func readAgentFeed() async throws {
-        guard let client else { return }
-        var request = client.request(route("feed"))
-        request.timeoutInterval = 120
-        let (bytes, response) = try await client.session.bytes(for: request)
-        guard (response as? HTTPURLResponse)?.statusCode == 200 else { return }
-        var event = ""
-        for try await line in bytes.lines {
-            if line.hasPrefix("event:") {
-                event = line.dropFirst(6).trimmingCharacters(in: .whitespaces)
-            } else if line.hasPrefix("data:") {
-                let value = (try? JSONDecoder().decode(JSON.self, from: Data(line.dropFirst(5).utf8))) ?? .null
-                switch event {
-                // On a call the answer is already spoken, in the call's own voice.
-                case "say": if let text = value["text"].string, !CallCenter.shared.active { ReadAloud.shared.enqueue(text) }
-                case "stop": ReadAloud.shared.stop()
-                default: break
-                }
-                event = ""
-            }
-        }
-    }
-
     /// Whether the engine has a DeepSeek credential to send. Not whether DeepSeek accepts it.
     static func ready() async -> Bool {
         guard let client else { return false }
@@ -285,7 +246,7 @@ final class VoicePreferences {
     private static let readingVoiceKey = "readingVoice"
     private var chosen: Source? = UserDefaults.standard.string(forKey: VoicePreferences.sourceKey).flatMap(Source.init(rawValue:))
 
-    /// The voice replies are read in, by the app and by the agent's `speak` tool.
+    /// The voice replies are read in.
     var readingVoice: DeepSeekSpeech.Voice = UserDefaults.standard.string(forKey: VoicePreferences.readingVoiceKey)
         .flatMap(DeepSeekSpeech.Voice.init(rawValue:)) ?? .stella {
         didSet { UserDefaults.standard.set(readingVoice.rawValue, forKey: Self.readingVoiceKey) }
@@ -311,7 +272,12 @@ final class ReadAloud {
 
     /// The session on screen. A change stops what is being read.
     var scope: String? {
-        didSet { if scope != oldValue { stop() } }
+        didSet {
+            if scope != oldValue {
+                stop()
+                VoiceMessagePlayer.shared.stop()
+            }
+        }
     }
     private(set) var speaking = false
     /// Held where it was; `resume()` goes on from there.
@@ -401,6 +367,7 @@ final class ReadAloud {
             onError?(String(localized: "通话中不能朗读"))
             return
         }
+        VoiceMessagePlayer.shared.stop()
         queue.append(plain)
         guard task == nil else { return }
         speaking = true
@@ -493,8 +460,9 @@ final class ReadAloud {
 }
 
 /// 24 kHz mono 16-bit PCM played as it arrives.
+/// 24 kHz mono speech played as it arrives: read-aloud replies and voice messages heard the first time.
 @MainActor
-private final class PCMPlayer {
+final class PCMPlayer {
     private let engine = AVAudioEngine()
     private let node = AVAudioPlayerNode()
     private let format = AVAudioFormat(standardFormatWithSampleRate: 24_000, channels: 1)!
@@ -545,6 +513,12 @@ private final class PCMPlayer {
     }
 
     func pause() { if !stopped { node.pause() } }
+
+    /// Seconds heard so far.
+    var playedSeconds: Double {
+        guard !stopped, let now = node.lastRenderTime, let time = node.playerTime(forNodeTime: now) else { return 0 }
+        return max(0, Double(time.sampleTime) / time.sampleRate)
+    }
 
     /// Playing on a stopped engine raises (iOS 17), so the engine starts again first.
     func resume() throws {

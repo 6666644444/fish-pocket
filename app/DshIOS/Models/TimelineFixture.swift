@@ -176,6 +176,20 @@ enum TimelineFixture {
                 ```
                 """#)]]),
             event("turn/end", ["turn": 6, "reason": ["kind": "completed"]]),
+            // Voice messages: one alone, one after a few words; a long one is wider.
+            user("早上好呀"),
+            event("turn/start", ["turn": 7]),
+            assistant(7, id: "m8", [call("v1", "send_voice_message", ["text": "早上好！昨晚睡得怎么样？今天天气不错，记得吃早饭哦。"])]),
+            result("v1", "{\"sent\":true,\"characters\":25}"),
+            event("turn/end", ["turn": 7, "reason": ["kind": "completed"]]),
+            user("给我讲个睡前小故事吧"),
+            event("turn/start", ["turn": 8]),
+            assistant(8, id: "m9", [
+                ["type": "text", "text": "好呀，听我慢慢讲～"],
+                call("v2", "send_voice_message", ["text": .string("从前有一只小鲸鱼，它每天晚上都会游到海面上看星星。有一天，它发现有一颗星星特别亮，一闪一闪的，好像在跟它打招呼。小鲸鱼就问妈妈：那颗星星为什么这么亮呀？妈妈说：因为它在等一个愿意陪它聊天的朋友。于是小鲸鱼每天晚上都去找那颗星星说话，一直说到睡着。晚安，做个好梦。")]),
+            ]),
+            result("v2", "{\"sent\":true,\"characters\":140}"),
+            event("turn/end", ["turn": 8, "reason": ["kind": "completed"]]),
             // More images than fit across a phone: the thumbnails wrap.
             user("这几张截图里的蓝牙设备都是什么？", images: 7),
         ]

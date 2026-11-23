@@ -96,7 +96,7 @@ targets:
       - sdk: Security.framework
       - sdk: ImageIO.framework
       - sdk: CoreGraphics.framework
-      # native/ios-native: local notifications, speech synthesis and the calendar.
+      # native/ios-native: local notifications, audio files and the calendar.
       - sdk: UserNotifications.framework
       - sdk: AVFoundation.framework
       - sdk: EventKit.framework

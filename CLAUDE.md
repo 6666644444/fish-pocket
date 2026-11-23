@@ -268,6 +268,18 @@ Bot 没有照片时显示的角色是 App 自己画的，形状和动作都写�
   - Debug 版把每一步写进 App 文档目录的 `call-diagnostics.log`（`CallDiagnostics`）：音频模式、麦克风格式、输出延迟、她说话期间每秒麦克风在消除前后的音量（`echo canceller: …`）、她每段放音时（处理后）麦克风的音量、每次认出字时离她开口多久。用 `devicectl device copy from --domain-type appDataContainer` 取，不用启动 App。真机上不注入测试消息：回声在用户自己通话时测，测完取这份日志看。
 - **在模拟器里测**（Debug 版）：`SIMCTL_CHILD_DSH_CALL_AUDIO=<16 kHz 单声道 WAV>` 让通话听这个文件而不是麦克风；`-dshOpen call` 在打开的会话上直接接通（配合 `-dsh.lastPlace bot:<Bot id>` 打开 Bot），`-dshOpen callscreen` 只看通话页。测试语音用 `say -v Tingting` 加 `afconvert -f WAVE -d LEI16@16000 -c 1` 生成，日志里 `[call]` 开头的行是每一步。真机才能测回声消除和真人说话。模拟器的音频服务有时会卡在第一次取麦克风节点（`engine.inputNode`），几秒后报 `Cleanup: RPC timeout. Apparently deadlocked` 退出，和代码无关；重启模拟器不一定好，这时换一台或直接上真机。
 
+## 语音消息
+
+AI 可以像微信那样回一条语音：对话里是一个语音气泡，点了才念。引擎不出声音，插件 `engine/plugins/ios-voice-message` 只提供 `send_voice_message` 工具（参数是要念的文字，发完这一轮就结束）；App 把这个工具调用画成气泡（`VoiceMessageBubble`），点的时候合成、播放（`Models/VoiceMessages.swift`）。
+
+- **在哪能发由用户定，什么时候发由 AI 定**：设置 → 语音消息，会话和 Bot 聊天各一个开关，Bot 默认开、会话默认关（会话里多是干活）。下面那段「什么时候发」是给 AI 的规则，用户可以改，默认写的是闲聊时偶尔发、干活不发、用户要就发。App 连上引擎、开关或规则变了、Bot 列表变了、合成服务变了时，把这些发给插件，插件存在 `$DSH_IOS_DATA/voice-message.json`，引擎重启后照旧。不允许的地方工具根本不出现，模型看不到。
+- **永远不发的地方**：群聊（成员的话从 ds-bot 的群聊账本读，工具调用不在里面）、子智能体、语音通话中、IM 渠道（微信、Telegram 等）发来的消息开的那一轮（ds-bot 只往回转文字），以及没有可用合成服务时。
+- **合成只用一家**：有火山引擎的 Key 就用火山（和语音通话同一个声音），没有才用 DeepSeek（和朗读同一个声音）。一家失败就报错，不换另一家重念：同一个对话里声音突然变了很割裂。
+- **边合成边播**：第一次点时一边合成一边播放，播完存成缓存里的 WAV，再点立刻播；秒数在合成完之前按字数估。试过「语音到达时先合成好再出气泡」，等得太久，用户不要。
+- **未读**：没播过的气泡旁边有红点。播过的记录存在 Application Support 的 `voice-messages-played.json`，不写 UserDefaults（写它会让整个界面重算）。
+- **朗读工具已删掉**：原来本机能力里有 `speak`（让 Agent 直接念一段话），和语音消息重叠，用户说「发条语音」时模型常选错，所以拿掉了。不要再加回来。
+- 本地看效果：`-dshOpen timeline` 的样例里有两条语音消息。
+
 ## 首页布局：系统的自适应 Tab
 
 iOS 18 起，iPhone、iPhone Duo、iPad 共用一套系统 `TabView`，样式是 `sidebarAdaptable`（`MainView.tabLayout`）：「会话 · Bot · 探索」三个 Tab，设置和 Mini Apps 都是探索页的一页，从页面最上面的「通用」「创作」两组进入（`SettingsView(pushed: true)`、`MiniAppsPage`），窄屏在底部，宽屏由系统放到顶部或换成侧边栏，Duo 展开时是右侧的竖条。宽窄切换（Duo 开合、iPad 拖窗口）不换布局，Tab 保持不变。iOS 17 的 iPhone 用同样三个 Tab，只是换成旧写法（`TabView` 加 `.tabItem`，`MainView.phoneTabLayout`），Tab 栏始终在底部，页面和行为与 iOS 18 起的一致。iOS 17 的 iPad 仍是旧布局：常驻侧边栏，窄窗口是抽屉（`DrawerView` 的 `sidebar` 样式，`MainView.split` / `drawerLayout`）；旧写法的 Tab 栏在 iPad 上也只能放底部，所以没改。iPhone Duo 只有 iOS 27，不涉及旧版本。

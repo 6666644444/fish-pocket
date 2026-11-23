@@ -508,7 +508,7 @@ engine/plugins/ios-native/
 （✅ = 已落地，⬜ = 待建。）
 
 - 服务 `ctx.iosNative`：引擎自己的工具走的那条路。插件够得到（拦不住，见 §5.3），但**不是 API**，不承诺跨版本稳定，见 §5.6。
-- 工具：给引擎本体用的那套（`device_info`、`notify`、`speak`、`calendar_list` …）。
+- 工具：给引擎本体用的那套（`device_info`、`notify`、`calendar_list` …）。朗读（`speak`）后来拿掉了：和语音消息（`send_voice_message`）功能重叠，模型常常选错。
 - 在 `engine/ios.patch.yml` 的 `insert` 里加一行挂上。
 - addon 不在（桌面开发机）时 `binding()` 返回 null，插件就不注册工具——和 `git` 在没有 addon 时"根本不是一个命令"一致。
 
