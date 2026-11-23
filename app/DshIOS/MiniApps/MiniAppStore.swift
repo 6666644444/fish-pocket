@@ -17,7 +17,6 @@ struct MiniApp: Identifiable, Hashable {
     let iconImage: URL?
     let summary: String?
     let folder: URL
-    let modified: Date
 
     var catalogEntry: MiniAppSummary {
         // Named by what the file is now, so a redrawn icon reaches the widget.
@@ -60,11 +59,9 @@ struct MiniApp: Identifiable, Hashable {
             return value.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.flatMap { $0.isEmpty ? nil : $0 }
         }
         let image = folder.appending(path: iconFile)
-        let dates = [manifest, entry(in: folder)!].compactMap { (try? files.attributesOfItem(atPath: $0.path))?[.modificationDate] as? Date }
         return MiniApp(id: id, name: text("name").map { String($0.prefix(40)) } ?? id, icon: emoji(text("icon")) ?? defaultIcon,
                        color: text("color") ?? defaultColor, iconImage: files.fileExists(atPath: image.path) ? image : nil,
-                       summary: text("description"), folder: folder,
-                       modified: dates.max() ?? .distantPast)
+                       summary: text("description"), folder: folder)
     }
 
     /// `index.html`, else the first of `componentEntries`.
@@ -92,7 +89,8 @@ struct MiniApp: Identifiable, Hashable {
     }
 }
 
-/// The apps in `~/apps`, newest first: last opened or last changed, whichever is later.
+/// The apps in `~/apps`, newest first by when each was made. Opening or changing one doesn't move
+/// it: the grid keeps its order, as a home screen does.
 @MainActor @Observable
 final class MiniAppStore {
     static let shared = MiniAppStore()
@@ -103,16 +101,17 @@ final class MiniAppStore {
 
     private(set) var apps: [MiniApp] = []
     private(set) var loaded = false
-    private static let openedKey = "dsh.miniApps.opened"
 
     func refresh() {
         MiniAppExamples.install()
         let folders = (try? FileManager.default.contentsOfDirectory(at: Self.root, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles)) ?? []
-        let opened = UserDefaults.standard.dictionary(forKey: Self.openedKey) as? [String: Double] ?? [:]
-        func recency(_ app: MiniApp) -> Date {
-            max(app.modified, opened[app.id].map { Date(timeIntervalSince1970: $0) } ?? .distantPast)
+        func made(_ app: MiniApp) -> Date {
+            (try? FileManager.default.attributesOfItem(atPath: app.folder.path))?[.creationDate] as? Date ?? .distantPast
         }
-        apps = folders.compactMap(MiniApp.load).sorted { recency($0) > recency($1) }
+        apps = folders.compactMap(MiniApp.load)
+            .map { ($0, made($0)) }
+            .sorted { $0.1 != $1.1 ? $0.1 > $1.1 : $0.0.id < $1.0.id }
+            .map(\.0)
         loaded = true
         // What the agent wrote while no one looked: published now, not when it is opened. Not while an
         // agent works, which may be halfway through an app; its turn's end comes back here.
@@ -135,19 +134,9 @@ final class MiniAppStore {
         return MiniApp.load(Self.root.appending(path: id, directoryHint: .isDirectory))
     }
 
-    func noteOpened(_ id: String) {
-        var opened = UserDefaults.standard.dictionary(forKey: Self.openedKey) as? [String: Double] ?? [:]
-        opened[id] = Date.now.timeIntervalSince1970
-        UserDefaults.standard.set(opened, forKey: Self.openedKey)
-        refresh()
-    }
-
     /// The folder and everything the app stored.
     func delete(_ app: MiniApp) async {
         try? FileManager.default.removeItem(at: app.folder)
-        var opened = UserDefaults.standard.dictionary(forKey: Self.openedKey) as? [String: Double] ?? [:]
-        opened[app.id] = nil
-        UserDefaults.standard.set(opened, forKey: Self.openedKey)
         try? await WKWebsiteDataStore.remove(forIdentifier: app.dataStoreId)
         refresh()
     }
