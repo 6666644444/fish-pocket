@@ -274,7 +274,7 @@ struct VolcKeySection: View {
     }
 }
 
-/// 设置 → 朗读: the voice replies are read in, by the app and by the agent's `speak` tool.
+/// 设置 → 朗读: the voice replies are read in.
 struct ReadAloudSettingsPage: View {
     @State private var preferences = VoicePreferences.shared
     @State private var reading = ReadAloud.shared
@@ -301,7 +301,7 @@ struct ReadAloudSettingsPage: View {
             } header: {
                 Text("声音")
             } footer: {
-                Text("朗读回复和 Agent 念出来的话都用 DeepSeek 的声音，同样用「模型」里的 DeepSeek API Key，费用由 DeepSeek 按字数收取。")
+                Text("朗读回复用 DeepSeek 的声音，同样用「模型」里的 DeepSeek API Key，费用由 DeepSeek 按字数收取。没有设置火山引擎时，语音消息也用这个声音。")
             }
             .groupedRow()
 

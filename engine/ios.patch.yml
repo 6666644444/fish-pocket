@@ -117,6 +117,10 @@
     # model each turn (answer briefly, aloud). The audio itself never reaches the engine.
     - id: ios-call
       name: ./plugins/ios-call/index.mjs
+    # Voice messages: a tool the agent answers with, drawn by the app as a voice bubble and read
+    # aloud there. Offered only where the user allows it (app settings); the engine makes no audio.
+    - id: ios-voice-message
+      name: ./plugins/ios-voice-message/index.mjs
     # Third model route next to the DeepSeek account and API-key routes: DeepSeek
     # models paid with Fish Pocket credits. Its own entry, never a profile in
     # llm-pi-ai's settings: config for llm-pi-ai here would override the user's

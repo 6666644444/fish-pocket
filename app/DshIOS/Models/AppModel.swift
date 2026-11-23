@@ -214,6 +214,7 @@ final class AppModel {
         cordis.attach(self)
         DeepSeekSpeech.client = client
         ReadAloud.shared.onError = { [weak self] message in self?.showToast(message, tone: .warning) }
+        VoiceMessagePlayer.shared.onError = { [weak self] message in self?.showToast(message, tone: .warning) }
     }
 
     func connect() async {
@@ -229,7 +230,7 @@ final class AppModel {
             account.follow()
             Task { await fishPocket.start() }
             botTeam.start()
-            DeepSeekSpeech.followAgent()
+            VoiceMessageSync.shared.attach(self)
             BackgroundKeeper.shared.attach { [weak self] in await self?.refreshSessions() }
             LiveActivityController.shared.attach(self)
             WidgetSnapshotWriter.shared.attach(self)

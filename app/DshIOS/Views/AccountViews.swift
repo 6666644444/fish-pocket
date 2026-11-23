@@ -313,6 +313,8 @@ struct DeepSeekKeyRow: View {
         if let value = try? await app.client.call("credentials/describe", ["refs": ["DEEPSEEK_API_KEY"]]) {
             keySet = value.array.first?["configured"].bool ?? value["DEEPSEEK_API_KEY"]["configured"].bool ?? false
         }
+        // DeepSeek is one of the voices voice messages are read in.
+        VoiceMessageSync.shared.sync()
     }
 }
 
