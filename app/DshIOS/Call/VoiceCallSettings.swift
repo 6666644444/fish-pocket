@@ -131,7 +131,7 @@ struct VoicePickerPage: View {
             } footer: {
                 switch owner {
                 case .bot: Text("朗读这个 Bot 的回复时用这里选的声音，群聊里它的发言也一样。跟随默认时，用「设置 → 朗读」里选的声音。")
-                case .session: Text("朗读这个会话的回复和 Agent 念出来的话时用这里选的声音。跟随默认时，用「设置 → 朗读」里选的声音。")
+                case .session: Text("朗读这个会话的回复时用这里选的声音。跟随默认时，用「设置 → 朗读」里选的声音。")
                 }
             }
             .groupedRow()

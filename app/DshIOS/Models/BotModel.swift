@@ -444,7 +444,11 @@ final class BotModel {
             await app.arrivalLanded()
             // Each write tells every view that reads it, so only a change is written.
             if !reachable { reachable = true }
-            if value["unchanged"].bool != true, team != value { team = value }
+            if value["unchanged"].bool != true, team != value {
+                team = value
+                // Which sessions are Bot chats and which belong to groups decides where voice messages go.
+                VoiceMessageSync.shared.sync()
+            }
             if !value["activity"].isNull, activity != value["activity"].object { activity = value["activity"].object }
             if !value["work"].isNull, work != value["work"] { work = value["work"]; announceApprovals() }
             for key in Self.liveKeys where !value[key].isNull && live[key] != value[key] { live[key] = value[key] }

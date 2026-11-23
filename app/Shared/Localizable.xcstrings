@@ -5705,6 +5705,40 @@
         }
       }
     },
+    "Bot 聊天" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot Chat"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chat de Bot"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot チャット"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot 채팅"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot 聊天"
+          }
+        }
+      }
+    },
     "DeepSeek 账号余额不足" : {
       "localizations" : {
         "en" : {
@@ -6302,6 +6336,142 @@
         }
       }
     },
+    "什么时候发" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When to Send"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuándo enviar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "送るタイミング"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "보낼 때"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "什麼時候發"
+          }
+        }
+      }
+    },
+    "仅 Bot" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bots Only"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo Bots"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot のみ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot만"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "僅 Bot"
+          }
+        }
+      }
+    },
+    "仅会话" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sessions Only"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo sesiones"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セッションのみ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "세션만"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "僅對話"
+          }
+        }
+      }
+    },
+    "会话和 Bot" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sessions & Bots"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sesiones y Bots"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "セッションと Bot"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "세션과 Bot"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "對話和 Bot"
+          }
+        }
+      }
+    },
     "你的 Fish Pocket 来自 App Store，按这一页操作。" : {
       "localizations" : {
         "en" : {
@@ -6672,6 +6842,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "像素鯨魚"
+          }
+        }
+      }
+    },
+    "允许发送语音消息" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow Voice Messages"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permitir mensajes de voz"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "音声メッセージを許可"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "음성 메시지 허용"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允許傳送語音訊息"
+          }
+        }
+      }
+    },
+    "允许后，AI 会自己判断什么时候用语音回复你，像微信里的语音消息一样，轻点就能听。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Once allowed, the AI decides for itself when to reply with a voice message, like the ones in WeChat. Tap one to listen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una vez permitido, la IA decide por sí misma cuándo responderte con un mensaje de voz, como los de WeChat. Tócalo para escucharlo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "許可すると、AI が自分で判断して音声で返信します。WeChat の音声メッセージのように、タップすると聞けます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "허용하면 AI가 언제 음성으로 답할지 스스로 판단해요. WeChat의 음성 메시지처럼 탭하면 들을 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "允許後，AI 會自己判斷什麼時候用語音回覆你，就像微信裡的語音訊息，點一下就能聽。"
           }
         }
       }
@@ -7362,6 +7600,40 @@
         }
       }
     },
+    "只在闲聊时偶尔发，比如打招呼、聊天、安慰、开玩笑，觉得说出来比打字更合适的时候。干活时不发：做任务、写代码、查资料、给步骤或数据，以及我可能想回头再看的内容，都用文字。我让你发语音时就发。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only now and then while we're just chatting, like greetings, small talk, comfort or a joke, when saying it out loud fits better than typing. Not while working: for tasks, code, research, steps or data, and anything I may want to read again, use text. Send one whenever I ask for a voice message."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo de vez en cuando mientras charlamos, como saludos, conversación, consuelo o una broma, cuando decirlo en voz alta encaje mejor que escribirlo. No mientras trabajas: para tareas, código, búsquedas, pasos o datos, y todo lo que quizá quiera volver a leer, usa texto. Si te pido un mensaje de voz, envíalo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "雑談のときだけ、たまに送ってください。あいさつやおしゃべり、励まし、冗談など、文字より声のほうが合うときです。作業中は送らないでください。タスク、コード、調べもの、手順やデータ、あとで読み返したくなりそうな内容は文字で。私が音声を頼んだときは送ってください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가볍게 대화할 때만 가끔 보내 주세요. 인사, 수다, 위로, 농담처럼 글보다 말이 더 어울릴 때요. 작업 중에는 보내지 마세요. 작업, 코드, 자료 조사, 단계나 데이터, 나중에 다시 볼 만한 내용은 글로 써 주세요. 제가 음성을 보내 달라고 하면 보내 주세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只在閒聊時偶爾發，比如打招呼、聊天、安慰、開玩笑，覺得說出來比打字更合適的時候。做事時不發：做任務、寫程式碼、查資料、給步驟或數據，以及我可能想回頭再看的內容，都用文字。我要你發語音時就發。"
+          }
+        }
+      }
+    },
     "启动后智能体才能操作其他 App。如果点了没反应、或 iCTRL 打不开，多半是签名过期了：免费 Apple ID 签的 App 每 7 天要在 SideStore 里刷新一次。" : {
       "localizations" : {
         "en" : {
@@ -8038,6 +8310,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "在這支手機上產生，畫面外加上 Fish Pocket 的標誌。錄影沒有聲音。"
+          }
+        }
+      }
+    },
+    "复制文字" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy Text"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar texto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テキストをコピー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "텍스트 복사"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "拷貝文字"
           }
         }
       }
@@ -10020,6 +10326,40 @@
         }
       }
     },
+    "收起文字" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hide Text"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocultar texto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テキストを隠す"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "텍스트 숨기기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "收起文字"
+          }
+        }
+      }
+    },
     "改用 Fish Pocket 发送" : {
       "localizations" : {
         "en" : {
@@ -10595,6 +10935,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "服務商回應：%@"
+          }
+        }
+      }
+    },
+    "朗读回复用 DeepSeek 的声音，同样用「模型」里的 DeepSeek API Key，费用由 DeepSeek 按字数收取。没有设置火山引擎时，语音消息也用这个声音。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replies are read aloud in DeepSeek's voice, using the DeepSeek API Key under Model. DeepSeek charges by the character. Without Volcengine set up, voice messages use this voice too."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las respuestas se leen en voz alta con la voz de DeepSeek, usando la API Key de DeepSeek de Modelo. DeepSeek cobra por carácter. Si no has configurado Volcengine, los mensajes de voz también usan esta voz."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返信の読み上げには DeepSeek の声を使い、「モデル」の DeepSeek API Key を使います。料金は DeepSeek が文字数に応じて請求します。Volcengine を設定していない場合は、音声メッセージもこの声になります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "답장 소리 내어 읽기에는 DeepSeek의 목소리를 쓰고, '모델'의 DeepSeek API Key를 사용해요. 요금은 DeepSeek이 글자 수에 따라 청구해요. Volcengine을 설정하지 않았다면 음성 메시지도 이 목소리를 써요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朗讀回覆使用 DeepSeek 的聲音，同樣用「模型」裡的 DeepSeek API Key，費用由 DeepSeek 依字數收取。沒有設定火山引擎時，語音訊息也用這個聲音。"
+          }
+        }
+      }
+    },
+    "未播放的语音消息，%lld 秒" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unplayed voice message, %lld seconds"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mensaje de voz sin escuchar, %lld segundos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未再生の音声メッセージ、%lld 秒"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "재생하지 않은 음성 메시지, %lld초"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未播放的語音訊息，%lld 秒"
           }
         }
       }
@@ -11524,6 +11932,40 @@
         }
       }
     },
+    "正在发语音…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sending voice message…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviando mensaje de voz…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "音声メッセージを送信中…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "음성 메시지 보내는 중…"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在傳送語音…"
+          }
+        }
+      }
+    },
     "正在打开 %@…" : {
       "localizations" : {
         "en" : {
@@ -11996,6 +12438,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "每天早上 8 點幫我整理一份新聞早報"
+          }
+        }
+      }
+    },
+    "没有合成出声音" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No audio was produced"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se generó audio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "音声を生成できませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "음성을 만들지 못했어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "沒有合成出聲音"
           }
         }
       }
@@ -12748,6 +13224,40 @@
         }
       }
     },
+    "用 DeepSeek，和朗读同一个声音（%@），费用由 DeepSeek 按字数收取。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uses DeepSeek with the same voice as Read Aloud (%@). DeepSeek charges by the character."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa DeepSeek con la misma voz que Leer en voz alta (%@). DeepSeek cobra por carácter."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek を使い、読み上げと同じ声（%@）で再生します。料金は DeepSeek が文字数に応じて請求します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DeepSeek을 사용하며 소리 내어 읽기와 같은 목소리(%@)예요. 요금은 DeepSeek이 글자 수에 따라 청구해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用 DeepSeek，和朗讀同一個聲音（%@），費用由 DeepSeek 依字數收取。"
+          }
+        }
+      }
+    },
     "用 Fish Pocket 继续" : {
       "localizations" : {
         "en" : {
@@ -12846,6 +13356,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "用對話客製化 Fish Pocket"
+          }
+        }
+      }
+    },
+    "用火山引擎，和语音通话同一个声音（%@），费用由火山引擎按字数收取。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uses Volcengine with the same voice as Voice Call (%@). Volcengine charges by the character."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa Volcengine con la misma voz que Llamada de voz (%@). Volcengine cobra por carácter."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volcengine を使い、音声通話と同じ声（%@）で再生します。料金は Volcengine が文字数に応じて請求します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volcengine을 사용하며 음성 통화와 같은 목소리(%@)예요. 요금은 Volcengine이 글자 수에 따라 청구해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用火山引擎，和語音通話同一個聲音（%@），費用由火山引擎依字數收取。"
           }
         }
       }
@@ -13660,6 +14204,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "網頁版也能放到主畫面"
+          }
+        }
+      }
+    },
+    "群聊、子智能体、语音通话中，以及从微信等 IM 渠道发来的消息，都不会收到语音消息。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voice messages are never sent in group chats, by subagents, during a voice call, or in reply to messages from WeChat and other IM channels."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nunca se envían mensajes de voz en grupos, desde subagentes, durante una llamada de voz ni como respuesta a mensajes de WeChat u otros canales de mensajería."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "グループチャット、サブエージェント、音声通話中、WeChat などの IM チャネルから届いたメッセージには、音声メッセージは送られません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "그룹 채팅, 하위 에이전트, 음성 통화 중, 그리고 WeChat 등 IM 채널에서 온 메시지에는 음성 메시지를 보내지 않아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "群組、子代理、語音通話中，以及從微信等 IM 管道傳來的訊息，都不會收到語音訊息。"
           }
         }
       }
@@ -14834,6 +15412,108 @@
         }
       }
     },
+    "语音消息" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voice Messages"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mensajes de voz"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "音声メッセージ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "음성 메시지"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "語音訊息"
+          }
+        }
+      }
+    },
+    "语音消息播放失败：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't play the voice message: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo reproducir el mensaje de voz: %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "音声メッセージを再生できませんでした：%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "음성 메시지를 재생하지 못했어요: %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "語音訊息播放失敗：%@"
+          }
+        }
+      }
+    },
+    "语音消息，%lld 秒" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voice message, %lld seconds"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mensaje de voz, %lld segundos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "音声メッセージ、%lld 秒"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "음성 메시지, %lld초"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "語音訊息，%lld 秒"
+          }
+        }
+      }
+    },
     "说说你想要什么，Agent 做好后会放在这里" : {
       "localizations" : {
         "en" : {
@@ -14936,6 +15616,40 @@
         }
       }
     },
+    "转文字" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show Text"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar texto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テキストを表示"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "텍스트로 보기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "轉文字"
+          }
+        }
+      }
+    },
     "轻点 Fish Pocket" : {
       "localizations" : {
         "en" : {
@@ -15004,6 +15718,74 @@
         }
       }
     },
+    "轻点停止" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to stop"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca para detener"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タップして停止"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "탭하여 정지"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點一下停止"
+          }
+        }
+      }
+    },
+    "轻点播放" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to play"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca para reproducir"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "タップして再生"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "탭하여 재생"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點一下播放"
+          }
+        }
+      }
+    },
     "运行脚本" : {
       "localizations" : {
         "en" : {
@@ -15034,6 +15816,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "執行指令碼"
+          }
+        }
+      }
+    },
+    "还没有可用的语音合成，AI 暂时不会发语音消息。在「语音通话」里填写火山引擎的 API Key，或在「模型」里填写 DeepSeek API Key 后就能用。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No speech service is set up yet, so the AI won't send voice messages for now. Add a Volcengine API Key under Voice Call, or a DeepSeek API Key under Model, to turn them on."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todavía no hay ningún servicio de voz configurado, así que la IA no enviará mensajes de voz por ahora. Añade una API Key de Volcengine en Llamada de voz o una API Key de DeepSeek en Modelo para activarlos."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ使える音声合成がないため、AI は今のところ音声メッセージを送りません。「音声通話」で Volcengine の API Key を、または「モデル」で DeepSeek の API Key を入力すると使えるようになります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 사용할 수 있는 음성 합성이 없어서 AI가 당분간 음성 메시지를 보내지 않아요. '음성 통화'에서 Volcengine API Key를 입력하거나 '모델'에서 DeepSeek API Key를 입력하면 쓸 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "還沒有可用的語音合成，AI 暫時不會發語音訊息。在「語音通話」裡填寫火山引擎的 API Key，或在「模型」裡填寫 DeepSeek API Key 後就能用。"
+          }
+        }
+      }
+    },
+    "还没有可用的语音合成，到「设置 → 语音消息」看看怎么设置" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No speech service is set up. See Settings → Voice Messages."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay ningún servicio de voz configurado. Consulta Configuración → Mensajes de voz."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使える音声合成がありません。「設定 → 音声メッセージ」で設定方法を確認してください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용할 수 있는 음성 합성이 없어요. '설정 → 음성 메시지'에서 설정 방법을 확인하세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "還沒有可用的語音合成，到「設定 → 語音訊息」看看怎麼設定"
           }
         }
       }
@@ -15170,6 +16020,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "這台裝置無法執行引擎"
+          }
+        }
+      }
+    },
+    "这段话会告诉 AI 什么时候适合发语音，可以按你的习惯改。语音里怎么说（口语、简短、不念代码和链接）由 App 固定告诉它，不用写在这里。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This tells the AI when a voice message fits; change it to suit you. How to talk in one (spoken, short, no code or links) the app always tells it, so you don't need to write that here."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto le dice a la IA cuándo conviene un mensaje de voz; cámbialo a tu gusto. Cómo hablar en él (tono hablado, breve, sin código ni enlaces) ya se lo indica siempre la app, así que no hace falta escribirlo aquí."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI に音声メッセージを送るタイミングを伝える文章です。好みに合わせて変更できます。話し方（話し言葉で短く、コードやリンクは読まない）はアプリが常に伝えるので、ここに書く必要はありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI에게 언제 음성 메시지를 보내면 좋을지 알려 주는 글이에요. 원하는 대로 고칠 수 있어요. 말하는 방식(구어체로 짧게, 코드와 링크는 읽지 않기)은 앱이 항상 알려 주니 여기에 쓰지 않아도 돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這段話會告訴 AI 什麼時候適合發語音，可以依你的習慣修改。語音裡怎麼說（口語、簡短、不念程式碼和連結）由 App 固定告訴它，不用寫在這裡。"
           }
         }
       }
@@ -15952,6 +16836,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "連線成功，可以按住說話了"
+          }
+        }
+      }
+    },
+    "通话中不能播放语音消息" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can't play voice messages during a call"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pueden reproducir mensajes de voz durante una llamada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話中は音声メッセージを再生できません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화 중에는 음성 메시지를 재생할 수 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話中不能播放語音訊息"
           }
         }
       }
@@ -66458,36 +67376,36 @@
         }
       }
     },
-    "朗读这个会话的回复和 Agent 念出来的话时用这里选的声音。跟随默认时，用「设置 → 朗读」里选的声音。" : {
+    "朗读这个会话的回复时用这里选的声音。跟随默认时，用「设置 → 朗读」里选的声音。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Replies in this session, and what the Agent says aloud, are read in the voice chosen here. With Use Default, they use the voice chosen in Settings → Read Aloud."
+            "value" : "Replies in this session are read aloud in the voice chosen here. With Use Default, they use the voice chosen in Settings → Read Aloud."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las respuestas de esta sesión y lo que el Agent dice en voz alta se leen con la voz que elijas aquí. Con Usar la predeterminada, se usa la voz elegida en Configuración → Leer en voz alta."
+            "value" : "Las respuestas de esta sesión se leen en voz alta con la voz que elijas aquí. Con Usar la predeterminada, se usa la voz elegida en Configuración → Leer en voz alta."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "このセッションの返信と Agent が読み上げる言葉は、ここで選んだ声を使います。「デフォルトを使用」のときは「設定 → 読み上げ」で選んだ声を使います。"
+            "value" : "このセッションの返信は、ここで選んだ声で読み上げます。「デフォルトを使用」のときは「設定 → 読み上げ」で選んだ声を使います。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "이 세션의 답장과 Agent가 소리 내어 말하는 내용은 여기서 고른 목소리로 읽어 줘요. 기본값 사용이면 「설정 → 소리 내어 읽기」에서 고른 목소리를 써요."
+            "value" : "이 세션의 답장은 여기서 고른 목소리로 읽어 줘요. 기본값 사용이면 「설정 → 소리 내어 읽기」에서 고른 목소리를 써요."
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "朗讀這個對話的回覆和 Agent 唸出來的話時用這裡選的聲音。跟隨預設時，用「設定 → 朗讀」裡選的聲音。"
+            "value" : "朗讀這個對話的回覆時用這裡選的聲音。跟隨預設時，用「設定 → 朗讀」裡選的聲音。"
           }
         }
       }

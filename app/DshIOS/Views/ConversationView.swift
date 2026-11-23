@@ -1609,7 +1609,9 @@ struct AssistantTurnView: View {
                 if tailShown {
                     VStack(alignment: .leading, spacing: 8) {
                         ForEach(Array(blocks.enumerated().dropFirst(finalStart)), id: \.element.id) { index, block in
-                            if case .tool = block {} else {
+                            if case .tool(let call) = block {
+                                if VoiceMessageBubble.handles(call) { VoiceMessageBubble(call: call, live: isLive(index)) }
+                            } else {
                                 BlockView(block: block, live: isLive(index), closing: finished).equatable()
                                     .environment(\.fileMentions, finished ? mentions : [:])
                             }
@@ -1671,7 +1673,8 @@ struct AssistantTurnView: View {
         }
     }
 
-    /// Index of the trailing run of text blocks (the answer after the last tool call).
+    /// Index of the trailing run of text blocks (the answer after the last tool call). A voice
+    /// message is an answer too: it ends the turn, and it stays out when the work folds away.
     private var finalAnswerStart: Int {
         var index = blocks.count
         // A Bot often says something and then ends its turn on a card (a question, a view, a
@@ -1679,15 +1682,25 @@ struct AssistantTurnView: View {
         if bot != nil {
             while index > 0 {
                 if case .text = blocks[index - 1] { index -= 1; continue }
-                if case .tool(let call) = blocks[index - 1], BotTurnEvents.cards.contains(call.displayName) { index -= 1; continue }
+                if case .tool(let call) = blocks[index - 1],
+                   BotTurnEvents.cards.contains(call.displayName) || VoiceMessageBubble.handles(call) { index -= 1; continue }
                 break
             }
             // Only cards and no words: nothing to lift out of the steps.
-            if !blocks[index...].contains(where: { if case .text = $0 { true } else { false } }) { index = blocks.count }
+            if !blocks[index...].contains(where: Self.isAnswer) { index = blocks.count }
             return index
         }
-        while index > 0, case .text = blocks[index - 1] { index -= 1 }
+        while index > 0, Self.isAnswer(blocks[index - 1]) { index -= 1 }
         return index
+    }
+
+    /// Words of the reply: text, or a voice message.
+    private static func isAnswer(_ block: AssistantBlock) -> Bool {
+        switch block {
+        case .text: true
+        case .tool(let call): VoiceMessageBubble.handles(call)
+        default: false
+        }
     }
 
     private func isLive(_ index: Int) -> Bool { inProgress && index >= blocks.count - liveCount }
@@ -1710,7 +1723,8 @@ struct AssistantTurnView: View {
             }
             return StepKind.thinking.running
         }
-        return [StepKind.title(calls: calls), closedLabel].compactMap { $0 }.joined(separator: " · ")
+        // A voice message is the reply, not a step of the work.
+        return [StepKind.title(calls: calls.filter { !VoiceMessageBubble.handles($0) }), closedLabel].compactMap { $0 }.joined(separator: " · ")
     }
 
     private var closedLabel: String? {

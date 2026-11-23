@@ -217,6 +217,7 @@ final class AppModel {
         ReadAloud.shared.voiceFor = { [weak self] session in
             VoiceChoices.shared.readingVoice(sessionId: session, botId: session.flatMap { self?.botTeam.botOwning($0)?.id })
         }
+        VoiceMessagePlayer.shared.onError = { [weak self] message in self?.showToast(message, tone: .warning) }
     }
 
     func connect() async {
@@ -232,7 +233,7 @@ final class AppModel {
             account.follow()
             Task { await fishPocket.start() }
             botTeam.start()
-            DeepSeekSpeech.followAgent()
+            VoiceMessageSync.shared.attach(self)
             BackgroundKeeper.shared.attach { [weak self] in await self?.refreshSessions() }
             LiveActivityController.shared.attach(self)
             WidgetSnapshotWriter.shared.attach(self)

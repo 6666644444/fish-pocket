@@ -56,11 +56,13 @@ final class VolcSpeech {
         let trimmed = key.trimmingCharacters(in: .whitespacesAndNewlines)
         VoiceKeychain.save(trimmed.isEmpty ? nil : trimmed)
         self.key = trimmed.isEmpty ? nil : trimmed
+        VoiceMessageSync.shared.sync()
     }
 
     func removeKey() {
         VoiceKeychain.save(nil)
         key = nil
+        VoiceMessageSync.shared.sync()
     }
 
     /// Whether Volcengine takes `key` for `resource`: connect, ask for a session, send a moment

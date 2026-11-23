@@ -123,6 +123,7 @@ enum ToolStyle {
         case "create_goal", "get_goal", "update_goal": return "flag"
         case "exit_plan_mode": return "list.bullet.clipboard"
         case "present", "present_files": return "shippingbox"
+        case "send_voice_message": return "waveform"
         case "schedule", "create_schedule", "schedule_create", "schedule_list", "schedule_delete", "schedule_update": return "clock"
         case "job_list", "job_output", "job_kill": return "gearshape.2"
         case "run_code", "workflow", "ralph": return "chevron.left.forwardslash.chevron.right"
@@ -153,7 +154,7 @@ enum ToolStyle {
         "write": String(localized: "写入"), "write_file": String(localized: "写入"), "edit": String(localized: "编辑"), "str_replace": String(localized: "编辑"), "str_replace_editor": String(localized: "编辑"), "multi_edit": String(localized: "编辑"), "apply_patch": String(localized: "编辑"),
         "glob": String(localized: "查找文件"), "grep": String(localized: "搜索文件内容"), "web_search": String(localized: "网页搜索"), "web_fetch": String(localized: "网页获取"),
         "todo_write": String(localized: "更新任务清单"), "ask_user_question": String(localized: "提问"), "skill": String(localized: "加载技能"),
-        "exit_plan_mode": String(localized: "计划"), "present": String(localized: "交付文件"), "run_code": String(localized: "代码"),
+        "exit_plan_mode": String(localized: "计划"), "present": String(localized: "交付文件"), "send_voice_message": String(localized: "语音消息"), "run_code": String(localized: "代码"),
         "subagent": String(localized: "创建子智能体"), "subagent_fork": String(localized: "派生子智能体"), "list_subagent_models": String(localized: "查看可用模型"), "list_agents": String(localized: "查看子智能体"), "send_message": String(localized: "发送消息"),
         "interrupt_agent": String(localized: "中断智能体"), "wait_agent": String(localized: "等待消息"),
         "team_task_create": String(localized: "创建团队任务"), "team_task_get": String(localized: "读取团队任务"), "team_task_update": String(localized: "更新团队任务"), "team_task_list": String(localized: "查看团队任务"),
