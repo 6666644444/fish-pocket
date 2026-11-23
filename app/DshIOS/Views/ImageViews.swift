@@ -124,7 +124,7 @@ struct ReplyImage: View {
             if let image {
                 let size = ImageGroup.singleSize(image.size)
                 Button { viewing = true } label: {
-                    Image(uiImage: image).resizable().scaledToFill()
+                    Picture(image: image)
                         .frame(width: size.width, height: size.height)
                         .clipped()
                 }
@@ -147,8 +147,8 @@ struct ReplyImage: View {
             let modified = (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate?.timeIntervalSince1970 ?? 0
             let key = "\(url.path)#\(modified)" as NSString
             if let hit = Self.cache.object(forKey: key) { image = hit; return }
-            guard let decoded = await Task.detached(priority: .userInitiated, operation: { ZoomableImage.decode(url) }).value else { failed = true; return }
-            Self.cache.setObject(decoded, forKey: key, cost: (decoded.cgImage?.bytesPerRow ?? 0) * (decoded.cgImage?.height ?? 0))
+            guard let decoded = await Task.detached(priority: .userInitiated, operation: { AnimatedPicture.decode(url) ?? ZoomableImage.decode(url) }).value else { failed = true; return }
+            Self.cache.setObject(decoded, forKey: key, cost: max(AnimatedPicture.cost(decoded), (decoded.cgImage?.bytesPerRow ?? 0) * (decoded.cgImage?.height ?? 0)))
             image = decoded
         }
         .fullScreenCover(isPresented: $viewing) {
@@ -188,7 +188,7 @@ struct AttachmentThumb: View {
         Group {
             if let image {
                 Button { viewing = true } label: {
-                    Image(uiImage: image).resizable().scaledToFill()
+                    Picture(image: image)
                         .frame(width: size.width, height: size.height)
                         .clipped()
                 }
@@ -246,9 +246,7 @@ struct ImageViewer: View {
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFit()
+            Picture(image: image, contentMode: .fit)
                 .scaleEffect(scale)
                 .offset(offset)
                 .gesture(
@@ -291,7 +289,7 @@ struct ImageViewer: View {
                 }
                 .accessibilityLabel("关闭")
                 Spacer()
-                ShareLink(item: Image(uiImage: image), preview: SharePreview(name ?? String(localized: "图片"), image: Image(uiImage: image))) {
+                ShareLink(item: Image(uiImage: image.still), preview: SharePreview(name ?? String(localized: "图片"), image: Image(uiImage: image.still))) {
                     Image(systemName: "square.and.arrow.up").font(.body.weight(.semibold)).frame(width: 44, height: 44)
                 }
                 .accessibilityLabel("分享")
@@ -315,7 +313,7 @@ struct ImageViewer: View {
         }
         .statusBarHidden()
         .fullScreenCover(isPresented: $marking) {
-            MarkupCanvas(picture: image) { marked in
+            MarkupCanvas(picture: image.still) { marked in
                 if let refusal = model?.composer.addImage(marked, name: String(localized: "标注") + ".jpg") {
                     app?.showToast(refusal)
                 }

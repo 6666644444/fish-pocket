@@ -82,6 +82,7 @@ struct ExploreTabView: View {
                     SupportLink.footer
                 }
             }
+            .tabEdgesSoftened()
             .navigationTitle("探索")
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: Route.self) { route in

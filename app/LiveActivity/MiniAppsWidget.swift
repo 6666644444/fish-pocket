@@ -1,7 +1,7 @@
 import SwiftUI
 import WidgetKit
 
-/// 我的应用 on the home screen: the apps the user picked (the most recent ones until they pick),
+/// 我的应用 on the home screen: the apps the user picked (the newest ones until they pick),
 /// each one tap away. Opening one needs no engine.
 struct MiniAppsWidget: Widget {
     var body: some WidgetConfiguration {
@@ -32,7 +32,7 @@ struct MiniAppsProvider: AppIntentTimelineProvider {
         Timeline(entries: [entry(configuration, context)], policy: .never)
     }
 
-    /// The picked apps still there, with their current names; none picked, the most recent.
+    /// The picked apps still there, with their current names; none picked, the newest.
     private func entry(_ configuration: MiniAppsWidgetIntent, _ context: Context) -> MiniAppsEntry {
         let all = MiniAppCatalog.read()
         let limit = context.family == .systemSmall ? 1 : 4

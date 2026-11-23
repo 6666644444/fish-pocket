@@ -1432,7 +1432,14 @@ private struct ModelRowEditor: View {
             Section("模型选项") {
                 DraftTextField(title: "上下文窗口", placeholder: contextHint, text: Binding(get: { contextText }, set: { contextText = $0; write(model.setting(["contextWindow"], parseCapacity($0))) }))
                 DraftTextField(title: "最大输出 token 数", placeholder: tokensHint, text: Binding(get: { tokensText }, set: { tokensText = $0; write(model.setting(["maxTokens"], parseCapacity($0))) }))
+            }
+            .groupedRow()
+            Section {
                 inputTypes
+            } header: {
+                Text("输入类型")
+            } footer: {
+                Text("至少保留一种，只剩一种时不能关。")
             }
             .groupedRow()
             if !reasoningLevels.isEmpty { ReasoningEditor(model: model, levels: reasoningLevels, levelsOnly: reasoningLevelsOnly, write: write) }
@@ -1463,21 +1470,20 @@ private struct ModelRowEditor: View {
         return list.isEmpty ? (inputFallback ?? ["text"]) : list
     }
 
+    /// One row per type, like every other switch in the list: stacked in one row, the system
+    /// switches of iOS 26 ran into each other.
     private var inputTypes: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("输入类型").font(.caption).foregroundStyle(Palette.secondary)
-            ForEach(["text", "image"], id: \.self) { modality in
-                let isOn = selected.contains(modality)
-                Toggle(modality == "text" ? "文本" : "图片", isOn: Binding(get: { isOn }, set: { on in
-                    let next = ["text", "image"].filter { $0 == modality ? on : selected.contains($0) }
-                    var row = model.setting([inputField], .array(next.map(JSON.string)))
-                    if inputField == "inputModalities" && !next.contains("image") {
-                        row = row.setting(["imagePixelBudget"], nil).setting(["imageMaxBytes"], nil)
-                    }
-                    write(row)
-                }))
-                .disabled(selected.count == 1 && isOn)
-            }
+        ForEach(["text", "image"], id: \.self) { modality in
+            let isOn = selected.contains(modality)
+            Toggle(modality == "text" ? "文本" : "图片", isOn: Binding(get: { isOn }, set: { on in
+                let next = ["text", "image"].filter { $0 == modality ? on : selected.contains($0) }
+                var row = model.setting([inputField], .array(next.map(JSON.string)))
+                if inputField == "inputModalities" && !next.contains("image") {
+                    row = row.setting(["imagePixelBudget"], nil).setting(["imageMaxBytes"], nil)
+                }
+                write(row)
+            }))
+            .disabled(selected.count == 1 && isOn)
         }
     }
 }

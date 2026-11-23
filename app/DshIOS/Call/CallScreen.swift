@@ -329,14 +329,16 @@ enum CallDuration {
 
 // MARK: - Face
 
-/// The one on the line: a Bot's own face, or the app's for a conversation. A ring of ink grows
-/// with the user's voice, a vermilion halo goes with hers, and a thin arc turns round it while the
-/// answer is being worked out. A drawn character also breathes and lifts with her voice; a picture
-/// (the user's photo, or the app's 大肥鱼) holds still, as bouncing a photo looks wrong.
+/// The one on the line: a Bot's own face, or the app's for a conversation, inside a ring of short
+/// ticks (`CallDial`) that carries the call: they rise with her voice in vermilion and with the
+/// user's in ink, a light sweeps round them while the answer is being worked out, and they fill
+/// one by one while the call connects. A drawn character also breathes and lifts with her voice; a
+/// picture (the user's photo, or the app's 大肥鱼) holds still, as bouncing a photo looks wrong.
 struct CallAvatar: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let call: VoiceCall
     let size: CGFloat
+    @State private var dial = CallDial()
 
     var body: some View {
         let speaking = call.phase == .speaking
@@ -346,31 +348,19 @@ struct CallAvatar: View {
             let time = context.date.timeIntervalSinceReferenceDate
             let breath = moves ? CGFloat(sin(time * 1.6)) * 0.012 : 0
             ZStack {
-                // Her voice: a soft vermilion halo.
-                Circle()
-                    .fill(Palette.spot.opacity(speaking ? 0.16 + level * 0.32 : 0))
-                    .frame(width: size, height: size)
-                    .scaleEffect(1.08 + level * 0.34)
-                    .blur(radius: size * 0.08)
-                // The user's voice: a ring of ink.
-                Circle()
-                    .stroke(Palette.ink.opacity(!speaking && level > 0.05 ? 0.18 + level * 0.3 : 0), lineWidth: 2)
-                    .frame(width: size, height: size)
-                    .scaleEffect(1.06 + level * 0.16)
-                if call.phase == .thinking && !reduceMotion {
-                    Circle()
-                        .trim(from: 0, to: 0.22)
-                        .stroke(Palette.ink.opacity(0.55), style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
-                        .frame(width: size + 18, height: size + 18)
-                        .rotationEffect(.radians(time * 2.6))
-                        .transition(.opacity)
+                // A little wider than the face's frame: the ticks' loudest reach spills past it.
+                Canvas { graphics, canvas in
+                    dial.draw(in: &graphics, size: canvas, radius: size / 2, time: time,
+                              phase: call.phase, level: level, still: reduceMotion)
                 }
+                .frame(width: size + 120, height: size + 120)
                 face
                     .scaleEffect(1 + breath + (speaking && moves ? level * 0.07 : 0))
                     .rotationEffect(.degrees(speaking && moves ? Double(sin(time * 5)) * Double(level) * 3 : 0))
             }
         }
-        .frame(width: size + 40, height: size + 40)
+        // Room for the ticks, so loud ones stay clear of the name below.
+        .frame(width: size + 90, height: size + 90)
         .animation(.smooth(duration: 0.14), value: level)
         .animation(.smooth(duration: 0.4), value: call.phase)
         .accessibilityHidden(true)
@@ -399,6 +389,86 @@ struct CallAvatar: View {
     private var mood: BotMood {
         if call.waitingOnUser { return .alert }
         return call.phase == .thinking ? .thinking : .idle
+    }
+}
+
+/// The ring of ticks round the call's face. Quiet, it is a faint ring of dots; with a voice the
+/// ticks stretch out by different lengths, mirrored left and right (hers vermilion and longer, the
+/// user's ink); while she thinks they hold still and a light runs round them with a tail; while
+/// the call connects they light up one by one from the top. Each tick eases to where it should
+/// be, so the levels' twenty readings a second come out smooth. It keeps that state between
+/// frames, so one dial belongs to one face.
+final class CallDial {
+    private static let count = 96
+    private var length = [CGFloat](repeating: 3, count: count)
+    private var alpha = [CGFloat](repeating: 0.18, count: count)
+    /// 0 ink … 1 vermilion.
+    private var warmth = [CGFloat](repeating: 0, count: count)
+    private var last: TimeInterval?
+
+    func draw(in context: inout GraphicsContext, size: CGSize, radius: CGFloat, time: TimeInterval,
+              phase: VoiceCall.Phase, level: CGFloat, still: Bool) {
+        let dt = min(0.05, max(0, time - (last ?? time)))
+        last = time
+        // With reduced motion the clock stands still: the ticks go straight to where they belong.
+        let ease = still ? 1 : 1 - CGFloat(exp(-dt * 14))
+        let scale = radius / 94
+        let centre = CGPoint(x: size.width / 2, y: size.height / 2)
+        let inner = radius + 12 * scale
+        let n = Self.count
+        let turn = 2 * Double.pi
+        let head = (time * 1.5).truncatingRemainder(dividingBy: turn)
+        let filled = (time * 0.9).truncatingRemainder(dividingBy: 1.25)
+        let breath = still ? 0 : 0.06 * CGFloat(sin(time * 1.6))
+        let style = StrokeStyle(lineWidth: 2.2 * scale, lineCap: .round)
+
+        for i in 0..<n {
+            let around = Double(i) / Double(n) * turn
+            var reach: CGFloat = 3, light: CGFloat = 0.18, warm: CGFloat = 0
+            switch phase {
+            case .speaking, .listening:
+                let speaking = phase == .speaking
+                // 0 at the top, 1 at the bottom, the same on both sides.
+                let u = Double(min(i, n - i)) / Double(n / 2)
+                let t = still ? 0 : time
+                let wave = 0.55 + 0.45 * sin(u * 9 + t * 7.1) * sin(u * 4.3 - t * 3.7 + 1.3) + 0.25 * sin(u * 17 + t * 11)
+                reach = 3 + (speaking ? 30 : 18) * level * max(0.08, CGFloat(wave))
+                light = speaking ? 0.3 + level * 0.7 : 0.18 + breath + level * 0.82
+                warm = speaking ? 1 : 0
+            case .thinking:
+                var behind = (around - head).truncatingRemainder(dividingBy: turn)
+                if behind < 0 { behind += turn }
+                let tail = CGFloat(exp(-(turn - behind).truncatingRemainder(dividingBy: turn) * 1.6))
+                reach = 3 + tail * 7
+                light = 0.15 + tail * 0.85
+                warm = light > 0.6 ? 1 : 0
+            case .connecting:
+                let lit: CGFloat = Double(i) / Double(n) < filled ? 1 : 0
+                // A full ring fades before it starts again.
+                let fade = filled > 1 ? CGFloat(1.25 - filled) * 4 : 1
+                reach = 3 + lit * 3
+                light = 0.15 + lit * 0.55 * fade
+            }
+            length[i] += (reach - length[i]) * ease
+            alpha[i] += (light - alpha[i]) * ease
+            warmth[i] += (warm - warmth[i]) * ease
+
+            let angle = around - .pi / 2
+            let direction = CGPoint(x: cos(angle), y: sin(angle))
+            let outer = inner + length[i] * scale
+            var tick = Path()
+            tick.move(to: CGPoint(x: centre.x + direction.x * inner, y: centre.y + direction.y * inner))
+            tick.addLine(to: CGPoint(x: centre.x + direction.x * outer, y: centre.y + direction.y * outer))
+            if warmth[i] < 0.99 {
+                context.opacity = alpha[i] * (1 - warmth[i]) * (phase == .thinking ? 1 : 0.85)
+                context.stroke(tick, with: .color(Palette.ink), style: style)
+            }
+            if warmth[i] > 0.01 {
+                context.opacity = alpha[i] * warmth[i]
+                context.stroke(tick, with: .color(Palette.spot), style: style)
+            }
+        }
+        context.opacity = 1
     }
 }
 

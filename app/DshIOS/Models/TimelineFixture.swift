@@ -162,6 +162,20 @@ enum TimelineFixture {
                 $$\begin{pmatrix} a & b \\ c & d \end{pmatrix}^{-1}=\frac{1}{ad-bc}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix}\tag{1}$$
                 """#)]]),
             event("turn/end", ["turn": 5, "reason": ["kind": "completed"]]),
+            // Code blocks wrap long lines, prose in a `text` block as well as code.
+            user("帮我写一段话，再给个读文件的例子"),
+            event("turn/start", ["turn": 6]),
+            assistant(6, id: "m7", [["type": "text", "text": .string(#"""
+                ```text
+                这几个月没白折腾，工具找着了，人也回来了，这回总该把心收回到稿子上了吧，别再拖了，编辑那边已经催了三回。
+                ```
+
+                ```swift
+                let text = try String(contentsOf: URL(fileURLWithPath: "/home/dsh/workspace/notes/very-long-file-name.md"), encoding: .utf8)
+                print(text.count)
+                ```
+                """#)]]),
+            event("turn/end", ["turn": 6, "reason": ["kind": "completed"]]),
             // More images than fit across a phone: the thumbnails wrap.
             user("这几张截图里的蓝牙设备都是什么？", images: 7),
         ]
