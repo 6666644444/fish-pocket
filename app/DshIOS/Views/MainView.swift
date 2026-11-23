@@ -1180,6 +1180,12 @@ struct MainView: View {
         case .session(let id):
             // A computer's session from the lock screen or a widget, after signing out: nothing to open.
             if RemoteStore.sessionId(of: id) != nil, !app.remote.signedIn { return }
+            // A Bot's or a group's Session (the Live Activity and the widgets list every running
+            // one): its chat on the Bot page, not the plain conversation.
+            if RemoteStore.sessionId(of: id) == nil, let route = await teamRoute(of: id) {
+                app.botTeam.openRequest = BotOpenRequest(route: route)
+                return
+            }
             selection = id
             if usesTabs { showInTabs(id) }
         case .new(let workspaceId, let preset, let draft):
@@ -1213,6 +1219,16 @@ struct MainView: View {
         case .call:
             CallCenter.shared.expand()
         }
+    }
+
+    /// The Bot chat or group a Session belongs to, nil for one the Bot team does not run.
+    /// A cold launch: the team arrives a moment after the engine, so its answer is waited for.
+    private func teamRoute(of id: String) async -> BotRoute? {
+        let deadline = ContinuousClock.now + .seconds(5)
+        while app.botTeam.status == .unknown, ContinuousClock.now < deadline {
+            try? await Task.sleep(for: .milliseconds(100))
+        }
+        return app.botTeam.route(ofSession: id)
     }
 
     /// Where 查看余额 goes: the Fish Pocket account when signed in to it, else the DeepSeek account

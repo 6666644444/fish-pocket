@@ -195,6 +195,14 @@ final class BotModel {
     func bot(_ id: String) -> BotInfo? { bots.first { $0.id == id } }
     /// The Bot whose own chat `sessionId` is, current part or earlier.
     func botOwning(_ sessionId: String) -> BotInfo? { bots.first { $0.sessionId == sessionId || $0.parts.contains(sessionId) } }
+    /// The chat a Session of the team is shown in: its Bot's, or its group's (a member's Session
+    /// there included). Nil for a Session the team does not run.
+    func route(ofSession sessionId: String) -> BotRoute? {
+        guard !sessionId.isEmpty else { return nil }
+        if let bot = botOwning(sessionId) { return .bot(bot.id) }
+        if let room = rooms.first(where: { $0.sessionId == sessionId || $0.sessions.contains(sessionId) }) { return .room(room.id) }
+        return nil
+    }
     /// The Bots that take the user's work first; the first is `mainBotId`.
     var mainBotIds: [String] { team["mainBotIds"].array.compactMap(\.string) }
     func isMain(_ bot: BotInfo) -> Bool { mainBotIds.contains(bot.id) }
