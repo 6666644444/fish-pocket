@@ -83,11 +83,23 @@ struct VoiceMessageSettingsPage: View {
                 Image(systemName: "exclamationmark.triangle").foregroundStyle(Palette.waiting)
             }
         case .some(.volcengine?):
-            Text("用火山引擎，和语音通话同一个声音（\(CallVoice.chosen.name)），费用由火山引擎按字数收取。")
-                .font(.subheadline)
+            VStack(alignment: .leading, spacing: 6) {
+                Text("用火山引擎，和语音通话同一个声音（\(CallVoice.chosen.name)），费用由火山引擎按字数收取。")
+                    .font(.subheadline)
+                ownVoices
+            }
         case .some(.deepseek(let reading)?):
-            Text("用 DeepSeek，和朗读同一个声音（\(reading.title)），费用由 DeepSeek 按字数收取。")
-                .font(.subheadline)
+            VStack(alignment: .leading, spacing: 6) {
+                Text("用 DeepSeek，和朗读同一个声音（\(reading.title)），费用由 DeepSeek 按字数收取。")
+                    .font(.subheadline)
+                ownVoices
+            }
         }
+    }
+
+    private var ownVoices: some View {
+        Text("Bot 和会话可以单独选声音：Bot 详情页、会话标题菜单里的「声音」。没单独选的用这个。")
+            .font(.footnote)
+            .foregroundStyle(.secondary)
     }
 }
