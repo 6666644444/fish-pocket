@@ -545,7 +545,7 @@ private struct RemoteImageThumb: View {
         Group {
             if let image {
                 Button { viewing = true } label: {
-                    Image(uiImage: image).resizable().scaledToFill()
+                    Picture(image: image)
                 }
                 .buttonStyle(.plain)
             } else if failed {
@@ -562,10 +562,14 @@ private struct RemoteImageThumb: View {
         .task(id: "\(attachment.id)-\(model.meta?.deviceOnline ?? true)") {
             guard image == nil else { return }
             failed = false
-            if case .local(let data) = attachment.source { image = UIImage(data: data); failed = image == nil; return }
+            if case .local(let data) = attachment.source {
+                image = await Task.detached(priority: .userInitiated) { AnimatedPicture.picture(data) }.value
+                failed = image == nil
+                return
+            }
             guard let client = app.remote.client,
                   let data = try? await RemoteFileFetch.data(attachment, client: client, deviceId: model.meta?.deviceId, cwd: model.cwd, online: model.meta?.deviceOnline ?? true),
-                  let loaded = UIImage(data: data) else { failed = true; return }
+                  let loaded = await Task.detached(priority: .userInitiated, operation: { AnimatedPicture.picture(data) }).value else { failed = true; return }
             image = loaded
         }
         .fullScreenCover(isPresented: $viewing) {

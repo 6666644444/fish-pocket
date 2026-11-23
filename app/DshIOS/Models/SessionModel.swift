@@ -82,6 +82,8 @@ final class SessionModel {
     @ObservationIgnored private let imageCache: NSCache<NSString, UIImage> = {
         let cache = NSCache<NSString, UIImage>()
         cache.countLimit = 60
+        // Only animated pictures count (`AnimatedPicture.cost`): their frames are decoded up front.
+        cache.totalCostLimit = 120 << 20
         return cache
     }()
     @ObservationIgnored private let previewCache: NSCache<NSString, UIImage> = {
@@ -716,8 +718,12 @@ final class SessionModel {
     func image(_ attachment: Attachment) async -> UIImage? {
         guard let attachmentId = attachment.attachmentId else { return nil }
         if let hit = imageCache.object(forKey: attachmentId as NSString) { return hit }
-        guard let data = await loadAttachment(attachment), let image = UIImage(data: data) else { return nil }
-        imageCache.setObject(image, forKey: attachmentId as NSString)
+        // An animation this device sent plays from its original; the engine keeps only a still.
+        var data = SentAnimations.data(for: attachmentId)
+        if data == nil { data = await loadAttachment(attachment) }
+        guard let data,
+              let image = await Task.detached(priority: .userInitiated, operation: { AnimatedPicture.picture(data) }).value else { return nil }
+        imageCache.setObject(image, forKey: attachmentId as NSString, cost: AnimatedPicture.cost(image))
         return image
     }
 

@@ -489,6 +489,10 @@ final class ComposerModel {
             stored: stored.count == sent.count ? stored : nil,
             placement: running ? (steer ? .steering : .queued) : .transcript
         )
+        // The engine stores a still of an animated image: the original is kept for the bubble.
+        for attachment in sent {
+            if case .image(_, let file, _) = attachment.kind, let id = attachment.stored?.attachmentId { SentAnimations.keep(file, for: id) }
+        }
         if submission.showsBubble {
             bubbleIds.insert(requestId)
             // Its images show as they were picked until the stored copies are read.
