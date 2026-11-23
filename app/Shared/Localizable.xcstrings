@@ -7974,6 +7974,40 @@
         }
       }
     },
+    "在这个会话里通话时用这里选的声音。跟随默认时，用「设置 → 语音通话」里选的声音。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calls in this session use the voice chosen here. With Use Default, they use the voice chosen in Settings → Voice Call."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las llamadas en esta sesión usan la voz que elijas aquí. Con Usar la predeterminada, usan la voz elegida en Configuración → Llamada de voz."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このセッションでの通話では、ここで選んだ声を使います。「デフォルトを使用」のときは「設定 → 音声通話」で選んだ声を使います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 세션에서 통화할 때 여기서 고른 목소리를 써요. 기본값 사용이면 「설정 → 음성 통화」에서 고른 목소리를 써요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在這個對話裡通話時用這裡選的聲音。跟隨預設時，用「設定 → 語音通話」裡選的聲音。"
+          }
+        }
+      }
+    },
     "在这台手机上生成，画面外加上 Fish Pocket 的标识。录像没有声音。" : {
       "localizations" : {
         "en" : {
@@ -37132,6 +37166,40 @@
         }
       }
     },
+    "和这个 Bot 通话时用这里选的声音。跟随默认时，用「设置 → 语音通话」里选的声音。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calls with this Bot use the voice chosen here. With Use Default, they use the voice chosen in Settings → Voice Call."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las llamadas con este Bot usan la voz que elijas aquí. Con Usar la predeterminada, usan la voz elegida en Configuración → Llamada de voz."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Bot との通話では、ここで選んだ声を使います。「デフォルトを使用」のときは「設定 → 音声通話」で選んだ声を使います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Bot과 통화할 때 여기서 고른 목소리를 써요. 기본값 사용이면 「설정 → 음성 통화」에서 고른 목소리를 써요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "和這個 Bot 通話時用這裡選的聲音。跟隨預設時，用「設定 → 語音通話」裡選的聲音。"
+          }
+        }
+      }
+    },
     "和邮件服务器的连接断了，再试一次" : {
       "localizations" : {
         "en" : {
@@ -66036,6 +66104,74 @@
         }
       }
     },
+    "朗读这个 Bot 的回复时用这里选的声音，群聊里它的发言也一样。跟随默认时，用「设置 → 朗读」里选的声音。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This Bot's replies are read aloud in the voice chosen here, including what it says in group chats. With Use Default, they use the voice chosen in Settings → Read Aloud."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las respuestas de este Bot se leen en voz alta con la voz que elijas aquí, también lo que dice en los grupos. Con Usar la predeterminada, se usa la voz elegida en Configuración → Leer en voz alta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Bot の返信は、ここで選んだ声で読み上げます。グループチャットでの発言も同じです。「デフォルトを使用」のときは「設定 → 読み上げ」で選んだ声を使います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Bot의 답장은 여기서 고른 목소리로 읽어 줘요. 그룹 채팅에서 한 말도 마찬가지예요. 기본값 사용이면 「설정 → 소리 내어 읽기」에서 고른 목소리를 써요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朗讀這個 Bot 的回覆時用這裡選的聲音，群組裡它的發言也一樣。跟隨預設時，用「設定 → 朗讀」裡選的聲音。"
+          }
+        }
+      }
+    },
+    "朗读这个会话的回复和 Agent 念出来的话时用这里选的声音。跟随默认时，用「设置 → 朗读」里选的声音。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replies in this session, and what the Agent says aloud, are read in the voice chosen here. With Use Default, they use the voice chosen in Settings → Read Aloud."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las respuestas de esta sesión y lo que el Agent dice en voz alta se leen con la voz que elijas aquí. Con Usar la predeterminada, se usa la voz elegida en Configuración → Leer en voz alta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このセッションの返信と Agent が読み上げる言葉は、ここで選んだ声を使います。「デフォルトを使用」のときは「設定 → 読み上げ」で選んだ声を使います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 세션의 답장과 Agent가 소리 내어 말하는 내용은 여기서 고른 목소리로 읽어 줘요. 기본값 사용이면 「설정 → 소리 내어 읽기」에서 고른 목소리를 써요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朗讀這個對話的回覆和 Agent 唸出來的話時用這裡選的聲音。跟隨預設時，用「設定 → 朗讀」裡選的聲音。"
+          }
+        }
+      }
+    },
     "未分组" : {
       "localizations" : {
         "en" : {
@@ -88547,6 +88683,74 @@
         }
       }
     },
+    "试听和通话要先在「设置 → 语音通话」里填好火山引擎的 API Key。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To preview voices and make calls, first enter your Volcengine API Key in Settings → Voice Call."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para escuchar voces y hacer llamadas, primero introduce tu API Key de Volcengine en Configuración → Llamada de voz."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試聴や通話の前に、「設定 → 音声通話」で Volcengine の API Key を入力してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "미리 듣기와 통화를 하려면 먼저 「설정 → 음성 통화」에서 Volcengine API Key를 입력하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試聽和通話要先在「設定 → 語音通話」裡填好火山引擎的 API Key。"
+          }
+        }
+      }
+    },
+    "试听按火山引擎的价格计费；通话中改了声音，下一通电话生效。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previews are billed at Volcengine's rates. A voice changed during a call applies from the next call."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las escuchas de prueba se cobran con las tarifas de Volcengine. Si cambias la voz durante una llamada, se aplica a partir de la siguiente."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試聴は Volcengine の料金で課金されます。通話中に声を変えた場合は、次の通話から反映されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "미리 듣기는 Volcengine 요금으로 과금돼요. 통화 중에 목소리를 바꾸면 다음 통화부터 적용돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "試聽按火山引擎的價格計費；通話中改了聲音，下一通電話生效。"
+          }
+        }
+      }
+    },
     "试试其他方式" : {
       "localizations" : {
         "en" : {
@@ -92358,6 +92562,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "跟隨系統"
+          }
+        }
+      }
+    },
+    "跟随默认" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use Default"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar la predeterminada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デフォルトを使用"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기본값 사용"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "跟隨預設"
           }
         }
       }
@@ -98615,6 +98853,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "聯絡人"
+          }
+        }
+      }
+    },
+    "通话" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calls"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Llamadas"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話"
           }
         }
       }

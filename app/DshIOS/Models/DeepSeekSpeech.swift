@@ -318,13 +318,18 @@ final class ReadAloud {
     private(set) var paused = false
     /// A failure worded for a toast; the app model shows it.
     @ObservationIgnored var onError: ((String) -> Void)?
+    /// The voice for what is read in a conversation (`scope`): its own or its Bot's, else the
+    /// default. Set by the app model, which knows the Bots.
+    @ObservationIgnored var voiceFor: ((String?) -> DeepSeekSpeech.Voice)?
 
-    @ObservationIgnored private var queue: [String] = []
+    @ObservationIgnored private var queue: [(text: String, voice: DeepSeekSpeech.Voice)] = []
     @ObservationIgnored private var task: Task<Void, Never>?
     @ObservationIgnored private var player: PCMPlayer?
 
-    func toggle(_ text: String) {
-        if speaking { stop() } else { enqueue(text) }
+    /// `voice`: one picked by the caller (a group member's, a voice being tried); nil: the
+    /// conversation's on screen.
+    func toggle(_ text: String, voice: DeepSeekSpeech.Voice? = nil) {
+        if speaking { stop() } else { enqueue(text, voice: voice) }
     }
 
     func pause() {
@@ -392,8 +397,8 @@ final class ReadAloud {
         }
     }
 
-    /// Read after whatever is being read now.
-    func enqueue(_ text: String) {
+    /// Read after whatever is being read now, in `voice`, else the conversation's on screen.
+    func enqueue(_ text: String, voice: DeepSeekSpeech.Voice? = nil) {
         let plain = Self.plain(text)
         guard !plain.isEmpty else { return }
         // A call holds the audio: reading aloud would take it over.
@@ -401,7 +406,7 @@ final class ReadAloud {
             onError?(String(localized: "通话中不能朗读"))
             return
         }
-        queue.append(plain)
+        queue.append((plain, voice ?? voiceFor?(scope) ?? VoicePreferences.shared.readingVoice))
         guard task == nil else { return }
         speaking = true
         task = Task { await run() }
@@ -417,11 +422,11 @@ final class ReadAloud {
             if paused { player.pause() }
             while true {
                 while !queue.isEmpty {
-                    let text = queue.removeFirst()
+                    let (text, voice) = queue.removeFirst()
                     // Every piece is fetched as fast as DeepSeek makes it and queued on the player,
                     // so the next piece is ready before the last one ends.
                     for piece in Self.pieces(of: text) {
-                        for try await pcm in DeepSeekSpeech.synthesize(piece, voice: VoicePreferences.shared.readingVoice) {
+                        for try await pcm in DeepSeekSpeech.synthesize(piece, voice: voice) {
                             try Task.checkCancellation()
                             player.schedule(pcm)
                         }

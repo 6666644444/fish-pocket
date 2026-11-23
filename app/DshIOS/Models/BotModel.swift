@@ -193,6 +193,8 @@ final class BotModel {
     var mainBotId: String? { team["mainBotId"].string }
     var mainBot: BotInfo? { bots.first { $0.id == mainBotId } ?? bots.first }
     func bot(_ id: String) -> BotInfo? { bots.first { $0.id == id } }
+    /// The Bot whose own chat `sessionId` is, current part or earlier.
+    func botOwning(_ sessionId: String) -> BotInfo? { bots.first { $0.sessionId == sessionId || $0.parts.contains(sessionId) } }
     /// The Bots that take the user's work first; the first is `mainBotId`.
     var mainBotIds: [String] { team["mainBotIds"].array.compactMap(\.string) }
     func isMain(_ bot: BotInfo) -> Bool { mainBotIds.contains(bot.id) }

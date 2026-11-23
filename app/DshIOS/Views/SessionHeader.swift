@@ -2,7 +2,7 @@ import SwiftUI
 
 /// The sheets the conversation's top bar opens.
 enum SessionHeaderSheet: String, Identifiable {
-    case subagents, jobs, reminders, logExport
+    case subagents, jobs, reminders, logExport, voice
     var id: String { rawValue }
 }
 
@@ -16,6 +16,7 @@ struct SessionTitleMenu: View {
     /// More icons share the bar: on a phone the title narrows so it stays between them.
     var crowded = false
     let shareImage: () -> Void
+    let chooseVoice: () -> Void
     let exportLog: () -> Void
     @Environment(AppModel.self) private var app
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -29,6 +30,7 @@ struct SessionTitleMenu: View {
                 Button { app.renameRequest = RenameRequest(target: .session(sessionId), initial: durableTitle ?? "") } label: {
                     Label("重命名", systemImage: "pencil")
                 }
+                Button(action: chooseVoice) { Label("声音", systemImage: "waveform") }
                 Button { Task { await app.fork(session: sessionId, from: .current) } } label: {
                     Label("分叉会话", systemImage: "arrow.triangle.branch")
                 }
