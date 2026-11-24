@@ -95136,6 +95136,46 @@
         }
       }
     },
+    "输入 %@ · 缓存命中 %@（%@） · 输出 %@ Token · %lld 次" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Input %1$@ · Cache hits %2$@ (%3$@) · Output %4$@ tokens · %5$lld requests"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrada %1$@ · Aciertos de caché %2$@ (%3$@) · Salida %4$@ tokens · %5$lld solicitudes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入力 %1$@・キャッシュヒット %2$@（%3$@）・出力 %4$@ トークン・%5$lld 回"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "입력 %1$@ · 캐시 적중 %2$@(%3$@) · 출력 %4$@ 토큰 · %5$lld회"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入 %1$@ · 缓存命中 %2$@（%3$@） · 输出 %4$@ Token · %5$lld 次"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "輸入 %1$@ · 快取命中 %2$@（%3$@） · 輸出 %4$@ Token · %5$lld 次"
+          }
+        }
+      }
+    },
     "输入 %@ · 输出 %@ Token · %lld 次" : {
       "localizations" : {
         "en" : {

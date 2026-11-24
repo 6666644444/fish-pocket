@@ -222,7 +222,18 @@ struct FishPocketRecordsPage: View {
         let line: String
         if let hit = usage.cacheHitInputTokens {
             let input = max(0, usage.inputTokens - hit).formatted(compact)
-            line = String(localized: "输入 \(input) · 缓存命中 \(hit.formatted(compact)) · 输出 \(output) Token · \(usage.requests) 次")
+            let hits = hit.formatted(compact)
+            if usage.inputTokens > 0 {
+                // The share of all input that hit the cache, to the nearest percent, but never 100%
+                // while some input missed.
+                var percent = (Double(min(hit, usage.inputTokens)) * 100 / Double(usage.inputTokens)).rounded()
+                if hit < usage.inputTokens { percent = min(percent, 99) }
+                let rate = (percent / 100).formatted(.percent.precision(.fractionLength(0)))
+                line = String(localized: "输入 \(input) · 缓存命中 \(hits)（\(rate)） · 输出 \(output) Token · \(usage.requests) 次")
+            } else {
+                // Nothing read (a day of voice only): no rate to give.
+                line = String(localized: "输入 \(input) · 缓存命中 \(hits) · 输出 \(output) Token · \(usage.requests) 次")
+            }
         } else {
             line = String(localized: "输入 \(usage.inputTokens.formatted(compact)) · 输出 \(output) Token · \(usage.requests) 次")
         }
