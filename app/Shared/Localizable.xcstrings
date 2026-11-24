@@ -57103,36 +57103,36 @@
         }
       }
     },
-    "按北京时间统计。每次回复结束时扣费，这里随即更新。" : {
+    "按北京时间统计，语音通话、按住说话和语音消息的用量也算在内。扣费后这里随即更新。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Days follow Beijing time. Credits are charged when each reply finishes, and show up here right away."
+            "value" : "Days follow Beijing time. Voice calls, hold to talk, and voice messages are included. Charges show up here right away."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los días siguen la hora de Pekín. Los créditos se cobran al terminar cada respuesta y aparecen aquí al momento."
+            "value" : "Los días siguen la hora de Pekín. Se incluyen las llamadas de voz, mantener pulsado para hablar y los mensajes de voz. Los cobros aparecen aquí al momento."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "日付は北京時間で集計しています。返信が終わるたびに差し引かれ、すぐここに反映されます。"
+            "value" : "日付は北京時間で集計しています。音声通話、押したまま話す、音声メッセージの利用分も含みます。差し引かれるとすぐここに反映されます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "날짜는 베이징 시간 기준이에요. 답변이 끝날 때마다 차감되고 바로 여기에 반영돼요."
+            "value" : "날짜는 베이징 시간 기준이에요. 음성 통화, 누른 채 말하기, 음성 메시지 사용량도 포함돼요. 차감되면 바로 여기에 반영돼요."
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "按北京時間統計。每次回覆結束時扣費，這裡隨即更新。"
+            "value" : "按北京時間統計，語音通話、按住說話和語音訊息的用量也算在內。扣費後這裡隨即更新。"
           }
         }
       }

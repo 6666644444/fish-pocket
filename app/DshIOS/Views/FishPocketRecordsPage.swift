@@ -111,7 +111,7 @@ struct FishPocketRecordsPage: View {
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
                 .cardSurface()
-                footnote("按北京时间统计。每次回复结束时扣费，这里随即更新。")
+                footnote("按北京时间统计，语音通话、按住说话和语音消息的用量也算在内。扣费后这里随即更新。")
             }
         }
     }
