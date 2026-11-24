@@ -264,7 +264,7 @@ final class VoiceCall {
     // MARK: Start and end
 
     func start() async {
-        guard let key = VolcSpeech.shared.key, !key.isEmpty else {
+        guard let credential = VolcSpeech.shared.credential else {
             fail(CallError.noKey.localizedDescription)
             return
         }
@@ -284,12 +284,12 @@ final class VoiceCall {
         replyText = session.items.lastAssistantText ?? ""
         renew()
 
-        let recognizer = CallRecognizer(key: key, resource: VolcSpeech.shared.resource.rawValue)
+        let recognizer = CallRecognizer(credential: credential)
         recognizer.setContext(context())
         recognizer.onEvent = { [weak self] event in Task { @MainActor in self?.recognized(event) } }
         self.recognizer = recognizer
 
-        let synthesizer = CallSynthesizer(key: key, voice: VoiceChoices.shared.callVoice(sessionId: sessionId, botId: botId).id)
+        let synthesizer = CallSynthesizer(credential: credential, voice: VoiceChoices.shared.callVoice(sessionId: sessionId, botId: botId).id)
         synthesizer.onEvent = { [weak self] event in Task { @MainActor in self?.synthesized(event) } }
         synthesizer.warmUp()
         self.synthesizer = synthesizer
