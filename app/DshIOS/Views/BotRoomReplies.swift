@@ -225,7 +225,7 @@ struct RoomMessage: View {
             }
             ShareLink(item: text) { Label("分享", systemImage: "square.and.arrow.up") }
             ShareLink(item: MarkdownFile(name: name, text: text), preview: SharePreview(name)) { Label("存为 Markdown 文件", systemImage: "arrow.down.doc") }
-            Button { ReadAloud.shared.toggle(text, voice: bot.map { VoiceChoices.shared.readingVoice(sessionId: nil, botId: $0.id) }) } label: {
+            Button { ReadAloud.shared.toggle(text, owner: bot.map { .bot($0.id) }) } label: {
                 ReadAloud.shared.speaking ? Label("停止朗读", systemImage: "speaker.slash") : Label("朗读", systemImage: "speaker.wave.2")
             }
             if let bot {

@@ -7,7 +7,7 @@ struct VoiceMessageSettingsPage: View {
     /// The rule as typed; saved after a pause and when leaving, not on every key.
     @State private var draft = VoiceMessageSettings.shared.guidance
     /// nil while it is being found out.
-    @State private var voice: VoiceMessageVoice??
+    @State private var voice: SynthesisVoice??
 
     var body: some View {
         List {
@@ -64,7 +64,7 @@ struct VoiceMessageSettingsPage: View {
             settings.setGuidance(draft)
         }
         .task {
-            let first = await VoiceMessageVoice.chosen()
+            let first = await SynthesisVoice.chosen()
             voice = .some(first)
         }
         .onDisappear { settings.setGuidance(draft) }

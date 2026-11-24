@@ -65,21 +65,17 @@ final class VoiceChoices {
         UserDefaults.standard.set(readings, forKey: Self.readingKey)
     }
 
-    /// The voice replies are read in: a Bot's (in its chat and its posts in a group), else the
-    /// conversation's; without one picked, the default.
-    func readingVoice(sessionId: String?, botId: String?) -> DeepSeekSpeech.Voice {
-        let owner = botId.map(VoiceOwner.bot) ?? sessionId.map(VoiceOwner.session)
-        return owner.flatMap(readingVoice(of:)) ?? VoicePreferences.shared.readingVoice
-    }
-
-    /// The reading voice for `owner`, else the default.
+    /// The DeepSeek voice `owner` is read in (a Bot in its chat and its posts in a group, else
+    /// the conversation), else the default. Reading with Volcengine uses the call voice instead.
     func readingVoice(for owner: VoiceOwner?) -> DeepSeekSpeech.Voice {
         owner.flatMap(readingVoice(of:)) ?? VoicePreferences.shared.readingVoice
     }
 
     /// What 声音 shows for `owner`: the voices picked, or 跟随默认.
     func summary(of owner: VoiceOwner) -> String {
-        let picked = [readingVoice(of: owner)?.title, callVoice(of: owner)?.name].compactMap(\.self)
+        // Reading with Volcengine goes with the call voice: the DeepSeek one picked is not heard.
+        let reading = VoicePreferences.shared.readingSource == .deepseek ? readingVoice(of: owner)?.title : nil
+        let picked = [reading, callVoice(of: owner)?.name].compactMap(\.self)
         return picked.isEmpty ? String(localized: "跟随默认") : picked.joined(separator: " · ")
     }
 }

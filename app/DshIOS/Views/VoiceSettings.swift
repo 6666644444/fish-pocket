@@ -106,10 +106,10 @@ struct VoiceInputSettingsPage: View {
 /// How Volcengine (豆包语音) is reached, picked by the user: their Fish Pocket account, paid in
 /// credits through its relay, or their own API Key (where it goes, the billing it was opened with,
 /// how to get one). Either way a check that it works for what it is for: hold-to-talk needs
-/// streaming recognition; a call needs synthesis 2.0 as well, and the check tries both. The two
-/// ways never stand in for each other.
+/// streaming recognition; reading aloud needs synthesis 2.0; a call needs both, and the check
+/// tries both. The two ways never stand in for each other.
 struct VolcKeySection: View {
-    enum Purpose { case input, call }
+    enum Purpose { case input, call, reading }
 
     let purpose: Purpose
     var onReady: (() -> Void)?
@@ -173,6 +173,7 @@ struct VolcKeySection: View {
                 switch purpose {
                 case .input: step(2, "开通「豆包流式语音识别模型 2.0」。")
                 case .call: step(2, "开通「豆包流式语音识别模型 2.0」和「豆包语音合成模型 2.0」。")
+                case .reading: step(2, "开通「豆包语音合成模型 2.0」。")
                 }
                 step(3, "在「API Key 管理」里创建一个 Key 并复制，回到这里粘贴到上面。")
                 Link(destination: VolcSpeech.keysURL) {
@@ -219,6 +220,8 @@ struct VolcKeySection: View {
                 Text("识别用的是豆包流式语音识别模型 2.0，按录音时长计费。")
             case .call:
                 Text("听你说话用豆包流式语音识别模型 2.0，按通话时长计费；回答的声音用豆包语音合成模型 2.0，按字数计费。余额用完时通话会挂断。")
+            case .reading:
+                Text("朗读用豆包语音合成模型 2.0，按字数计费。")
             }
         }
         .groupedRow()
@@ -254,10 +257,13 @@ struct VolcKeySection: View {
                     .inkTint()
                 }
             }
-            Picker("计费方式", selection: $speech.resource) {
-                ForEach(VolcSpeech.Resource.allCases) { Text($0.title).tag($0) }
+            // How recognition is paid for: reading aloud does not recognize anything.
+            if purpose != .reading {
+                Picker("计费方式", selection: $speech.resource) {
+                    ForEach(VolcSpeech.Resource.allCases) { Text($0.title).tag($0) }
+                }
+                .pickerValueTint()
             }
-            .pickerValueTint()
         } header: {
             Text(FishPocketAPI.available ? "API Key" : "火山引擎")
         } footer: {
@@ -266,6 +272,8 @@ struct VolcKeySection: View {
                 Text("识别用的是豆包流式语音识别模型 2.0。计费方式要和你在控制台开通的一致，没特别选过就用「小时版」。录音直接发给火山引擎识别，App 不保存录音。")
             case .call:
                 Text("听你说话用豆包流式语音识别模型 2.0，回答的声音用豆包语音合成模型 2.0，两个都要在控制台开通，费用由火山引擎按你的用量收取。计费方式指识别的计费方式，要和控制台开通的一致，没特别选过就用「小时版」。通话的声音直接发给火山引擎，App 不保存录音。API Key 和按住说话共用，只保存在这台设备本地。")
+            case .reading:
+                Text("朗读用豆包语音合成模型 2.0，要在控制台开通，费用由火山引擎按字数收取。API Key 和按住说话、语音通话共用，只保存在这台设备本地。")
             }
         }
         .groupedRow()
@@ -301,6 +309,7 @@ struct VolcKeySection: View {
                 switch purpose {
                 case .input: Label("连接成功，可以按住说话了", systemImage: "checkmark.circle.fill")
                 case .call: Label("连接成功，可以打电话了", systemImage: "checkmark.circle.fill")
+                case .reading: Label("连接成功，可以朗读了", systemImage: "checkmark.circle.fill")
                 }
             }
             .foregroundStyle(.green)
@@ -331,8 +340,8 @@ struct VolcKeySection: View {
         let purpose = purpose
         Task {
             do {
-                try await VolcSpeech.check(credential)
-                if purpose == .call { try await CallSynthesizer.check(credential) }
+                if purpose != .reading { try await VolcSpeech.check(credential) }
+                if purpose != .input { try await CallSynthesizer.check(credential) }
                 passed()
             } catch {
                 status = .failed(error.localizedDescription)
@@ -349,58 +358,112 @@ struct VolcKeySection: View {
     }
 }
 
-/// 设置 → 朗读: the voice replies are read in.
+/// 设置 → 朗读: which service reads replies aloud, picked by the user, and its voice. DeepSeek has
+/// voices of its own; Volcengine speaks in the call's voice and is reached the way calls are.
 struct ReadAloudSettingsPage: View {
     @State private var preferences = VoicePreferences.shared
     @State private var reading = ReadAloud.shared
+    @State private var speech = VolcSpeech.shared
+    @State private var callVoice = CallVoice.chosen
+    @State private var preview = VoicePreview.shared
 
     var body: some View {
         List {
             Section {
-                ForEach(DeepSeekSpeech.Voice.allCases) { voice in
-                    Button {
-                        Haptics.select()
-                        preferences.readingVoice = voice
-                    } label: {
-                        HStack {
-                            Text(voice.title).foregroundStyle(Palette.ink)
-                            Spacer()
-                            if preferences.readingVoice == voice {
-                                Image(systemName: "checkmark").font(.body.weight(.semibold)).foregroundStyle(Palette.ink)
-                            }
-                        }
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
+                Picker("朗读服务", selection: $preferences.readingSource) {
+                    ForEach(VoicePreferences.Source.allCases) { Text($0.title).tag($0) }
                 }
-            } header: {
-                Text("声音")
+                .pickerValueTint()
             } footer: {
-                Text("朗读回复用 DeepSeek 的声音，同样用「模型」里的 DeepSeek API Key，费用由 DeepSeek 按字数收取。没有设置火山引擎时，语音消息也用这个声音。")
+                switch preferences.readingSource {
+                case .deepseek:
+                    Text("朗读回复用 DeepSeek 的声音，同样用「模型」里的 DeepSeek API Key，费用由 DeepSeek 按字数收取。没有设置火山引擎时，语音消息也用这个声音。")
+                case .volcengine:
+                    Text("朗读回复用豆包语音合成模型 2.0，声音和接入方式都和语音通话共用。")
+                }
             }
             .groupedRow()
 
-            Section {
-                Button {
-                    Haptics.tap()
-                    if reading.speaking {
-                        reading.stop()
-                    } else {
-                        reading.enqueue(String(localized: "你好，我会用这个声音为你朗读。"), voice: preferences.readingVoice)
+            switch preferences.readingSource {
+            case .deepseek:
+                deepSeekVoices
+                Section {
+                    Button {
+                        Haptics.tap()
+                        if reading.speaking {
+                            reading.stop()
+                        } else {
+                            reading.enqueue(String(localized: "你好，我会用这个声音为你朗读。"), voice: .deepseek(preferences.readingVoice))
+                        }
+                    } label: {
+                        Text(reading.speaking ? "停止" : "试听")
                     }
-                } label: {
-                    Text(reading.speaking ? "停止" : "试听")
+                    .buttonStyle(.capsule(height: 50))
                 }
-                .buttonStyle(.capsule(height: 50))
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets())
+            case .volcengine:
+                // Without a way in, that comes first: nothing is read until it is set up.
+                if speech.configured {
+                    volcengineVoices
+                    VolcKeySection(purpose: .reading)
+                } else {
+                    VolcKeySection(purpose: .reading)
+                    volcengineVoices
+                }
             }
-            .listRowBackground(Color.clear)
-            .listRowInsets(EdgeInsets())
         }
         .groupedList()
+        .scrollDismissesKeyboard(.immediately)
         .navigationTitle("朗读")
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: preferences.readingVoice) { ReadAloud.shared.stop() }
-        .onDisappear { ReadAloud.shared.stop() }
+        .onChange(of: preferences.readingSource) {
+            ReadAloud.shared.stop()
+            preview.stop()
+        }
+        .onChange(of: callVoice) { CallVoice.chosen = callVoice }
+        .onDisappear {
+            ReadAloud.shared.stop()
+            preview.stop()
+        }
+    }
+
+    private var deepSeekVoices: some View {
+        Section {
+            ForEach(DeepSeekSpeech.Voice.allCases) { voice in
+                Button {
+                    Haptics.select()
+                    preferences.readingVoice = voice
+                } label: {
+                    HStack {
+                        Text(voice.title).foregroundStyle(Palette.ink)
+                        Spacer()
+                        if preferences.readingVoice == voice {
+                            Image(systemName: "checkmark").font(.body.weight(.semibold)).foregroundStyle(Palette.ink)
+                        }
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
+        } header: {
+            Text("声音")
+        }
+        .groupedRow()
+    }
+
+    private var volcengineVoices: some View {
+        Section {
+            ForEach(CallVoice.all) { item in
+                CallVoiceRow(voice: item, selected: callVoice == item, purpose: .reading) { callVoice = item }
+            }
+        } header: {
+            Text("声音")
+        } footer: {
+            Text("和语音通话、语音消息是同一个声音，在这里改了那边也跟着变。试听按火山引擎的价格计费。")
+        }
+        .groupedRow()
     }
 }
 

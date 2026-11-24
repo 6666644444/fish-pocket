@@ -97,7 +97,7 @@ final class VoiceMessageSync {
         for room in team.rooms { groups.insert(room.sessionId); groups.formUnion(room.sessions) }
         bots.remove("")
         groups.remove("")
-        let ready = await VoiceMessageVoice.available()
+        let ready = await SynthesisVoice.available()
         return [
             "allowSessions": .bool(settings.allowSessions),
             "allowBots": .bool(settings.allowBots),
@@ -109,17 +109,31 @@ final class VoiceMessageSync {
     }
 }
 
-/// The speech a voice message is read in: Volcengine in the call's voice when it is set up (the
-/// user's own key or the Fish Pocket account, whichever they picked),
-/// else DeepSeek in the reading voice, each the one picked for the Bot or the conversation it was
-/// sent in (`VoiceChoices`), else the default. Only that one: when it fails, the message fails, rather
-/// than another service reading it in a voice that does not match the rest.
-enum VoiceMessageVoice: Equatable {
+/// A service and a voice to speak in: for voice messages and for reading aloud. Only that one:
+/// when it fails, the speech fails, rather than another service reading it in a voice that does
+/// not match the rest.
+enum SynthesisVoice: Equatable {
     case volcengine(VolcCredential?, voice: String)
     case deepseek(DeepSeekSpeech.Voice)
 
+    /// What replies are read in: the service picked in 设置 → 朗读 (never switched on the user's
+    /// behalf), in the voice picked for `owner` (`VoiceChoices`), else the default. Volcengine
+    /// speaks in the call's voice, so a Bot sounds the same in a call, a voice message and when
+    /// read aloud. Its credential is nil until the way to reach it is set up.
     @MainActor
-    static func chosen(for owner: VoiceOwner? = nil) async -> VoiceMessageVoice? {
+    static func reading(for owner: VoiceOwner?) -> SynthesisVoice {
+        switch VoicePreferences.shared.readingSource {
+        case .volcengine: .volcengine(VolcSpeech.shared.credential, voice: VoiceChoices.shared.callVoice(for: owner).id)
+        case .deepseek: .deepseek(VoiceChoices.shared.readingVoice(for: owner))
+        }
+    }
+
+    /// What a voice message is read in: Volcengine in the call's voice when it is set up (the
+    /// user's own key or the Fish Pocket account, whichever they picked), else DeepSeek in the
+    /// reading voice, each the one picked for the Bot or the conversation it was sent in, else
+    /// the default.
+    @MainActor
+    static func chosen(for owner: VoiceOwner? = nil) async -> SynthesisVoice? {
         if let credential = VolcSpeech.shared.credential { return .volcengine(credential, voice: VoiceChoices.shared.callVoice(for: owner).id) }
         if await DeepSeekSpeech.ready() { return .deepseek(VoiceChoices.shared.readingVoice(for: owner)) }
         return nil
@@ -158,7 +172,8 @@ enum VoiceMessageVoice: Equatable {
                     }
                 }
                 let reply = synthesizer.begin()
-                synthesizer.say(text, reply: reply)
+                // A long reply read aloud goes in a sentence or so at a time, as a call's does.
+                for piece in ReadAloud.pieces(of: text, limit: 400) { synthesizer.say(piece + "\n", reply: reply) }
                 synthesizer.end(reply: reply)
                 // No sound at all: the key or the service is not answering.
                 let watchdog = Task {
@@ -289,7 +304,7 @@ final class VoiceMessagePlayer {
 
     /// A message heard for the first time: played as the speech comes in, then kept.
     private func stream(id: String, text: String, owner: VoiceOwner?) async throws {
-        guard let voice = await VoiceMessageVoice.chosen(for: owner) else { throw VoiceMessageError.noVoice }
+        guard let voice = await SynthesisVoice.chosen(for: owner) else { throw VoiceMessageError.noVoice }
         let streamer = try PCMPlayer()
         streamer.onHalt = { [weak self] in if self?.streamer === streamer { self?.stop() } }
         self.streamer = streamer
@@ -375,10 +390,10 @@ final class VoiceMessagePlayer {
         String(SHA256.hash(data: Data("\(tag)\n\(text)".utf8)).map { String(format: "%02x", $0) }.joined().prefix(32))
     }
 
-    /// The tag of the voice `VoiceMessageVoice.chosen` picks, without asking DeepSeek.
+    /// The tag of the voice `SynthesisVoice.chosen` picks, without asking DeepSeek.
     private static func currentTag(_ owner: VoiceOwner?) -> String {
-        if VolcSpeech.shared.configured { return VoiceMessageVoice.volcengine(nil, voice: VoiceChoices.shared.callVoice(for: owner).id).tag }
-        return VoiceMessageVoice.deepseek(VoiceChoices.shared.readingVoice(for: owner)).tag
+        if VolcSpeech.shared.configured { return SynthesisVoice.volcengine(nil, voice: VoiceChoices.shared.callVoice(for: owner).id).tag }
+        return SynthesisVoice.deepseek(VoiceChoices.shared.readingVoice(for: owner)).tag
     }
 
     // MARK: Audio session

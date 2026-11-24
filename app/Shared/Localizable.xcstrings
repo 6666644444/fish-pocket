@@ -7838,6 +7838,40 @@
         }
       }
     },
+    "和语音通话、语音消息是同一个声音，在这里改了那边也跟着变。试听按火山引擎的价格计费。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is the same voice as voice calls and voice messages; changing it here changes it there too. Previews are billed at Volcengine's rates."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es la misma voz que la de las llamadas y los mensajes de voz; si la cambias aquí, también cambia allí. Las escuchas de prueba se cobran con las tarifas de Volcengine."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "音声通話・音声メッセージと同じ声です。ここで変えると、そちらも変わります。試聴は Volcengine の料金で課金されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "음성 통화, 음성 메시지와 같은 목소리예요. 여기서 바꾸면 그쪽도 함께 바뀌어요. 미리 듣기는 Volcengine 요금으로 과금돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "和語音通話、語音訊息是同一個聲音，在這裡改了那邊也跟著變。試聽按火山引擎的價格計費。"
+          }
+        }
+      }
+    },
     "回看智能体的操作" : {
       "localizations" : {
         "en" : {
@@ -8786,6 +8820,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "幫我做一個記帳用的實用工具"
+          }
+        }
+      }
+    },
+    "开通「豆包语音合成模型 2.0」。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable “Doubao Speech Synthesis Model 2.0”."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activa «Doubao Speech Synthesis Model 2.0»."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「豆包语音合成模型 2.0」（Doubao 音声合成モデル 2.0）を有効にします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‘豆包语音合成模型 2.0’(Doubao 음성 합성 모델 2.0) 서비스를 활성화하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開通「豆包語音合成模型 2.0」。"
           }
         }
       }
@@ -11105,6 +11173,244 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "朗讀回覆使用 DeepSeek 的聲音，同樣用「模型」裡的 DeepSeek API Key，費用由 DeepSeek 依字數收取。沒有設定火山引擎時，語音訊息也用這個聲音。"
+          }
+        }
+      }
+    },
+    "朗读回复用豆包语音合成模型 2.0，声音和接入方式都和语音通话共用。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replies are read aloud by Doubao Speech Synthesis Model 2.0. The voice and the way to connect are shared with voice calls."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las respuestas se leen en voz alta con Doubao Speech Synthesis Model 2.0. La voz y la forma de conectarse son las mismas que en las llamadas de voz."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返信は Doubao 音声合成モデル 2.0 で読み上げます。声と接続方法は音声通話と共通です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "답장은 Doubao 음성 합성 모델 2.0으로 읽어 줘요. 목소리와 연결 수단은 음성 통화와 함께 써요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朗讀回覆用豆包語音合成模型 2.0，聲音和接入方式都和語音通話共用。"
+          }
+        }
+      }
+    },
+    "朗读服务" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read Aloud Service"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Servicio de lectura"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み上げサービス"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "읽기 서비스"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朗讀服務"
+          }
+        }
+      }
+    },
+    "朗读用的是火山引擎，这个 Bot 的回复和它在群聊里的发言也用这里的声音朗读。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read Aloud uses Volcengine, so this Bot's replies, including what it says in group chats, are read aloud in this voice too."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La lectura en voz alta usa Volcengine, así que las respuestas de este Bot, también lo que dice en los grupos, se leen con esta voz."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み上げに Volcengine を使っているので、この Bot の返信とグループチャットでの発言もこの声で読み上げます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "소리 내어 읽기에 Volcengine을 쓰고 있어서, 이 Bot의 답장과 그룹 채팅에서 한 말도 이 목소리로 읽어 줘요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朗讀用的是火山引擎，這個 Bot 的回覆和它在群組裡的發言也用這裡的聲音朗讀。"
+          }
+        }
+      }
+    },
+    "朗读用的是火山引擎，这个会话的回复也用这里的声音朗读。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read Aloud uses Volcengine, so replies in this session are read aloud in this voice too."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La lectura en voz alta usa Volcengine, así que las respuestas de esta sesión también se leen con esta voz."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み上げに Volcengine を使っているので、このセッションの返信もこの声で読み上げます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "소리 내어 읽기에 Volcengine을 쓰고 있어서, 이 세션의 답장도 이 목소리로 읽어 줘요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朗讀用的是火山引擎，這個對話的回覆也用這裡的聲音朗讀。"
+          }
+        }
+      }
+    },
+    "朗读用豆包语音合成模型 2.0，按字数计费。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading aloud uses Doubao Speech Synthesis Model 2.0, charged by characters."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La lectura en voz alta usa Doubao Speech Synthesis Model 2.0, que se cobra por caracteres."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み上げには Doubao 音声合成モデル 2.0 を使い、文字数に応じて課金されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "읽기에는 Doubao 음성 합성 모델 2.0을 사용하며 글자 수에 따라 과금돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朗讀用豆包語音合成模型 2.0，按字數計費。"
+          }
+        }
+      }
+    },
+    "朗读用豆包语音合成模型 2.0，要在控制台开通，费用由火山引擎按字数收取。API Key 和按住说话、语音通话共用，只保存在这台设备本地。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading aloud uses Doubao Speech Synthesis Model 2.0. Enable it in the console; Volcengine charges you by characters. The API key is shared with hold to talk and voice calls and stays on this device only."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La lectura en voz alta usa Doubao Speech Synthesis Model 2.0. Actívalo en la consola; Volcengine te cobra por caracteres. La API Key es la misma que la de mantener pulsado para hablar y las llamadas de voz, y solo se guarda en este dispositivo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み上げには Doubao 音声合成モデル 2.0 を使います。コンソールで有効にする必要があり、料金は文字数に応じて Volcengine から請求されます。API Key は「押したまま話す」・音声通話と共通で、このデバイスにだけ保存されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "읽기에는 Doubao 음성 합성 모델 2.0을 사용해요. 콘솔에서 활성화해야 하며, 요금은 글자 수에 따라 Volcengine에서 청구해요. API Key는 누른 채 말하기, 음성 통화와 함께 쓰며, 이 기기에만 저장돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朗讀用豆包語音合成模型 2.0，要在主控台開通，費用由火山引擎按字數收取。API Key 和按住說話、語音通話共用，只儲存在這台裝置上。"
+          }
+        }
+      }
+    },
+    "朗读还没设置好，请在「设置 → 朗读」里选择火山引擎的接入方式" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read Aloud isn't set up yet. Choose how to connect to Volcengine in Settings → Read Aloud."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La lectura en voz alta aún no está configurada. Elige cómo conectarte a Volcengine en Configuración → Leer en voz alta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み上げがまだ設定されていません。「設定 → 読み上げ」で Volcengine への接続方法を選んでください"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "소리 내어 읽기가 아직 설정되지 않았어요. 「설정 → 소리 내어 읽기」에서 Volcengine 연결 수단을 선택하세요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "朗讀還沒設定好，請在「設定 → 朗讀」裡選擇火山引擎的接入方式"
           }
         }
       }
@@ -16296,6 +16602,40 @@
         }
       }
     },
+    "连接成功，可以朗读了" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected. Replies can be read aloud now."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conectado. Ya se pueden leer las respuestas en voz alta."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続に成功しました。読み上げできます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연결됐어요. 이제 소리 내어 읽을 수 있어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連線成功，可以朗讀了"
+          }
+        }
+      }
+    },
     "选好后点右上角的「完成」。列表里只写「打开 Bot」，点进去能看到选的是哪个。" : {
       "localizations" : {
         "en" : {
@@ -17040,6 +17380,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "通話中不能播放語音訊息"
+          }
+        }
+      }
+    },
+    "通话和朗读" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calls and Read Aloud"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Llamadas y lectura en voz alta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話と読み上げ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "통화와 소리 내어 읽기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話和朗讀"
           }
         }
       }
