@@ -24,8 +24,15 @@ DshAec3 *dsh_aec3_create(int core_rate_hz, int render_rate_hz, int capture_rate_
   aec->core_rate = core_rate_hz;
   aec->render_rate = render_rate_hz;
   aec->capture_rate = capture_rate_hz;
-  aec->canceller = std::make_unique<webrtc::EchoCanceller3>(webrtc::EchoCanceller3Config(), std::nullopt,
-                                                           core_rate_hz, 1, 1);
+  webrtc::EchoCanceller3Config config;
+  // When the echo path changes under it (the phone picked up or put down, a hand over the
+  // speaker), the echo its filter no longer matches looks like someone talking, and what it then
+  // lets through recognition hears as her words. So it decides that the user is the louder one
+  // against the echo it is sure to leave, not against its best guess, which is far too low right
+  // then; and when it does decide so, it lets no more of the low band through than otherwise.
+  config.suppressor.dominant_nearend_detection.use_unbounded_echo_spectrum = false;
+  config.suppressor.nearend_tuning = config.suppressor.normal_tuning;
+  aec->canceller = std::make_unique<webrtc::EchoCanceller3>(config, std::nullopt, core_rate_hz, 1, 1);
   // The processed microphone is what recognition hears.
   aec->canceller->SetCaptureOutputUsage(true);
   aec->render = std::make_unique<webrtc::AudioBuffer>(render_rate_hz, 1, core_rate_hz, 1, core_rate_hz, 1);

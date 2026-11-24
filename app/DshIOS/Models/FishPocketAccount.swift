@@ -283,16 +283,21 @@ final class FishPocketAccount {
         try await authorized(method, path) { body }
     }
 
+    /// A read with the session (the records page).
+    func read(_ path: String, query: [URLQueryItem] = []) async throws -> JSON {
+        try await authorized("GET", path, query: query) { nil }
+    }
+
     /// `body` is built for each attempt, after any renewal.
     @discardableResult
-    private func authorized(_ method: String, _ path: String, body: () -> JSON?) async throws -> JSON {
+    private func authorized(_ method: String, _ path: String, query: [URLQueryItem] = [], body: () -> JSON?) async throws -> JSON {
         guard let http else { throw FishPocketError(status: 0, code: "unavailable", message: "") }
         let session = FishPocketKeychain.read(Stored.session)
         do {
-            return try await http.send(method, path, body: body(), bearer: session)
+            return try await http.send(method, path, query: query, body: body(), bearer: session)
         } catch let error as FishPocketError where error.status == 401 {
             guard let renewed = await renewSession() else { throw error }
-            return try await http.send(method, path, body: body(), bearer: renewed)
+            return try await http.send(method, path, query: query, body: body(), bearer: renewed)
         } catch let error as FishPocketError where error.code == "account_deleted" {
             // Deleted on another device: nothing here can work any more.
             await signedOutRemotely()

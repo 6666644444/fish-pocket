@@ -29,6 +29,7 @@ struct FishPocketPage: View {
     @State private var confirmingSignOut = false
     @State private var confirmingDelete = false
     @State private var failure: String?
+    @State private var recordsOpen = false
 
     private var account: FishPocketAccount { app.fishPocket }
     /// The first pack starts chosen.
@@ -40,7 +41,10 @@ struct FishPocketPage: View {
         ScrollView {
             VStack(spacing: 24) {
                 if account.signedIn {
-                    FishPocketBalance(balance: account.balance, depleted: topUp, sells: account.canPurchase)
+                    VStack(spacing: 10) {
+                        FishPocketBalance(balance: account.balance, depleted: topUp, sells: account.canPurchase)
+                        if !topUp { recordsLink }
+                    }
                     if account.canPurchase { packs } else { FishPocketNoPurchaseNote() }
                     FishPocketPerks(rate: account.tokensPerCredit)
                     if !topUp { accountCard }
@@ -65,7 +69,11 @@ struct FishPocketPage: View {
         // Signed out, the page's own heading is the title.
         .navigationTitle(account.signedIn ? Text(topUp && account.canPurchase ? "购买额度" : "Fish Pocket 账号") : Text(verbatim: ""))
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(isPresented: $recordsOpen) { FishPocketRecordsPage() }
         .task { await account.refresh() }
+        #if DEBUG
+        .task { if UserDefaults.standard.string(forKey: "dshOpen") == "credits", account.signedIn, !topUp { recordsOpen = true } }
+        #endif
         .task { if account.packs.isEmpty { await account.loadPacks() } }
         .task(id: account.signedIn) { if !account.signedIn { await account.loadSignInOptions() } }
         .refreshable { await account.refresh() }
@@ -82,6 +90,28 @@ struct FishPocketPage: View {
         } message: {
             Text("注销后账号无法恢复，剩余积分将作废。")
         }
+    }
+
+    /// 积分明细: usage by day and the credits that came in.
+    private var recordsLink: some View {
+        Button {
+            Haptics.tap()
+            recordsOpen = true
+        } label: {
+            HStack(spacing: 4) {
+                Text("积分明细")
+                Image(systemName: "chevron.right")
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(Palette.faint)
+            }
+            .font(.subheadline.weight(.medium))
+            .foregroundStyle(Palette.ink)
+            .padding(.horizontal, 14)
+            .frame(height: 34)
+            .background(Palette.control, in: Capsule())
+            .hitTarget()
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: Packs
@@ -226,7 +256,7 @@ struct FishPocketPage: View {
     }
 }
 
-private extension View {
+extension View {
     /// A surface on the grouped page: white, and in the dark a step up from the near-black page.
     func cardSurface(selected: Bool = false) -> some View { modifier(CardSurface(selected: selected)) }
 

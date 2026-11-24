@@ -485,7 +485,7 @@ struct MainView: View {
     }
 
     #if DEBUG
-    /// Screenshots and UI checks: `simctl launch … -dshOpen drawer|workbench|approval|question|timeline|settings|imagegen|plugins|store|schedules|signin|support|share|watch|connectors|whatsnew|capabilities|phonecontrol|shortcuts|remote|start|fishpocket|topup|miniapps|miniapp`.
+    /// Screenshots and UI checks: `simctl launch … -dshOpen drawer|workbench|approval|question|timeline|settings|imagegen|plugins|store|schedules|signin|support|share|watch|connectors|whatsnew|capabilities|phonecontrol|shortcuts|remote|start|fishpocket|credits|topup|miniapps|miniapp`.
     /// `miniapp` opens the tool `-dshApp <id>` names.
     /// The conversation takes `workbench|filesearch|approval|question|timeline` itself; `filesearch` is the workbench's
     /// file search, with `-dshQuery <text>` to start it on a search.
@@ -508,7 +508,8 @@ struct MainView: View {
         case "shortcuts": if usesTabs { tab = .explore; explorePath = [.shortcuts] } else { sheet = .shortcuts }
         case "remote": sheet = .remote
         case "start": Task { await openCredentials(.start) }
-        case "fishpocket": sheet = .fishPocket
+        // `credits` goes on to 积分明细 (FishPocketPage pushes it when it sees the argument).
+        case "fishpocket", "credits": sheet = .fishPocket
         case "topup": app.fishPocket.quotaPrompt = true
         case "miniapps": openMiniApps()
         case "miniapp": MiniAppPresenter.open(UserDefaults.standard.string(forKey: "dshApp") ?? "")
