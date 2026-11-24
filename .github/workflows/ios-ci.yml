@@ -124,20 +124,24 @@ jobs:
       # 优先选普通机型（iPhone 17 / iPhone 17 Pro 这类）：上次随手取了最后一台「iPhone Duo」
       # （预览镜像里的新机型），装测试程序时模拟器服务崩溃（Mach error -308）。
       # 选好后先启动并等它完全就绪，不让 xcodebuild 在冷启动中途安装。
+      # 设备从 xcodebuild -showdestinations 里选，而不是 simctl：镜像里有两套 iOS 27.2 运行时，
+      # simctl 列出的「iPhone 17 (27.2)」xcodebuild 并不认（Unable to find a device matching…）。
       - name: Pick and boot simulator
         id: sim
+        working-directory: app
         run: |
-          xcrun simctl list devices available
-          pick() {
-            xcrun simctl list devices available -j | jq -r --arg re "$1" '
-              [.devices | to_entries[] | select(.key | test("SimRuntime\\.iOS"))
-               | .key as $rt | .value[] | select(.name | test($re)) | . + {rt: $rt}]
-              | sort_by(.rt | [scan("[0-9]+") | tonumber]) | last | .udid // empty'
-          }
-          udid="$(pick '^iPhone [0-9]+( Pro)?$')"
-          [ -n "$udid" ] || udid="$(pick '^iPhone (?!.*(Duo|Fold)).*')"
-          [ -n "$udid" ] || { echo "no iPhone simulator" >&2; exit 1; }
-          xcrun simctl list devices available | grep "$udid"
+          dests="$(xcodebuild -project DshIOS.xcodeproj -scheme DshIOS -showdestinations 2>/dev/null \
+            | grep -F 'platform:iOS Simulator' | grep -F 'arch:arm64' | grep -F 'name:iPhone' | grep -vE 'name:iPhone (Duo|Fold)')"
+          echo "$dests"
+          # 普通机型优先（iPhone 17 / iPhone 18 Pro），同名取 OS 最高的。
+          line="$( { echo "$dests" | grep -E 'name:iPhone [0-9]+( Pro)? \}'; echo "$dests"; } \
+            | awk -F'OS:' 'NF>1{split($2,a,","); print a[1]"\t"$0}' | sort -t. -k1,1n -k2,2n -k3,3n | tail -1 | cut -f2-)"
+          first_plain="$(echo "$dests" | grep -E 'name:iPhone [0-9]+( Pro)? \}' \
+            | awk -F'OS:' 'NF>1{split($2,a,","); print a[1]"\t"$0}' | sort -t. -k1,1n -k2,2n -k3,3n | tail -1 | cut -f2-)"
+          [ -n "$first_plain" ] && line="$first_plain"
+          udid="$(echo "$line" | sed -nE 's/.*id:([0-9A-F-]{36}).*/\1/p')"
+          [ -n "$udid" ] || { echo "no iPhone simulator xcodebuild accepts" >&2; exit 1; }
+          echo "picked: $line"
           xcrun simctl boot "$udid" || true
           xcrun simctl bootstatus "$udid" -b
           echo "udid=$udid" >> "$GITHUB_OUTPUT"
