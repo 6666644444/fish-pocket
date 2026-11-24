@@ -56,6 +56,8 @@ struct VoiceCallSettingsPage: View {
 struct CallVoiceRow: View {
     let voice: CallVoice
     let selected: Bool
+    /// What the sample line says it is for.
+    var purpose: VoicePreview.Purpose = .call
     let select: () -> Void
     @State private var speech = VolcSpeech.shared
     @State private var preview = VoicePreview.shared
@@ -81,7 +83,7 @@ struct CallVoiceRow: View {
             .buttonStyle(.plain)
             Button {
                 Haptics.tap()
-                if preview.playing == voice.id { preview.stop() } else { preview.play(voice) }
+                if preview.playing == voice.id { preview.stop() } else { preview.play(voice, for: purpose) }
             } label: {
                 Group {
                     if preview.loading == voice.id {
@@ -103,10 +105,11 @@ struct CallVoiceRow: View {
 }
 
 /// 声音 for one Bot or one conversation: voices of its own for reading aloud and for calls, or the
-/// defaults.
+/// defaults. Reading with Volcengine goes with the call voice, so then there is one list for both.
 struct VoicePickerPage: View {
     let owner: VoiceOwner
     @State private var choices = VoiceChoices.shared
+    @State private var preferences = VoicePreferences.shared
     @State private var speech = VolcSpeech.shared
     @State private var preview = VoicePreview.shared
     @State private var reading = ReadAloud.shared
@@ -116,8 +119,9 @@ struct VoicePickerPage: View {
     var body: some View {
         let readingPicked = choices.readingVoice(of: owner)
         let callPicked = choices.callVoice(of: owner)
+        let readsWithVolcengine = preferences.readingSource == .volcengine
         List {
-            Section {
+            if !readsWithVolcengine { Section {
                 DefaultVoiceRow(current: VoicePreferences.shared.readingVoice.title, selected: readingPicked == nil) {
                     choices.setReadingVoice(nil, for: owner)
                 }
@@ -138,7 +142,7 @@ struct VoicePickerPage: View {
                     if !speech.configured { Text("AI 发来的语音消息也用这里的声音。") }
                 }
             }
-            .groupedRow()
+            .groupedRow() }
             Section {
                 DefaultVoiceRow(current: CallVoice.chosen.name, selected: callPicked == nil) {
                     choices.setCallVoice(nil, for: owner)
@@ -147,12 +151,18 @@ struct VoicePickerPage: View {
                     CallVoiceRow(voice: item, selected: callPicked == item) { choices.setCallVoice(item, for: owner) }
                 }
             } header: {
-                Text("通话")
+                Text(readsWithVolcengine ? "通话和朗读" : "通话")
             } footer: {
                 VStack(alignment: .leading, spacing: 6) {
                     switch owner {
                     case .bot: Text("和这个 Bot 通话时用这里选的声音。跟随默认时，用「设置 → 语音通话」里选的声音。")
                     case .session: Text("在这个会话里通话时用这里选的声音。跟随默认时，用「设置 → 语音通话」里选的声音。")
+                    }
+                    if readsWithVolcengine {
+                        switch owner {
+                        case .bot: Text("朗读用的是火山引擎，这个 Bot 的回复和它在群聊里的发言也用这里的声音朗读。")
+                        case .session: Text("朗读用的是火山引擎，这个会话的回复也用这里的声音朗读。")
+                        }
                     }
                     if speech.configured {
                         Text("AI 发来的语音消息也用这里的声音。")
@@ -210,7 +220,7 @@ private struct ReadingVoiceRow: View {
                 reading.stop()
                 VoicePreview.shared.stop()
                 trying = stopping ? nil : voice
-                if !stopping { reading.enqueue(String(localized: "你好，我会用这个声音为你朗读。"), voice: voice) }
+                if !stopping { reading.enqueue(String(localized: "你好，我会用这个声音为你朗读。"), voice: .deepseek(voice)) }
             } label: {
                 Image(systemName: playing ? "stop.circle.fill" : "play.circle")
                     .font(.system(size: 22))
@@ -258,6 +268,9 @@ private struct DefaultVoiceRow: View {
 final class VoicePreview {
     static let shared = VoicePreview()
 
+    /// Where the voice will be heard, which the sample line says.
+    enum Purpose { case call, reading }
+
     /// The voice being heard, and the one whose sound has not come yet.
     private(set) var playing: String?
     private(set) var loading: String?
@@ -272,7 +285,7 @@ final class VoicePreview {
 
     private init() {}
 
-    func play(_ voice: CallVoice) {
+    func play(_ voice: CallVoice, for purpose: Purpose = .call) {
         stop()
         guard let credential = VolcSpeech.shared.credential else { return }
         do {
@@ -297,9 +310,13 @@ final class VoicePreview {
         synthesizer.onEvent = { [weak self] event in Task { @MainActor in self?.handle(event) } }
         self.synthesizer = synthesizer
         let reply = synthesizer.begin()
-        synthesizer.say(voice.english
-            ? "Hi, this is how I'll sound on your calls. Just talk to me, and pause when you're done."
-            : String(localized: "你好，通话时我会用这个声音回答你。想说什么直接说，说完停一下就好。"), reply: reply)
+        let line = switch (purpose, voice.english) {
+        case (.call, true): "Hi, this is how I'll sound on your calls. Just talk to me, and pause when you're done."
+        case (.call, false): String(localized: "你好，通话时我会用这个声音回答你。想说什么直接说，说完停一下就好。")
+        case (.reading, true): "Hi, this is how I'll sound reading replies to you."
+        case (.reading, false): String(localized: "你好，我会用这个声音为你朗读。")
+        }
+        synthesizer.say(line, reply: reply)
         synthesizer.end(reply: reply)
     }
 

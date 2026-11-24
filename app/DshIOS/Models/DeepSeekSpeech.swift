@@ -243,10 +243,18 @@ final class VoicePreferences {
     }
 
     private static let sourceKey = "voiceSource"
+    private static let readingSourceKey = "readingSource"
     private static let readingVoiceKey = "readingVoice"
     private var chosen: Source? = UserDefaults.standard.string(forKey: VoicePreferences.sourceKey).flatMap(Source.init(rawValue:))
 
-    /// The voice replies are read in.
+    /// Which service reads replies aloud, picked by the user: DeepSeek until they pick another,
+    /// never switched for them by which key is saved.
+    var readingSource: Source = UserDefaults.standard.string(forKey: VoicePreferences.readingSourceKey)
+        .flatMap(Source.init(rawValue:)) ?? .deepseek {
+        didSet { UserDefaults.standard.set(readingSource.rawValue, forKey: Self.readingSourceKey) }
+    }
+
+    /// The DeepSeek voice replies are read in.
     var readingVoice: DeepSeekSpeech.Voice = UserDefaults.standard.string(forKey: VoicePreferences.readingVoiceKey)
         .flatMap(DeepSeekSpeech.Voice.init(rawValue:)) ?? .stella {
         didSet { UserDefaults.standard.set(readingVoice.rawValue, forKey: Self.readingVoiceKey) }
@@ -263,8 +271,9 @@ final class VoicePreferences {
 
 // MARK: - Reading aloud
 
-/// Replies read aloud in DeepSeek's voice, one after another. Reading belongs to the conversation
-/// on screen (`scope`): moving to another one stops it.
+/// Replies read aloud, one after another, by the service picked in 设置 → 朗读 (DeepSeek or
+/// Volcengine). Reading belongs to the conversation on screen (`scope`): moving to another one
+/// stops it.
 @MainActor
 @Observable
 final class ReadAloud {
@@ -284,18 +293,17 @@ final class ReadAloud {
     private(set) var paused = false
     /// A failure worded for a toast; the app model shows it.
     @ObservationIgnored var onError: ((String) -> Void)?
-    /// The voice for what is read in a conversation (`scope`): its own or its Bot's, else the
-    /// default. Set by the app model, which knows the Bots.
-    @ObservationIgnored var voiceFor: ((String?) -> DeepSeekSpeech.Voice)?
+    /// Whose voice reads a conversation (`scope`): its Bot's, else its own. Set by the app model,
+    /// which knows the Bots.
+    @ObservationIgnored var ownerFor: ((String?) -> VoiceOwner?)?
 
-    @ObservationIgnored private var queue: [(text: String, voice: DeepSeekSpeech.Voice)] = []
+    @ObservationIgnored private var queue: [(text: String, voice: SynthesisVoice)] = []
     @ObservationIgnored private var task: Task<Void, Never>?
     @ObservationIgnored private var player: PCMPlayer?
 
-    /// `voice`: one picked by the caller (a group member's, a voice being tried); nil: the
-    /// conversation's on screen.
-    func toggle(_ text: String, voice: DeepSeekSpeech.Voice? = nil) {
-        if speaking { stop() } else { enqueue(text, voice: voice) }
+    /// `owner`: whose voice reads it (a group member's); nil: the conversation's on screen.
+    func toggle(_ text: String, owner: VoiceOwner? = nil) {
+        if speaking { stop() } else { enqueue(text, owner: owner) }
     }
 
     func pause() {
@@ -363,8 +371,13 @@ final class ReadAloud {
         }
     }
 
-    /// Read after whatever is being read now, in `voice`, else the conversation's on screen.
-    func enqueue(_ text: String, voice: DeepSeekSpeech.Voice? = nil) {
+    /// Read after whatever is being read now, in `owner`'s voice, else the conversation's on screen.
+    func enqueue(_ text: String, owner: VoiceOwner? = nil) {
+        enqueue(text, voice: SynthesisVoice.reading(for: owner ?? ownerFor?(scope)))
+    }
+
+    /// Read after whatever is being read now, in `voice` (one being tried).
+    func enqueue(_ text: String, voice: SynthesisVoice) {
         let plain = Self.plain(text)
         guard !plain.isEmpty else { return }
         // A call holds the audio: reading aloud would take it over.
@@ -372,8 +385,12 @@ final class ReadAloud {
             onError?(String(localized: "通话中不能朗读"))
             return
         }
+        if case .volcengine(nil, _) = voice {
+            onError?(String(localized: "朗读还没设置好，请在「设置 → 朗读」里选择火山引擎的接入方式"))
+            return
+        }
         VoiceMessagePlayer.shared.stop()
-        queue.append((plain, voice ?? voiceFor?(scope) ?? VoicePreferences.shared.readingVoice))
+        queue.append((plain, voice))
         guard task == nil else { return }
         speaking = true
         task = Task { await run() }
@@ -390,10 +407,13 @@ final class ReadAloud {
             while true {
                 while !queue.isEmpty {
                     let (text, voice) = queue.removeFirst()
-                    // Every piece is fetched as fast as DeepSeek makes it and queued on the player,
-                    // so the next piece is ready before the last one ends.
-                    for piece in Self.pieces(of: text) {
-                        for try await pcm in DeepSeekSpeech.synthesize(piece, voice: voice) {
+                    // Every piece is fetched as fast as it is made and queued on the player, so the
+                    // next piece is ready before the last one ends. DeepSeek takes a long reply in
+                    // several requests; Volcengine in one session, fed a sentence or so at a time.
+                    let parts: [String]
+                    if case .deepseek = voice { parts = Self.pieces(of: text) } else { parts = [text] }
+                    for piece in parts {
+                        for try await pcm in voice.stream(piece) {
                             try Task.checkCancellation()
                             player.schedule(pcm)
                         }
@@ -425,7 +445,7 @@ final class ReadAloud {
 
     /// DeepSeek takes at most 10,000 billed characters a request (a Chinese one counts as two):
     /// a long reply goes in pieces, cut between paragraphs, else after a sentence.
-    static func pieces(of text: String, limit: Int = 6_000) -> [String] {
+    nonisolated static func pieces(of text: String, limit: Int = 6_000) -> [String] {
         func cost<S: StringProtocol>(_ s: S) -> Int { s.unicodeScalars.reduce(0) { $0 + ($1.value > 0x2E7F ? 2 : 1) } }
         var pieces: [String] = []
         var current = ""

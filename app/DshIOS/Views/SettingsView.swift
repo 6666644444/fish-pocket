@@ -116,7 +116,7 @@ private struct SettingsList: View {
                     row("语音输入", "mic", VoicePreferences.shared.source == .volcengine && !VolcSpeech.shared.configured ? String(localized: "未设置") : VoicePreferences.shared.source.title)
                 }
                 NavigationLink { ReadAloudSettingsPage() } label: {
-                    row("朗读", "speaker.wave.2", VoicePreferences.shared.readingVoice.title)
+                    row("朗读", "speaker.wave.2", readingSummary)
                 }
                 NavigationLink { VoiceCallSettingsPage() } label: {
                     row("语音通话", "waveform", VolcSpeech.shared.configured ? CallVoice.chosen.name : String(localized: "未设置"))
@@ -242,6 +242,14 @@ private struct SettingsList: View {
         .task { await load() }
         .task(id: app.settingsRevision) { await loadDerived() }
         .task(id: app.revision("permission-presets/catalog-changed")) { await loadPermissions() }
+    }
+
+    /// 朗读's value: the voice, Volcengine's being the call's, or 未设置 until it can be reached.
+    private var readingSummary: String {
+        switch VoicePreferences.shared.readingSource {
+        case .deepseek: VoicePreferences.shared.readingVoice.title
+        case .volcengine: VolcSpeech.shared.configured ? CallVoice.chosen.name : String(localized: "未设置")
+        }
     }
 
     private var aboutValue: String {

@@ -287,6 +287,15 @@ AI 可以像微信那样回一条语音：对话里是一个语音气泡，点�
 - **朗读工具已删掉**：原来本机能力里有 `speak`（让 Agent 直接念一段话），和语音消息重叠，用户说「发条语音」时模型常选错，所以拿掉了。不要再加回来。
 - 本地看效果：`-dshOpen timeline` 的样例里有两条语音消息。
 
+## 朗读
+
+回复下面的「朗读」（会话、Bot、群聊里的每条发言，以及 Bot 的自动朗读）由 `ReadAloud`（`Models/DeepSeekSpeech.swift`）按顺序念，换到别的对话就停。
+
+- **用哪家由用户在「设置 → 朗读」里选**（`VoicePreferences.readingSource`），默认 DeepSeek，不按有没有火山的 Key 或登没登录替用户切换，一家失败也不换另一家重念。
+- **DeepSeek**：自己的两个声音，走引擎的 `/api/ios-speech/tts`，长回复按段切成几次请求。
+- **火山引擎**：豆包语音合成模型 2.0（`CallSynthesizer`，和通话、语音消息同一套），接入方式（自己的 Key 或 Fish Pocket 账号）和语音通话共用 `VolcSpeech.route`。声音就是通话的声音：设置页里列的是通话的音色，改了通话、语音消息跟着变；Bot 和会话单独选的声音也用「通话」那一栏（`SynthesisVoice.reading`），这时「声音」页把两栏合成「通话和朗读」。整段回复在一个合成会话里，一句一句喂进去。
+- 选了火山但接入方式没设置好时，点朗读直接提示去「设置 → 朗读」，不偷偷改用 DeepSeek。
+
 ## 首页布局：系统的自适应 Tab
 
 iOS 18 起，iPhone、iPhone Duo、iPad 共用一套系统 `TabView`，样式是 `sidebarAdaptable`（`MainView.tabLayout`）：「会话 · Bot · 探索」三个 Tab，设置和 Mini Apps 都是探索页的一页，从页面最上面的「通用」「创作」两组进入（`SettingsView(pushed: true)`、`MiniAppsPage`），窄屏在底部，宽屏由系统放到顶部或换成侧边栏，Duo 展开时是右侧的竖条。宽窄切换（Duo 开合、iPad 拖窗口）不换布局，Tab 保持不变。iOS 17 的 iPhone 用同样三个 Tab，只是换成旧写法（`TabView` 加 `.tabItem`，`MainView.phoneTabLayout`），Tab 栏始终在底部，页面和行为与 iOS 18 起的一致。iOS 17 的 iPad 仍是旧布局：常驻侧边栏，窄窗口是抽屉（`DrawerView` 的 `sidebar` 样式，`MainView.split` / `drawerLayout`）；旧写法的 Tab 栏在 iPad 上也只能放底部，所以没改。iPhone Duo 只有 iOS 27，不涉及旧版本。
