@@ -18,7 +18,16 @@ struct ImageGenSettingsPage: View {
     private var value: JSON { mirror.namespace(ImageGenModel.namespace)?["value"] ?? .null }
     private var writable: Bool { mirror.writable }
     private var provider: ImageGenProvider { ImageGenProvider(rawValue: value["provider"].string ?? "") ?? .google }
-    private var channels: [ImageGenChannel] { ImageGenChannel.all(value) }
+    /// The user's own channels; the Fish Pocket one is the app's and has a row of its own.
+    private var channels: [ImageGenChannel] { ImageGenChannel.all(value).filter { $0.id != FishPocketImageGen.channelID } }
+
+    /// What 默认使用 offers: every provider, and the Fish Pocket account where the build has it.
+    private enum Choice: Hashable {
+        case fishPocket
+        case provider(ImageGenProvider)
+    }
+
+    private var choice: Choice { FishPocketImageGen.isChosen(value) ? .fishPocket : .provider(provider) }
 
     var body: some View {
         List {
@@ -53,8 +62,9 @@ struct ImageGenSettingsPage: View {
         }
 
         Section {
-            Picker("默认使用", selection: Binding(get: { provider }, set: { next in save("provider", .string(next.rawValue)) })) {
-                ForEach(ImageGenProvider.allCases) { Text($0.title).tag($0) }
+            Picker("默认使用", selection: Binding(get: { choice }, set: { pick($0) })) {
+                if FishPocketImageGen.available { Text("Fish Pocket 账号（Seedream）").tag(Choice.fishPocket) }
+                ForEach(ImageGenProvider.allCases) { Text($0.title).tag(Choice.provider($0)) }
             }
             .pickerStyle(.navigationLink)
             .disabled(!writable)
@@ -62,6 +72,19 @@ struct ImageGenSettingsPage: View {
             Text("智能体画图时用它，对话里也能临时换别家。")
         }
         .groupedRow()
+
+        if FishPocketImageGen.available {
+            Section {
+                NavigationLink { ImageGenFishPocketPage() } label: {
+                    LabeledContent("Fish Pocket 账号") {
+                        if choice == .fishPocket { Text("正在使用") }
+                    }
+                }
+            } header: {
+                Text("用积分 · 不用 API Key")
+            }
+            .groupedRow()
+        }
 
         Section {
             ForEach(ImageGenProvider.subscriptions) { item in
@@ -144,6 +167,115 @@ struct ImageGenSettingsPage: View {
             } catch {
                 failure = describeFailure(error)
             }
+        }
+    }
+
+    /// 默认使用 changed. Leaving the Fish Pocket channel for OpenAI compatible goes back to the
+    /// user's own default channel.
+    private func pick(_ next: Choice) {
+        Task {
+            do {
+                failure = nil
+                switch next {
+                case .fishPocket:
+                    try await FishPocketImageGen.choose(in: mirror)
+                case .provider(let item):
+                    var ops: [SettingsOp] = [.set(["provider"], .string(item.rawValue))]
+                    if item == .openaiCompat, FishPocketImageGen.isChosen(value) {
+                        ops.append(.set(["openaiCompatActiveChannel"], .string(ImageGenChannel.defaultID)))
+                    }
+                    try await mirror.mutate(ImageGenModel.namespace, ops, expectedRevision: mirror.namespace(ImageGenModel.namespace)?["revision"].int)
+                }
+            } catch {
+                failure = describeFailure(error)
+            }
+        }
+    }
+}
+
+/// 生图 → Fish Pocket 账号: images paid in credits, through the Fish Pocket service, with no key
+/// of the user's own. What it is, the account it is paid from, and the switch to use it.
+struct ImageGenFishPocketPage: View {
+    @Environment(AppModel.self) private var app
+    @State private var failure: String?
+    @State private var working = false
+
+    private var mirror: SettingsMirror { app.settings }
+    private var value: JSON { mirror.namespace(ImageGenModel.namespace)?["value"] ?? .null }
+
+    var body: some View {
+        List {
+            Section {
+                Text("用 Fish Pocket 账号的积分生图，不用自己开通火山方舟。模型是即梦 Seedream 5.5，按生成的张数计费：图越大、参考图越多，扣得越多；没生成出来的不扣。")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
+
+            Section {
+                let account = app.fishPocket
+                NavigationLink { FishPocketPage() } label: {
+                    if account.signedIn {
+                        LabeledContent {
+                            if let balance = account.balance { Text("\(balance) 积分").monospacedDigit() }
+                        } label: {
+                            Text(account.user?.label ?? String(localized: "已登录"))
+                        }
+                    } else {
+                        Text("登录 Fish Pocket 账号")
+                    }
+                }
+            } header: {
+                Text("Fish Pocket 账号")
+            } footer: {
+                Text("提示词和参考图经 Fish Pocket 的服务器转给火山方舟，服务器不保存。生成的图都带「AI生成」水印，用 Fish Pocket 账号时不能关闭。")
+            }
+            .groupedRow()
+
+            Section {
+                if FishPocketImageGen.isChosen(value) {
+                    Label("正在使用", systemImage: "checkmark.circle.fill").foregroundStyle(.green).frame(maxWidth: .infinity)
+                } else {
+                    Button {
+                        use()
+                    } label: {
+                        HStack(spacing: 8) {
+                            if working { ProgressView().tint(Palette.onInk) }
+                            Text("设为默认")
+                        }
+                    }
+                    .buttonStyle(.capsule(height: 50))
+                    .disabled(working || !mirror.writable || !app.fishPocket.signedIn)
+                }
+            } footer: {
+                if let failure {
+                    Text(failure).foregroundStyle(.red).frame(maxWidth: .infinity).multilineTextAlignment(.center)
+                } else if !app.fishPocket.signedIn {
+                    Text("登录后才能用。").frame(maxWidth: .infinity).multilineTextAlignment(.center)
+                }
+            }
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets())
+        }
+        .groupedList()
+        .navigationTitle("Fish Pocket 账号")
+        .navigationBarTitleDisplayMode(.inline)
+        .followSettings()
+        .task { await app.fishPocket.refresh() }
+    }
+
+    private func use() {
+        working = true
+        failure = nil
+        Task {
+            do {
+                try await FishPocketImageGen.choose(in: mirror)
+                Haptics.success()
+            } catch {
+                failure = describeFailure(error)
+            }
+            working = false
         }
     }
 }
@@ -732,7 +864,7 @@ struct ImageGenProviderPage: View {
 
             if channelsHere {
                 Section {
-                    ForEach(ImageGenChannel.all(value).dropFirst()) { channel in
+                    ForEach(ImageGenChannel.all(value).dropFirst().filter { $0.id != FishPocketImageGen.channelID }) { channel in
                         NavigationLink { ImageGenProviderPage(provider: .openaiCompat, channel: channel) } label: {
                             LabeledContent(channel.label) { if keys[channel.keyRef]?["configured"].bool == true { ConfiguredMark() } }
                         }

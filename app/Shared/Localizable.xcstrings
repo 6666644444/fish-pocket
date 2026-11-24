@@ -124805,7 +124805,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "不用自己開通火山引擎：費用從 Fish Pocket 帳號的點數裡扣，按用量計費。聲音經 Fish Pocket 的伺服器轉給火山引擎，伺服器不儲存錄音。"
+            "value" : "不用自己開通火山引擎：費用從 Fish Pocket 帳號的積分裡扣，按用量計費。聲音經 Fish Pocket 的伺服器轉給火山引擎，伺服器不儲存錄音。"
           }
         }
       }
@@ -124873,7 +124873,7 @@
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "聽你說話用豆包串流語音辨識模型 2.0，按通話時長計費；回答的聲音用豆包語音合成模型 2.0，按字數計費。點數用完時通話會掛斷。"
+            "value" : "聽你說話用豆包串流語音辨識模型 2.0，按通話時長計費；回答的聲音用豆包語音合成模型 2.0，按字數計費。積分用完時通話會掛斷。"
           }
         }
       }
@@ -125112,6 +125112,244 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "說話時文字就會出現。用 Fish Pocket 帳號還是自己的 API Key 接入火山引擎，在下面選。"
+          }
+        }
+      }
+    },
+    "Fish Pocket 账号（Seedream）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket Account (Seedream)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuenta de Fish Pocket (Seedream)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket アカウント（Seedream）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket 계정(Seedream)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket 帳號（Seedream）"
+          }
+        }
+      }
+    },
+    "正在使用" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Use"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En uso"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用中"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용 중"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用中"
+          }
+        }
+      }
+    },
+    "用积分 · 不用 API Key" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "With Credits · No API Key"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con créditos · Sin clave de API"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "クレジットで · API Key 不要"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "크레딧으로 · API Key 없이"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用積分 · 不用 API Key"
+          }
+        }
+      }
+    },
+    "用 Fish Pocket 账号的积分生图，不用自己开通火山方舟。模型是即梦 Seedream 5.5，按生成的张数计费：图越大、参考图越多，扣得越多；没生成出来的不扣。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Generate images with your Fish Pocket credits, without setting up Volcengine Ark yourself. The model is Seedream 5.5, charged per image made: larger images and more reference images cost more, and images that aren't made cost nothing."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Genera imágenes con tus créditos de Fish Pocket, sin tener que activar Volcengine Ark por tu cuenta. El modelo es Seedream 5.5 y se cobra por imagen generada: las imágenes más grandes y las que usan más imágenes de referencia cuestan más, y las que no se llegan a generar no cuestan nada."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket アカウントのクレジットで画像を生成します。Volcengine Ark を自分で開通する必要はありません。モデルは Seedream 5.5 で、生成した枚数に応じて課金されます。画像が大きいほど、参照画像が多いほど多く差し引かれ、生成されなかった画像は課金されません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volcengine Ark를 직접 개통하지 않아도 Fish Pocket 계정의 크레딧으로 이미지를 생성해요. 모델은 Seedream 5.5이며 생성한 장수에 따라 과금돼요. 이미지가 클수록, 참고 이미지가 많을수록 더 많이 차감되고, 생성되지 않은 이미지는 차감되지 않아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用 Fish Pocket 帳號的積分生圖，不用自己開通火山方舟。模型是即夢 Seedream 5.5，按生成的張數計費：圖越大、參考圖越多，扣得越多；沒生成出來的不扣。"
+          }
+        }
+      }
+    },
+    "提示词和参考图经 Fish Pocket 的服务器转给火山方舟，服务器不保存。生成的图都带「AI生成」水印，用 Fish Pocket 账号时不能关闭。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prompts and reference images go to Volcengine Ark through Fish Pocket's server, which does not keep them. Every image carries an “AI-generated” watermark, which can't be turned off with a Fish Pocket account."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las indicaciones y las imágenes de referencia llegan a Volcengine Ark a través del servidor de Fish Pocket, que no las guarda. Todas las imágenes llevan una marca de agua de «generado por IA», que no se puede desactivar con una cuenta de Fish Pocket."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "プロンプトと参照画像は Fish Pocket のサーバーを経由して Volcengine Ark に送られ、サーバーには保存されません。生成した画像にはすべて「AI 生成」の透かしが入り、Fish Pocket アカウントでは外せません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "프롬프트와 참고 이미지는 Fish Pocket 서버를 거쳐 Volcengine Ark로 전송되며, 서버는 저장하지 않아요. 생성된 이미지에는 모두 'AI 생성' 워터마크가 들어가며, Fish Pocket 계정으로는 끌 수 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提示詞和參考圖經 Fish Pocket 的伺服器轉給火山方舟，伺服器不儲存。生成的圖都帶「AI生成」浮水印，用 Fish Pocket 帳號時無法關閉。"
+          }
+        }
+      }
+    },
+    "设为默认" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set as Default"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar por defecto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デフォルトに設定"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기본으로 설정"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設為預設"
+          }
+        }
+      }
+    },
+    "登录后才能用。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sign in to use it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inicia sesión para usarla."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サインインすると使えます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "로그인하면 사용할 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登入後才能使用。"
           }
         }
       }

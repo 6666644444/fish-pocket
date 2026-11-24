@@ -236,6 +236,7 @@ Bot 功能的后台是内置的 ds-bot 插件，版本锁定在 `engine/plugins/
 - **只用它的后端。**设置读写 `image-gen` 命名空间，Key 走凭据；测试连接、拉取模型、订阅登录走它的 `/plugins/dsh-image-gen/` 路由（`ImageGenModel`）。原生设置页（`ImageGenSettings.swift`）逐项对应它网页版设置卡片里的字段，升级插件时对照它 `src/client/index.tsx` 的 `ImageGenerationSettingsCard` 增删字段；保存前的几项校验（尺寸表、附加 JSON、OpenAI 尺寸、ComfyUI 工作流、官方接口的自动编辑格式）是照它的前端写的，也要一起对。
 - **订阅登录**用它在本机固定端口起的回调（ChatGPT 1455、Grok 56121、Google 51121），授权页在 App 内的 Safari 里打开，引擎一直在跑才接得到跳回，和连接器的登录是同一套。
 - **给模型的说明只放模型不可能知道的事**（`image-gen-notes.mjs`）：画布没打开时去掉插件那句「让用户去开工作台」，并在插件的生图说明后补一句 App 里生图设置的位置。不要往里加「该用哪张图」之类的指令，选图交给插件自己的规则和模型。`test/image-gen-notes.test.mjs` 会检查插件的上下文名和措辞，升级后它报错就先看插件现在说了什么。
+- **用 Fish Pocket 积分生图**（`Models/FishPocketImageGen.swift`）：只卖火山方舟的 Seedream 一个模型。插件自带的 Seedream 服务商把 Key 存在 `ARK_API_KEY`，和用户自己的方舟 Key 共用，所以 Fish Pocket 是插件的一个 OpenAI 兼容渠道（id `fishpocket`，Key 存在它自己的 `DSH_IMAGE_GEN_OPENAI_COMPAT_KEY_FISHPOCKET`），地址是 Fish Pocket 服务的 `/v1`，改图用 `jsonImageUrlArray` 格式，尺寸表按 Seedream 的像素范围填好，生成和改图都要 JPEG（`output_format`）：Seedream 默认出 PNG，存进 App 时会被重新编码成 JPEG，火山写在文件里的隐式标识（C2PA）就丢了；直接要 JPEG 才原样保存，也小得多。渠道和 Key 都由 App 写、由 App 同步（运行时密钥换了、退出登录、引擎连上时），设置页的渠道列表里不显示它，在生图设置的「默认使用」和单独的「Fish Pocket 账号」页里选。只有用户选了才建，选了也不替用户切回别家。服务端强制加「AI生成」水印、只出单张图，换模型、改价格都在服务端，不用发版。
 - **对话里的图**：生图结果由 `ImageGenCard` 显示，一轮折叠后图片仍留在外面；对话里任何一张图点开都有「标注」（`MarkupCanvas`），画完只把标注版放进输入框。
 - 升级插件后照「引擎或插件升级后的回归」走一遍，另外在设置页把每家服务商点开看一眼，再用一个真实或本机假的 OpenAI 兼容服务各生一张、改一张。
 

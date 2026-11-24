@@ -38,9 +38,10 @@ Fish Pocket 是独立的开源社区项目，与深度求索（DeepSeek）不存
 Fish Pocket 账号是可选功能，登录后可以用 App 内购买的额度调用 DeepSeek 模型。只有登录并使用这个功能时，以下数据才会发给开发者运营的 Fish Pocket 服务器：
 
 - **账号信息：** 用 Apple 登录时，Apple 提供的用户标识，以及你同意分享的姓名和邮箱；用手机号登录时，你的手机号和验证码。
-- **额度与购买：** 积分余额、App Store 的购买凭证，以及每次调用的模型名称、token 用量和扣除的积分；用语音时是录音时长、念出来的字数和扣除的积分。
+- **额度与购买：** 积分余额、App Store 的购买凭证，以及每次调用的模型名称、token 用量和扣除的积分；用语音时是录音时长、念出来的字数和扣除的积分；生图时是生成的张数、尺寸、参考图张数和扣除的积分。
 - **对话内容：** 选择「Fish Pocket 账号」里的模型时，你发送的内容经 Fish Pocket 服务器转发给提供 DeepSeek 模型的服务商（DeepSeek 官方或其模型的托管服务商），由该服务商按其隐私政策处理。Fish Pocket 服务器只读取用量用于计费，不保存对话内容。
 - **语音：** 在语音输入或语音通话的设置里选择用「Fish Pocket 账号」接入火山引擎时，按住说话和语音通话的录音、语音消息和通话里要念出来的文字，经 Fish Pocket 服务器转发给火山引擎的豆包语音服务，由火山引擎按其隐私政策处理。Fish Pocket 服务器只读取录音时长和字数用于计费，不保存录音和文字。
+- **生图：** 在生图设置里把「Fish Pocket 账号（Seedream）」设为默认使用时，生图的提示词和参考图经 Fish Pocket 服务器转发给火山方舟的 Seedream 模型，由火山引擎按其隐私政策处理；生成的图片由 App 直接从火山引擎下载，不经过 Fish Pocket 服务器。Fish Pocket 服务器只读取生成的张数和尺寸用于计费，不保存提示词和图片。
 
 登录凭证保存在本机的钥匙串里。你可以随时在「设置 → Fish Pocket 账号」退出登录，或注销账号；注销后账号无法恢复，剩余积分作废。
 
@@ -92,9 +93,10 @@ These connections happen only when you use the related feature, and the data goe
 A Fish Pocket account is optional. Once signed in, you can use credits bought in the app to call DeepSeek models. Only when you sign in and use this feature is the following sent to the Fish Pocket servers the developer runs:
 
 - **Account details:** with Sign in with Apple, the user identifier Apple provides and the name and email you choose to share; with a phone number, your number and the verification code.
-- **Credits and purchases:** your credit balance, App Store purchase receipts, and for each request the model name, token usage and credits deducted; for voice, the length of the recording, the number of characters spoken and the credits deducted.
+- **Credits and purchases:** your credit balance, App Store purchase receipts, and for each request the model name, token usage and credits deducted; for voice, the length of the recording, the number of characters spoken and the credits deducted; for image generation, the number and size of the images made, the number of reference images and the credits deducted.
 - **Conversations:** when you pick a model under "Fish Pocket credits", what you send is forwarded through the Fish Pocket servers to the provider serving the DeepSeek models (DeepSeek itself or a provider hosting its models) and handled under that provider's privacy policy. The Fish Pocket servers read usage for billing only and do not store conversation content.
 - **Voice:** when you choose to reach Volcengine with your Fish Pocket account in the voice input or voice call settings, the recordings of hold-to-talk and voice calls, and the text of voice messages and of call replies to be spoken, are forwarded through the Fish Pocket servers to Volcengine's Doubao speech service and handled under Volcengine's privacy policy. The Fish Pocket servers read the length of the recordings and the number of characters for billing only and do not store recordings or text.
+- **Image generation:** when you set "Fish Pocket Account (Seedream)" as the default in the image generation settings, your prompts and reference images are forwarded through the Fish Pocket servers to Volcengine Ark's Seedream model and handled under Volcengine's privacy policy; the images it makes are downloaded by the app directly from Volcengine, not through the Fish Pocket servers. The Fish Pocket servers read the number and size of the images made for billing only and do not store prompts or images.
 
 Sign-in tokens are kept in this device's Keychain. You can sign out or delete your account at any time in Settings → Fish Pocket credits; a deleted account cannot be restored and its remaining credits are forfeited.
 

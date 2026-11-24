@@ -91,10 +91,13 @@ struct ImageGenCard: View {
     }
 
     /// 「Google Gemini · gemini-3.1-flash-image」: the first image's maker, as the plugin records it.
+    /// An OpenAI-compatible channel goes by its own name (「Fish Pocket 账号（Seedream）」).
     private var caption: String? {
         let meta = batch ? call.meta["images"][0] : call.meta
         guard let raw = meta["provider"].string else { return nil }
-        let provider = ImageGenProvider(rawValue: raw)?.title ?? raw
+        let provider = raw == ImageGenProvider.openaiCompat.rawValue && meta["channel"].string != nil
+            ? ImageGenChannel.title(of: meta["channel"].string ?? "", in: app.settings.namespace(ImageGenModel.namespace)?["value"] ?? .null)
+            : ImageGenProvider(rawValue: raw)?.title ?? raw
         let model = meta["model"].string ?? ""
         return model.isEmpty ? provider : "\(provider) · \(model)"
     }
