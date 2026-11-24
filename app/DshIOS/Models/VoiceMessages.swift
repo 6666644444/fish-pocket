@@ -109,17 +109,18 @@ final class VoiceMessageSync {
     }
 }
 
-/// The speech a voice message is read in: Volcengine in the call's voice when its key is saved,
+/// The speech a voice message is read in: Volcengine in the call's voice when it is set up (the
+/// user's own key or the Fish Pocket account, whichever they picked),
 /// else DeepSeek in the reading voice, each the one picked for the Bot or the conversation it was
 /// sent in (`VoiceChoices`), else the default. Only that one: when it fails, the message fails, rather
 /// than another service reading it in a voice that does not match the rest.
 enum VoiceMessageVoice: Equatable {
-    case volcengine(key: String, voice: String)
+    case volcengine(VolcCredential?, voice: String)
     case deepseek(DeepSeekSpeech.Voice)
 
     @MainActor
     static func chosen(for owner: VoiceOwner? = nil) async -> VoiceMessageVoice? {
-        if let key = VolcSpeech.shared.key, !key.isEmpty { return .volcengine(key: key, voice: VoiceChoices.shared.callVoice(for: owner).id) }
+        if let credential = VolcSpeech.shared.credential { return .volcengine(credential, voice: VoiceChoices.shared.callVoice(for: owner).id) }
         if await DeepSeekSpeech.ready() { return .deepseek(VoiceChoices.shared.readingVoice(for: owner)) }
         return nil
     }
@@ -140,9 +141,13 @@ enum VoiceMessageVoice: Equatable {
         switch self {
         case .deepseek(let voice):
             return DeepSeekSpeech.synthesize(text, voice: voice)
-        case .volcengine(let key, let voice):
+        case .volcengine(let credential, let voice):
             return AsyncThrowingStream { continuation in
-                let synthesizer = CallSynthesizer(key: key, voice: voice)
+                guard let credential else {
+                    continuation.finish(throwing: CallError.noKey)
+                    return
+                }
+                let synthesizer = CallSynthesizer(credential: credential, voice: voice)
                 let heard = FirstOnce()
                 synthesizer.onEvent = { event in
                     switch event {
@@ -372,7 +377,7 @@ final class VoiceMessagePlayer {
 
     /// The tag of the voice `VoiceMessageVoice.chosen` picks, without asking DeepSeek.
     private static func currentTag(_ owner: VoiceOwner?) -> String {
-        if let key = VolcSpeech.shared.key, !key.isEmpty { return VoiceMessageVoice.volcengine(key: "", voice: VoiceChoices.shared.callVoice(for: owner).id).tag }
+        if VolcSpeech.shared.configured { return VoiceMessageVoice.volcengine(nil, voice: VoiceChoices.shared.callVoice(for: owner).id).tag }
         return VoiceMessageVoice.deepseek(VoiceChoices.shared.readingVoice(for: owner)).tag
     }
 
