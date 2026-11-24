@@ -85,6 +85,10 @@ final class FishPocketAccount {
 
     var available: Bool { http != nil }
 
+    /// This device's runtime key, while signed in: the engine spends credits with it, and so does
+    /// the speech relay (`VolcCredential.fishPocket`).
+    nonisolated static var storedRuntimeKey: String? { FishPocketKeychain.read(Stored.runtimeKey) }
+
     /// A call anyone may make, sent with the account when signed in (a plugin report): a session
     /// that can't be renewed any more goes out without one rather than failing the call.
     func sendAsUser(_ method: String, _ path: String, body: JSON? = nil) async throws -> JSON {
@@ -187,6 +191,7 @@ final class FishPocketAccount {
         }
         let previous = FishPocketKeychain.read(Stored.runtimeKey)
         FishPocketKeychain.write(Stored.runtimeKey, key)
+        VolcSpeech.shared.reloadFishPocketKey()
         _ = try? await engine.call("credentials/set", ["ref": .string(FishPocketAPI.runtimeKeyRef), "value": .string(key)])
         // A replaced key is revoked so keys do not pile up on the server (best effort).
         if let previous, previous != key {
@@ -257,6 +262,7 @@ final class FishPocketAccount {
         FishPocketKeychain.write(Stored.session, nil)
         FishPocketKeychain.write(Stored.refresh, nil)
         FishPocketKeychain.write(Stored.runtimeKey, nil)
+        VolcSpeech.shared.reloadFishPocketKey()
         signedIn = false
         user = nil
         balance = nil

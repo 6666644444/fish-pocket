@@ -36,7 +36,11 @@ struct VoiceInputSettingsPage: View {
                 case .deepseek:
                     Text("用你在「模型」里填写的 DeepSeek API Key，没有 Key 时用登录的 DeepSeek 账号（DeepSeek 目前还不支持账号登录使用语音），费用由 DeepSeek 按录音时长收取。松手后整段识别，说话时不显示文字。录音直接发给 DeepSeek 识别，App 不保存录音。")
                 case .volcengine:
-                    Text("说话时文字就会出现。需要你自己开通火山引擎的豆包语音并填写 API Key，费用由火山引擎按你的用量收取。API Key 只保存在这台设备本地，只用来连接火山引擎，不会上传到其他任何地方。")
+                    if FishPocketAPI.available {
+                        Text("说话时文字就会出现。用 Fish Pocket 账号还是自己的 API Key 接入火山引擎，在下面选。")
+                    } else {
+                        Text("说话时文字就会出现。需要你自己开通火山引擎的豆包语音并填写 API Key，费用由火山引擎按你的用量收取。API Key 只保存在这台设备本地，只用来连接火山引擎，不会上传到其他任何地方。")
+                    }
                 }
             }
             .groupedRow()
@@ -99,14 +103,17 @@ struct VoiceInputSettingsPage: View {
     }
 }
 
-/// The user's Volcengine (豆包语音) key: where it goes, the billing it was opened with, a check
-/// that it works for what it is for, and how to get one. Hold-to-talk needs streaming
-/// recognition; a call needs synthesis 2.0 as well, and the check tries both.
+/// How Volcengine (豆包语音) is reached, picked by the user: their Fish Pocket account, paid in
+/// credits through its relay, or their own API Key (where it goes, the billing it was opened with,
+/// how to get one). Either way a check that it works for what it is for: hold-to-talk needs
+/// streaming recognition; a call needs synthesis 2.0 as well, and the check tries both. The two
+/// ways never stand in for each other.
 struct VolcKeySection: View {
     enum Purpose { case input, call }
 
     let purpose: Purpose
     var onReady: (() -> Void)?
+    @Environment(AppModel.self) private var app
     @State private var speech = VolcSpeech.shared
     @State private var draft = ""
     @State private var checking = false
@@ -118,7 +125,110 @@ struct VolcKeySection: View {
     }
 
     var body: some View {
-        // The key comes first, in the top half of the page, where the keyboard never covers it.
+        if FishPocketAPI.available {
+            Section {
+                Picker("接入方式", selection: $speech.route) {
+                    ForEach(VolcSpeech.Route.allCases) { Text($0.title).tag($0) }
+                }
+                .pickerValueTint()
+            } header: {
+                Text("火山引擎")
+            } footer: {
+                switch speech.route {
+                case .fishPocket:
+                    Text("不用自己开通火山引擎：费用从 Fish Pocket 账号的积分里扣，按用量计费。声音经 Fish Pocket 的服务器转给火山引擎，服务器不保存录音。")
+                case .ownKey:
+                    Text("用你自己在火山引擎开通的服务和 API Key，费用由火山引擎按你的用量收取。声音直接发给火山引擎。")
+                }
+            }
+            .groupedRow()
+            .onChange(of: speech.route) { status = nil }
+        }
+
+        switch speech.route {
+        case .fishPocket: fishPocket
+        case .ownKey: ownKey
+        }
+
+        Section {
+            Button {
+                if speech.route == .ownKey, !speech.configured { use(draft) } else { check() }
+            } label: {
+                HStack(spacing: 8) {
+                    if checking { ProgressView().tint(Palette.onInk) }
+                    Text(speech.route == .ownKey && !speech.configured ? "保存并测试" : "测试连接")
+                }
+            }
+            .buttonStyle(.capsule(height: 50))
+            .disabled(checking || !canCheck)
+        } footer: {
+            statusFooter
+        }
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets())
+
+        if speech.route == .ownKey, !speech.configured {
+            Section {
+                step(1, "登录火山引擎的豆包语音控制台，没有账号先注册并完成实名认证。")
+                switch purpose {
+                case .input: step(2, "开通「豆包流式语音识别模型 2.0」。")
+                case .call: step(2, "开通「豆包流式语音识别模型 2.0」和「豆包语音合成模型 2.0」。")
+                }
+                step(3, "在「API Key 管理」里创建一个 Key 并复制，回到这里粘贴到上面。")
+                Link(destination: VolcSpeech.keysURL) {
+                    Label("打开豆包语音控制台", systemImage: "arrow.up.right.square")
+                }
+            } header: {
+                Text("还没有 API Key？")
+            }
+            .groupedRow()
+        }
+    }
+
+    private var canCheck: Bool {
+        switch speech.route {
+        case .fishPocket: speech.configured
+        case .ownKey: speech.configured || !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
+    }
+
+    /// The account the credits come from, or the way to sign in.
+    private var fishPocket: some View {
+        Section {
+            let account = app.fishPocket
+            if account.signedIn {
+                NavigationLink { FishPocketPage() } label: {
+                    LabeledContent {
+                        if let balance = account.balance {
+                            Text("\(balance) 积分").monospacedDigit()
+                        }
+                    } label: {
+                        Text(account.user?.label ?? String(localized: "已登录"))
+                    }
+                }
+            } else {
+                NavigationLink { FishPocketPage() } label: {
+                    Text("登录 Fish Pocket 账号")
+                }
+            }
+        } header: {
+            Text("Fish Pocket 账号")
+        } footer: {
+            switch purpose {
+            case .input:
+                Text("识别用的是豆包流式语音识别模型 2.0，按录音时长计费。")
+            case .call:
+                Text("听你说话用豆包流式语音识别模型 2.0，按通话时长计费；回答的声音用豆包语音合成模型 2.0，按字数计费。余额用完时通话会挂断。")
+            }
+        }
+        .groupedRow()
+        .task { await app.fishPocket.refresh() }
+    }
+
+    /// The user's own key: the key comes first, in the top half of the page, where the keyboard
+    /// never covers it.
+    @ViewBuilder
+    private var ownKey: some View {
         Section {
             if let key = speech.key, !key.isEmpty {
                 LabeledContent("API Key") {
@@ -149,7 +259,7 @@ struct VolcKeySection: View {
             }
             .pickerValueTint()
         } header: {
-            Text("火山引擎")
+            Text(FishPocketAPI.available ? "API Key" : "火山引擎")
         } footer: {
             switch purpose {
             case .input:
@@ -160,40 +270,6 @@ struct VolcKeySection: View {
         }
         .groupedRow()
         .onChange(of: speech.resource) { status = nil }
-
-        Section {
-            Button {
-                if speech.configured { check() } else { use(draft) }
-            } label: {
-                HStack(spacing: 8) {
-                    if checking { ProgressView().tint(Palette.onInk) }
-                    Text(speech.configured ? "测试连接" : "保存并测试")
-                }
-            }
-            .buttonStyle(.capsule(height: 50))
-            .disabled(checking || !speech.configured && draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-        } footer: {
-            statusFooter
-        }
-        .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets())
-
-        if !speech.configured {
-            Section {
-                step(1, "登录火山引擎的豆包语音控制台，没有账号先注册并完成实名认证。")
-                switch purpose {
-                case .input: step(2, "开通「豆包流式语音识别模型 2.0」。")
-                case .call: step(2, "开通「豆包流式语音识别模型 2.0」和「豆包语音合成模型 2.0」。")
-                }
-                step(3, "在「API Key 管理」里创建一个 Key 并复制，回到这里粘贴到上面。")
-                Link(destination: VolcSpeech.keysURL) {
-                    Label("打开豆包语音控制台", systemImage: "arrow.up.right.square")
-                }
-            } header: {
-                Text("还没有 API Key？")
-            }
-            .groupedRow()
-        }
     }
 
     private func step(_ number: Int, _ text: LocalizedStringKey) -> some View {
@@ -248,16 +324,15 @@ struct VolcKeySection: View {
     }
 
     private func check() {
-        guard let key = speech.key else { return }
+        guard let credential = speech.credential else { return }
         Haptics.tap()
         checking = true
         status = nil
-        let resource = speech.resource
         let purpose = purpose
         Task {
             do {
-                try await VolcSpeech.check(key: key, resource: resource)
-                if purpose == .call { try await CallSynthesizer.check(key: key) }
+                try await VolcSpeech.check(credential)
+                if purpose == .call { try await CallSynthesizer.check(credential) }
                 passed()
             } catch {
                 status = .failed(error.localizedDescription)

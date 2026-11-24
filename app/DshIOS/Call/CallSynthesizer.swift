@@ -5,11 +5,9 @@ import Foundation
 /// sentences and sends the sound back as it is made, so she starts talking before the model has
 /// finished. One connection for the whole call; each reply is a session on it. Every reply of a
 /// call shares one `section_id`, so Volcengine keeps the tone of the conversation from one to the
-/// next, and Markdown is read as the words it marks up.
+/// next, and Markdown is read as the words it marks up. The sound comes as Ogg Opus, a fifth of
+/// the bytes of PCM, and is decoded here: `.audio` is 24 kHz mono 16-bit PCM.
 final class CallSynthesizer: @unchecked Sendable {
-    static let endpoint = URL(string: "wss://openspeech.bytedance.com/api/v3/tts/bidirection")!
-    static let resource = "seed-tts-2.0"
-
     enum Event: Sendable {
         /// Volcengine starts a sentence of `reply`: the sound until its end belongs to it.
         case sentenceStart(reply: Int)
@@ -23,7 +21,7 @@ final class CallSynthesizer: @unchecked Sendable {
 
     var onEvent: (@Sendable (Event) -> Void)?
 
-    private let key: String
+    private let credential: VolcCredential
     private let voice: String
     private let section: String
     private let lock = NSLock()
@@ -37,8 +35,8 @@ final class CallSynthesizer: @unchecked Sendable {
         case connect, begin(Int), text(Int, String), end(Int), cancel(Int)
     }
 
-    init(key: String, voice: String, section: String = UUID().uuidString.lowercased()) {
-        self.key = key
+    init(credential: VolcCredential, voice: String, section: String = UUID().uuidString.lowercased()) {
+        self.credential = credential
         self.voice = voice
         self.section = section
         let (stream, continuation) = AsyncStream<Command>.makeStream()
@@ -53,9 +51,9 @@ final class CallSynthesizer: @unchecked Sendable {
 
     deinit { close() }
 
-    /// Whether Volcengine makes speech 2.0 for `key`: one word, until its first sound comes back.
-    static func check(key: String) async throws {
-        let synthesizer = CallSynthesizer(key: key, voice: CallVoice.all[0].id)
+    /// Whether synthesis 2.0 works with `credential`: one word, until its first sound comes back.
+    static func check(_ credential: VolcCredential) async throws {
+        let synthesizer = CallSynthesizer(credential: credential, voice: CallVoice.all[0].id)
         defer { synthesizer.close() }
         let once = FirstOnce()
         try await withCheckedThrowingContinuation { (waiter: CheckedContinuation<Void, Error>) in
@@ -122,6 +120,8 @@ final class CallSynthesizer: @unchecked Sendable {
     /// The reply on the connection and its session id.
     private var current: (reply: Int, session: String)?
     private var sessions: [String: Int] = [:]
+    /// Each session's sound is an Ogg stream of its own.
+    private var decoders: [String: OggOpusDecoder] = [:]
     private var waiters: [String: CheckedContinuation<Data, Error>] = [:]
     /// Events that came before anyone waited for them (a fast answer, a session nobody waits on).
     private var arrived: [String: Result<Data, Error>] = [:]
@@ -193,7 +193,8 @@ final class CallSynthesizer: @unchecked Sendable {
             "namespace": "BidirectionalTTS",
             "req_params": [
                 "speaker": voice,
-                "audio_params": ["format": "pcm", "sample_rate": 24_000],
+                // Opus only comes at 48 kHz; it is decoded to 24 kHz here.
+                "audio_params": ["format": "ogg_opus", "sample_rate": 48_000, "bit_rate": 64_000],
                 "additions": encoded,
             ],
         ]
@@ -205,13 +206,8 @@ final class CallSynthesizer: @unchecked Sendable {
 
     private func connect() async throws {
         if lock.withLock({ socket != nil }) { return }
-        var request = URLRequest(url: Self.endpoint)
-        request.setValue(key, forHTTPHeaderField: "X-Api-Key")
-        request.setValue(Self.resource, forHTTPHeaderField: "X-Api-Resource-Id")
-        request.setValue(UUID().uuidString, forHTTPHeaderField: "X-Api-Connect-Id")
-        request.timeoutInterval = 15
         let session = URLSession(configuration: .ephemeral)
-        let socket = session.webSocketTask(with: request)
+        let socket = session.webSocketTask(with: credential.request(.synthesis))
         socket.maximumMessageSize = 8 << 20
         lock.withLock {
             self.socket = socket
@@ -223,7 +219,7 @@ final class CallSynthesizer: @unchecked Sendable {
             try await send(event: 1, session: nil, payload: [:])
             _ = try await wait(for: "50", seconds: 8)
         } catch {
-            throw Self.refusal(socket) ?? error
+            throw credential.refusal(socket.response, .synthesis) ?? error
         }
     }
 
@@ -235,6 +231,7 @@ final class CallSynthesizer: @unchecked Sendable {
                 urlSession = nil
                 current = nil
                 sessions = [:]
+                decoders = [:]
                 waiters = [:]
                 arrived = [:]
             }
@@ -303,7 +300,8 @@ final class CallSynthesizer: @unchecked Sendable {
             } catch {
                 guard lock.withLock({ self.socket === socket }) else { return }
                 let reply = lock.withLock { current?.reply }
-                if let reply, !isCancelled(reply) { onEvent?(.failed(reply: reply, Self.refusal(socket) ?? error)) }
+                let failure = credential.refusal(socket.response, .synthesis) ?? VolcCredential.closure(socket.closeCode) ?? error
+                if let reply, !isCancelled(reply) { onEvent?(.failed(reply: reply, failure)) }
                 drop()
                 return
             }
@@ -331,10 +329,19 @@ final class CallSynthesizer: @unchecked Sendable {
                     onEvent?(.sentenceEnd(reply: reply, text.trimmingCharacters(in: .whitespacesAndNewlines)))
                 }
             case 352:
-                if let reply, !isCancelled(reply), !frame.payload.isEmpty { onEvent?(.audio(reply: reply, frame.payload)) }
+                guard let reply, !isCancelled(reply), !frame.payload.isEmpty else { break }
+                let decoder = lock.withLock { () -> OggOpusDecoder in
+                    if let decoder = decoders[session] { return decoder }
+                    let decoder = OggOpusDecoder(outputRate: 24_000)
+                    decoders[session] = decoder
+                    return decoder
+                }
+                let pcm = decoder.decode(frame.payload)
+                if !pcm.isEmpty { onEvent?(.audio(reply: reply, pcm)) }
             case 151, 152, 153:
                 lock.withLock {
                     sessions[session] = nil
+                    decoders[session] = nil
                     if current?.session == session { current = nil }
                 }
                 if frame.event == 153 {
@@ -349,12 +356,6 @@ final class CallSynthesizer: @unchecked Sendable {
                 break
             }
         }
-    }
-
-    /// The handshake answered 401 or 403: the key is not taken for synthesis 2.0.
-    private static func refusal(_ socket: URLSessionWebSocketTask) -> Error? {
-        guard let response = socket.response as? HTTPURLResponse, [401, 403].contains(response.statusCode) else { return nil }
-        return CallError.synthesisRefused
     }
 
     private static func serverError(_ code: UInt32, _ payload: Data) -> Error {
@@ -420,7 +421,7 @@ enum CallError: LocalizedError {
         switch self {
         case .synthesisRefused: String(localized: "火山引擎没有接受这个 Key 的语音合成，请在控制台开通「豆包语音合成模型 2.0」")
         case .synthesis(let code, let message): String(localized: "语音合成出错（\(String(code))）：\(message)")
-        case .noKey: String(localized: "语音通话需要火山引擎的 API Key")
+        case .noKey: String(localized: "语音通话还没设置好，请在设置 → 语音通话里选择连接方式")
         case .microphone(let detail): String(localized: "麦克风打不开：\(detail)")
         case .noAnswer: String(localized: "火山引擎的语音合成没有回应，请稍后再试")
         }

@@ -21,8 +21,7 @@ final class CallRecognizer: @unchecked Sendable {
 
     var onEvent: (@Sendable (Event) -> Void)?
 
-    private let key: String
-    private let resource: String
+    private let credential: VolcCredential
     private let lock = NSLock()
     private var outbox: AsyncStream<Data>.Continuation?
     /// Audio that arrived while no connection was open: the last three seconds.
@@ -35,16 +34,15 @@ final class CallRecognizer: @unchecked Sendable {
     private static let backlogLimit = 15
     private static let attempts = 6
 
-    init(key: String, resource: String) {
-        self.key = key
-        self.resource = resource
+    init(credential: VolcCredential) {
+        self.credential = credential
     }
 
     func start() {
         worker = Task.detached(priority: .userInitiated) { [weak self] in await self?.run() }
     }
 
-    /// 16 kHz mono 16-bit PCM from the microphone.
+    /// 16 kHz mono 16-bit PCM from the microphone, encoded as Ogg Opus on its way out.
     func send(_ pcm: Data) {
         lock.withLock {
             guard !stopped else { return }
@@ -85,7 +83,7 @@ final class CallRecognizer: @unchecked Sendable {
                 // The server ended the session (its own limit): open the next one at once.
             } catch {
                 if isStopped || Task.isCancelled { return }
-                if Self.fatal(error) {
+                if VolcCredential.fatal(error) {
                     onEvent?(.failed(error))
                     return
                 }
@@ -102,16 +100,8 @@ final class CallRecognizer: @unchecked Sendable {
 
     /// One session, until the server ends it or it fails. `connected` runs once it is open.
     private func connection(connected: () -> Void) async throws {
-        var request = URLRequest(url: VolcSpeech.endpoint)
-        let id = UUID().uuidString
-        request.setValue(key, forHTTPHeaderField: "X-Api-Key")
-        request.setValue(resource, forHTTPHeaderField: "X-Api-Resource-Id")
-        request.setValue(id, forHTTPHeaderField: "X-Api-Request-Id")
-        request.setValue(id, forHTTPHeaderField: "X-Api-Connect-Id")
-        request.setValue("-1", forHTTPHeaderField: "X-Api-Sequence")
-        request.timeoutInterval = 15
         let session = URLSession(configuration: .ephemeral)
-        let socket = session.webSocketTask(with: request)
+        let socket = session.webSocketTask(with: credential.request(.recognition))
         socket.maximumMessageSize = 4 << 20
         let (packets, continuation) = AsyncStream<Data>.makeStream(bufferingPolicy: .bufferingNewest(50))
         let (backlog, turns) = lock.withLock { () -> ([Data], [(user: Bool, text: String)]) in
@@ -137,24 +127,26 @@ final class CallRecognizer: @unchecked Sendable {
         do {
             try await socket.send(.data(VolcFrame.request(sequence: 1, json: parameters)))
         } catch {
-            throw Self.refusal(socket) ?? error
+            throw credential.refusal(socket.response, .recognition) ?? error
         }
         connected()
         onEvent?(.steady)
         let sender = Task {
             var sequence: Int32 = 1
+            // Each connection is a stream of its own, header pages first: a new encoder each time.
+            let encoder = OggOpusEncoder()
             do {
                 for chunk in backlog {
                     sequence += 1
-                    try await socket.send(.data(VolcFrame.audio(sequence: sequence, pcm: chunk, last: false)))
+                    try await socket.send(.data(VolcFrame.audio(sequence: sequence, encoded: encoder.encode(chunk), last: false)))
                 }
                 for await chunk in packets {
                     sequence += 1
-                    try await socket.send(.data(VolcFrame.audio(sequence: sequence, pcm: chunk, last: false)))
+                    try await socket.send(.data(VolcFrame.audio(sequence: sequence, encoded: encoder.encode(chunk), last: false)))
                 }
                 // Hung up: the last packet closes the session.
                 sequence += 1
-                try await socket.send(.data(VolcFrame.audio(sequence: sequence, pcm: Data(), last: true)))
+                try await socket.send(.data(VolcFrame.audio(sequence: sequence, encoded: encoder.finish(), last: true)))
             } catch {
                 socket.cancel(with: .goingAway, reason: nil)
             }
@@ -189,21 +181,7 @@ final class CallRecognizer: @unchecked Sendable {
             }
         } catch {
             if partial != "" { onEvent?(.partial("")) }
-            throw Self.refusal(socket) ?? error
-        }
-    }
-
-    /// The handshake answered 401 or 403: the key is not taken for this model.
-    private static func refusal(_ socket: URLSessionWebSocketTask) -> VoiceError? {
-        guard let response = socket.response as? HTTPURLResponse, [401, 403].contains(response.statusCode) else { return nil }
-        return .rejected
-    }
-
-    /// A refused key or a model without quota will not get better by trying again.
-    private static func fatal(_ error: Error) -> Bool {
-        switch error as? VoiceError {
-        case .rejected, .noQuota: true
-        default: false
+            throw credential.refusal(socket.response, .recognition) ?? VolcCredential.closure(socket.closeCode) ?? error
         }
     }
 
@@ -229,7 +207,7 @@ final class CallRecognizer: @unchecked Sendable {
             }
         }
         let json: [String: Any] = [
-            "audio": ["format": "pcm", "codec": "raw", "rate": 16_000, "bits": 16, "channel": 1],
+            "audio": VolcFrame.audioFormat,
             "request": request,
         ]
         return (try? JSONSerialization.data(withJSONObject: json)) ?? Data()

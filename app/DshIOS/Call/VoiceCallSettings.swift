@@ -274,7 +274,7 @@ final class VoicePreview {
 
     func play(_ voice: CallVoice) {
         stop()
-        guard let key = VolcSpeech.shared.key, !key.isEmpty else { return }
+        guard let credential = VolcSpeech.shared.credential else { return }
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
             try AVAudioSession.sharedInstance().setActive(true)
@@ -293,7 +293,7 @@ final class VoicePreview {
         playing = voice.id
         loading = voice.id
         made = false
-        let synthesizer = CallSynthesizer(key: key, voice: voice.id)
+        let synthesizer = CallSynthesizer(credential: credential, voice: voice.id)
         synthesizer.onEvent = { [weak self] event in Task { @MainActor in self?.handle(event) } }
         self.synthesizer = synthesizer
         let reply = synthesizer.begin()

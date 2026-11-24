@@ -218,6 +218,9 @@ final class AppModel {
             VoiceChoices.shared.readingVoice(sessionId: session, botId: session.flatMap { self?.botTeam.botOwning($0)?.id })
         }
         VoiceMessagePlayer.shared.onError = { [weak self] message in self?.showToast(message, tone: .warning) }
+        VolcSpeech.shared.onRuntimeKeyRefused = { [weak self] in
+            Task { await self?.fishPocket.repairRuntimeKey() }
+        }
     }
 
     func connect() async {
