@@ -22,7 +22,10 @@ concurrency:
 
 jobs:
   build-and-test:
-    runs-on: macos-26
+    # 原定 macos-26，但它连续三次排队 15 分钟都没有机器接单（GitHub 提示 macOS arm64 容量不足），
+    # 见 OPEN_QUESTIONS.md 第 1 条。默认改用上游 ios-build.yml 的 xcode-27；
+    # 设置仓库变量 IOS_CI_RUNNER=macos-26 即可切回。不用 -xlarge。
+    runs-on: ${{ vars.IOS_CI_RUNNER || 'xcode-27' }}
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v5
