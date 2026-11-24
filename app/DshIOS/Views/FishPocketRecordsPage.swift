@@ -214,10 +214,31 @@ struct FishPocketRecordsPage: View {
         .accessibilityAddTraits(on ? .isSelected : [])
     }
 
+    /// Input, cache hits and output side by side: the first two don't overlap, so the three add
+    /// up to everything the model read and wrote.
     private func tokens(_ usage: FishPocketUsage) -> Text {
-        let input = usage.inputTokens.formatted(.number.notation(.compactName))
-        let output = usage.outputTokens.formatted(.number.notation(.compactName))
-        return Text("输入 \(input) · 输出 \(output) Token · \(usage.requests) 次")
+        let compact = IntegerFormatStyle<Int>.number.notation(.compactName)
+        let output = usage.outputTokens.formatted(compact)
+        let line: String
+        if let hit = usage.cacheHitInputTokens {
+            let input = max(0, usage.inputTokens - hit).formatted(compact)
+            line = String(localized: "输入 \(input) · 缓存命中 \(hit.formatted(compact)) · 输出 \(output) Token · \(usage.requests) 次")
+        } else {
+            line = String(localized: "输入 \(usage.inputTokens.formatted(compact)) · 输出 \(output) Token · \(usage.requests) 次")
+        }
+        return Text(Self.wrappingAtSeparators(line))
+    }
+
+    /// Lets the line wrap only between its " · " parts, so a number never lands on another line
+    /// than its label ("6.1" and "万", "·" and "12 次" ended up apart on narrow phones).
+    static func wrappingAtSeparators(_ line: String) -> String {
+        guard let separator = [" · ", "・"].first(where: line.contains) else { return line }
+        return line.components(separatedBy: separator).map { part in
+            // Word joiners between the characters, no-break spaces for the spaces.
+            part.map { $0 == " " ? "\u{00A0}" : String($0) }.joined(separator: "\u{2060}")
+        }
+        // The dot stays at the end of the line it follows, never starts the next.
+        .joined(separator: separator.hasPrefix(" ") ? "\u{00A0}" + separator.dropFirst() : separator)
     }
 
     // MARK: History

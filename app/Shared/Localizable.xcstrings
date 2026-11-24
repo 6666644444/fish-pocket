@@ -94722,6 +94722,46 @@
         }
       }
     },
+    "输入 %@ · 缓存命中 %@ · 输出 %@ Token · %lld 次" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Input %1$@ · Cache hits %2$@ · Output %3$@ tokens · %4$lld requests"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrada %1$@ · Aciertos de caché %2$@ · Salida %3$@ tokens · %4$lld solicitudes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入力 %1$@・キャッシュヒット %2$@・出力 %3$@ トークン・%4$lld 回"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "입력 %1$@ · 캐시 적중 %2$@ · 출력 %3$@ 토큰 · %4$lld회"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入 %1$@ · 缓存命中 %2$@ · 输出 %3$@ Token · %4$lld 次"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "輸入 %1$@ · 快取命中 %2$@ · 輸出 %3$@ Token · %4$lld 次"
+          }
+        }
+      }
+    },
     "输入 %@ · 输出 %@ Token · %lld 次" : {
       "localizations" : {
         "en" : {
