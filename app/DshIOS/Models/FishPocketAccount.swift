@@ -71,6 +71,8 @@ final class FishPocketAccount {
     /// The packs, about buying more: opened from a conversation's out-of-balance card.
     var quotaPrompt = false
     var toast: String?
+    /// This device's runtime key changed (issued, replaced, or gone on signing out).
+    @ObservationIgnored var onRuntimeKeyChange: (() -> Void)?
 
     @ObservationIgnored private var transactionTask: Task<Void, Never>?
     @ObservationIgnored private var refreshing: Task<String?, Never>?
@@ -192,6 +194,7 @@ final class FishPocketAccount {
         let previous = FishPocketKeychain.read(Stored.runtimeKey)
         FishPocketKeychain.write(Stored.runtimeKey, key)
         VolcSpeech.shared.reloadFishPocketKey()
+        onRuntimeKeyChange?()
         _ = try? await engine.call("credentials/set", ["ref": .string(FishPocketAPI.runtimeKeyRef), "value": .string(key)])
         // A replaced key is revoked so keys do not pile up on the server (best effort).
         if let previous, previous != key {
@@ -263,6 +266,7 @@ final class FishPocketAccount {
         FishPocketKeychain.write(Stored.refresh, nil)
         FishPocketKeychain.write(Stored.runtimeKey, nil)
         VolcSpeech.shared.reloadFishPocketKey()
+        onRuntimeKeyChange?()
         signedIn = false
         user = nil
         balance = nil

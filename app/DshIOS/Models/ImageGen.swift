@@ -160,6 +160,14 @@ struct ImageGenChannel: Identifiable, Equatable {
 
     var isDefault: Bool { id == Self.defaultID }
 
+    /// The name a channel goes by where an image says what made it: the Fish Pocket one by its
+    /// own name, the user's by the label they gave it, else the provider's.
+    @MainActor
+    static func title(of id: String, in value: JSON) -> String {
+        if id == FishPocketImageGen.channelID { return FishPocketImageGen.title }
+        return all(value).first { $0.id == id }?.label ?? ImageGenProvider.openaiCompat.title
+    }
+
     /// `DSH_IMAGE_GEN_OPENAI_COMPAT_KEY_<ID>` for an added channel.
     static func keyRef(for id: String) -> String {
         id == defaultID ? defaultKeyRef : "\(defaultKeyRef)_\(id.replacingOccurrences(of: "[^A-Za-z0-9]", with: "_", options: .regularExpression).uppercased())"

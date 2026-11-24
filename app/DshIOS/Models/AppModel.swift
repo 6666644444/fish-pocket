@@ -221,6 +221,10 @@ final class AppModel {
         VolcSpeech.shared.onRuntimeKeyRefused = { [weak self] in
             Task { await self?.fishPocket.repairRuntimeKey() }
         }
+        fishPocket.onRuntimeKeyChange = { [weak self] in
+            guard let self else { return }
+            Task { await FishPocketImageGen.sync(in: self.settings) }
+        }
     }
 
     func connect() async {
@@ -234,7 +238,10 @@ final class AppModel {
             followRemoteEvents()
             followScheduleCatalog()
             account.follow()
-            Task { await fishPocket.start() }
+            Task {
+                await fishPocket.start()
+                await FishPocketImageGen.sync(in: settings)
+            }
             botTeam.start()
             VoiceMessageSync.shared.attach(self)
             BackgroundKeeper.shared.attach { [weak self] in await self?.refreshSessions() }
