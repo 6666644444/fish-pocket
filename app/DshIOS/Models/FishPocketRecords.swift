@@ -45,7 +45,11 @@ struct FishPocketMonth: Hashable, Comparable {
 /// What one day (or a whole month) of conversations on Fish Pocket credits cost.
 struct FishPocketUsage: Equatable {
     var credits = 0
+    /// All input tokens, cache hits included.
     var inputTokens = 0
+    /// The part of `inputTokens` the model served from its prompt cache, billed far cheaper.
+    /// Nil from a service too old to report it.
+    var cacheHitInputTokens: Int?
     var outputTokens = 0
     var requests = 0
 
@@ -54,6 +58,7 @@ struct FishPocketUsage: Equatable {
     init(_ json: JSON) {
         credits = json["credits"].int ?? 0
         inputTokens = json["inputTokens"].int ?? 0
+        cacheHitInputTokens = json["cacheHitInputTokens"].int
         outputTokens = json["outputTokens"].int ?? 0
         requests = json["requests"].int ?? 0
     }
