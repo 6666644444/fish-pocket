@@ -158,6 +158,20 @@ jobs:
             ARCHS=arm64 ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO \
             test -quiet
 
+      # -quiet 会把测试结果也藏起来：从结果包里读出用例数并打印。一个用例都没跑也算失败，
+      # 免得测试目标没接上时 CI 依然显示绿色。
+      - name: Test summary
+        if: always()
+        working-directory: app
+        run: |
+          [ -d build/TestResults.xcresult ] || { echo "no result bundle" >&2; exit 1; }
+          summary="$(xcrun xcresulttool get test-results summary --path build/TestResults.xcresult --compact)"
+          echo "$summary" | jq '{result, totalTestCount, passedTests, failedTests, skippedTests}'
+          xcrun xcresulttool get test-results tests --path build/TestResults.xcresult --compact \
+            | jq -r '.. | objects | select(.nodeType? == "Test Case") | "\(.result)\t\(.name)"' || true
+          total="$(echo "$summary" | jq -r '.totalTestCount // 0')"
+          [ "$total" -gt 0 ] || { echo "no unit tests ran" >&2; exit 1; }
+
       - name: Upload test results
         if: failure()
         uses: actions/upload-artifact@v4
