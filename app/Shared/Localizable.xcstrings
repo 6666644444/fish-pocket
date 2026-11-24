@@ -4366,6 +4366,40 @@
         }
       }
     },
+    "%lld日" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld日"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld일"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld日"
+          }
+        }
+      }
+    },
     "%lld月%lld日" : {
       "localizations" : {
         "en" : {
@@ -5287,6 +5321,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "App Store 版"
+          }
+        }
+      }
+    },
+    "App Store 购买" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store Purchase"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compra en App Store"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store での購入"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store 구입"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store 購買"
+          }
+        }
+      }
+    },
+    "App Store 退款" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store Refund"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reembolso de App Store"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store の返金"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store 환불"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store 退款"
           }
         }
       }
@@ -13326,6 +13428,40 @@
         }
       }
     },
+    "用 Fish Pocket 账号对话后，每天的消耗会显示在这里。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Once you chat with your Fish Pocket Account, each day’s usage shows up here."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando converses con tu Cuenta de Fish Pocket, el uso de cada día aparecerá aquí."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket アカウントで会話すると、日ごとの使用量がここに表示されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket 계정으로 대화하면 날마다 사용한 양이 여기에 표시돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用 Fish Pocket 帳號對話後，每天的消耗會顯示在這裡。"
+          }
+        }
+      }
+    },
     "用 Siri 和自动化打开 Bot、Mini App" : {
       "localizations" : {
         "en" : {
@@ -18381,6 +18517,40 @@
         }
       }
     },
+    "Fish Pocket 发放" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From Fish Pocket"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Otorgado por Fish Pocket"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket から付与"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket 지급"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fish Pocket 發放"
+          }
+        }
+      }
+    },
     "Fish Pocket 微信交流群二维码" : {
       "localizations" : {
         "en" : {
@@ -20612,6 +20782,40 @@
         }
       }
     },
+    "上个月" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous Month"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mes anterior"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "前の月"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이전 달"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上個月"
+          }
+        }
+      }
+    },
     "上传中…" : {
       "localizations" : {
         "en" : {
@@ -21084,6 +21288,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "下一首"
+          }
+        }
+      }
+    },
+    "下个月" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next Month"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mes siguiente"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次の月"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음 달"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下個月"
           }
         }
       }
@@ -23906,6 +24144,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "儲存庫、Issue 和拉取請求"
+          }
+        }
+      }
+    },
+    "付款收据在「设置」里查看：轻点顶部的 Apple 账户，再到「媒体与购买项目」里的购买记录。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Receipts are in Settings: tap your Apple Account at the top, then Media & Purchases, then Purchase History."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los recibos están en Ajustes: toca tu Cuenta de Apple arriba y luego Contenido y compras > Historial de compras."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "領収書は「設定」で確認できます。いちばん上の Apple アカウントをタップし、「メディアと購入」の購入履歴を開いてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "영수증은 설정에서 볼 수 있어요. 맨 위의 Apple 계정을 탭한 다음 미디어 및 구입 항목에서 구입 내역을 확인하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "付款收據在「設定」裡查看：點一下最上方的 Apple 帳號，再到「媒體與購買項目」裡的購買記錄。"
           }
         }
       }
@@ -28060,6 +28332,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "儲值後才能開始新對話，也可稍後在「設定 → 帳號與餘額」儲值。"
+          }
+        }
+      }
+    },
+    "充值记录" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Top-Up History"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Historial de recargas"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャージ履歴"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "충전 내역"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "儲值記錄"
           }
         }
       }
@@ -47294,6 +47600,40 @@
         }
       }
     },
+    "已到账" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Added"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadido"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加済み"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "추가됨"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已入帳"
+          }
+        }
+      }
+    },
     "已协调子智能体" : {
       "localizations" : {
         "en" : {
@@ -48288,6 +48628,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已恢復原內容，你的修改還在編輯器裡。\n\n%@"
+          }
+        }
+      }
+    },
+    "已扣回" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taken Back"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retirado"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "差し引き済み"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "차감됨"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已扣回"
+          }
+        }
+      }
+    },
+    "已扣除退款 · 购买的积分不会过期" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refunds deducted · Purchased credits never expire"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reembolsos descontados · Los créditos comprados no caducan"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "返金分を差し引き済み・購入したクレジットは無期限"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "환불액 차감 · 구매한 크레딧은 만료되지 않아요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已扣除退款 · 購買的積分不會過期"
           }
         }
       }
@@ -52373,6 +52781,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "目前：%@"
+          }
+        }
+      }
+    },
+    "当月消耗" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Used That Month"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uso del mes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この月の使用量"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "그달 사용량"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "當月消耗"
           }
         }
       }
@@ -56657,6 +57099,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "依你的要求定時提醒你，App 關著也會響"
+          }
+        }
+      }
+    },
+    "按北京时间统计，语音通话、按住说话和语音消息的用量也算在内。扣费后这里随即更新。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Days follow Beijing time. Voice calls, hold to talk, and voice messages are included. Charges show up here right away."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los días siguen la hora de Pekín. Se incluyen las llamadas de voz, mantener pulsado para hablar y los mensajes de voz. Los cobros aparecen aquí al momento."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日付は北京時間で集計しています。音声通話、押したまま話す、音声メッセージの利用分も含みます。差し引かれるとすぐここに反映されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "날짜는 베이징 시간 기준이에요. 음성 통화, 누른 채 말하기, 음성 메시지 사용량도 포함돼요. 차감되면 바로 여기에 반영돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "按北京時間統計，語音通話、按住說話和語音訊息的用量也算在內。扣費後這裡隨即更新。"
           }
         }
       }
@@ -83582,6 +84058,40 @@
       },
       "extractionState" : "stale"
     },
+    "累计到账" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total Added"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total añadido"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加の合計"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "총 추가된 크레딧"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "累計入帳"
+          }
+        }
+      }
+    },
     "约%lld个月" : {
       "localizations" : {
         "en" : {
@@ -94212,6 +94722,46 @@
         }
       }
     },
+    "输入 %@ · 输出 %@ Token · %lld 次" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Input %1$@ · Output %2$@ tokens · %3$lld requests"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrada %1$@ · Salida %2$@ tokens · %3$lld solicitudes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "入力 %1$@・出力 %2$@ トークン・%3$lld 回"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "입력 %1$@ · 출력 %2$@ 토큰 · %3$lld회"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "输入 %1$@ · 输出 %2$@ Token · %3$lld 次"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "輸入 %1$@ · 輸出 %2$@ Token · %3$lld 次"
+          }
+        }
+      }
+    },
     "输入 API Key" : {
       "localizations" : {
         "en" : {
@@ -95228,6 +95778,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "還沒有儲存金鑰。Bot 需要時會在聊天裡請你填寫。"
+          }
+        }
+      }
+    },
+    "还没有充值记录" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Top-Ups Yet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no hay recargas"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "チャージ履歴はまだありません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 충전 내역이 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "還沒有儲值記錄"
           }
         }
       }
@@ -104450,6 +105034,40 @@
         }
       }
     },
+    "%@ · 今天" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · Today"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · Hoy"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@・今日"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · 오늘"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · 今天"
+          }
+        }
+      }
+    },
     "%@ · 离线" : {
       "localizations" : {
         "en" : {
@@ -110459,6 +111077,40 @@
         }
       }
     },
+    "这个月还没有用量" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Usage This Month"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin uso este mes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今月はまだ使用していません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이번 달 사용 내역이 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這個月還沒有用量"
+          }
+        }
+      }
+    },
     "这个请求已过期，等待智能体更新。" : {
       "localizations" : {
         "en" : {
@@ -113866,6 +114518,40 @@
         }
       }
     },
+    "积分明细" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Credit History"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detalle de créditos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "クレジット明細"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "크레딧 내역"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "積分明細"
+          }
+        }
+      }
+    },
     "已有 DeepSeek 或其他服务商的 API Key，填进来直接用。" : {
       "localizations" : {
         "en" : {
@@ -114104,6 +114790,40 @@
         }
       }
     },
+    "暂时无法获取，轻点重试" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not load. Tap to retry."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo cargar. Toca para reintentar."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "読み込めません。タップして再試行"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "불러올 수 없어요. 탭해서 다시 시도"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暫時無法取得，輕點重試"
+          }
+        }
+      }
+    },
     "暂时无法连接 Fish Pocket，请稍后再试" : {
       "localizations" : {
         "en" : {
@@ -114338,6 +115058,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "刪除帳號"
+          }
+        }
+      }
+    },
+    "活动赠送" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Promotion"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Promoción"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "キャンペーン特典"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이벤트 지급"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "活動贈送"
           }
         }
       }
@@ -114956,6 +115710,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "購買額度"
+          }
+        }
+      }
+    },
+    "购买额度包后，到账记录会显示在这里。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "After you buy a credit pack, it shows up here once added."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando compres un paquete de créditos, aparecerá aquí al añadirse."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "クレジットパックを購入すると、追加された記録がここに表示されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "크레딧 팩을 구매하면 추가된 내역이 여기에 표시돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "購買額度包後，入帳記錄會顯示在這裡。"
           }
         }
       }
@@ -120616,6 +121404,40 @@
         }
       }
     },
+    "本月消耗" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Used This Month"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uso de este mes"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今月の使用量"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이번 달 사용량"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本月消耗"
+          }
+        }
+      }
+    },
     "查找灵感" : {
       "localizations" : {
         "en" : {
@@ -123240,6 +124062,40 @@
         }
       }
     },
+    "每日用量" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daily Usage"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uso diario"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日別の使用量"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "일별 사용량"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每日用量"
+          }
+        }
+      }
+    },
     "每次调用会加在提示词前面。工作流里种子可以用 {{seed}}，宽高可以用 {{width}}、{{height}}（智能体给出尺寸或比例时生效，默认 1024×1024）；图生图在 LoadImage 的 image 输入写 {{image}}，几张参考图就写几个，按节点编号顺序对应。智能体调用时也能按名称指定工作流。" : {
       "localizations" : {
         "en" : {
@@ -123576,6 +124432,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "訂閱帳號 · 不用 API Key"
+          }
+        }
+      }
+    },
+    "订阅额度" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscription Credits"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créditos de suscripción"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サブスクリプションのクレジット"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "구독 크레딧"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "訂閱額度"
           }
         }
       }
