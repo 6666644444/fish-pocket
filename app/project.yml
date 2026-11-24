@@ -46,7 +46,9 @@ targets:
     type: application
     platform: iOS
     # A shared scheme in the generated project: Xcode Cloud builds only those.
-    scheme: {}
+    # `xcodebuild test` on this scheme runs DshIOSTests (.github/workflows/ios-ci.yml).
+    scheme:
+      testTargets: [DshIOSTests]
     sources:
       - path: DshIOS
         excludes:
@@ -418,3 +420,18 @@ targets:
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         # Archived inside the iPhone app, not as a product of its own.
         SKIP_INSTALL: YES
+  # Unit tests hosted in the app (@testable import DshIOS), run on a simulator by ios-ci.yml.
+  # Not embedded in the app and not archived: Xcode Cloud's archive skips test bundles.
+  DshIOSTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: DshIOSTests
+    dependencies:
+      - target: DshIOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.wsw.dsh-ios.tests
+        GENERATE_INFOPLIST_FILE: YES
+        # The vendored xcframeworks are arm64 only, as the app is.
+        ARCHS: arm64

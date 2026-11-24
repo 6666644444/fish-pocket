@@ -1,0 +1,149 @@
+# 开发分支的 iOS CI：在模拟器上编译 App 并运行单元测试（DshIOSTests）。
+# 和 ios-build.yml 的区别：那个只在 main / release 的 PR 上编译；这个在开发分支每次推送时
+# 编译 + 跑测试，给没有 Mac 的开发流程当「编译器」用。
+# macOS 分钟很贵：nodejs-mobile、Python、FFmpeg 的下载和 libgit2 的构建结果都按生成它们的
+# 脚本哈希缓存；SwiftPM 依赖按 project.yml 缓存；只改文档的提交跳过。不用 -xlarge 机型。
+name: iOS CI
+
+on:
+  push:
+    branches: ["feat/**", "fix/**", "ci/**"]
+    paths-ignore: ["docs/**", "**/*.md"]
+  pull_request:
+    paths-ignore: ["docs/**", "**/*.md"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: engine/package-lock.json
+
+      # 选镜像里版本号最高的 Xcode。ios-build.yml 注释提到旧编译器会拒绝部分 SwiftUI 代码，
+      # 所以尽量用最新的；实际选中的版本打印在日志里，缓存键也带上它。
+      - name: Xcode
+        id: xcode
+        run: |
+          ls -d /Applications/Xcode*.app
+          latest="$(ls -d /Applications/Xcode_*.app | sed -E 's#.*/Xcode_([0-9.]+)\.app#\1#' | grep -E '^[0-9.]+$' | sort -t. -k1,1n -k2,2n -k3,3n | tail -1)"
+          sudo xcode-select -s "/Applications/Xcode_${latest}.app"
+          xcodebuild -version
+          echo "version=$latest" >> "$GITHUB_OUTPUT"
+
+      - name: Cache nodejs-mobile
+        id: nodejs-mobile
+        uses: actions/cache@v5
+        with:
+          path: |
+            vendor/nodejs-mobile/ios
+            vendor/nodejs-mobile/rooted
+          key: nodejs-mobile-${{ hashFiles('scripts/fetch-nodejs-mobile.sh') }}
+
+      - name: Fetch nodejs-mobile
+        if: steps.nodejs-mobile.outputs.cache-hit != 'true'
+        run: scripts/fetch-nodejs-mobile.sh
+
+      - name: Cache Python
+        id: python
+        uses: actions/cache@v5
+        with:
+          path: |
+            vendor/python/ios
+            vendor/python/rooted
+          key: python-${{ hashFiles('scripts/fetch-python.sh') }}
+
+      - name: Fetch Python
+        if: steps.python.outputs.cache-hit != 'true'
+        run: scripts/fetch-python.sh
+
+      - name: Check NodeMobile imports
+        run: scripts/check-root-imports.sh
+
+      # 只缓存安装产物和 xcframework，源码和中间构建目录不进缓存。libgit2 用 clang 编译，键带 Xcode 版本。
+      - name: Cache libgit2
+        id: libgit2
+        uses: actions/cache@v5
+        with:
+          path: |
+            vendor/libgit2/Libgit2.xcframework
+            vendor/libgit2/ios-arm64
+            vendor/libgit2/ios-arm64-simulator
+            vendor/libgit2/macos
+          key: libgit2-${{ runner.os }}-xcode${{ steps.xcode.outputs.version }}-${{ hashFiles('scripts/build-libgit2.sh') }}
+
+      - name: Build libgit2
+        if: steps.libgit2.outputs.cache-hit != 'true'
+        run: scripts/build-libgit2.sh
+
+      - name: Cache FFmpeg
+        id: ffmpeg
+        uses: actions/cache@v5
+        with:
+          path: vendor/ffmpeg/FFmpeg.xcframework
+          key: ffmpeg-${{ runner.os }}-${{ hashFiles('scripts/fetch-ffmpeg.sh', 'scripts/build-ffmpeg.sh', 'native/ffmpeg/**') }}
+
+      - name: Fetch FFmpeg
+        if: steps.ffmpeg.outputs.cache-hit != 'true'
+        run: scripts/fetch-ffmpeg.sh
+
+      - name: Assemble engine
+        run: scripts/build-engine.sh
+
+      - name: Install xcodegen
+        run: command -v xcodegen >/dev/null || brew install xcodegen
+
+      - name: Generate project
+        working-directory: app
+        run: xcodegen generate --quiet
+
+      # SwiftPM 依赖（SwiftTerm、SwiftMath）：版本钉在 project.yml 里，按它缓存。
+      - name: Cache SwiftPM
+        uses: actions/cache@v5
+        with:
+          path: app/build/DerivedData/SourcePackages
+          key: spm-${{ runner.os }}-${{ hashFiles('app/project.yml') }}
+
+      # 找一台可用的 iPhone 模拟器（arm64），测试需要具体设备，generic 目的地跑不了测试。
+      - name: Pick simulator
+        id: sim
+        run: |
+          udid="$(xcrun simctl list devices available -j \
+            | jq -r '[.devices | to_entries[] | select(.key | test("iOS")) | .value[] | select(.name | test("^iPhone"))] | last | .udid')"
+          [ -n "$udid" ] && [ "$udid" != "null" ] || { xcrun simctl list devices available; echo "no iPhone simulator" >&2; exit 1; }
+          xcrun simctl list devices available | grep "$udid"
+          echo "udid=$udid" >> "$GITHUB_OUTPUT"
+
+      # vendored 的 xcframework 只有 arm64，所以固定 ARCHS=arm64。不签名。
+      - name: Build and test (iOS simulator)
+        working-directory: app
+        run: |
+          set -o pipefail
+          xcodebuild -project DshIOS.xcodeproj -scheme DshIOS \
+            -destination "platform=iOS Simulator,id=${{ steps.sim.outputs.udid }}" \
+            -derivedDataPath build/DerivedData -skipPackagePluginValidation \
+            -resultBundlePath build/TestResults.xcresult \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO \
+            test -quiet
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults
+          path: app/build/TestResults.xcresult
+          retention-days: 5
+          if-no-files-found: ignore
