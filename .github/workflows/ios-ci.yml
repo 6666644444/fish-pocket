@@ -121,13 +121,25 @@ jobs:
           key: spm-${{ runner.os }}-${{ hashFiles('app/project.yml') }}
 
       # 找一台可用的 iPhone 模拟器（arm64），测试需要具体设备，generic 目的地跑不了测试。
-      - name: Pick simulator
+      # 优先选普通机型（iPhone 17 / iPhone 17 Pro 这类）：上次随手取了最后一台「iPhone Duo」
+      # （预览镜像里的新机型），装测试程序时模拟器服务崩溃（Mach error -308）。
+      # 选好后先启动并等它完全就绪，不让 xcodebuild 在冷启动中途安装。
+      - name: Pick and boot simulator
         id: sim
         run: |
-          udid="$(xcrun simctl list devices available -j \
-            | jq -r '[.devices | to_entries[] | select(.key | test("iOS")) | .value[] | select(.name | test("^iPhone"))] | last | .udid')"
-          [ -n "$udid" ] && [ "$udid" != "null" ] || { xcrun simctl list devices available; echo "no iPhone simulator" >&2; exit 1; }
+          xcrun simctl list devices available
+          pick() {
+            xcrun simctl list devices available -j | jq -r --arg re "$1" '
+              [.devices | to_entries[] | select(.key | test("SimRuntime\\.iOS"))
+               | .key as $rt | .value[] | select(.name | test($re)) | . + {rt: $rt}]
+              | sort_by(.rt | [scan("[0-9]+") | tonumber]) | last | .udid // empty'
+          }
+          udid="$(pick '^iPhone [0-9]+( Pro)?$')"
+          [ -n "$udid" ] || udid="$(pick '^iPhone (?!.*(Duo|Fold)).*')"
+          [ -n "$udid" ] || { echo "no iPhone simulator" >&2; exit 1; }
           xcrun simctl list devices available | grep "$udid"
+          xcrun simctl boot "$udid" || true
+          xcrun simctl bootstatus "$udid" -b
           echo "udid=$udid" >> "$GITHUB_OUTPUT"
 
       # vendored 的 xcframework 只有 arm64，所以固定 ARCHS=arm64。不签名。
