@@ -121,7 +121,7 @@ final class LearningAPITests: XCTestCase {
         XCTAssertNil(skills[0].body)
         XCTAssertFalse(skills[0].managed)
         XCTAssertEqual(skills[1].whenToUse, "考前")
-        let one = #"{"ok":true,"result":{"name":"exam-review","kind":"bundle","description":"复习","managed":true,"valid":true,"body":"# 复习\n问我三个问题"}}"#
+        let one = ##"{"ok":true,"result":{"name":"exam-review","kind":"bundle","description":"复习","managed":true,"valid":true,"body":"# 复习\n问我三个问题"}}"##
         XCTAssertEqual(try LearningAPI.decode(LearningSkill.self, data: data(one), status: 200).body, "# 复习\n问我三个问题")
     }
 
