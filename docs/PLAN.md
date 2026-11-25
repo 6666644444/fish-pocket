@@ -15,14 +15,14 @@
 
 - **版本**：nodejs-mobile `24.20.0-0`，也就是 Node 24.20.0。下载地址钉在 `scripts/fetch-nodejs-mobile.sh` 第 8 行。CI 和本机跑测试都用 Node 24。【代码】
 - **只能启动一个实例**：`app/DshIOS/NodeEngine.swift` 第 6–7 行写明 *"Node can be started only once per process, so this is a singleton for the app's lifetime"*。`NodeEngine.shared` 用 `started` 标志防止重复调用 `node_start`。引擎重启发生在这个实例内部，由 `main.mjs` 重新拉起 worker。【代码】
-- **结论**：学习功能不能另起一个 Node，必须跑在 DSH 同一个引擎进程里，做成 DSH 插件。真要隔离重活（比如大批量建索引），可以用 `node:worker_threads`。真机一致性测试 `native/root/test/conformance.mjs` 已经覆盖了 Worker。
+- **结论**：学习功能不能另起一个 Node，必须跑在 DSH 同一个引擎进程里，做成 DSH 插件。真要隔离重活（比如大批量建索引），可以用 `node:worker_threads`。`native/root/test/conformance.mjs` 里有 Worker 的检查，但它靠 `scripts/test-root-sim.sh` 在模拟器上手动跑，不在 CI 里，没有运行记录可查【待验证】。
 
 ## 2. 能否使用原生 Node 模块；SQLite 放在哪一侧
 
 - **原生模块**：不能用 `dlopen` 加载 `.node` 文件，App Store 也不允许动态加载未随 App 签名的代码。仓库的做法是把 C/ObjC 代码直接编进 App，再用 `napi_module_register` 注册成「链接绑定」，JS 侧通过 `process._linkedBinding('名字')` 调用。现有的绑定有 `dsh_git`、`dsh_image`、`dsh_ios_native`、`dsh_root`、`dsh_python`、`dsh_ffmpeg`，见 `native/*` 和 `app/project.yml` 的 sources。npm 上带预编译 `.node` 的包（better-sqlite3、sqlite3 等）在 iOS 上都不能用。【代码】
 - **SQLite：放 Node 侧，用内置的 `node:sqlite`**，不放 Swift 侧，也不用 WASM。理由：
   - Node 24 自带 `node:sqlite`，不需要任何原生模块。
-  - 真机一致性测试 `conformance.mjs` 第 111–124 行，已经在真的 NodeMobile 上测过 `DatabaseSync` 的 DELETE 和 WAL 两种日志模式。【代码】
+  - `native/root/test/conformance.mjs` 第 111–124 行写了 `DatabaseSync` 在 DELETE 和 WAL 两种日志模式下的检查，要在真的 NodeMobile 上跑。但它要靠 `scripts/test-root-sim.sh` **在模拟器上手动运行**，不是真机，也不在 CI 里，没有运行记录可查。【待验证】
   - DSH 自己的会话全文检索 `@deepseek-ai/dsh-session-query-sqlite` 就用 `node:sqlite` 加 FTS5。它是 `dsh-base` 的依赖，学习功能用同一套技术栈，最符合「复用、不另起一套」。【代码】
   - 放 Swift 侧的话，每次查询都要多走一层 JS↔Swift 通信，还要新写一套绑定。用 WASM（sql.js、wa-sqlite）则更慢、包更大，而且和 DSH 用的不是同一个 SQLite。
 - **待确认**：
@@ -37,7 +37,7 @@
   - 向量以 BLOB 形式存进上面那个 SQLite，和文本块放在一起。
   - 相似度用 JS 写一个循环算点积或余弦。学习资料的规模大约是几千个文本块乘几百维，一次查询是百万次乘加，在 JS 里是毫秒级，不值得为它新建一条原生通道。
   - 只有当真机实测查询超过约 50 ms 时，才考虑在原生侧加 Accelerate（`vDSP_dotpr`）批量计算，同时在 project.yml 加上 Accelerate.framework。
-- **待确认**：NLEmbedding 句向量的维度，以及中文是否可用。中文句向量可能没有，或要下载语言资源，所以要准备退路，比如用 DSH 已配置的在线 embedding 接口，或者只做关键词检索。【待真机】
+- **待确认**：NLEmbedding 句向量的维度，以及中文是否可用。中文句向量可能没有，或要下载语言资源，所以要准备退路，可以用可配置的 OpenAI 兼容 embedding provider（Key 存 Keychain；DeepSeek 官方 API 没有 embedding 接口，仓库里也没有现成的 embedding 服务），或者只做关键词检索。【待真机】
 
 ## 4. DSH 现有的 skills、插件、会话存储格式（必须复用或兼容）
 
@@ -83,3 +83,81 @@ LICENSE 是 MIT 许可证加一段附加条款（Additional Terms）。附加条
 - **CI 编译并通过单元测试**：只写 CI 上实际跑过并且全绿的东西。
 - **未经真机或模拟器人工验证**：所有界面、交互，以及上面标【待真机】的项，附验证步骤清单。
 - 界面部分只保证编译通过，不声称外观或交互正常。
+
+---
+
+# 里程碑 1 起补充的设计（2026-11-25）
+
+## 6. 现有架构
+
+```
+SwiftUI 外壳（app/DshIOS）
+  ├─ NodeEngine：整个进程只启动一个 Node（node_start），以单例形式存在
+  │    └─ engine/main.mjs → worker 线程里跑 DSH（boot.mjs，`dsh web`）
+  │         ├─ DSH 官方插件（node_modules/@deepseek-ai/*，不修改）
+  │         ├─ ds-bot（Bot、群聊、Bot 记忆 = 每个 Bot/团队各一份 MEMORY.md）
+  │         └─ 本项目插件（engine/plugins/*，在 ios.patch.yml 末尾的 insert 里登记）
+  │              ios-host / ios-native / ios-speech / ios-call / ios-voice-message / fish-pocket / learning（新）
+  ├─ EngineClient：用 launch token 换 cookie，之后 POST /api/<method>
+  │    插件自己的路由用 ctx.connection.fetch.register 挂在同一个端口上（例如 /api/ios-voice-message/settings）
+  └─ 原生绑定：C/ObjC 代码编进 App，通过 process._linkedBinding 调用（dsh_git、dsh_ios_native、dsh_root…）
+路径：native/root 把 /home/dsh 映射到 App 容器
+  /home/dsh/.dsh   = DSH_HOME（设置、会话、Bot 数据；recovery.mjs 会把根目录和 profiles/web 两层里的小文件当成设置）
+  /home/dsh/.ios   = DSH_IOS_DATA（App 和引擎共享）
+  /home/dsh/Documents = 会通过「文件」App 共享，学习数据不放这里
+```
+
+学习记忆和 Bot 记忆完全分开：Bot 记忆是 ds-bot 的 MEMORY.md，界面在 `BotDetailView.swift` 的 `BotMemoryPage`；学习记忆是学习库的 `memories` 表。「清空学习记忆」只清空这张表。
+
+## 7. 回归检查表（每个里程碑都要对照）
+
+| # | 功能 | CI 能自动检查吗 | 人工检查步骤 |
+|---|---|---|---|
+| 1 | 引擎能启动，插件全部加载、没有报错 | 部分（编译和单测）| 打开 App → 设置 → 插件：每一行都没有报错 |
+| 2 | 普通会话：工具卡片、流式回复、自动标题 | 否 | 新建会话，发送「用 bash 运行 node -e "console.log(6*7)"，然后一句话告诉我结果」 |
+| 3 | 老会话能读出来，也能接着聊 | 否 | 先装旧版本建一条会话，再覆盖安装新版本，打开这条会话接着发一句 |
+| 4 | 子智能体能追问、能中断 | 否 | 让 agent 起一个子智能体，然后追问、再中断 |
+| 5 | Bot 聊天、群聊的回复能显示 | 否 | Bot 和群里各发一条消息 |
+| 6 | Bot 记忆页 | 否 | Bot 详情 → 记忆：内容和升级前一样 |
+| 7 | 插件页、插件商店、设置、计划任务、连接器、本机能力、Mini Apps | 否（scripts/smoke-sim.sh 能截图） | 逐页打开看一遍 |
+| 8 | 语音输入、朗读、语音消息、语音通话 | 否 | 各操作一次 |
+| 9 | 浏览器、手机控制、分享扩展、小组件、手表、快捷指令 | 否 | 各操作一次 |
+| 10 | iPad / iPhone Duo 的分栏和 Tab 布局 | 否 | 在这些机型的模拟器上打开首页 |
+| 11 | 「引擎修复」页的恢复和重置 | 部分（recovery.test.mjs，学习库不会被当成设置：learning-store.test.mjs）| 重置一次之后，学习数据仍然在 |
+| 12 | 学习功能（从 M1 起新增）：笔记本、学习记忆 | Node 部分能 | 见各里程碑的汇报 |
+
+## 8. 学习库的数据模型（M1）
+
+- 文件路径是 `$DSH_HOME/learning/learning.db`，放在 `~/.dsh` 下面一层的子目录里，原因见第 6 节。用 node:sqlite，开 WAL 和 foreign_keys。
+- `PRAGMA application_id = 0x4C524E31`（'LRN1'），和 dsh-session-query-sqlite 的 1146308689 不同。`user_version` 记录 schema 版本。打开时，如果 application_id 不对、库里已有别的表、或者版本比当前代码新，就拒绝打开，并且不改动这个文件。
+- 迁移按顺序执行，每一步只新增内容：
+  - v1：`notebooks`、`notes`（notebook_id 外键，ON DELETE CASCADE）、`memories`（content、source=user|agent）、`meta`；
+  - v2：`notes_fts`（fts5，content='notes'，tokenize='trigram'）加三个同步触发器。如果 SQLite 不带 trigram，就在 meta 里记 `fts=none`，搜索全部走 LIKE。
+- 搜索：查询词按空白切开，各词之间是 AND 关系。所有词都在 3 个字及以上并且有 trigram 时，用 FTS（按 bm25 排序）；否则用 LIKE，%、_、\ 都会转义。
+
+## 9. Swift 和 Node 之间的接口（M1）
+
+`POST /api/learning/<method>`，请求体是参数的 JSON 对象。
+- 成功：200 `{ ok: true, result }`
+- 失败：`{ error: { kind, message } }`。kind 和状态码对应：invalid=400，not-found=404，conflict=409，unavailable=503，internal=500。
+
+| 方法 | 参数 | 返回 |
+|---|---|---|
+| status | — | { schemaVersion, latestSchemaVersion, search: 'trigram' \| 'none' } |
+| notebooks.list / get / create / update / delete | get、delete 要 {id}；create 要 {title}；update 要 {id, title} | 笔记本对象 {id, title, noteCount, createdAt, updatedAt} |
+| notes.list | {notebookId, limit?, offset?} | 笔记对象数组 |
+| notes.get / create / update / delete | get、delete 要 {id}；create 要 {notebookId, title?, body?}；update 要 {id, title?, body?} | {id, notebookId, title, body, createdAt, updatedAt} |
+| notes.search | {query, notebookId?, limit?} | { mode: 'fts' \| 'like' \| 'none', results: [{id, notebookId, title, excerpt, updatedAt}] } |
+| memories.list / get / create / update / delete | create 要 {content, source?}；update 要 {id, content} | {id, content, source, createdAt, updatedAt} |
+| memories.clear | — | { deleted: n }，只清学习记忆 |
+
+时间是毫秒级的时间戳。限制：标题最多 200 字，正文最多 100 万字，单条记忆最多 4000 字，一页最多 200 条。
+
+## 10. Deep Research 的状态机和断点恢复（只写设计，代码在 M5 实现）
+
+- 状态：`planned → searching(i/n) → synthesizing → writing → done`，另有 `failed`、`cancelled`。每一步都有输入、输出和尝试次数。
+- 落盘：每个任务一行记在学习库的 `research_jobs` 表里，每一步的结果记在 `research_steps` 表里（M5 迁移时新增）。一步完成后，在同一个事务里写入结果并推进状态，所以要么整步都写进去，要么都不写。
+- 恢复：引擎启动时扫描没有到终态的任务，标记为 `paused`。用户点「继续」后，从最后一个完成的步骤往下做。步骤的唯一键是 `job_id + 步骤序号`，所以重复恢复也不会写出两份结果。
+- 取消：先置 `cancelRequested`，当前这一步做完后检查这个标记，然后转到 `cancelled`。已经完成的步骤保留。
+- 进度：`research.status` 返回当前状态、已完成数 / 总数，以及最近一步的摘要。App 定时拉取。
+- iOS 后台：App 退到后台时，用 `beginBackgroundTask` 争取一点时间把当前这一步做完并落盘，而不是去跑完整个任务。只有在用户允许时，才申请 BGProcessingTask，标识用 `$(PRODUCT_BUNDLE_IDENTIFIER).task.learning-research`（落在 project.yml 已有的 `.task.*` 通配范围里），在后台接着跑剩下的步骤。默认情况下只在前台运行。
