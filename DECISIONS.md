@@ -113,6 +113,30 @@
 - 用 App 现成的 `AppModel.createSession(in:)`（会复用一个空白会话，和「新会话」按钮一样），再调 `sessions.setMode`。没有改会话列表或聊天界面。
 - 已知限制：学习会话建好后如果一条消息都没发，之后点普通的「新会话」可能会复用它，这时它仍在学习模式里。设置 → 学习 → 学习会话里可以结束学习模式。记在 OPEN_QUESTIONS.md 第 7 条。
 
+## D16 知识库分块参数（2026-11-25，M3）
+
+- 初值：目标 500、上限 800、重叠 ≤80、最小尾块 40，都按 Unicode 码点算（kb.mjs `CHUNKING`）。
+- 理由：中文 500 字大约一两段，检索时既能命中细节又带上下文；800 的上限让一次检索带 8 条结果时合计约 6000 字，进提示词不至于太大。重叠只放整句，避免半句话被两边各切一半。
+- 中文按句号、问号、叹号、分号、省略号切；英文只在标点后跟空白时切，所以 `3.14`、`e.g.x` 不会被切开。
+
+## D17 向量谁来算：Apple 的在引擎里，OpenAI 兼容的在 App 里（M3）
+
+- Apple 句向量：在 native/ios-native 的 `nlp` 里加一个 `vectors` 操作（最小改动：一个函数加能力表里的一个名字），引擎用它给文档和查询算向量。这样 Deep Research（M5）在引擎里也能直接做语义检索，不用绕回 App。模型工具 `text_analysis` 不提供这个操作（模型用不上原始向量）。
+- OpenAI 兼容服务：只在 App 里调用，Key 只存 Keychain、不交给引擎；App 取 `kb.vectors.pending`、算好后 `kb.vectors.put`，搜索时把查询向量放进 `queryVectors`。代价：M5 在引擎里用不了这个服务，只能用 Apple 向量和关键词。
+- 向量按 model 分开存、分开比：model 名里带语言和修订号（Apple）或 host 和模型名（OpenAI 兼容），不同 model 的向量从不互相比较。
+
+## D18 默认检索方案：关键词 + Apple 句向量，用 RRF 合并（M3）
+
+- 默认开启 Apple 句向量：不联网、不要 Key、不花钱；设备没有该语言的句向量时这份资料只按关键词检索（`embedding_status = unavailable`，不反复重试）。
+- 合并用 RRF（k=60）只看名次：native/ios-native 里的实测注释说明 Apple 句向量的余弦大小没有可比性（正确答案 0.10、无关 -0.32），名次才可靠。
+- 关键词检索始终在：向量缺失、关闭或出错时，结果退化成纯关键词，不会没有结果。
+- 这是在 NLEmbedding 中文效果还没测到之前的选择；评估结果见 PLAN.md §12.6，结果不好就把默认改成只用关键词。
+
+## D19 NLEmbedding 中文评估怎么做（M3）
+
+- 不在 Node 测（桌面没有 NaturalLanguage）。用 XCTest 在 CI 的 iPhone 模拟器上测中文、英文各一组：是否有句向量、维度、修订号、相关句和无关句的距离顺序，打印成 `NLEMBED …` 行。可用性和顺序只记录不判失败：这是评估，不是功能测试。
+- 只算「CI：模拟器」结论。真机可能需要下载语言资源，标【待真机】。
+
 ## 改过的上游文件
 
 | 文件 | 改了什么 | 为什么 |
@@ -122,6 +146,9 @@
 | `docs/PLAN.md` | 从仓库根目录挪进来（git mv），然后补充内容 | fork 自己的文档 |
 | `app/DshIOS/Views/SettingsView.swift` | 新增一个 5 行的分区 | 见 D7 |
 | `app/Shared/Localizable.xcstrings` | 在末尾追加 34 条（M1），M2 再追加 34 条 | 见 D10；M2 同样五种语言逐条翻译，覆盖率 3665/3665 |
+| `native/ios-native/caps_nlp.m` | M3：新增 `vectors` 函数和分发里的一行，已有操作没动 | 见 D17 |
+| `native/ios-native/ios_native.m` | M3：能力表 `nlp` 一行里加了 `"vectors"` | 见 D17 |
+| `native/root/test/learning-sqlite.mjs` | M3：加一项知识库检查（这是 fork 自己加的文件） | 模拟器上验证 v4 表、trigram、float32 向量 |
 
 没有改：`node_modules`、引擎版本、`ios.patch.yml` 里已有的条目、`ios-build.yml`、`LICENSE`、`project.yml`、Bundle ID、App Group、签名、`test-root-sim.sh`、`conformance.mjs`。
 

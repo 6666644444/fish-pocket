@@ -10,7 +10,8 @@
 // Methods (METHODS below): notebooks.list|get|create|update|delete,
 // notes.list|get|create|update|delete|search, memories.list|get|create|update|delete|clear,
 // status, and from M2 settings.get|update, modes.list, sessions.getMode|setMode|list,
-// skills.list|get|create|update|delete.
+// skills.list|get|create|update|delete, and from M3 kb.status, kb.documents.list|get|import|delete,
+// kb.chunks.get, kb.vectors.pending|put|clear, kb.search and kb.parse.cloud (not implemented).
 //
 // A session the app put in a learning mode gets, at the first step of each turn, one note
 // with the mode's instructions and a few learning memories (modes.mjs). Other sessions are
@@ -23,6 +24,7 @@
 import { LearningError, LearningStore, libraryFile, SCHEMA_VERSION } from './store.mjs';
 import { MODES, MODE_IDS, modeInstructions, noteMessage, noteSections, pickMemories, userTextOf } from './modes.mjs';
 import { SkillFiles, skillsDir } from './skills.mjs';
+import { appleEmbedder, appleQueryVectors, embedPending } from './embed.mjs';
 
 export const ROUTE = '/api/learning';
 
@@ -47,7 +49,11 @@ export const METHODS = {
   'memories.delete': ({ store }, p) => store.deleteMemory(p),
   'memories.clear': ({ store }) => store.clearMemories(),
   'settings.get': ({ store }) => store.getSettings(),
-  'settings.update': ({ store }, p) => store.updateSettings(p),
+  'settings.update': ({ store, index }, p) => {
+    const settings = store.updateSettings(p);
+    if (p.appleEmbedding === true) index();
+    return settings;
+  },
   'modes.list': () => MODE_IDS.map((id) => ({ id, skill: MODES[id].skill })),
   'sessions.getMode': ({ store }, p) => store.getSessionMode(p),
   'sessions.setMode': ({ store }, p) => store.setSessionMode(p),
@@ -57,35 +63,79 @@ export const METHODS = {
   'skills.create': ({ skills }, p) => skills().create(p),
   'skills.update': ({ skills }, p) => skills().update(p),
   'skills.delete': ({ skills }, p) => skills().delete(p),
+  // M3: the light knowledge base. Vectors come from the app (NLEmbedding or an OpenAI-compatible
+  // provider whose key stays in the Keychain); the engine stores and compares them.
+  'kb.status': ({ store, embedder }) => ({
+    search: store.kbFts,
+    vectors: store.vectorStatus(),
+    appleEmbedding: { available: Boolean(embedder), enabled: store.getSettings().appleEmbedding },
+  }),
+  'kb.documents.list': ({ store }) => store.listDocuments(),
+  'kb.documents.get': ({ store }, p) => store.getDocument(p),
+  'kb.documents.import': ({ store, index }, p) => {
+    const document = store.importDocument(p);
+    index();
+    return document;
+  },
+  'kb.documents.delete': ({ store }, p) => store.deleteDocument(p),
+  'kb.chunks.get': ({ store }, p) => store.getChunk(p),
+  'kb.vectors.pending': ({ store }, p) => store.pendingVectors(p),
+  'kb.vectors.put': ({ store }, p) => store.putVectors(p),
+  'kb.vectors.clear': ({ store }, p) => store.clearVectors(p),
+  // Embeds any chunk still lacking an Apple vector; answers at once, the work runs on.
+  'kb.vectors.index': ({ embedder, index }) => ({ started: Boolean(embedder && index()) }),
+  // With Apple's embedding on, the query is embedded for each Apple model that has vectors
+  // and searched beside the keyword ranking; vectors the app sends (`queryVectors`, from an
+  // OpenAI-compatible provider) join in. Without it, keyword search only.
+  'kb.search': async ({ store, embedder }, p) => {
+    let extra = [];
+    if (embedder && store.getSettings().appleEmbedding && typeof p.query === 'string' && p.query.trim()) {
+      try { extra = await appleQueryVectors(store, embedder, p.query); } catch { extra = []; }
+    }
+    const queryVectors = [...(Array.isArray(p.queryVectors) ? p.queryVectors : []), ...extra];
+    return store.searchKnowledge({ ...p, queryVectors: queryVectors.length ? queryVectors : undefined });
+  },
+  // Scanned PDFs need OCR. The interface is defined (the app sends the PDF's bytes as base64
+  // with a file name); no cloud parser is built, so it always answers `unsupported`.
+  'kb.parse.cloud': () => {
+    throw new LearningError('unsupported', 'reading scanned PDFs needs a cloud parser, which is not implemented');
+  },
 };
 
-const STATUS = { invalid: 400, 'not-found': 404, conflict: 409, unavailable: 503 };
+const STATUS = { invalid: 400, 'not-found': 404, conflict: 409, unsupported: 422, unavailable: 503 };
 
 const json = (value, status = 200) =>
   new Response(JSON.stringify(value), { status, headers: { 'content-type': 'application/json' } });
 
 /**
- * Answer one call: what the route sends back for `method` with `params`.
+ * Answer one call: what the route sends back for `method` with `params`. A Response, or a
+ * promise of one for the methods that wait on something (kb.search embeds the query).
  * @param {() => LearningStore} open - the library, opened on first use.
  * @param {string} method
  * @param {object} params
  * @param {() => SkillFiles} [skills] - the skill folder.
+ * @param {{ embedder?: object|null, index?: () => unknown }} [kb] - Apple's embedding and the indexer.
  */
-export function call(open, method, params, skills = () => new SkillFiles(skillsDir())) {
+export function call(open, method, params, skills = () => new SkillFiles(skillsDir()), kb = {}) {
   const run = METHODS[method];
   if (!run) return json({ error: { kind: 'invalid', message: `unknown method ${method}` } }, 404);
   if (params === null || typeof params !== 'object' || Array.isArray(params)) {
     return json({ error: { kind: 'invalid', message: 'the body must be a JSON object' } }, 400);
   }
-  try {
-    const where = { skills };
-    Object.defineProperty(where, 'store', { get: open });
-    return json({ ok: true, result: run(where, params) ?? null });
-  } catch (error) {
+  const fail = (error) => {
     if (error instanceof LearningError) {
       return json({ error: { kind: error.kind, message: error.message } }, STATUS[error.kind] ?? 400);
     }
     return json({ error: { kind: 'internal', message: String(error?.message ?? error) } }, 500);
+  };
+  const done = (value) => json({ ok: true, result: value ?? null });
+  try {
+    const where = { skills, embedder: kb.embedder ?? null, index: kb.index ?? (() => null) };
+    Object.defineProperty(where, 'store', { get: open });
+    const value = run(where, params);
+    return value && typeof value.then === 'function' ? value.then(done, fail) : done(value);
+  } catch (error) {
+    return fail(error);
   }
 }
 
@@ -126,6 +176,28 @@ export default class Learning {
       return store;
     };
     const skills = () => new SkillFiles(config.skillsDir ?? skillsDir());
+    // Apple's embedding (null off iOS, or when a test passes `embedder: null`). Indexing runs
+    // in the background, one run at a time, and stops when the plugin is disposed.
+    const embedder = config.embedder !== undefined ? config.embedder : appleEmbedder();
+    const stop = new AbortController();
+    let indexing = null;
+    const index = () => {
+      if (!embedder || stop.signal.aborted) return null;
+      if (indexing) return indexing;
+      let library;
+      try {
+        library = open();
+        if (!library.getSettings().appleEmbedding) return null;
+      } catch {
+        return null;
+      }
+      indexing = embedPending(library, embedder, { signal: stop.signal })
+        .catch((error) => { if (!stop.signal.aborted) ctx.logger?.warn?.(`learning: indexing stopped: ${error?.message ?? error}`); })
+        .finally(() => { indexing = null; });
+      return indexing;
+    };
+    this.indexing = () => indexing;
+    const kb = { embedder, index };
     for (const method of Object.keys(METHODS)) {
       ctx.effect(() => ctx.connection.fetch.register({
         path: `${ROUTE}/${method}`,
@@ -139,7 +211,7 @@ export default class Learning {
           } catch {
             return json({ error: { kind: 'invalid', message: 'the body is not JSON' } }, 400);
           }
-          return call(open, method, params, skills);
+          return call(open, method, params, skills, kb);
         },
       }), `learning: ${method}`);
     }
@@ -162,6 +234,7 @@ export default class Learning {
     });
 
     ctx.effect(() => () => {
+      stop.abort();
       store?.close();
       store = undefined;
     }, 'learning: library');

@@ -94,6 +94,8 @@ enum LearningMode: String, Codable, CaseIterable, Identifiable, Sendable {
 struct LearningSettings: Codable, Equatable, Sendable {
     /// Whether learning sessions get a few relevant learning memories each turn.
     var injectMemories: Bool
+    /// Whether the knowledge base uses Apple's sentence embedding (milestone 3). nil from an older engine.
+    var appleEmbedding: Bool? = nil
 }
 
 /// A session the app started in a learning mode. Only the DSH session id is kept.

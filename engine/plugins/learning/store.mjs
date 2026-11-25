@@ -14,11 +14,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
+import { blobToVector, chunkText, citationOf, cosine, fuseRanks, vectorToBlob } from './kb.mjs';
 
 /** `PRAGMA application_id`: 'LRN1'. DSH's session search uses 1146308689; this must differ. */
 export const APPLICATION_ID = 0x4c524e31;
 /** Limits on what one request may store. */
-export const LIMITS = { title: 200, body: 1_000_000, memory: 4_000, query: 200, page: 200 };
+export const LIMITS = {
+  title: 200, body: 1_000_000, memory: 4_000, query: 200, page: 200,
+  // M3: one imported document, a model name, a vector, one vectors.put call.
+  document: 5_000_000, model: 200, dims: 4_096, vectorBatch: 256,
+};
 
 /** The database file under `$DSH_HOME`. */
 export function libraryFile(home = process.env.DSH_HOME) {
@@ -27,7 +32,7 @@ export function libraryFile(home = process.env.DSH_HOME) {
 }
 
 export class LearningError extends Error {
-  /** @param {'invalid'|'not-found'|'unavailable'|'conflict'} kind */
+  /** @param {'invalid'|'not-found'|'unavailable'|'conflict'|'unsupported'} kind */
   constructor(kind, message) {
     super(message);
     this.kind = kind;
@@ -111,6 +116,67 @@ export const MIGRATIONS = [
         updated_at INTEGER NOT NULL
       ) STRICT;
     `);
+  },
+  // 4 (M3): the light knowledge base. A document is kept as its chunks (the text cut with
+  // overlap, kb.mjs chunkText), never as a file; vectors, one per chunk and model, are made
+  // by the app and stored as float32 BLOBs. Full-text over chunks is trigram like notes',
+  // optional the same way (meta kb_fts).
+  (db, options) => {
+    db.exec(`
+      CREATE TABLE kb_documents (
+        id INTEGER PRIMARY KEY,
+        title TEXT NOT NULL,
+        kind TEXT NOT NULL CHECK (kind IN ('txt', 'md', 'pdf')),
+        source_name TEXT NOT NULL DEFAULT '',
+        chars INTEGER NOT NULL,
+        chunk_count INTEGER NOT NULL,
+        -- BCP-47 code the engine detected (for Apple's per-language embedding), '' until then.
+        language TEXT NOT NULL DEFAULT '',
+        -- Apple embedding: '' not tried yet, 'ok', 'unavailable' (no sentence embedding for
+        -- for the language on this device), 'failed'.
+        embedding_status TEXT NOT NULL DEFAULT '',
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL
+      ) STRICT;
+      CREATE TABLE kb_chunks (
+        id INTEGER PRIMARY KEY,
+        document_id INTEGER NOT NULL REFERENCES kb_documents(id) ON DELETE CASCADE,
+        ordinal INTEGER NOT NULL,
+        start INTEGER NOT NULL,
+        end INTEGER NOT NULL,
+        heading TEXT NOT NULL DEFAULT '',
+        text TEXT NOT NULL,
+        UNIQUE (document_id, ordinal)
+      ) STRICT;
+      CREATE TABLE kb_vectors (
+        chunk_id INTEGER NOT NULL REFERENCES kb_chunks(id) ON DELETE CASCADE,
+        model TEXT NOT NULL,
+        dims INTEGER NOT NULL,
+        vector BLOB NOT NULL,
+        PRIMARY KEY (chunk_id, model)
+      ) STRICT;
+      CREATE INDEX kb_vectors_by_model ON kb_vectors(model);
+    `);
+    let fts = 'none';
+    if (options.fts !== false) {
+      try {
+        db.exec(`
+          CREATE VIRTUAL TABLE kb_chunks_fts USING fts5(
+            heading, text, content='kb_chunks', content_rowid='id', tokenize='trigram'
+          );
+          CREATE TRIGGER kb_chunks_ai AFTER INSERT ON kb_chunks BEGIN
+            INSERT INTO kb_chunks_fts(rowid, heading, text) VALUES (new.id, new.heading, new.text);
+          END;
+          CREATE TRIGGER kb_chunks_ad AFTER DELETE ON kb_chunks BEGIN
+            INSERT INTO kb_chunks_fts(kb_chunks_fts, rowid, heading, text) VALUES ('delete', old.id, old.heading, old.text);
+          END;
+        `);
+        fts = 'trigram';
+      } catch (error) {
+        if (!/no such tokenizer|no such module/i.test(String(error?.message))) throw error;
+      }
+    }
+    db.prepare('INSERT OR REPLACE INTO meta(key, value) VALUES (?, ?)').run('kb_fts', fts);
   },
 ];
 export const SCHEMA_VERSION = MIGRATIONS.length;
@@ -411,14 +477,20 @@ export class LearningStore {
   // reset never moves them away and deleting learning data takes them too.
 
   getSettings() {
-    const inject = this.db.prepare("SELECT value FROM meta WHERE key = 'inject_memories'").get()?.value;
-    return { injectMemories: inject !== 'off' };
+    const value = (key) => this.db.prepare('SELECT value FROM meta WHERE key = ?').get(key)?.value;
+    return { injectMemories: value('inject_memories') !== 'off', appleEmbedding: value('kb_apple_embedding') !== 'off' };
   }
 
-  updateSettings({ injectMemories }) {
-    if (typeof injectMemories !== 'boolean') throw new LearningError('invalid', 'injectMemories must be true or false');
-    this.db.prepare('INSERT OR REPLACE INTO meta(key, value) VALUES (?, ?)')
-      .run('inject_memories', injectMemories ? 'on' : 'off');
+  /** Change the settings given; the rest keep their value. */
+  updateSettings({ injectMemories, appleEmbedding }) {
+    const changes = [['inject_memories', injectMemories, 'injectMemories'], ['kb_apple_embedding', appleEmbedding, 'appleEmbedding']]
+      .filter(([, value]) => value !== undefined);
+    if (!changes.length) throw new LearningError('invalid', 'nothing to change: pass injectMemories or appleEmbedding');
+    for (const [, value, name] of changes) {
+      if (typeof value !== 'boolean') throw new LearningError('invalid', `${name} must be true or false`);
+    }
+    const put = this.db.prepare('INSERT OR REPLACE INTO meta(key, value) VALUES (?, ?)');
+    for (const [key, value] of changes) put.run(key, value ? 'on' : 'off');
     return this.getSettings();
   }
 
@@ -460,6 +532,268 @@ export class LearningStore {
     return this.db.prepare('SELECT * FROM session_modes ORDER BY updated_at DESC, session_id LIMIT ?').all(page)
       .map((row) => ({ sessionId: row.session_id, mode: row.mode, announced: row.announced ?? null, updatedAt: row.updated_at }));
   }
+
+  // Knowledge base (M3)
+
+  /** 'trigram' when chunks have a full-text index, 'none' when keyword search scans with LIKE. */
+  get kbFts() { return this.db.prepare("SELECT value FROM meta WHERE key = 'kb_fts'").get()?.value ?? 'none'; }
+
+  listDocuments() {
+    return this.db.prepare('SELECT * FROM kb_documents ORDER BY updated_at DESC, id DESC').all().map(documentRow);
+  }
+
+  getDocument({ id: documentId }) {
+    const row = this.db.prepare('SELECT * FROM kb_documents WHERE id = ?').get(id(documentId));
+    if (!row) throw new LearningError('not-found', `no document ${documentId}`);
+    return documentRow(row);
+  }
+
+  /**
+   * Store a document as its chunks. `text` is the document's text: the file itself for
+   * txt and md, what the app extracted with PDFKit for a pdf. A pdf with no text (a scan)
+   * is refused as `unsupported`: reading scans needs a cloud parser, which is not built.
+   */
+  importDocument({ title, kind, text: body, sourceName = '' }) {
+    const name = text(title, 'title', LIMITS.title).trim();
+    if (!name) throw new LearningError('invalid', 'title is empty');
+    if (!DOCUMENT_KINDS.includes(kind)) throw new LearningError('invalid', `kind must be one of ${DOCUMENT_KINDS.join(', ')}`);
+    text(sourceName, 'sourceName', LIMITS.title);
+    const content = text(body, 'text', LIMITS.document).replace(/\r\n?/g, '\n');
+    if (!content.trim()) {
+      if (kind === 'pdf') throw new LearningError('unsupported', 'this PDF has no text layer (a scan?); reading scanned PDFs is not supported yet');
+      throw new LearningError('invalid', 'the document has no text');
+    }
+    const chunks = chunkText(content, { markdown: kind === 'md' });
+    return this.transaction(() => {
+      const now = this.now();
+      const { lastInsertRowid } = this.db.prepare(`
+        INSERT INTO kb_documents(title, kind, source_name, chars, chunk_count, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `).run(name, kind, sourceName, codepoints(content), chunks.length, now, now);
+      const documentId = Number(lastInsertRowid);
+      const insert = this.db.prepare(
+        'INSERT INTO kb_chunks(document_id, ordinal, start, end, heading, text) VALUES (?, ?, ?, ?, ?, ?)',
+      );
+      for (const chunk of chunks) insert.run(documentId, chunk.ordinal, chunk.start, chunk.end, chunk.heading, chunk.text);
+      return this.getDocument({ id: documentId });
+    });
+  }
+
+  /** Deletes the document, its chunks and their vectors. */
+  deleteDocument({ id: documentId }) {
+    const { changes } = this.db.prepare('DELETE FROM kb_documents WHERE id = ?').run(id(documentId));
+    if (!changes) throw new LearningError('not-found', `no document ${documentId}`);
+    return { deleted: true };
+  }
+
+  getChunk({ id: chunkId }) {
+    const row = this.db.prepare(`
+      SELECT c.*, d.title AS document_title, d.chunk_count FROM kb_chunks c JOIN kb_documents d ON d.id = c.document_id
+      WHERE c.id = ?
+    `).get(id(chunkId));
+    if (!row) throw new LearningError('not-found', `no chunk ${chunkId}`);
+    return chunkHit(row);
+  }
+
+  /**
+   * Chunks that have no vector for `model` yet (or, with `modelPrefix`, for any model
+   * starting with it), oldest first, for whoever makes vectors. `documentId` narrows it.
+   */
+  pendingVectors({ model, modelPrefix, documentId, limit = 64 }) {
+    const page = Math.min(Math.max(1, Number(limit) || 64), LIMITS.vectorBatch);
+    let match;
+    let key;
+    if (modelPrefix !== undefined) {
+      key = `${modelName(modelPrefix).replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+      match = "v.model LIKE ? ESCAPE '\\'";
+    } else {
+      key = modelName(model);
+      match = 'v.model = ?';
+    }
+    const inDoc = documentId === undefined ? '' : ' AND c.document_id = ?';
+    const extra = documentId === undefined ? [] : [id(documentId, 'documentId')];
+    return this.db.prepare(`
+      SELECT c.id, c.text FROM kb_chunks c
+      WHERE NOT EXISTS (SELECT 1 FROM kb_vectors v WHERE v.chunk_id = c.id AND ${match})${inDoc}
+      ORDER BY c.id LIMIT ?
+    `).all(key, ...extra, page).map((row) => ({ chunkId: row.id, text: row.text }));
+  }
+
+  /** Record what the engine found out about a document for Apple's embedding. */
+  setDocumentEmbedding({ id: documentId, language, status }) {
+    if (language !== undefined && (typeof language !== 'string' || language.length > 35)) {
+      throw new LearningError('invalid', 'language must be a BCP-47 code');
+    }
+    if (status !== undefined && !['', 'ok', 'unavailable', 'failed'].includes(status)) {
+      throw new LearningError('invalid', 'status must be "", ok, unavailable or failed');
+    }
+    const current = this.getDocument({ id: documentId });
+    this.db.prepare('UPDATE kb_documents SET language = ?, embedding_status = ? WHERE id = ?')
+      .run(language ?? current.language, status ?? current.embeddingStatus, documentId);
+    return this.getDocument({ id: documentId });
+  }
+
+  /** Documents whose chunks still lack an Apple vector and that are worth trying. */
+  documentsToEmbed(prefix) {
+    const key = `${modelName(prefix).replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+    return this.db.prepare(`
+      SELECT d.* FROM kb_documents d
+      WHERE d.embedding_status NOT IN ('unavailable', 'failed') AND EXISTS (
+        SELECT 1 FROM kb_chunks c WHERE c.document_id = d.id AND NOT EXISTS (
+          SELECT 1 FROM kb_vectors v WHERE v.chunk_id = c.id AND v.model LIKE ? ESCAPE '\\'))
+      ORDER BY d.id
+    `).all(key).map(documentRow);
+  }
+
+  /** The models that have vectors, with their length. */
+  vectorModels() {
+    return this.db.prepare('SELECT model, dims FROM kb_vectors GROUP BY model, dims ORDER BY model').all()
+      .map((row) => ({ model: row.model, dims: row.dims }));
+  }
+
+  /**
+   * Store vectors made by `model`. Every vector of one model has the same length; the
+   * first stored fixes it. A chunk deleted meanwhile is skipped, not an error.
+   */
+  putVectors({ model, items }) {
+    const key = modelName(model);
+    if (!Array.isArray(items) || items.length > LIMITS.vectorBatch) {
+      throw new LearningError('invalid', `items must be an array of at most ${LIMITS.vectorBatch}`);
+    }
+    return this.transaction(() => {
+      let dims = this.db.prepare('SELECT dims FROM kb_vectors WHERE model = ? LIMIT 1').get(key)?.dims;
+      const exists = this.db.prepare('SELECT 1 FROM kb_chunks WHERE id = ?');
+      const put = this.db.prepare('INSERT OR REPLACE INTO kb_vectors(chunk_id, model, dims, vector) VALUES (?, ?, ?, ?)');
+      let stored = 0;
+      for (const item of items) {
+        const chunkId = id(item?.chunkId, 'chunkId');
+        const vector = item?.vector;
+        if (!Array.isArray(vector) || !vector.length || vector.length > LIMITS.dims) {
+          throw new LearningError('invalid', `vector must be an array of 1 to ${LIMITS.dims} numbers`);
+        }
+        dims ??= vector.length;
+        if (vector.length !== dims) throw new LearningError('invalid', `${key} vectors have ${dims} dimensions, not ${vector.length}`);
+        let blob;
+        try { blob = vectorToBlob(vector); } catch (error) { throw new LearningError('invalid', error.message); }
+        if (!exists.get(chunkId)) continue;
+        put.run(chunkId, key, dims, blob);
+        stored += 1;
+      }
+      return { stored, dims: dims ?? null };
+    });
+  }
+
+  /** Vector coverage per model: how many chunks have one, out of all chunks. */
+  vectorStatus() {
+    const chunks = this.db.prepare('SELECT count(*) AS n FROM kb_chunks').get().n;
+    const models = this.db.prepare('SELECT model, dims, count(*) AS n FROM kb_vectors GROUP BY model, dims ORDER BY model').all()
+      .map((row) => ({ model: row.model, dims: row.dims, chunks: row.n }));
+    return { chunks, models };
+  }
+
+  /** Forget every vector of `model` (a model the user no longer uses, or one that changed). */
+  clearVectors({ model }) {
+    const { changes } = this.db.prepare('DELETE FROM kb_vectors WHERE model = ?').run(modelName(model));
+    return { deleted: Number(changes) };
+  }
+
+  /**
+   * Chunks for `query`, best first, each with its citation. Keyword search always runs
+   * (trigram FTS when every word has three characters or more, LIKE otherwise, the same
+   * rule as notes). When `vector` and `model` are given and chunks have vectors for that
+   * model, a cosine ranking runs too and the two are fused by reciprocal rank.
+   */
+  searchKnowledge({ query, vector, model, queryVectors, documentIds, limit = 8 }) {
+    const terms = queryTerms(text(query, 'query', LIMITS.query));
+    const page = Math.min(Math.max(1, Number(limit) || 8), 50);
+    let inDocs = '';
+    let docArgs = [];
+    if (documentIds !== undefined) {
+      if (!Array.isArray(documentIds) || documentIds.length > 200) throw new LearningError('invalid', 'documentIds must be an array of at most 200 ids');
+      docArgs = documentIds.map((value) => id(value, 'documentIds'));
+      if (!docArgs.length) return { mode: 'none', results: [] };
+      inDocs = ` AND c.document_id IN (${docArgs.map(() => '?').join(', ')})`;
+    }
+    const pool = 50;
+    let keyword = [];
+    let keywordMode = 'none';
+    if (terms.length) {
+      if (this.kbFts === 'trigram' && terms.every((term) => codepoints(term) >= 3)) {
+        keywordMode = 'fts';
+        const match = terms.map((term) => `"${term.replaceAll('"', '""')}"`).join(' AND ');
+        keyword = this.db.prepare(`
+          SELECT c.id FROM kb_chunks_fts f JOIN kb_chunks c ON c.id = f.rowid
+          WHERE kb_chunks_fts MATCH ?${inDocs} ORDER BY bm25(kb_chunks_fts), c.id LIMIT ?
+        `).all(match, ...docArgs, pool).map((row) => row.id);
+      } else {
+        keywordMode = 'like';
+        const escape = (term) => `%${term.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+        const where = terms.map(() => "(c.text LIKE ? ESCAPE '\\' OR c.heading LIKE ? ESCAPE '\\')").join(' AND ');
+        keyword = this.db.prepare(`SELECT c.id FROM kb_chunks c WHERE ${where}${inDocs} ORDER BY c.document_id, c.ordinal LIMIT ?`)
+          .all(...terms.flatMap((term) => [escape(term), escape(term)]), ...docArgs, pool).map((row) => row.id);
+      }
+    }
+    let semantic = [];
+    const queries = [];
+    if (vector !== undefined) queries.push({ model, vector });
+    if (queryVectors !== undefined) {
+      if (!Array.isArray(queryVectors) || queryVectors.length > 8) throw new LearningError('invalid', 'queryVectors must be an array of at most 8');
+      queries.push(...queryVectors);
+    }
+    const rankings = [];
+    for (const entry of queries) {
+      const key = modelName(entry?.model);
+      if (!Array.isArray(entry.vector) || !entry.vector.length) throw new LearningError('invalid', 'vector must be a non-empty array of numbers');
+      const query32 = Float32Array.from(entry.vector, Number);
+      const rows = this.db.prepare(`
+        SELECT v.chunk_id, v.dims, v.vector FROM kb_vectors v JOIN kb_chunks c ON c.id = v.chunk_id WHERE v.model = ?${inDocs}
+      `).all(key, ...docArgs);
+      if (rows.length && rows[0].dims !== query32.length) {
+        throw new LearningError('invalid', `${key} vectors have ${rows[0].dims} dimensions, the query has ${query32.length}`);
+      }
+      rankings.push(rows
+        .map((row) => ({ id: row.chunk_id, score: cosine(query32, blobToVector(row.vector)) }))
+        .filter((ranked) => ranked.score > 0)
+        .sort((a, b) => b.score - a.score || a.id - b.id)
+        .slice(0, pool)
+        .map((ranked) => ranked.id));
+    }
+    semantic = rankings.flat();
+    const mode = queries.length ? 'hybrid' : keywordMode;
+    if (!keyword.length && !semantic.length) return { mode, results: [] };
+    const fused = !queries.length ? keyword.map((chunkId, i) => ({ id: chunkId, score: 1 / (60 + i + 1) }))
+      : fuseRanks([keyword, ...rankings]);
+    const get = this.db.prepare(`
+      SELECT c.*, d.title AS document_title, d.chunk_count FROM kb_chunks c JOIN kb_documents d ON d.id = c.document_id
+      WHERE c.id = ?
+    `);
+    const results = fused.slice(0, page).map(({ id: chunkId, score }) => {
+      const hit = chunkHit(get.get(chunkId));
+      return { ...citationOf(hit), score: Number(score.toFixed(6)) };
+    });
+    return { mode, results };
+  }
+}
+
+/** The document kinds the knowledge base takes; the table's CHECK holds the same list. */
+export const DOCUMENT_KINDS = ['txt', 'md', 'pdf'];
+
+const documentRow = (row) => row && ({
+  id: row.id, title: row.title, kind: row.kind, sourceName: row.source_name, chars: row.chars,
+  chunkCount: row.chunk_count, language: row.language, embeddingStatus: row.embedding_status,
+  createdAt: row.created_at, updatedAt: row.updated_at,
+});
+
+const chunkHit = (row) => row && ({
+  chunkId: row.id, documentId: row.document_id, documentTitle: row.document_title, chunkCount: row.chunk_count,
+  ordinal: row.ordinal, start: row.start, end: row.end, heading: row.heading, text: row.text,
+});
+
+function modelName(value) {
+  if (typeof value !== 'string' || !value.trim() || value.length > LIMITS.model) {
+    throw new LearningError('invalid', `model must be a non-empty string of at most ${LIMITS.model} characters`);
+  }
+  return value.trim();
 }
 
 /** The modes a session can be in; the table's CHECK holds the same list. */

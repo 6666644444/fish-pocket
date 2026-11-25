@@ -198,10 +198,71 @@ static void similar(NSDictionary *args, DshNativeReply reply) {
           @"truncated": @((BOOL)(scored.count > best.count))}, nil);
 }
 
+/// `vectors` (learning plugin, milestone 3): the sentence-embedding vector of each
+/// string, for a knowledge base that stores them and compares them itself. The
+/// learning plugin calls it directly; the agent's `text_analysis` tool does not
+/// offer it (a model has no use for raw vectors). Same embedding as `similar`, so
+/// the same caveat holds: compare vectors to rank, do not read the magnitudes.
+/// `model` names the embedding and its revision: vectors of different models or
+/// revisions must never be compared with each other.
+static const NSUInteger kMaxVectorTexts = 64;
+
+static void vectors(NSDictionary *args, DshNativeReply reply) {
+  NSArray *texts = args[@"texts"];
+  if (![texts isKindOfClass:NSArray.class] || texts.count == 0) {
+    reply(nil, @"vectors needs a non-empty 'texts' array of strings");
+    return;
+  }
+  if (texts.count > kMaxVectorTexts) {
+    reply(nil, [NSString stringWithFormat:@"'texts' has %lu entries; the limit is %lu",
+                (unsigned long)texts.count, (unsigned long)kMaxVectorTexts]);
+    return;
+  }
+  NLLanguage language = nil;
+  NSString *requested = args[@"language"];
+  if ([requested isKindOfClass:NSString.class] && requested.length > 0) {
+    language = requested;
+  } else {
+    NSMutableString *sample = [NSMutableString string];
+    for (id entry in texts) {
+      if (![entry isKindOfClass:NSString.class]) continue;
+      [sample appendString:entry];
+      [sample appendString:@"\n"];
+      if (sample.length > 4000) break;
+    }
+    language = dominant_language(sample);
+  }
+  if (language == nil) {
+    reply(nil, @"could not tell what language the texts are in; pass 'language' as a BCP-47 code");
+    return;
+  }
+  NLEmbedding *embedding = [NLEmbedding sentenceEmbeddingForLanguage:language];
+  if (embedding == nil) {
+    reply(@{@"language": language, @"available": @NO}, nil);
+    return;
+  }
+  NSMutableArray *out = [NSMutableArray arrayWithCapacity:texts.count];
+  for (id entry in texts) {
+    NSString *text = [entry isKindOfClass:NSString.class] ? entry : @"";
+    if (text.length > kMaxCandidateLength) text = [text substringToIndex:kMaxCandidateLength];
+    // nil when the string has nothing the embedding can place (empty, only symbols).
+    NSArray<NSNumber *> *vector = text.length ? [embedding vectorForString:text] : nil;
+    [out addObject:vector ?: NSNull.null];
+  }
+  reply(@{@"available": @YES,
+          @"language": language,
+          @"dimension": @(embedding.dimension),
+          @"revision": @(embedding.revision),
+          @"model": [NSString stringWithFormat:@"apple-nl-sentence/%@/r%lu", language,
+                     (unsigned long)embedding.revision],
+          @"vectors": out}, nil);
+}
+
 void dsh_native_nlp(NSString *op, NSDictionary *args, DshNativeReply reply) {
   if ([op isEqualToString:@"language"]) { identify_language(args, reply); return; }
   if ([op isEqualToString:@"entities"]) { named_entities(args, reply); return; }
   if ([op isEqualToString:@"similar"]) { similar(args, reply); return; }
+  if ([op isEqualToString:@"vectors"]) { vectors(args, reply); return; }
   // Unreachable: the dispatcher checked `op` against the table first.
   reply(nil, [NSString stringWithFormat:@"nlp has no operation '%@'", op]);
 }

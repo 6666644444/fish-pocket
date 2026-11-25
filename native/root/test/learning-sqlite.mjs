@@ -54,5 +54,21 @@ await check('the learning store in the filesystem view', () => {
   again.close();
 });
 
+await check('the knowledge base (M3): chunks, trigram search, float32 vectors', () => {
+  const home = `${H}/.dsh`;
+  const store = new LearningStore(libraryFile(home));
+  assert.equal(store.kbFts, 'trigram');
+  const doc = store.importDocument({ title: '微积分', kind: 'md', text: `# 导数\n\n${'导数是函数的瞬时变化率。'.repeat(80)}` });
+  assert.ok(doc.chunkCount >= 2);
+  assert.equal(store.searchKnowledge({ query: '瞬时变化率' }).mode, 'fts');
+  const [first] = store.pendingVectors({ model: 'sim', limit: 1 });
+  store.putVectors({ model: 'sim', items: [{ chunkId: first.chunkId, vector: [0.25, -1, 3.5] }] });
+  const hit = store.searchKnowledge({ query: '导数', vector: [0.25, -1, 3.5], model: 'sim' });
+  assert.equal(hit.mode, 'hybrid');
+  assert.equal(hit.results[0].chunkId, first.chunkId);
+  store.deleteDocument({ id: doc.id });
+  store.close();
+});
+
 console.log(failed ? `${failed} failed` : 'all passed');
 process.exit(failed ? 1 : 0);

@@ -140,7 +140,7 @@ test('the note: full instructions when announcing, a reminder otherwise, memorie
 
 // The library: schema 3, settings, session modes
 
-test('a schema 2 library opens as schema 3 with its data intact', () => {
+test('a schema 2 library opens at the latest schema with its data intact', () => {
   const file = library();
   fs.mkdirSync(path.dirname(file), { recursive: true });
   const db = new DatabaseSync(file);
@@ -150,8 +150,8 @@ test('a schema 2 library opens as schema 3 with its data intact', () => {
   db.prepare("INSERT INTO memories(content, source, created_at, updated_at) VALUES ('kept', 'user', 1, 1)").run();
   db.close();
   const store = new LearningStore(file);
-  assert.equal(SCHEMA_VERSION, 3);
-  assert.equal(store.version, 3);
+  assert.ok(SCHEMA_VERSION >= 3);
+  assert.equal(store.version, SCHEMA_VERSION);
   assert.equal(store.listMemories()[0].content, 'kept');
   assert.equal(store.getSessionMode({ sessionId: 's1' }), null);
   store.close();
@@ -159,9 +159,11 @@ test('a schema 2 library opens as schema 3 with its data intact', () => {
 
 test('settings: memory injection is on until turned off', () => {
   const store = new LearningStore(':memory:');
-  assert.deepEqual(store.getSettings(), { injectMemories: true });
-  assert.deepEqual(store.updateSettings({ injectMemories: false }), { injectMemories: false });
-  assert.deepEqual(store.updateSettings({ injectMemories: true }), { injectMemories: true });
+  assert.deepEqual(store.getSettings(), { injectMemories: true, appleEmbedding: true });
+  assert.deepEqual(store.updateSettings({ injectMemories: false }), { injectMemories: false, appleEmbedding: true });
+  assert.deepEqual(store.updateSettings({ injectMemories: true }), { injectMemories: true, appleEmbedding: true });
+  assert.deepEqual(store.updateSettings({ appleEmbedding: false }), { injectMemories: true, appleEmbedding: false });
+  assert.throws(() => store.updateSettings({}), { kind: 'invalid' });
   assert.throws(() => store.updateSettings({ injectMemories: 'no' }), { kind: 'invalid' });
   store.close();
 });
@@ -236,7 +238,7 @@ test('turning injection off leaves the memories out but keeps the mode', async (
   const plugin = fakeContext({ file: library() });
   await post(plugin.routes, 'memories.create', { content: 'likes maths' });
   await post(plugin.routes, 'sessions.setMode', { sessionId: 's1', mode: 'qa' });
-  assert.deepEqual((await post(plugin.routes, 'settings.update', { injectMemories: false })).body.result, { injectMemories: false });
+  assert.equal((await post(plugin.routes, 'settings.update', { injectMemories: false })).body.result.injectMemories, false);
   const decision = await step(plugin.preStep, 's1', { messages: [userMessage('maths question')] });
   assert.deepEqual(decision.messages[1].source.sections.map((s) => s.name), ['learning-mode']);
   assert.doesNotMatch(decision.messages[1].content[0].text, /likes maths/);

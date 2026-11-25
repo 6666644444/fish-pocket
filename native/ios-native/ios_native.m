@@ -79,7 +79,7 @@ static const dsh_capability CAPABILITIES[] = {
   // `open` leaves the app, so it reaches no user data of ours and needs no
   // permission — what it needs instead is a scheme allowlist, in caps_open.m.
   {"open",     dsh_native_open,     {"url", NULL}, NULL, {NULL}, false},
-  {"nlp",      dsh_native_nlp,      {"language", "entities", "similar", NULL}, NULL, {NULL}, false},
+  {"nlp",      dsh_native_nlp,      {"language", "entities", "similar", "vectors", NULL}, NULL, {NULL}, false},
   // MapKit's search and directions are Apple's servers answering a query, not
   // the user's position — no permission, and "near me" stays a `location` question.
   {"maps",     dsh_native_maps,     {"search", "eta", "route", NULL}, NULL, {NULL}, false},

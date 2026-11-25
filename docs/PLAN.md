@@ -126,7 +126,7 @@ SwiftUI 外壳（app/DshIOS）
 | 9 | 浏览器、手机控制、分享扩展、小组件、手表、快捷指令 | 否 | 各操作一次 |
 | 10 | iPad / iPhone Duo 的分栏和 Tab 布局 | 否 | 在这些机型的模拟器上打开首页 |
 | 11 | 「引擎修复」页的恢复和重置 | 部分（recovery.test.mjs，学习库不会被当成设置：learning-store.test.mjs）| 重置一次之后，学习数据仍然在 |
-| 12 | 学习功能（从 M1 起新增）：笔记本、学习记忆；M2 起：三种学习模式、学习记忆注入开关、我的 Skills | Node 部分能 | 见各里程碑的汇报 |
+| 12 | 学习功能（从 M1 起新增）：笔记本、学习记忆；M2 起：三种学习模式、学习记忆注入开关、我的 Skills；M3 起：知识库导入、搜索、向量设置 | Node 部分能 | 见各里程碑的汇报 |
 | 13 | 普通会话不受学习功能影响（M2 起） | 能（learning-modes.test.mjs：没有模式的会话原样通过） | 新建普通会话发一句话，确认回答方式和以前一样 |
 
 ## 8. 学习库的数据模型（M1）
@@ -227,3 +227,45 @@ skills.* 不打开学习库。
 ### 11.6 界面（M2）
 
 设置 → 学习：新增「开始学习」（三种模式各一行）、「学习会话」（有模式的会话，可打开、左滑结束学习模式）、「在学习会话中使用学习记忆」开关、「我的 Skills」页（列出、新建、编辑、删除；不是这里建的显示「只读」，格式不对的显示「格式有误」）。只保证编译通过，没有人工看过。
+
+## 12. 轻量知识库（M3）
+
+### 12.1 分工
+- **App（Swift）**：选文件（txt、Markdown、PDF）；txt/md 按 UTF-8（含 BOM）→ UTF-16（有 BOM）→ GB 18030 的顺序解码；PDF 用 PDFKit 逐页取文字层，取不到文字就是扫描件，界面显示「暂不支持」；一次最多 200 万字。可选的 OpenAI 兼容向量服务也在 App 里调用，Key 只存 Keychain。
+- **引擎（Node，plugins/learning）**：分块（kb.mjs）、存储（学习库 v4）、关键词检索、向量比较、结果合并、引用格式；Apple 句向量通过 native/ios-native 的 `nlp.vectors` 在引擎里生成（embed.mjs），导入后在后台建立。
+- **扫描件**：只定义了 `kb.parse.cloud` 接口（App 发 PDF 的 base64 和文件名），没有实现，固定返回 422 `unsupported`。
+
+### 12.2 分块（参数见 DECISIONS.md D16）
+- 先按句切：`。！？；…` 后、`. ! ? ;` 后跟空白处、换行处；句末的右引号、右括号留在本句。`3.14` 这类不切。
+- 按句装块，目标 500、上限 800 码点；新块开头带上一块末尾的整句，合计不超过 80 码点；超过上限的单句在空格或逗号处硬切，切不开就按上限硬切（不会切开代理对）。
+- Markdown：标题行另起一块；每块记标题路径（「第一章 › 1.1 极限」）。最后一块不足 40 码点且和前一块同一节时，并回前一块。
+- `text.slice(start, end)` 就是这一块，start/end 是 UTF-16 偏移。
+
+### 12.3 学习库 v4
+- `kb_documents(id, title, kind txt|md|pdf, source_name, chars, chunk_count, language, embedding_status, created_at, updated_at)`
+- `kb_chunks(id, document_id → ON DELETE CASCADE, ordinal, start, end, heading, text, UNIQUE(document_id, ordinal))` + `kb_chunks_fts`（trigram，可无，`meta.kb_fts`）
+- `kb_vectors(chunk_id → ON DELETE CASCADE, model, dims, vector BLOB, PRIMARY KEY(chunk_id, model))`：float32 小端；同一 model 的维度固定，由第一次写入决定。
+- 设置：`meta.kb_apple_embedding`（默认 on）。
+
+### 12.4 检索
+- 关键词：查询词都 ≥3 字且有 trigram 时用 FTS（bm25），否则 LIKE（同笔记规则），最多取 50 条。
+- 向量：每个有向量的 model 各算一次余弦（只比同一 model 的向量），取 >0 的前 50 条。Apple 的 model 名是 `apple-nl-sentence/<语言>/r<修订号>`，所以不同语言、不同修订的向量互不比较；OpenAI 兼容服务是 `openai/<host>/<模型>`。
+- 合并：关键词和各个向量排名用 RRF（k=60）合并；只依赖名次，不依赖分数大小（native 注释里实测过：Apple 句向量的余弦大小没有意义，顺序有意义）。
+- 引用：每条结果带 documentId、documentTitle、chunkId、ordinal/chunkCount、start/end、heading、160 字摘录，以及 `label`：「《标题》第 n/N 段（标题路径）」。
+
+### 12.5 接口（在 §9、§11.5 的基础上新增）
+| 方法 | 参数 | 返回 |
+|---|---|---|
+| kb.status | — | {search, vectors:{chunks, models:[{model,dims,chunks}]}, appleEmbedding:{available, enabled}} |
+| kb.documents.list / get / delete | get、delete 要 {id} | 文档对象 |
+| kb.documents.import | {title, kind, text, sourceName?} | 文档对象；之后后台建 Apple 向量 |
+| kb.chunks.get | {id} | 一块的全文和位置 |
+| kb.vectors.pending | {model 或 modelPrefix, documentId?, limit?} | [{chunkId, text}] |
+| kb.vectors.put | {model, items:[{chunkId, vector}]} | {stored, dims} |
+| kb.vectors.clear / kb.vectors.index | {model} / — | {deleted} / {started} |
+| kb.search | {query, queryVectors?:[{model, vector}], documentIds?, limit?} | {mode: fts\|like\|hybrid\|none, results:[引用…]} |
+| kb.parse.cloud | {name, data} | 固定 422 unsupported（未实现） |
+
+### 12.6 NLEmbedding 评估
+- 怎么测：`DshIOSTests/KnowledgeAPITests.testEvaluateAppleSentenceEmbedding` 在 CI 的 iPhone 模拟器上跑，打印 `NLEMBED language=… available=… dimension=… revision=… near=… far=… order=…`（中文、英文各一组）。可用性和排序只记录、不判失败。
+- 结论：【待 CI】结果出来后填在这里。模拟器上有，不等于真机有（真机可能要下载语言资源）【待真机】。
