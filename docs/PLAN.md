@@ -22,12 +22,14 @@
 - **原生模块**：不能用 `dlopen` 加载 `.node` 文件，App Store 也不允许动态加载未随 App 签名的代码。仓库的做法是把 C/ObjC 代码直接编进 App，再用 `napi_module_register` 注册成「链接绑定」，JS 侧通过 `process._linkedBinding('名字')` 调用。现有的绑定有 `dsh_git`、`dsh_image`、`dsh_ios_native`、`dsh_root`、`dsh_python`、`dsh_ffmpeg`，见 `native/*` 和 `app/project.yml` 的 sources。npm 上带预编译 `.node` 的包（better-sqlite3、sqlite3 等）在 iOS 上都不能用。【代码】
 - **SQLite：放 Node 侧，用内置的 `node:sqlite`**，不放 Swift 侧，也不用 WASM。理由：
   - Node 24 自带 `node:sqlite`，不需要任何原生模块。
-  - `native/root/test/conformance.mjs` 第 111–124 行写了 `DatabaseSync` 在 DELETE 和 WAL 两种日志模式下的检查，要在真的 NodeMobile 上跑。但它要靠 `scripts/test-root-sim.sh` **在模拟器上手动运行**，不是真机，也不在 CI 里，没有运行记录可查。【待验证】
+  - `native/root/test/conformance.mjs` 第 111–124 行写了 `DatabaseSync` 在 DELETE 和 WAL 两种日志模式下的检查，要在真的 NodeMobile 上跑。但它要靠 `scripts/test-root-sim.sh` **在模拟器上手动运行**，不是真机，也不在 CI 里，没有运行记录可查。
+  - **【CI：模拟器】2026-11-25 run 45626288772（28cd234）**：新加的 `scripts/test-learning-sim.sh` 用 iPhone 模拟器里真实的 NodeMobile（node v24.20.0，SQLite 3.53.4）跑了一遍。node:sqlite 能打开 /home/dsh 下的文件，WAL 能落盘；学习库的读写、检索、清空都通过。真机还没验证。
   - DSH 自己的会话全文检索 `@deepseek-ai/dsh-session-query-sqlite` 就用 `node:sqlite` 加 FTS5。它是 `dsh-base` 的依赖，学习功能用同一套技术栈，最符合「复用、不另起一套」。【代码】
   - 放 Swift 侧的话，每次查询都要多走一层 JS↔Swift 通信，还要新写一套绑定。用 WASM（sql.js、wa-sqlite）则更慢、包更大，而且和 DSH 用的不是同一个 SQLite。
 - **待确认**：
-  - nodejs-mobile 编进去的 SQLite 带不带 FTS5，以及中文检索要用的 `trigram` 分词器。DSH 的会话检索用了 FTS5，说明大概率带，但具体分词器名在本地看不到，没有核实。【待真机】
-  - 第 1 个里程碑会加一个 CI 能跑的检查：在模拟器上的 App 进程里执行 `create virtual table … using fts5(tokenize='trigram')`。如果不支持，就退回到 unicode61 分词器加 LIKE 查询。
+  - nodejs-mobile 编进去的 SQLite 带不带 FTS5，以及中文检索要用的 `trigram` 分词器。DSH 的会话检索用了 FTS5，说明大概率带，但具体分词器名在本地看不到，没有核实。（当时的判断）
+  - **【CI：模拟器】已确认**（同一次 run）：NodeMobile 的 SQLite 带 FTS5 和 `trigram` 分词器，三个字的中文能命中，两个字命中不了，所以退回 LIKE 是必须的。
+  - 原计划在第 1 个里程碑加一个 CI 能跑的检查（已完成，见上一条和 DECISIONS.md D9）。如果以后 NodeMobile 升级后不带 trigram，学习库会自动退回 LIKE（meta.fts=none），测试覆盖了这条路径。
 
 ## 3. 向量相似度放 Swift（Accelerate）还是 Node
 
