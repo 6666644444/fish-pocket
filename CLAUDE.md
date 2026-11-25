@@ -345,3 +345,12 @@ iOS 18 起，iPhone、iPhone Duo、iPad 共用一套系统 `TabView`，样式是
 - 官网 `fish-pocket-site` 的 `web/public/wechat-group.png`：中文页顶部「微信群」按钮弹出的大图和页脚都用它，合进官网的 `main` 就自动部署。
 
 App 不内置图片，设置页里「微信交流群」一行是个链接，在浏览器里打开官网的 `https://fish.deepseek1024.com/wechat-group.png`（`AppLinks.wechatGroupCode`）。所以换二维码只要更新官网，不用发版；反过来，官网上这个文件的名字和路径不能改，否则已经装好的 App 都会打开一个不存在的页面。
+
+## Issue 和 GitHub Project
+
+本仓库开着的 issue 会自动加进 GitHub Project「FishFish」（`gh project view 2 --owner imsai-sh`），Agent 开 issue 时不用再手动加。
+
+- 靠的是 Project 的 Auto-add 规则，条件是 `is:issue is:open`：新开的和有更新的 issue 才会加进去，已经关闭的不会补进去。PR 不自动加，也不用加，它关联的 issue 上能看到。
+- 要手动加时用 `gh project item-add 2 --owner imsai-sh --url <issue 链接>`。gh 要有 `project` 权限，没有就先跑 `gh auth refresh -s project`。
+- 在 Project 里已有的 issue 下面拆出的子 issue，会自动加进去（Auto-add sub-issues）。
+- issue 的指派人、标签、里程碑都是公开的，在 Project 里改也一样公开；状态、优先级、Size 这些是 Project 自己的字段，只在 Project 里能看到。
