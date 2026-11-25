@@ -26,6 +26,7 @@ import { MODES, MODE_IDS, modeInstructions, noteMessage, noteSections, pickMemor
 import { SkillFiles, skillsDir } from './skills.mjs';
 import { appleEmbedder, appleQueryVectors, embedPending } from './embed.mjs';
 import { quizTool } from './quiz-tool.mjs';
+import { ResearchRunner, researchTool } from './research-tool.mjs';
 
 export const ROUTE = '/api/learning';
 
@@ -110,6 +111,17 @@ export const METHODS = {
   'quiz.topics': ({ store }) => store.quizTopics(),
   'quiz.answer': ({ store }, p) => store.answerQuestion(p),
   'quiz.attempts': ({ store }, p) => store.listAttempts(p),
+  // M5: research jobs. The model starts them with the deep_research tool; the app lists them,
+  // reads reports, resumes a paused job (with the model it started with) and cancels.
+  'research.list': ({ store }, p) => store.listResearchJobs(p),
+  'research.get': ({ store }, p) => store.getResearchJob({ id: p.id }),
+  'research.claims': ({ store }, p) => store.listClaims({ jobId: store.getResearchJob({ id: p.id, withReport: false }).id }),
+  'research.resume': ({ store, runner }, p) => ({ ...runner.start(store.getResearchJob({ id: p.id, withReport: false }).id), job: store.getResearchJob({ id: p.id, withReport: false }) }),
+  'research.cancel': ({ runner }, p) => runner.cancel(p.id),
+  'research.delete': ({ store, runner }, p) => {
+    if (runner.running.has(p.id)) throw new LearningError('conflict', 'cancel the research before deleting it');
+    return store.deleteResearchJob(p);
+  },
 };
 
 const STATUS = { invalid: 400, 'not-found': 404, conflict: 409, unsupported: 422, unavailable: 503 };
@@ -140,7 +152,7 @@ export function call(open, method, params, skills = () => new SkillFiles(skillsD
   };
   const done = (value) => json({ ok: true, result: value ?? null });
   try {
-    const where = { skills, embedder: kb.embedder ?? null, index: kb.index ?? (() => null) };
+    const where = { skills, embedder: kb.embedder ?? null, index: kb.index ?? (() => null), runner: kb.runner };
     Object.defineProperty(where, 'store', { get: open });
     const value = run(where, params);
     return value && typeof value.then === 'function' ? value.then(done, fail) : done(value);
@@ -182,7 +194,11 @@ export default class Learning {
   constructor(ctx, config = {}) {
     let store;
     const open = () => {
-      store ??= new LearningStore(config.file ?? libraryFile(), config.storeOptions);
+      if (!store) {
+        store = new LearningStore(config.file ?? libraryFile(), config.storeOptions);
+        // Nothing runs before this plugin starts: research left `running` by a stopped engine is paused.
+        try { store.pauseInterruptedResearch(); } catch { /* an older library without research tables cannot be here */ }
+      }
       return store;
     };
     const skills = () => new SkillFiles(config.skillsDir ?? skillsDir());
@@ -207,7 +223,13 @@ export default class Learning {
       return indexing;
     };
     this.indexing = () => indexing;
-    const kb = { embedder, index };
+    const service = (name) => {
+      if (config.services && name in config.services) return config.services[name];
+      try { return ctx.get?.(name); } catch { return undefined; }
+    };
+    const runner = new ResearchRunner({ open, get: service, embedder, logger: ctx.logger, ...(config.callModel ? { callModel: config.callModel } : {}) });
+    this.research = runner;
+    const kb = { embedder, index, runner };
     for (const method of Object.keys(METHODS)) {
       ctx.effect(() => ctx.connection.fetch.register({
         path: `${ROUTE}/${method}`,
@@ -234,6 +256,8 @@ export default class Learning {
         try { return open().getSessionMode({ sessionId }) !== null; } catch { return false; }
       };
       ctx.effect(() => ctx.tools.register(quizTool(open), { when: inLearning }), 'learning: quiz tool');
+      // M5: deep research, offered in every main session (not to subagents).
+      ctx.effect(() => ctx.tools.register(researchTool(open, runner), { when: ({ agent }) => agent?.session?.header?.origin !== 'subagent' }), 'learning: research tool');
     }
 
     // Only a turn's first step, and only one that brings new messages: a retry (no
@@ -255,6 +279,7 @@ export default class Learning {
 
     ctx.effect(() => () => {
       stop.abort();
+      void runner.dispose();
       store?.close();
       store = undefined;
     }, 'learning: library');

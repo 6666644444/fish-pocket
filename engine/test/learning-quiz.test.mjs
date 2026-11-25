@@ -170,7 +170,7 @@ test('deleting a question removes its attempts and its mistake-book row', () => 
   store.close();
 });
 
-test('a schema 4 library opens at schema 5 with its data intact', () => {
+test('a schema 4 library opens at the latest schema with its data intact', () => {
   const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'dsh-learning-quiz-')), 'learning.db');
   const db = new DatabaseSync(file);
   for (const step of MIGRATIONS.slice(0, 4)) step(db, {});
@@ -178,8 +178,8 @@ test('a schema 4 library opens at schema 5 with its data intact', () => {
   db.prepare("INSERT INTO kb_documents(title, kind, chars, chunk_count, created_at, updated_at) VALUES ('kept', 'txt', 1, 0, 1, 1)").run();
   db.close();
   const store = new LearningStore(file);
-  assert.equal(SCHEMA_VERSION, 5);
-  assert.equal(store.version, 5);
+  assert.ok(SCHEMA_VERSION >= 5);
+  assert.equal(store.version, SCHEMA_VERSION);
   assert.equal(store.listDocuments()[0].title, 'kept');
   assert.deepEqual(store.listQuestions(), []);
   store.close();
@@ -210,7 +210,7 @@ const agent = (id) => ({ session: { id, header: {} } });
 
 test('the learning_quiz tool is offered only in learning sessions, saves and grades', async () => {
   const p = plugin();
-  assert.equal(p.tools.length, 1);
+  assert.deepEqual(p.tools.map((t) => t.tool.name), [TOOL, 'deep_research']);
   const { tool, options } = p.tools[0];
   assert.equal(tool.name, TOOL);
   assert.equal(options.when({ agent: agent('plain') }), false);

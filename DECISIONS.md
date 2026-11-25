@@ -153,6 +153,25 @@
 - 题目由模型在学习会话里生成，经 `learning_quiz` 工具存库、判分。插件用 `ctx.tools.register(tool, { when })` 注册（ios-voice-message 的写法），`when` 只在学习会话里放行，普通会话看不到这个工具。
 - 这一步同时验证了 M5 方案 C 的前提之一：插件可以给模型注册工具。
 
+## D23 Deep Research 用方案 C：引擎内移植 DeepTutor 的研究流程，Skill 作入口（2026-11-25，M5）
+
+- 比较过三种（评估全文在会话工作区的 评估_M5_DeepResearch.md）：A 原简化版（每个子问题检索一次，达不到多轮检索、交叉验证、盲区识别）；B 把 DeepTutor 的 Python 研究模块作为独立引擎、Skill 调脚本（DeepTutor 依赖 pydantic、openai、tiktoken、psutil、mcp，含编译扩展，iOS 的 pip 装不了；还要另配一套模型和 Key、再起一套 Agent 循环）；C 在 learning 插件里用 JS 移植 DeepTutor 的流程，模型走 ctx.llm、搜索走 ctx.web。
+- 选 C。移植了 DeepTutor（HKUDS/DeepTutor，Apache-2.0）的：子课题拆解、每块的多轮循环和 APPEND 动态队列、每条结果的 note 摘要、引用 ID 规则和无效引用清理、报告分节写作。DeepTutor 本身没有的、这里新写的：关键结论交叉验证、全局盲区检查、断点续跑、调用预算。M7 的 NOTICE 要保留 DeepTutor 的 Apache-2.0 声明。
+- 没用 DSH 的 workflow 工具：README 写明不能在重启后恢复、没有 token 预算，每个子 Agent 带完整系统提示词，成本最高，iOS 上也没验证过。
+
+## D24 研究联网默认开启（M5）
+
+- 总控原文写「联网搜索默认关闭」，但多轮联网检索是用户要求的核心能力。2026-11-25 用户让编码代理定，定为：研究默认可以联网（用的是 DSH 里已配置的搜索服务），设置 → 学习 → 深度研究 可关；关掉后只查知识库，两者都没有就明确报错。
+
+## D25 研究的模型和预算（M5）
+
+- 模型：调用 `deep_research` 的会话最近路由的 provider/model，记在任务里，App 续跑时沿用。
+- 预算初值（research.mjs `DEPTHS`）：quick 2 个子课题、队列 4、每块 3 轮、验证 3 条、盲区 1 轮、40 次调用；standard 4/8/5/6/2/90；deep 6/10/6/10/2/150。到上限停止扩展，报告照写并注明。
+
+## D26 不做 BGProcessingTask（M5）
+
+- 研究跑在引擎进程里，App 在后台时靠 BackgroundKeeper 已有的保活；被系统结束后靠逐步落盘续跑，用户点「继续研究」或让模型 resume。PLAN §10 设想的 BGProcessingTask 需要动 project.yml 的后台任务注册和 App 生命周期，收益不大，先不做。
+
 ## 改过的上游文件
 
 | 文件 | 改了什么 | 为什么 |

@@ -215,6 +215,73 @@ export const MIGRATIONS = [
       ) STRICT;
     `);
   },
+  // 6 (M5): Deep Research. A job, its sub-topic blocks, every finished step's output under a
+  // deterministic key (the resume log), the citations the steps produced and the claim checks.
+  (db) => {
+    db.exec(`
+      CREATE TABLE research_jobs (
+        id INTEGER PRIMARY KEY,
+        session_id TEXT,
+        topic TEXT NOT NULL,
+        depth TEXT NOT NULL CHECK (depth IN ('quick', 'standard', 'deep')),
+        sources TEXT NOT NULL DEFAULT '[]',
+        language TEXT,
+        model_target TEXT,
+        status TEXT NOT NULL CHECK (status IN ('planned', 'running', 'paused', 'done', 'failed', 'cancelled')),
+        phase TEXT NOT NULL DEFAULT '',
+        progress TEXT NOT NULL DEFAULT '',
+        cancel_requested INTEGER NOT NULL DEFAULT 0,
+        calls_used INTEGER NOT NULL DEFAULT 0,
+        report TEXT,
+        error TEXT,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL
+      ) STRICT;
+      CREATE TABLE research_blocks (
+        id INTEGER PRIMARY KEY,
+        job_id INTEGER NOT NULL REFERENCES research_jobs(id) ON DELETE CASCADE,
+        ordinal INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        overview TEXT NOT NULL DEFAULT '',
+        origin TEXT NOT NULL CHECK (origin IN ('plan', 'append', 'verify', 'gap')),
+        parent_id INTEGER,
+        status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'running', 'done')),
+        summary TEXT,
+        UNIQUE (job_id, ordinal)
+      ) STRICT;
+      CREATE TABLE research_steps (
+        job_id INTEGER NOT NULL REFERENCES research_jobs(id) ON DELETE CASCADE,
+        key TEXT NOT NULL,
+        kind TEXT NOT NULL CHECK (kind IN ('llm', 'tool', 'mark')),
+        output TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        PRIMARY KEY (job_id, key)
+      ) STRICT;
+      CREATE TABLE research_citations (
+        job_id INTEGER NOT NULL REFERENCES research_jobs(id) ON DELETE CASCADE,
+        cit_id TEXT NOT NULL,
+        block_id INTEGER,
+        tool TEXT NOT NULL,
+        query TEXT NOT NULL,
+        title TEXT NOT NULL,
+        url TEXT,
+        label TEXT,
+        chunk_id INTEGER,
+        excerpt TEXT NOT NULL,
+        note TEXT,
+        PRIMARY KEY (job_id, cit_id)
+      ) STRICT;
+      CREATE TABLE research_claims (
+        job_id INTEGER NOT NULL REFERENCES research_jobs(id) ON DELETE CASCADE,
+        key TEXT NOT NULL,
+        claim TEXT NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('corroborated', 'single-source', 'conflicting', 'refuted')),
+        note TEXT NOT NULL DEFAULT '',
+        citations TEXT NOT NULL DEFAULT '[]',
+        PRIMARY KEY (job_id, key)
+      ) STRICT;
+    `);
+  },
 ];
 export const SCHEMA_VERSION = MIGRATIONS.length;
 
@@ -515,14 +582,21 @@ export class LearningStore {
 
   getSettings() {
     const value = (key) => this.db.prepare('SELECT value FROM meta WHERE key = ?').get(key)?.value;
-    return { injectMemories: value('inject_memories') !== 'off', appleEmbedding: value('kb_apple_embedding') !== 'off' };
+    return {
+      injectMemories: value('inject_memories') !== 'off',
+      appleEmbedding: value('kb_apple_embedding') !== 'off',
+      researchWeb: value('research_web') !== 'off',
+    };
   }
 
   /** Change the settings given; the rest keep their value. */
-  updateSettings({ injectMemories, appleEmbedding }) {
-    const changes = [['inject_memories', injectMemories, 'injectMemories'], ['kb_apple_embedding', appleEmbedding, 'appleEmbedding']]
-      .filter(([, value]) => value !== undefined);
-    if (!changes.length) throw new LearningError('invalid', 'nothing to change: pass injectMemories or appleEmbedding');
+  updateSettings({ injectMemories, appleEmbedding, researchWeb }) {
+    const changes = [
+      ['inject_memories', injectMemories, 'injectMemories'],
+      ['kb_apple_embedding', appleEmbedding, 'appleEmbedding'],
+      ['research_web', researchWeb, 'researchWeb'],
+    ].filter(([, value]) => value !== undefined);
+    if (!changes.length) throw new LearningError('invalid', 'nothing to change: pass injectMemories, appleEmbedding or researchWeb');
     for (const [, value, name] of changes) {
       if (typeof value !== 'boolean') throw new LearningError('invalid', `${name} must be true or false`);
     }
@@ -943,7 +1017,192 @@ export class LearningStore {
       .all(questionId, Math.min(Math.max(1, Number(limit) || 50), LIMITS.page))
       .map((row) => ({ id: row.id, answer: row.answer, verdict: row.verdict, score: row.score, gradedBy: row.graded_by, createdAt: row.created_at }));
   }
+
+  // Deep Research (M5)
+
+  createResearchJob({ topic, depth = 'standard', sources = ['web', 'kb'], sessionId, language }) {
+    const subject = text(topic, 'topic', 2_000).trim();
+    if (!subject) throw new LearningError('invalid', 'topic is empty');
+    if (!RESEARCH_DEPTHS.includes(depth)) throw new LearningError('invalid', `depth must be one of ${RESEARCH_DEPTHS.join(', ')}`);
+    if (!Array.isArray(sources) || !sources.length || sources.some((s) => !['web', 'kb'].includes(s))) {
+      throw new LearningError('invalid', "sources must be a non-empty list of 'web' and 'kb'");
+    }
+    if (language !== undefined) text(language, 'language', 50);
+    const now = this.now();
+    const { lastInsertRowid } = this.db.prepare(`
+      INSERT INTO research_jobs(session_id, topic, depth, sources, language, status, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, 'planned', ?, ?)
+    `).run(sessionId === undefined ? null : sessionKey(sessionId), subject, depth, JSON.stringify([...new Set(sources)]), language ?? null, now, now);
+    return this.getResearchJob({ id: Number(lastInsertRowid) });
+  }
+
+  getResearchJob({ id: jobId, withReport = true }) {
+    const row = this.db.prepare(`
+      SELECT j.*, (SELECT count(*) FROM research_blocks b WHERE b.job_id = j.id) AS blocks,
+        (SELECT count(*) FROM research_blocks b WHERE b.job_id = j.id AND b.status = 'done') AS blocks_done,
+        (SELECT count(*) FROM research_citations c WHERE c.job_id = j.id) AS citations
+      FROM research_jobs j WHERE j.id = ?
+    `).get(id(jobId));
+    if (!row) throw new LearningError('not-found', `no research job ${jobId}`);
+    return researchRow(row, withReport);
+  }
+
+  listResearchJobs({ limit = 50 } = {}) {
+    return this.db.prepare(`
+      SELECT j.*, (SELECT count(*) FROM research_blocks b WHERE b.job_id = j.id) AS blocks,
+        (SELECT count(*) FROM research_blocks b WHERE b.job_id = j.id AND b.status = 'done') AS blocks_done,
+        (SELECT count(*) FROM research_citations c WHERE c.job_id = j.id) AS citations
+      FROM research_jobs j ORDER BY j.updated_at DESC, j.id DESC LIMIT ?
+    `).all(Math.min(Math.max(1, Number(limit) || 50), LIMITS.page)).map((row) => researchRow(row, false));
+  }
+
+  setResearchStatus({ id: jobId, status, phase, progress }) {
+    this.db.prepare(`
+      UPDATE research_jobs SET status = ?, phase = coalesce(?, phase), progress = coalesce(?, progress), updated_at = ?
+      WHERE id = ? AND status NOT IN ('done', 'failed', 'cancelled')
+    `).run(status, phase ?? null, progress ?? null, this.now(), id(jobId));
+  }
+
+  finishResearch({ id: jobId, status, report, error }) {
+    this.db.prepare(`
+      UPDATE research_jobs SET status = ?, report = coalesce(?, report), error = ?, phase = ?, progress = '', updated_at = ?
+      WHERE id = ? AND status NOT IN ('done', 'failed', 'cancelled')
+    `).run(status, report ?? null, error ?? null, status, this.now(), id(jobId));
+  }
+
+  /** Ask a job to stop: it ends `cancelled` after the step in progress. A job not running stops now. */
+  cancelResearch({ id: jobId }) {
+    const job = this.getResearchJob({ id: jobId, withReport: false });
+    if (['done', 'failed', 'cancelled'].includes(job.status)) return job;
+    if (job.status === 'running') {
+      this.db.prepare('UPDATE research_jobs SET cancel_requested = 1, updated_at = ? WHERE id = ?').run(this.now(), job.id);
+    } else {
+      this.finishResearch({ id: job.id, status: 'cancelled' });
+    }
+    return this.getResearchJob({ id: job.id, withReport: false });
+  }
+
+  /** The model a job runs with (kept so the app can resume it without a session turn). */
+  setResearchTarget({ id: jobId, target }) {
+    this.db.prepare('UPDATE research_jobs SET model_target = ? WHERE id = ?').run(JSON.stringify({ provider: target.provider, model: target.model }), id(jobId));
+  }
+
+  /** At engine start nothing runs yet: jobs left `running` by a stopped engine become `paused`. */
+  pauseInterruptedResearch() {
+    const { changes } = this.db.prepare("UPDATE research_jobs SET status = 'paused', updated_at = ? WHERE status = 'running'").run(this.now());
+    return { paused: Number(changes) };
+  }
+
+  deleteResearchJob({ id: jobId }) {
+    const { changes } = this.db.prepare('DELETE FROM research_jobs WHERE id = ?').run(id(jobId));
+    if (!changes) throw new LearningError('not-found', `no research job ${jobId}`);
+    return { deleted: true };
+  }
+
+  getResearchStep({ jobId, key }) {
+    const row = this.db.prepare('SELECT * FROM research_steps WHERE job_id = ? AND key = ?').get(jobId, key);
+    return row ? { key: row.key, kind: row.kind, output: row.output } : null;
+  }
+
+  /** Store a step's output and count a model call, in one transaction; a key already there is kept. */
+  putResearchStep({ jobId, key, kind, output }) {
+    this.transaction(() => {
+      const { changes } = this.db.prepare('INSERT OR IGNORE INTO research_steps(job_id, key, kind, output, created_at) VALUES (?, ?, ?, ?, ?)')
+        .run(jobId, key, kind, output, this.now());
+      if (changes && kind === 'llm') this.db.prepare('UPDATE research_jobs SET calls_used = calls_used + 1, updated_at = ? WHERE id = ?').run(this.now(), jobId);
+    });
+  }
+
+  listResearchSteps({ jobId }) {
+    return this.db.prepare('SELECT key, kind FROM research_steps WHERE job_id = ? ORDER BY rowid').all(jobId).map((row) => ({ key: row.key, kind: row.kind }));
+  }
+
+  /**
+   * Add blocks at the end of the queue. With `stepKey` this happens once: the key is stored
+   * in the same transaction, and a second call with it adds nothing.
+   */
+  addResearchBlocks({ jobId, origin, blocks, parentId = null, stepKey }) {
+    return this.transaction(() => {
+      if (stepKey && this.getResearchStep({ jobId, key: stepKey })) return [];
+      let ordinal = this.db.prepare('SELECT coalesce(max(ordinal), 0) AS n FROM research_blocks WHERE job_id = ?').get(jobId).n;
+      const insert = this.db.prepare('INSERT INTO research_blocks(job_id, ordinal, title, overview, origin, parent_id) VALUES (?, ?, ?, ?, ?, ?)');
+      const ids = blocks.map((b) => {
+        ordinal += 1;
+        return Number(insert.run(jobId, ordinal, b.title.slice(0, 300), (b.overview ?? '').slice(0, 1_000), origin, parentId).lastInsertRowid);
+      });
+      if (stepKey) this.db.prepare('INSERT INTO research_steps(job_id, key, kind, output, created_at) VALUES (?, ?, \'mark\', ?, ?)').run(jobId, stepKey, JSON.stringify(ids), this.now());
+      return ids;
+    });
+  }
+
+  listResearchBlocks({ jobId }) {
+    return this.db.prepare('SELECT * FROM research_blocks WHERE job_id = ? ORDER BY ordinal').all(jobId).map((row) => ({
+      id: row.id, ordinal: row.ordinal, title: row.title, overview: row.overview, origin: row.origin,
+      parentId: row.parent_id ?? null, status: row.status, summary: row.summary ?? null,
+    }));
+  }
+
+  setResearchBlock({ id: blockId, status, summary }) {
+    this.db.prepare('UPDATE research_blocks SET status = ?, summary = coalesce(?, summary) WHERE id = ?').run(status, summary ?? null, blockId);
+  }
+
+  /**
+   * Record citations for one tool step. Ids are derived from the step key, so the same step
+   * replayed on resume records nothing new. Returns the citations with the raw text to note.
+   */
+  addCitations({ jobId, blockId, tool, query, stepKey, items }) {
+    const base = `CIT-${stepKey.replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '')}`;
+    const insert = this.db.prepare(`
+      INSERT OR IGNORE INTO research_citations(job_id, cit_id, block_id, tool, query, title, url, label, chunk_id, excerpt)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+    return this.transaction(() => items.map((item, i) => {
+      const citId = `${base}-${i + 1}`;
+      insert.run(jobId, citId, blockId ?? null, tool, String(query).slice(0, 500), String(item.title ?? '').slice(0, 300) || tool,
+        item.url ?? null, item.label ?? null, item.chunkId ?? null, String(item.raw).slice(0, 2_000));
+      return { citId, raw: String(item.raw) };
+    }));
+  }
+
+  setCitationNote({ jobId, citId, note }) {
+    this.db.prepare('UPDATE research_citations SET note = ? WHERE job_id = ? AND cit_id = ?').run(String(note).slice(0, 4_000), jobId, citId);
+  }
+
+  listCitations({ jobId }) {
+    return this.db.prepare('SELECT * FROM research_citations WHERE job_id = ? ORDER BY rowid').all(jobId).map((row) => ({
+      citId: row.cit_id, blockId: row.block_id ?? null, tool: row.tool, query: row.query, title: row.title,
+      url: row.url ?? null, label: row.label ?? null, chunkId: row.chunk_id ?? null, excerpt: row.excerpt, note: row.note ?? null,
+    }));
+  }
+
+  /** A block's evidence as the research loop shows it (or how many citations it has). */
+  blockEvidence({ jobId, blockId, count = false }) {
+    const rows = this.db.prepare('SELECT * FROM research_citations WHERE job_id = ? AND block_id = ? ORDER BY rowid').all(jobId, blockId);
+    if (count) return rows.length;
+    return rows.map((row) => `[${row.cit_id}] ${row.title}${row.url ? ` (${row.url})` : row.label ? ` (${row.label})` : ''}: ${(row.note || row.excerpt).slice(0, 700)}`).join('\n');
+  }
+
+  putClaim({ jobId, key, claim, status, note, citations }) {
+    this.db.prepare('INSERT OR REPLACE INTO research_claims(job_id, key, claim, status, note, citations) VALUES (?, ?, ?, ?, ?, ?)')
+      .run(jobId, key, claim.slice(0, 1_000), status, String(note ?? '').slice(0, 1_000), JSON.stringify(citations ?? []));
+  }
+
+  listClaims({ jobId }) {
+    return this.db.prepare('SELECT * FROM research_claims WHERE job_id = ? ORDER BY rowid').all(jobId)
+      .map((row) => ({ key: row.key, claim: row.claim, status: row.status, note: row.note, citations: JSON.parse(row.citations) }));
+  }
 }
+
+/** Research depths; the table's CHECK holds the same list. */
+export const RESEARCH_DEPTHS = ['quick', 'standard', 'deep'];
+
+const researchRow = (row, withReport) => row && ({
+  id: row.id, sessionId: row.session_id ?? null, topic: row.topic, depth: row.depth, sources: JSON.parse(row.sources),
+  language: row.language ?? null, target: row.model_target ? JSON.parse(row.model_target) : null, status: row.status, phase: row.phase, progress: row.progress,
+  cancelRequested: Boolean(row.cancel_requested), callsUsed: row.calls_used, blocks: row.blocks ?? 0,
+  blocksDone: row.blocks_done ?? 0, citations: row.citations ?? 0, error: row.error ?? null,
+  ...(withReport ? { report: row.report ?? null } : {}), createdAt: row.created_at, updatedAt: row.updated_at,
+});
 
 const questionRow = (row, withAnswer) => row && ({
   id: row.id, kind: row.kind, prompt: row.prompt, options: JSON.parse(row.options),

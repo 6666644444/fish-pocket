@@ -126,7 +126,7 @@ SwiftUI 外壳（app/DshIOS）
 | 9 | 浏览器、手机控制、分享扩展、小组件、手表、快捷指令 | 否 | 各操作一次 |
 | 10 | iPad / iPhone Duo 的分栏和 Tab 布局 | 否 | 在这些机型的模拟器上打开首页 |
 | 11 | 「引擎修复」页的恢复和重置 | 部分（recovery.test.mjs，学习库不会被当成设置：learning-store.test.mjs）| 重置一次之后，学习数据仍然在 |
-| 12 | 学习功能（从 M1 起新增）：笔记本、学习记忆；M2 起：三种学习模式、学习记忆注入开关、我的 Skills；M3 起：知识库导入、搜索、向量设置；M4 起：题库与错题本、出题测验模式里的 learning_quiz 工具 | Node 部分能 | 见各里程碑的汇报 |
+| 12 | 学习功能（从 M1 起新增）：笔记本、学习记忆；M2 起：三种学习模式、学习记忆注入开关、我的 Skills；M3 起：知识库导入、搜索、向量设置；M4 起：题库与错题本、出题测验模式里的 learning_quiz 工具；M5 起：deep_research 工具、深度研究页 | Node 部分能 | 见各里程碑的汇报 |
 | 13 | 普通会话不受学习功能影响（M2 起） | 能（learning-modes.test.mjs：没有模式的会话原样通过） | 新建普通会话发一句话，确认回答方式和以前一样 |
 
 ## 8. 学习库的数据模型（M1）
@@ -156,7 +156,7 @@ SwiftUI 外壳（app/DshIOS）
 
 时间是毫秒级的时间戳。限制：标题最多 200 字，正文最多 100 万字，单条记忆最多 4000 字，一页最多 200 条。
 
-## 10. Deep Research 的状态机和断点恢复（只写设计，代码在 M5 实现）
+## 10. Deep Research 的状态机和断点恢复（M1 时的设计；M5 实际按 §14 的方案 C 实现，BGProcessingTask 没有做）
 
 - 状态：`planned → searching(i/n) → synthesizing → writing → done`，另有 `failed`、`cancelled`。每一步都有输入、输出和尝试次数。
 - 落盘：每个任务一行记在学习库的 `research_jobs` 表里，每一步的结果记在 `research_steps` 表里（M5 迁移时新增）。一步完成后，在同一个事务里写入结果并推进状态，所以要么整步都写进去，要么都不写。
@@ -303,3 +303,41 @@ skills.* 不打开学习库。
 
 ### 13.5 界面
 设置 → 学习 →「题库与错题本」：错题本 / 全部题目切换、左滑删除、点开重做（单选点选项，简答输入），显示判定、参考答案、解析和错题本变化；简答可以「其实我答对了 / 答错了」改判。只保证编译通过。
+
+## 14. Deep Research（M5，方案 C；取代 §10 的简化设计）
+
+评估和选择理由：`.tmp/fp-control/评估_M5_DeepResearch.md`（不进仓库），结论记在 DECISIONS D23。
+
+### 14.1 结构
+主会话 → 随包 skill `deep-research`（何时用、先澄清范围、选深度、如何呈现报告）→ 学习插件的模型工具 `deep_research`（start/status/report/resume/cancel/list）→ ResearchRunner（research-tool.mjs）在一个归会话所有的 dsh-jobs job 里跑 → 研究引擎 research.mjs → 工具：ctx.web 的 search/fetch、学习库知识库检索（M3，含 Apple 向量）。模型用调用会话最近路由的 provider/model（`session.requestHeader().config`，写法同 dsh-compaction-basic），经 ctx.llm，凭据和 Fish Pocket 线路照常。
+
+### 14.2 流程（每一步一个确定的 key）
+1. `plan`：拆成 2/4/6 个子课题（quick/standard/deep）。
+2. 每个子课题一个小循环（≤3/5/6 轮）：模型每轮回一个 JSON 动作 `search` / `fetch` / `kb` / `append`（新子课题进队列，相似度去重，队列上限 4/8/10）/ `finish`（带 `[CIT-…]` 的小结）。没用过工具不许 finish。每条检索结果一次 note 摘要（原文截 8000 字），记成一条引用。用尽轮数还没 finish 就强制小结。
+3. 交叉验证：从所有小结里挑 ≤3/6/10 条关键结论 → 每条用结论原话做一次独立检索 → 模型判定 corroborated / single-source / conflicting / refuted；conflicting 自动生成一个「Conflicting evidence: …」子课题去查清。
+4. 盲区检查：≤1/2/2 轮，模型对照大纲和小结提出至多 3 个新子课题，研究后再做一次验证。
+5. 报告：大纲（每个块都要进某一节，漏掉的补「Other findings」）→ 各节（只用给定证据，标注单一来源/矛盾/推翻）→ 开头摘要 → 删除未知 CIT → 按首次出现编号 → 结论核查表 → 参考文献。
+- 预算：模型调用硬上限 40/90/150；到了就停止扩展，报告照写（报告不计入上限）并在末尾说明。
+
+### 14.3 落盘与恢复
+- 学习库 v6：`research_jobs`（状态 planned/running/paused/done/failed/cancelled、phase、progress、cancel_requested、calls_used、model_target、report、error）、`research_blocks`、`research_steps(job_id, key, kind llm|tool|mark, output)`、`research_citations`、`research_claims`。
+- 每次模型调用、工具调用的输出先按 key 写进 `research_steps`（主键 job_id+key），再往下走；续跑时同一 key 直接读回，不再调用。加块、加引用也以 step key 去重。所以在任意一步中断都能续跑，重复续跑不会写出第二份（测试在每一次调用处中断各验证一遍）。
+- 引擎启动（学习库首次打开）时把 `running` 改成 `paused`；App 或模型 `resume` 后从最后完成的一步继续。
+- 取消：置 `cancel_requested`，当前这一步做完后变 `cancelled`，已完成的步骤保留，不写报告。
+
+### 14.4 接口
+| 方法 | 参数 | 返回 |
+|---|---|---|
+| research.list | {limit?} | 任务（不含报告） |
+| research.get | {id} | 任务（含报告） |
+| research.claims | {id} | 结论核查 |
+| research.resume | {id} | {started, reason?, job} |
+| research.cancel / research.delete | {id} | 任务 / {deleted}；运行中的任务不能删 |
+| settings.update | {researchWeb} | 研究是否联网（默认开，D24） |
+
+### 14.5 iOS 运行
+- 研究在引擎进程里跑，没有子进程、没有新依赖。dsh-jobs job 归会话所有，会话的 Agent 释放时 job 被取消，但所有已完成步骤都在学习库里，`resume` 接着做。
+- 后台：App 在后台时靠 BackgroundKeeper（静音音频默认开）；被系统杀掉后靠续跑。PLAN §10 里设想的 BGProcessingTask 没有做（D26）。
+
+### 14.6 界面
+设置 → 学习 →「深度研究」：联网开关、任务列表、任务详情（状态、进度、结论核查、报告、分享、继续、停止、删除）。研究本身在会话里由模型发起。只保证编译通过。

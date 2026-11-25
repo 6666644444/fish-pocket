@@ -159,10 +159,10 @@ test('a schema 2 library opens at the latest schema with its data intact', () =>
 
 test('settings: memory injection is on until turned off', () => {
   const store = new LearningStore(':memory:');
-  assert.deepEqual(store.getSettings(), { injectMemories: true, appleEmbedding: true });
-  assert.deepEqual(store.updateSettings({ injectMemories: false }), { injectMemories: false, appleEmbedding: true });
-  assert.deepEqual(store.updateSettings({ injectMemories: true }), { injectMemories: true, appleEmbedding: true });
-  assert.deepEqual(store.updateSettings({ appleEmbedding: false }), { injectMemories: true, appleEmbedding: false });
+  assert.deepEqual(store.getSettings(), { injectMemories: true, appleEmbedding: true, researchWeb: true });
+  assert.deepEqual(store.updateSettings({ injectMemories: false }), { injectMemories: false, appleEmbedding: true, researchWeb: true });
+  assert.deepEqual(store.updateSettings({ injectMemories: true }), { injectMemories: true, appleEmbedding: true, researchWeb: true });
+  assert.deepEqual(store.updateSettings({ appleEmbedding: false }), { injectMemories: true, appleEmbedding: false, researchWeb: true });
   assert.throws(() => store.updateSettings({}), { kind: 'invalid' });
   assert.throws(() => store.updateSettings({ injectMemories: 'no' }), { kind: 'invalid' });
   store.close();
