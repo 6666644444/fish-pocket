@@ -195,6 +195,10 @@ jobs:
           xcrun xcresulttool get test-results tests --path build/TestResults.xcresult --compact \
             | jq -r '.. | objects | select(.nodeType? == "Test Case") | "\(.result)\t\(.name)"' || true
           total="$(echo "$summary" | jq -r '.totalTestCount // 0')"
+          # Findings the learning tests print (NLEmbedding evaluation, docs/PLAN.md §12.6). -quiet
+          # hides test output, so read it back from the result bundle's console log.
+          xcrun xcresulttool get log --path build/TestResults.xcresult --type console 2>/dev/null | grep -a 'NLEMBED' \
+            || echo "NLEMBED: no evaluation lines in the console log"
           [ "$total" -gt 0 ] || { echo "no unit tests ran" >&2; exit 1; }
 
       # The learning plugin's SQLite on the real NodeMobile in the simulator booted above:

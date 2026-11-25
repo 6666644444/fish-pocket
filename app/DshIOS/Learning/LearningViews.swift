@@ -112,6 +112,9 @@ struct LearningHomePage: View {
             NavigationLink { KnowledgeBasePage() } label: {
                 Label("知识库", systemImage: "books.vertical")
             }
+            NavigationLink { QuizBankPage() } label: {
+                Label("题库与错题本", systemImage: "list.bullet.clipboard")
+            }
         } footer: {
             Text("学习记忆只供学习功能使用，和 Bot 的记忆分开保存。开启后，学习会话每一轮会按相关度附上最多 3 条学习记忆（合计不超过 800 字），普通会话不受影响。")
         }

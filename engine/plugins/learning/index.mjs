@@ -25,6 +25,7 @@ import { LearningError, LearningStore, libraryFile, SCHEMA_VERSION } from './sto
 import { MODES, MODE_IDS, modeInstructions, noteMessage, noteSections, pickMemories, userTextOf } from './modes.mjs';
 import { SkillFiles, skillsDir } from './skills.mjs';
 import { appleEmbedder, appleQueryVectors, embedPending } from './embed.mjs';
+import { quizTool } from './quiz-tool.mjs';
 
 export const ROUTE = '/api/learning';
 
@@ -100,6 +101,15 @@ export const METHODS = {
   'kb.parse.cloud': () => {
     throw new LearningError('unsupported', 'reading scanned PDFs needs a cloud parser, which is not implemented');
   },
+  // M4: the question bank and the mistake book. The model saves and grades through the
+  // learning_quiz tool; the app lists, redoes and deletes through these routes.
+  'quiz.questions.list': ({ store }, p) => store.listQuestions(p),
+  'quiz.questions.get': ({ store }, p) => store.getQuestion({ id: p.id, withAnswer: p.withAnswer !== false }),
+  'quiz.questions.create': ({ store }, p) => store.saveQuestions({ questions: p.questions, source: 'user' }),
+  'quiz.questions.delete': ({ store }, p) => store.deleteQuestion(p),
+  'quiz.topics': ({ store }) => store.quizTopics(),
+  'quiz.answer': ({ store }, p) => store.answerQuestion(p),
+  'quiz.attempts': ({ store }, p) => store.listAttempts(p),
 };
 
 const STATUS = { invalid: 400, 'not-found': 404, conflict: 409, unsupported: 422, unavailable: 503 };
@@ -161,7 +171,7 @@ export function turnNote(store, sessionId, messages, options = {}) {
 }
 
 export default class Learning {
-  static inject = ['connection', 'agents'];
+  static inject = ['connection', 'agents', 'tools'];
 
   /**
    * @param {object} ctx
@@ -214,6 +224,16 @@ export default class Learning {
           return call(open, method, params, skills, kb);
         },
       }), `learning: ${method}`);
+    }
+
+    // M4: the model's way into the question bank, offered only in learning sessions.
+    if (ctx.tools?.register) {
+      const inLearning = ({ agent }) => {
+        const sessionId = agent?.session?.id;
+        if (typeof sessionId !== 'string' || !sessionId || agent?.session?.header?.origin === 'subagent') return false;
+        try { return open().getSessionMode({ sessionId }) !== null; } catch { return false; }
+      };
+      ctx.effect(() => ctx.tools.register(quizTool(open), { when: inLearning }), 'learning: quiz tool');
     }
 
     // Only a turn's first step, and only one that brings new messages: a retry (no

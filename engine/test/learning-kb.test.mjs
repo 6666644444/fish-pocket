@@ -253,7 +253,7 @@ test('hybrid search: a chunk found by meaning and by keyword ranks first; meanin
   store.close();
 });
 
-test('a schema 3 library opens at schema 4 with its data intact', () => {
+test('a schema 3 library opens at the latest schema with its data intact', () => {
   const file = library();
   fs.mkdirSync(path.dirname(file), { recursive: true });
   const db = new DatabaseSync(file);
@@ -262,8 +262,8 @@ test('a schema 3 library opens at schema 4 with its data intact', () => {
   db.prepare("INSERT INTO session_modes(session_id, mode, updated_at) VALUES ('s1', 'quiz', 1)").run();
   db.close();
   const store = new LearningStore(file);
-  assert.equal(SCHEMA_VERSION, 4);
-  assert.equal(store.version, 4);
+  assert.ok(SCHEMA_VERSION >= 4);
+  assert.equal(store.version, SCHEMA_VERSION);
   assert.equal(store.getSessionMode({ sessionId: 's1' }).mode, 'quiz');
   assert.deepEqual(store.listDocuments(), []);
   store.close();

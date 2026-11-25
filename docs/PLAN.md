@@ -126,7 +126,7 @@ SwiftUI 外壳（app/DshIOS）
 | 9 | 浏览器、手机控制、分享扩展、小组件、手表、快捷指令 | 否 | 各操作一次 |
 | 10 | iPad / iPhone Duo 的分栏和 Tab 布局 | 否 | 在这些机型的模拟器上打开首页 |
 | 11 | 「引擎修复」页的恢复和重置 | 部分（recovery.test.mjs，学习库不会被当成设置：learning-store.test.mjs）| 重置一次之后，学习数据仍然在 |
-| 12 | 学习功能（从 M1 起新增）：笔记本、学习记忆；M2 起：三种学习模式、学习记忆注入开关、我的 Skills；M3 起：知识库导入、搜索、向量设置 | Node 部分能 | 见各里程碑的汇报 |
+| 12 | 学习功能（从 M1 起新增）：笔记本、学习记忆；M2 起：三种学习模式、学习记忆注入开关、我的 Skills；M3 起：知识库导入、搜索、向量设置；M4 起：题库与错题本、出题测验模式里的 learning_quiz 工具 | Node 部分能 | 见各里程碑的汇报 |
 | 13 | 普通会话不受学习功能影响（M2 起） | 能（learning-modes.test.mjs：没有模式的会话原样通过） | 新建普通会话发一句话，确认回答方式和以前一样 |
 
 ## 8. 学习库的数据模型（M1）
@@ -269,3 +269,37 @@ skills.* 不打开学习库。
 ### 12.6 NLEmbedding 评估
 - 怎么测：`DshIOSTests/KnowledgeAPITests.testEvaluateAppleSentenceEmbedding` 在 CI 的 iPhone 模拟器上跑，打印 `NLEMBED language=… available=… dimension=… revision=… near=… far=… order=…`（中文、英文各一组）。可用性和排序只记录、不判失败。
 - 结论：【待 CI】结果出来后填在这里。模拟器上有，不等于真机有（真机可能要下载语言资源）【待真机】。
+
+## 13. 题库测验与错题本（M4）
+
+### 13.1 怎么出题、怎么判分
+- 题目由模型生成：学习会话（有学习模式的会话）里，学习插件向模型提供工具 `learning_quiz`（`ctx.tools.register`，写法照 ios-voice-message；`when` 只对学习会话、非子智能体放行）。`learning-quiz` skill 要求模型出题前先 `save`、学习者作答后 `grade`。
+- 判分在 Node（plugins/learning/quiz.mjs）：
+  - 单选：读出答案里唯一的选项字母（"B"、"b."、"我选 C"、"(d)"），和保存的字母比；模型的判断不参与。
+  - 简答：先比规范化后的全文（NFKC、小写、去空白和标点）；不相同就看参考答案的关键词（拉丁词和数字、中日韩相邻两字）有多少出现在作答里：≥0.7 答对、≥0.3 部分正确、否则答错（D20）。模型可以传自己的 `judged` 判定，传了就以它为准（gradedBy=model）；学习者在 App 里可以改判（gradedBy=user）。
+- 题型：单选（2–6 个选项）和简答。一次最多保存 20 题，一批里有一题不合格就整批不存。
+
+### 13.2 学习库 v5
+- `quiz_questions(id, kind choice|short, prompt, options JSON, answer, explanation, topic, source model|user, session_id, created_at)`；单选的 answer 存字母。
+- `quiz_attempts(id, question_id → CASCADE, answer, verdict correct|partial|incorrect, score, graded_by rule|model|user, created_at)`
+- `quiz_mistakes(question_id PK → CASCADE, streak, added_at, updated_at)`
+
+### 13.3 错题本规则
+- 作答结果不是「答对」（包括部分正确）：题目进入错题本；已在本里的，连对次数清零。
+- 本里的题答对一次连对 +1，连续答对 `MASTERY`（初值 2，D21）次后移出。不在本里的题答对，不变化。
+- 判分、写作答记录、更新错题本在同一个事务里。
+
+### 13.4 接口
+| 方法 | 参数 | 返回 |
+|---|---|---|
+| quiz.questions.list | {topic?, mistakes?, limit?, offset?} | 题目（不含答案） |
+| quiz.questions.get | {id, withAnswer?} | 题目（默认含答案和解析） |
+| quiz.questions.create / delete | create 要 {questions}（source=user）；delete 要 {id} | |
+| quiz.topics | — | [{topic, questions, mistakes}] |
+| quiz.answer | {id, answer, judged?, gradedBy?: 'user'} | {verdict, score, gradedBy, chosen?, correctAnswer, explanation, mistakeBook: added\|in\|removed\|not-in, streak?, mastery} |
+| quiz.attempts | {questionId, limit?} | 作答记录，新的在前 |
+
+工具 `learning_quiz`：action = save（questions）/ grade（questionId, answer, judged?）/ list（topic?, mistakes?；不含答案）。
+
+### 13.5 界面
+设置 → 学习 →「题库与错题本」：错题本 / 全部题目切换、左滑删除、点开重做（单选点选项，简答输入），显示判定、参考答案、解析和错题本变化；简答可以「其实我答对了 / 答错了」改判。只保证编译通过。

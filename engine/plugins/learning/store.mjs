@@ -15,6 +15,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { blobToVector, chunkText, citationOf, cosine, fuseRanks, vectorToBlob } from './kb.mjs';
+import { MASTERY, QuizError, grade, letter, nextMistake, normalizeQuestion, QUIZ_LIMITS } from './quiz.mjs';
 
 /** `PRAGMA application_id`: 'LRN1'. DSH's session search uses 1146308689; this must differ. */
 export const APPLICATION_ID = 0x4c524e31;
@@ -177,6 +178,42 @@ export const MIGRATIONS = [
       }
     }
     db.prepare('INSERT OR REPLACE INTO meta(key, value) VALUES (?, ?)').run('kb_fts', fts);
+  },
+  // 5 (M4): the question bank. Questions the model wrote (or the user), every graded answer,
+  // and the mistake book (one row per question currently in it, with its run of correct
+  // answers since it went in).
+  (db) => {
+    db.exec(`
+      CREATE TABLE quiz_questions (
+        id INTEGER PRIMARY KEY,
+        kind TEXT NOT NULL CHECK (kind IN ('choice', 'short')),
+        prompt TEXT NOT NULL,
+        options TEXT NOT NULL DEFAULT '[]',
+        answer TEXT NOT NULL,
+        explanation TEXT NOT NULL DEFAULT '',
+        topic TEXT NOT NULL DEFAULT '',
+        source TEXT NOT NULL DEFAULT 'model' CHECK (source IN ('model', 'user')),
+        session_id TEXT,
+        created_at INTEGER NOT NULL
+      ) STRICT;
+      CREATE INDEX quiz_questions_by_topic ON quiz_questions(topic, created_at DESC);
+      CREATE TABLE quiz_attempts (
+        id INTEGER PRIMARY KEY,
+        question_id INTEGER NOT NULL REFERENCES quiz_questions(id) ON DELETE CASCADE,
+        answer TEXT NOT NULL,
+        verdict TEXT NOT NULL CHECK (verdict IN ('correct', 'partial', 'incorrect')),
+        score REAL NOT NULL,
+        graded_by TEXT NOT NULL CHECK (graded_by IN ('rule', 'model', 'user')),
+        created_at INTEGER NOT NULL
+      ) STRICT;
+      CREATE INDEX quiz_attempts_by_question ON quiz_attempts(question_id, created_at DESC);
+      CREATE TABLE quiz_mistakes (
+        question_id INTEGER PRIMARY KEY REFERENCES quiz_questions(id) ON DELETE CASCADE,
+        streak INTEGER NOT NULL DEFAULT 0,
+        added_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL
+      ) STRICT;
+    `);
   },
 ];
 export const SCHEMA_VERSION = MIGRATIONS.length;
@@ -773,7 +810,148 @@ export class LearningStore {
     });
     return { mode, results };
   }
+
+  // Question bank (M4)
+
+  /** Wrap quiz.mjs's validation errors as library errors. */
+  #quiz(work) {
+    try {
+      return work();
+    } catch (error) {
+      if (error instanceof QuizError) throw new LearningError('invalid', error.message);
+      throw error;
+    }
+  }
+
+  /** Save questions in one transaction: all of them or none. */
+  saveQuestions({ questions, source = 'model', sessionId }) {
+    if (!Array.isArray(questions) || !questions.length || questions.length > QUIZ_LIMITS.batch) {
+      throw new LearningError('invalid', `questions must be an array of 1 to ${QUIZ_LIMITS.batch}`);
+    }
+    if (!['model', 'user'].includes(source)) throw new LearningError('invalid', "source must be 'model' or 'user'");
+    const session = sessionId === undefined ? null : sessionKey(sessionId);
+    const normalized = this.#quiz(() => questions.map((q, i) => {
+      try { return normalizeQuestion(q); } catch (error) { throw new QuizError(`question ${i + 1}: ${error.message}`); }
+    }));
+    return this.transaction(() => {
+      const now = this.now();
+      const insert = this.db.prepare(`
+        INSERT INTO quiz_questions(kind, prompt, options, answer, explanation, topic, source, session_id, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+      return normalized.map((q) => {
+        const { lastInsertRowid } = insert.run(q.kind, q.prompt, JSON.stringify(q.options), q.answer, q.explanation, q.topic, source, session, now);
+        return this.getQuestion({ id: Number(lastInsertRowid) });
+      });
+    });
+  }
+
+  getQuestion({ id: questionId, withAnswer = true }) {
+    const row = this.db.prepare(`
+      SELECT q.*, m.streak AS mistake_streak, m.question_id IS NOT NULL AS in_mistakes,
+        (SELECT count(*) FROM quiz_attempts a WHERE a.question_id = q.id) AS attempts,
+        (SELECT a.verdict FROM quiz_attempts a WHERE a.question_id = q.id ORDER BY a.created_at DESC, a.id DESC LIMIT 1) AS last_verdict
+      FROM quiz_questions q LEFT JOIN quiz_mistakes m ON m.question_id = q.id WHERE q.id = ?
+    `).get(id(questionId));
+    if (!row) throw new LearningError('not-found', `no question ${questionId}`);
+    return questionRow(row, withAnswer);
+  }
+
+  /** Questions newest first; `topic` filters, `mistakes: true` lists the mistake book. */
+  listQuestions({ topic, mistakes = false, limit = 100, offset = 0, withAnswer = false } = {}) {
+    const page = Math.min(Math.max(1, Number(limit) || 100), LIMITS.page);
+    const where = [];
+    const args = [];
+    if (topic !== undefined) { where.push('q.topic = ?'); args.push(text(topic, 'topic', QUIZ_LIMITS.topic).trim()); }
+    if (mistakes) where.push('m.question_id IS NOT NULL');
+    return this.db.prepare(`
+      SELECT q.*, m.streak AS mistake_streak, m.question_id IS NOT NULL AS in_mistakes,
+        (SELECT count(*) FROM quiz_attempts a WHERE a.question_id = q.id) AS attempts,
+        (SELECT a.verdict FROM quiz_attempts a WHERE a.question_id = q.id ORDER BY a.created_at DESC, a.id DESC LIMIT 1) AS last_verdict
+      FROM quiz_questions q LEFT JOIN quiz_mistakes m ON m.question_id = q.id
+      ${where.length ? `WHERE ${where.join(' AND ')}` : ''}
+      ORDER BY ${mistakes ? 'm.added_at DESC,' : ''} q.created_at DESC, q.id DESC LIMIT ? OFFSET ?
+    `).all(...args, page, Math.max(0, Number(offset) || 0)).map((row) => questionRow(row, withAnswer));
+  }
+
+  /** Topics with their question and mistake counts. */
+  quizTopics() {
+    return this.db.prepare(`
+      SELECT q.topic, count(*) AS questions, count(m.question_id) AS mistakes
+      FROM quiz_questions q LEFT JOIN quiz_mistakes m ON m.question_id = q.id GROUP BY q.topic ORDER BY q.topic
+    `).all().map((row) => ({ topic: row.topic, questions: row.questions, mistakes: row.mistakes }));
+  }
+
+  deleteQuestion({ id: questionId }) {
+    const { changes } = this.db.prepare('DELETE FROM quiz_questions WHERE id = ?').run(id(questionId));
+    if (!changes) throw new LearningError('not-found', `no question ${questionId}`);
+    return { deleted: true };
+  }
+
+  /**
+   * Grade an answer, record it, and move the question in or out of the mistake book, in
+   * one transaction. `judged` is the model's own verdict for a short answer;
+   * `gradedBy: 'user'` with `judged` is the learner overruling the grade in the app.
+   */
+  answerQuestion({ id: questionId, answer, judged, gradedBy }) {
+    return this.transaction(() => {
+      const question = this.getQuestion({ id: questionId });
+      if (gradedBy !== undefined && gradedBy !== 'user') throw new LearningError('invalid', "gradedBy can only be 'user'");
+      const result = this.#quiz(() => {
+        if (gradedBy === 'user') {
+          if (!['correct', 'partial', 'incorrect'].includes(judged)) throw new QuizError('judged must be correct, partial or incorrect');
+          return { verdict: judged, score: judged === 'correct' ? 1 : judged === 'partial' ? 0.5 : 0, gradedBy: 'user' };
+        }
+        return grade(question, answer, { judged: question.kind === 'short' ? judged : undefined });
+      });
+      const given = typeof answer === 'string' ? answer.trim().slice(0, QUIZ_LIMITS.answer) : String(answer ?? '');
+      const now = this.now();
+      this.db.prepare('INSERT INTO quiz_attempts(question_id, answer, verdict, score, graded_by, created_at) VALUES (?, ?, ?, ?, ?, ?)')
+        .run(question.id, result.chosen ?? given, result.verdict, result.score, result.gradedBy, now);
+      const entry = this.db.prepare('SELECT streak FROM quiz_mistakes WHERE question_id = ?').get(question.id) ?? null;
+      const next = nextMistake(entry, result.verdict, this.mastery);
+      if (next.action === 'add') {
+        this.db.prepare('INSERT INTO quiz_mistakes(question_id, streak, added_at, updated_at) VALUES (?, 0, ?, ?)').run(question.id, now, now);
+      } else if (next.action === 'reset' || next.action === 'progress') {
+        this.db.prepare('UPDATE quiz_mistakes SET streak = ?, updated_at = ? WHERE question_id = ?').run(next.streak, now, question.id);
+      } else if (next.action === 'remove') {
+        this.db.prepare('DELETE FROM quiz_mistakes WHERE question_id = ?').run(question.id);
+      }
+      return {
+        questionId: question.id,
+        verdict: result.verdict,
+        score: result.score,
+        gradedBy: result.gradedBy,
+        chosen: result.chosen,
+        correctAnswer: question.answer,
+        explanation: question.explanation,
+        mistakeBook: next.action === 'none' ? 'not-in' : next.action === 'remove' ? 'removed'
+          : next.action === 'add' ? 'added' : 'in',
+        streak: next.action === 'remove' || next.action === 'none' ? undefined : next.streak,
+        mastery: this.mastery,
+      };
+    });
+  }
+
+  /** How many correct answers in a row take a question out of the mistake book. */
+  get mastery() { return MASTERY; }
+
+  /** One question's attempts, newest first. */
+  listAttempts({ questionId, limit = 50 }) {
+    this.getQuestion({ id: questionId });
+    return this.db.prepare('SELECT * FROM quiz_attempts WHERE question_id = ? ORDER BY created_at DESC, id DESC LIMIT ?')
+      .all(questionId, Math.min(Math.max(1, Number(limit) || 50), LIMITS.page))
+      .map((row) => ({ id: row.id, answer: row.answer, verdict: row.verdict, score: row.score, gradedBy: row.graded_by, createdAt: row.created_at }));
+  }
 }
+
+const questionRow = (row, withAnswer) => row && ({
+  id: row.id, kind: row.kind, prompt: row.prompt, options: JSON.parse(row.options),
+  ...(withAnswer ? { answer: row.answer, explanation: row.explanation } : {}),
+  topic: row.topic, source: row.source, sessionId: row.session_id ?? null, createdAt: row.created_at,
+  attempts: row.attempts ?? 0, lastVerdict: row.last_verdict ?? null,
+  inMistakes: Boolean(row.in_mistakes), mistakeStreak: row.in_mistakes ? row.mistake_streak : null,
+});
 
 /** The document kinds the knowledge base takes; the table's CHECK holds the same list. */
 export const DOCUMENT_KINDS = ['txt', 'md', 'pdf'];
