@@ -197,6 +197,15 @@ jobs:
           total="$(echo "$summary" | jq -r '.totalTestCount // 0')"
           [ "$total" -gt 0 ] || { echo "no unit tests ran" >&2; exit 1; }
 
+      # The learning plugin's SQLite on the real NodeMobile in the simulator booted above:
+      # node:sqlite, the trigram tokenizer and the store under /home/dsh (DECISIONS.md D1, D4).
+      # A new script beside upstream's test-root-sim.sh, which stays untouched.
+      - name: Learning SQLite on NodeMobile
+        timeout-minutes: 10
+        env:
+          SIM_DEVICE: ${{ steps.sim.outputs.udid }}
+        run: scripts/test-learning-sim.sh
+
       - name: Upload test results
         if: failure()
         uses: actions/upload-artifact@v4

@@ -29,6 +29,8 @@ X The job was not acquired by Runner of type hosted even after multiple attempts
 
 **已决定（2026-11-24，用户）**：默认用 xcode-27；每个里程碑开工时查一次 macos-26，恢复了就用上面的命令切回去。
 
+**补充（2026-11-25）**：macos-26 有机器了，可还是不能切回去。run 45554899599（ddea0fd，手动触发，当时 `IOS_CI_RUNNER=macos-26`）分到了 `macos-26-arm64` 镜像，上面带的是 **Xcode 26.6**。上游代码 `app/DshIOS/Call/CallSynthesizer.swift:208` 在这个版本下编译不过（`closure captures 'socket' before it is declared`），和学习功能的改动无关。变量已经改回 `xcode-27`。所以要切回 macos-26，除了有机器，还得确认镜像里有 Xcode 27（日志「Xcode」那一步会打印版本）。
+
 原来的问题：
 - 接受默认用 `xcode-27`（预览镜像），还是等 macos-26 容量恢复后用上面的命令切回去？
 - 如果之后 `xcode-27` 也拿不到机器，下一个备选是 `macos-latest`（正式镜像），但它的 Xcode 可能比本 App 要求的旧。上游注释说旧编译器会拒绝一段很长的 SwiftUI 代码，到时可能需要拆分那段代码。

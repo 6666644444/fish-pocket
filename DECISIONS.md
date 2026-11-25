@@ -56,15 +56,41 @@
 - 方法名统一用 `learning` 前缀，下面分 `notebooks.*`、`notes.*`、`memories.*`、`status`，完整清单见 `docs/PLAN.md` 第 9 节。
 - 学习库在第一次收到请求时才打开，不在引擎启动时打开。这样它出问题不会拖住或者卡死引擎启动。
 
+## D7 界面入口：设置页里新增一个「学习」分区（M1）
+
+- **决定**：在设置页「插件 / 自动化」那个分区下面，新增一个只有一行「学习」的分区。点进去是「学习记忆」入口和笔记本列表。代码放在 `app/DshIOS/Learning/`。
+- **理由**：不改任何已有的行和页面，对现有功能没有影响，也最容易和上游合并。首页的 Tab 结构比较复杂（自适应 Tab，iPad 和 Duo 上一共三种布局），风险更高。
+- **替代方案**：在探索页加一张卡片，或者在首页加一个 Tab。等功能多起来、在真机上看过之后再考虑。
+- **回退**：删掉 `SettingsView.swift` 里新增的那 5 行。
+- **未验证**：界面外观和交互只保证能编译通过，还没在模拟器或真机上看过。
+
+## D8 Swift 和 Node 之间的桥接（M1）
+
+- `LearningAPI` 只负责格式，不发请求：请求路径、请求体编码、响应解码、错误转换都在这里，所以 XCTest 不用启动引擎就能测。`LearningClient` 用引擎的 session 发请求，cookie 也沿用引擎的。
+- 错误统一转成 `LearningError(kind, message, status)`。HTTP 200 但返回的数据形状不对，也按传输错误处理，不会当成成功静默吞掉。
+
+## D9 模拟器上的 SQLite 验证：新增脚本，不改上游的 conformance 测试（M1）
+
+- 新增 `scripts/test-learning-sim.sh` 和 `native/root/test/learning-sqlite.mjs`，写法照 `test-root-sim.sh`：不启动 App，在模拟器里直接用真实的 NodeMobile 加文件系统视图，跑 node:sqlite、trigram 分词，以及插件 store 的中文检索。
+- 放在 CI macOS job 的单元测试之后执行，限时 10 分钟。
+
+## D10 翻译（M1）
+
+- 新增 34 条文案，en、es、ja、ko、zh-Hant 五种语言都按 CLAUDE.md「界面翻译」的要求逐条直接翻译，没有用简繁转换工具。zh-Hant 用台湾用词（儲存、裝置、搜尋、新增、建立）。
+- 改法是在 `Localizable.xcstrings` 的 `strings` 末尾插入文本，文件其余部分一个字节都没动。以后 Xcode 同步时可能会重新排序，不影响结果。
+- `scripts/strings-coverage.mjs` 结果：五种语言都是 3631/3631。
+
 ## 改过的上游文件
 
 | 文件 | 改了什么 | 为什么 |
 |---|---|---|
-| `engine/ios.patch.yml` | 在 `insert` 列表末尾追加了 `learning` 这一项，已有的条目都没动 | 注册学习插件 |
-| `.github/workflows/ios-ci.yml` | 新增 `engine-tests` job（这个文件是 fork 自己加的，不是上游的） | 见 D5 |
+| `engine/ios.patch.yml` | 只在 `insert` 末尾追加了 `learning` 一项，已有条目没动 | 注册学习插件 |
+| `.github/workflows/ios-ci.yml` | 新增 `engine-tests` job，以及 macOS job 里的「Learning SQLite on NodeMobile」这一步（这个文件是 fork 自己加的，不是上游的） | 见 D5、D9 |
 | `docs/PLAN.md` | 从仓库根目录挪进来（git mv），然后补充内容 | fork 自己的文档 |
+| `app/DshIOS/Views/SettingsView.swift` | 新增一个 5 行的分区 | 见 D7 |
+| `app/Shared/Localizable.xcstrings` | 在末尾追加 34 条 | 见 D10 |
 
-没有改：`node_modules`、引擎版本、`ios.patch.yml` 里已有的条目、`ios-build.yml`、`LICENSE`、Bundle ID、App Group、签名。
+没有改：`node_modules`、引擎版本、`ios.patch.yml` 里已有的条目、`ios-build.yml`、`LICENSE`、`project.yml`、Bundle ID、App Group、签名、`test-root-sim.sh`、`conformance.mjs`。
 
 ## 新增的依赖
 

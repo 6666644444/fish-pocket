@@ -143,6 +143,11 @@ private struct SettingsList: View {
                 }
             }
 
+            // Learning (engine/plugins/learning): notebooks and the learner's memory, apart from Bot memory.
+            Section {
+                NavigationLink { LearningHomePage() } label: { row("学习", "graduationcap") }
+            }
+
             Section {
                 // Turning it off asks first: without it the system may end the engine in the background.
                 Toggle(isOn: Binding(get: { keepAlive }, set: { on in
