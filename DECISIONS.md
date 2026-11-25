@@ -80,6 +80,39 @@
 - 改法是在 `Localizable.xcstrings` 的 `strings` 末尾插入文本，文件其余部分一个字节都没动。以后 Xcode 同步时可能会重新排序，不影响结果。
 - `scripts/strings-coverage.mjs` 结果：五种语言都是 3631/3631。
 
+## D11 学习模式用随包 skill 加每轮注入，不用 Agent 预设（2026-11-25，M2）
+
+- 查过的结论：
+  - **skill 能直接复用**：`dsh-skill-filesystem` 已经从 `engine/skills`（随包根，rank 600）和 `$DSH_HOME/skills`（用户根，rank 400）加载 skill，格式是 `<name>/SKILL.md` 加 YAML 头（必填 `name`、`description`，可选 `whenToUse`、`metadata` 等），目录有监视，不用重启。
+  - **Agent 预设不适合**：`dsh-agent-preset-registry` 不扫描目录，新增预设要往 profile 里装一份 bundle patch；用户一旦覆盖某个预设，会替换整份子插件列表，以后上游对它的修改也合不进来。为了三段提示词去改 profile，风险比收益大。
+- 做法：三种模式写成三个随包 skill（learning-qa / learning-socratic / learning-quiz），学习插件在 `agent/pre-step` 里把模式说明注入学习会话（写法照 ios-call 的通话提示）。同一份 SKILL.md 既是注入的来源，也能在任何会话里 `/名称` 调用，只有一份文本。
+- 注入只给学习库里记了模式的会话。普通会话一律原样通过，不改变现有功能的行为（总控第四节）。
+
+## D12 模式说明只完整注入一次，之后每轮一行提醒（M2）
+
+- 完整说明每轮都放会让长会话的上下文越来越大（每份 1.3–1.8 KB）。所以一个会话第一次进入某个模式时放完整正文，之后只放一行提醒，提醒里告诉模型看不到说明时去加载对应的 skill（会话被压缩后也能找回来）。
+- `announced` 存在学习库里，引擎重启后不会重复完整注入。
+
+## D13 学习记忆注入的参数初值（M2）
+
+- 最多 3 条；每条最多 300 字；合计最多 800 字；剩余不到 40 字就不再加；只在最近更新的 500 条里挑。
+- 相关度用「拉丁词 + 中日韩相邻两字」的 token 重合度，不用向量：M3 之前学习库里还没有 embedding，而且这样在 Node 里就能测。
+- 没有任何一条相关时补 1 条最近更新的，让「我在准备考研」这类长期信息也能进来；有 3 条相关时不补。
+- 默认开启；设置里关掉后只是不再附记忆，模式说明照常。设置存在学习库的 `meta` 表，不放在 `$DSH_HOME` 根目录（那里的文件会被当成设置，见 D2）。
+
+## D14 自定义 Skills 放 DSH 自己的用户 skill 目录，只改这里建的（M2）
+
+- 目录：`$DSH_HOME/skills/<name>/SKILL.md`，不另建一套。它在 `$DSH_HOME` 下一层，`recovery.mjs` 不会把它当设置。
+- 这个目录里原来可能就有用户或 Agent 写的 skill。按总控第四节「不读写已有用户数据」，这些只列出和查看，不改不删；这里建的在 `metadata` 里带 `created-by: dsh-learning`，只有带标记的才能编辑和删除。删除时文件夹里有 SKILL.md 以外的文件就拒绝。
+- 名字规则直接用 `@deepseek-ai/dsh-skill` 的 `isSkillName`；`learning-` 前缀保留给随包模式，避免用户 skill（rank 400）盖住随包的（rank 600）。description 最多 500 字，因为 dsh-tool-skill 在目录里只显示前 500 字。
+- YAML：只写不读复杂结构，值一律写成 JSON 字符串（YAML 能读的双引号标量）。没有引入 YAML 库（`yaml` 包是 ISC 许可，按总控第四节不新增）；测试里用 node_modules 里已有的 `yaml`（dsh-skill-filesystem 的依赖）核对 DSH 能解析我们写出的文件，App 代码不依赖它。
+- 这次测试抓到一个问题：随包 SKILL.md 的 description 里有 `": "`，YAML 会解析失败，DSH 会静默跳过这个 skill。已改成带引号的写法，测试会拦住同类问题。
+
+## D15 学习会话怎么建（M2）
+
+- 用 App 现成的 `AppModel.createSession(in:)`（会复用一个空白会话，和「新会话」按钮一样），再调 `sessions.setMode`。没有改会话列表或聊天界面。
+- 已知限制：学习会话建好后如果一条消息都没发，之后点普通的「新会话」可能会复用它，这时它仍在学习模式里。设置 → 学习 → 学习会话里可以结束学习模式。记在 OPEN_QUESTIONS.md 第 7 条。
+
 ## 改过的上游文件
 
 | 文件 | 改了什么 | 为什么 |
@@ -88,7 +121,7 @@
 | `.github/workflows/ios-ci.yml` | 新增 `engine-tests` job，以及 macOS job 里的「Learning SQLite on NodeMobile」这一步（这个文件是 fork 自己加的，不是上游的） | 见 D5、D9 |
 | `docs/PLAN.md` | 从仓库根目录挪进来（git mv），然后补充内容 | fork 自己的文档 |
 | `app/DshIOS/Views/SettingsView.swift` | 新增一个 5 行的分区 | 见 D7 |
-| `app/Shared/Localizable.xcstrings` | 在末尾追加 34 条 | 见 D10 |
+| `app/Shared/Localizable.xcstrings` | 在末尾追加 34 条（M1），M2 再追加 34 条 | 见 D10；M2 同样五种语言逐条翻译，覆盖率 3665/3665 |
 
 没有改：`node_modules`、引擎版本、`ios.patch.yml` 里已有的条目、`ios-build.yml`、`LICENSE`、`project.yml`、Bundle ID、App Group、签名、`test-root-sim.sh`、`conformance.mjs`。
 

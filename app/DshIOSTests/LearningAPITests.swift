@@ -74,4 +74,69 @@ final class LearningAPITests: XCTestCase {
         let reply = #"{"ok":true,"result":[]}"#
         XCTAssertThrowsError(try LearningAPI.decode([LearningNotebook].self, data: data(reply), status: 500))
     }
+
+    // Milestone 2
+
+    func testModesMatchTheEngineSkills() {
+        XCTAssertEqual(LearningMode.allCases.map(\.rawValue), ["qa", "socratic", "quiz"])
+        XCTAssertEqual(LearningMode.allCases.map(\.skill), ["learning-qa", "learning-socratic", "learning-quiz"])
+        for mode in LearningMode.allCases {
+            XCTAssertFalse(mode.title.isEmpty)
+            XCTAssertFalse(mode.summary.isEmpty)
+        }
+    }
+
+    func testDecodesSettings() throws {
+        let settings = try LearningAPI.decode(LearningSettings.self, data: data(#"{"ok":true,"result":{"injectMemories":false}}"#), status: 200)
+        XCTAssertEqual(settings, LearningSettings(injectMemories: false))
+    }
+
+    func testDecodesSessionModesAndANullMode() throws {
+        let reply = #"{"ok":true,"result":[{"sessionId":"s-1","mode":"socratic","announced":null,"updatedAt":9}]}"#
+        let modes = try LearningAPI.decode([LearningSessionMode].self, data: data(reply), status: 200)
+        XCTAssertEqual(modes, [LearningSessionMode(sessionId: "s-1", mode: .socratic, updatedAt: 9)])
+        let none = try LearningAPI.decode(LearningSessionMode?.self, data: data(#"{"ok":true,"result":null}"#), status: 200)
+        XCTAssertNil(none)
+    }
+
+    func testAnUnknownModeIsATransportError() {
+        let reply = #"{"ok":true,"result":{"sessionId":"s","mode":"lecture","updatedAt":1}}"#
+        XCTAssertThrowsError(try LearningAPI.decode(LearningSessionMode?.self, data: data(reply), status: 200)) { error in
+            XCTAssertEqual((error as? LearningError)?.kind, "transport")
+        }
+    }
+
+    func testClearingAModeSendsNull() throws {
+        let body = try JSON.parse(LearningAPI.body(["sessionId": "s", "mode": .null]))
+        XCTAssertEqual(body["sessionId"].string, "s")
+        guard case .null = body["mode"] else { return XCTFail("mode should be null, got \(body["mode"])") }
+        XCTAssertTrue(body.object.keys.contains("mode"))
+    }
+
+    func testDecodesSkillsWithAndWithoutOptionalFields() throws {
+        let list = #"{"ok":true,"result":[{"name":"agent-made","kind":"bundle","description":"d","managed":false,"valid":true},{"name":"exam-review","kind":"bundle","description":"复习","whenToUse":"考前","managed":true,"valid":true}]}"#
+        let skills = try LearningAPI.decode([LearningSkill].self, data: data(list), status: 200)
+        XCTAssertEqual(skills.map(\.name), ["agent-made", "exam-review"])
+        XCTAssertNil(skills[0].whenToUse)
+        XCTAssertNil(skills[0].body)
+        XCTAssertFalse(skills[0].managed)
+        XCTAssertEqual(skills[1].whenToUse, "考前")
+        let one = #"{"ok":true,"result":{"name":"exam-review","kind":"bundle","description":"复习","managed":true,"valid":true,"body":"# 复习\n问我三个问题"}}"#
+        XCTAssertEqual(try LearningAPI.decode(LearningSkill.self, data: data(one), status: 200).body, "# 复习\n问我三个问题")
+    }
+
+    func testSkillConflictKeepsTheEngineMessage() {
+        let reply = #"{"error":{"kind":"conflict","message":"a skill or file named exam-review already exists"}}"#
+        XCTAssertThrowsError(try LearningAPI.decode(LearningSkill.self, data: data(reply), status: 409)) { error in
+            XCTAssertEqual((error as? LearningError)?.kind, "conflict")
+            XCTAssertEqual((error as? LearningError)?.status, 409)
+        }
+    }
+
+    func testSkillNameRulesMatchTheEngine() {
+        for name in ["ab", "a-b", "exam-review", "a1", "x"] { XCTAssertTrue(LearningSkillRules.isValidName(name), name) }
+        for name in ["", "a--b", "-a", "a-", "A", "a_b", "中文", "learning-mine", String(repeating: "a", count: 65)] {
+            XCTAssertFalse(LearningSkillRules.isValidName(name), name)
+        }
+    }
 }

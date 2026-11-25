@@ -126,7 +126,8 @@ SwiftUI 外壳（app/DshIOS）
 | 9 | 浏览器、手机控制、分享扩展、小组件、手表、快捷指令 | 否 | 各操作一次 |
 | 10 | iPad / iPhone Duo 的分栏和 Tab 布局 | 否 | 在这些机型的模拟器上打开首页 |
 | 11 | 「引擎修复」页的恢复和重置 | 部分（recovery.test.mjs，学习库不会被当成设置：learning-store.test.mjs）| 重置一次之后，学习数据仍然在 |
-| 12 | 学习功能（从 M1 起新增）：笔记本、学习记忆 | Node 部分能 | 见各里程碑的汇报 |
+| 12 | 学习功能（从 M1 起新增）：笔记本、学习记忆；M2 起：三种学习模式、学习记忆注入开关、我的 Skills | Node 部分能 | 见各里程碑的汇报 |
+| 13 | 普通会话不受学习功能影响（M2 起） | 能（learning-modes.test.mjs：没有模式的会话原样通过） | 新建普通会话发一句话，确认回答方式和以前一样 |
 
 ## 8. 学习库的数据模型（M1）
 
@@ -163,3 +164,66 @@ SwiftUI 外壳（app/DshIOS）
 - 取消：先置 `cancelRequested`，当前这一步做完后检查这个标记，然后转到 `cancelled`。已经完成的步骤保留。
 - 进度：`research.status` 返回当前状态、已完成数 / 总数，以及最近一步的摘要。App 定时拉取。
 - iOS 后台：App 退到后台时，用 `beginBackgroundTask` 争取一点时间把当前这一步做完并落盘，而不是去跑完整个任务。只有在用户允许时，才申请 BGProcessingTask，标识用 `$(PRODUCT_BUNDLE_IDENTIFIER).task.learning-research`（落在 project.yml 已有的 `.task.*` 通配范围里），在后台接着跑剩下的步骤。默认情况下只在前台运行。
+
+## 11. 学习模式、学习记忆注入、自定义 Skills（M2）
+
+### 11.1 三种模式 = 三个随包 skill
+
+| 模式 id | skill（`engine/skills/<名>/SKILL.md`） | 做什么 |
+|---|---|---|
+| `qa` | `learning-qa` | 普通问答：先给答案，再讲原因，最后一句确认 |
+| `socratic` | `learning-socratic` | 引导式学习：一次只问一个问题，不直接给出最终答案；学习者明确要两次才给 |
+| `quiz` | `learning-quiz` | 出题测验：一次一题，单选（A–D）或简答，批改并讲解，默认 5 题后小结。M2 只是对话，题目不进题库（题库在 M4） |
+
+- skill 由 `dsh-skill-filesystem` 的随包根（`DSH_BUNDLED_SKILL_DIR` = `engine/skills`，`scripts/build-engine.sh` 原样拷进 App）加载，所以在任何会话里也能 `/learning-socratic` 调用。
+- 学习会话就是普通 DSH 会话（JSONL v4，不改格式）。App 在「设置 → 学习 → 开始学习」用 `AppModel.createSession` 建会话，再调 `sessions.setMode` 记下模式。
+- Agent 预设没有用，原因见 DECISIONS.md D11。
+
+### 11.2 每一轮注入什么（`agent/pre-step`，写法同 ios-call）
+
+只对**学习库里有模式记录的会话**生效；其他会话什么都不加。条件：这一回合的第 1 步、带新消息、没被拒绝或中止。
+
+注入的是一条 `role: user`、`source.kind: 'learning-context'`、`form: 'snapshot'` 的消息，App 的时间线不显示。内容分两节：
+
+1. `learning-mode`：这个会话第一次进入某个模式时，放该 skill 的完整正文，并在 `session_modes.announced` 记下；之后每轮只放一行提醒（「继续按 learning-xxx 的说明；如果已经看不到，就加载这个 skill」）。换模式会清空 `announced`，下一轮重新放完整正文。
+2. `learning-memory`（设置开着时）：按相关度挑出的学习记忆。
+
+记忆筛选（`modes.mjs` 的 `pickMemories`，参数初值见 D13）：
+- 相关度：把用户这一轮的文字和每条记忆切成 token（拉丁字母/数字的词 ≥2 个字符；中日韩文字取相邻两字），相关度 = 共有 token 数 / √(记忆的 token 数)。
+- 取相关度 > 0 的前 3 条（同分时较新的优先）；不足 3 条时，再补 1 条最近更新的。
+- 截断：每条最多 300 字，合计最多 800 字（按 Unicode 码点计），被截的结尾加「…」；剩余空间不到 40 字时不再加。空白折叠成单个空格。
+- 只看最近更新的 500 条记忆。
+
+出错（学习库打不开、skill 文件读不到）时只记一条 warn，这一轮照常进行，不带注入。
+
+### 11.3 学习库 v3
+
+- `session_modes(session_id TEXT PRIMARY KEY, mode TEXT CHECK IN ('qa','socratic','quiz'), announced TEXT, updated_at INTEGER)`。只存 session id。
+- 设置放在 `meta`：`inject_memories` = `on` / `off`，没有这一行时视为 on。
+- 打开顺序改为：先校验 application_id 和版本，再切 WAL（M1 的写法会先把别人的数据库切成 WAL 再拒绝，改了文件头）。
+
+### 11.4 自定义 Skills
+
+- 位置：`$DSH_HOME/skills/<name>/SKILL.md`，即 dsh-skill-filesystem 的 `user-dsh` 根（rank 400）。DSH 监视这个目录，新增、修改、删除不用重启。它在 `$DSH_HOME` 下一层，`recovery.mjs` 的 settingsFiles 只看 `$DSH_HOME` 根和 `profiles/web` 里的文件，所以不会被「重置设置」移走。
+- 写出的格式：`name`（kebab-case，规则就是 `@deepseek-ai/dsh-skill` 的 `isSkillName`）、`description`、可选 `whenToUse`，值写成 JSON 字符串（YAML 双引号标量）；另加 `metadata: { created-by: dsh-learning }` 作为「这里建的」标记。写入用临时文件加 rename。
+- 只改这里建的：没有标记的（Agent 写的、手动放的、平铺的 `<name>.md`）可以列出和查看，但不改、不删。`learning-` 开头的名字留给随包模式。删除只删 `SKILL.md` 和随后变空的文件夹，文件夹里有别的文件就拒绝。
+
+### 11.5 接口（在 §9 的基础上新增）
+
+| 方法 | 参数 | 返回 |
+|---|---|---|
+| settings.get / settings.update | update 要 {injectMemories: bool} | {injectMemories} |
+| modes.list | — | [{id, skill}] |
+| sessions.getMode | {sessionId} | {sessionId, mode, announced, updatedAt} 或 null |
+| sessions.setMode | {sessionId, mode: 'qa'\|'socratic'\|'quiz'\|null} | 同上；null 表示结束学习模式（会话本身不动） |
+| sessions.list | {limit?} | 有模式的会话，最近设置的在前 |
+| skills.list | — | [{name, kind: bundle\|file, description, whenToUse?, managed, valid}] |
+| skills.get | {name} | 同上加 body |
+| skills.create / skills.update | {name, description, whenToUse?, body}；update 省略的字段保持原值，whenToUse 传空串表示清除 | 同 skills.get |
+| skills.delete | {name} | {deleted: true} |
+
+skills.* 不打开学习库。
+
+### 11.6 界面（M2）
+
+设置 → 学习：新增「开始学习」（三种模式各一行）、「学习会话」（有模式的会话，可打开、左滑结束学习模式）、「在学习会话中使用学习记忆」开关、「我的 Skills」页（列出、新建、编辑、删除；不是这里建的显示「只读」，格式不对的显示「格式有误」）。只保证编译通过，没有人工看过。

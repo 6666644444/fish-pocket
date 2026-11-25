@@ -7,6 +7,7 @@ import SwiftUI
 /// Settings → 学习.
 struct LearningHomePage: View {
     @Environment(AppModel.self) private var app
+    @Environment(\.openSession) private var openSession
     @State private var notebooks: [LearningNotebook] = []
     @State private var loaded = false
     @State private var loadError: String?
@@ -15,49 +16,139 @@ struct LearningHomePage: View {
     @State private var renaming: LearningNotebook?
     @State private var renameTitle = ""
     @State private var deleting: LearningNotebook?
+    @State private var learningSessions: [LearningSessionMode] = []
+    @State private var settings: LearningSettings?
+    @State private var starting: LearningMode?
 
     private var client: LearningClient { LearningClient(engine: app.client) }
 
+    /// Learning sessions the app still has (an archived or deleted one is not offered).
+    private var openableSessions: [LearningSessionMode] {
+        learningSessions.filter { app.sessions[$0.sessionId] != nil }
+    }
+
     var body: some View {
-        List {
-            Section {
-                NavigationLink { LearningMemoryPage() } label: {
-                    Label("学习记忆", systemImage: "brain.head.profile")
-                }
-            } footer: {
-                Text("学习记忆只供学习功能使用，和 Bot 的记忆分开保存。")
+        page(
+            List {
+                modesSection
+                sessionsSection
+                memorySection
+                notebooksSection
             }
-            Section {
-                if !loaded {
-                    ProgressView().frame(maxWidth: .infinity)
-                } else if let loadError {
-                    Text(loadError).font(.footnote).foregroundStyle(.red)
-                } else if notebooks.isEmpty {
-                    Text("还没有笔记本。点右上角的 + 新建一个。").font(.footnote).foregroundStyle(.secondary)
-                } else {
-                    ForEach(notebooks) { book in
-                        NavigationLink { NotebookPage(notebook: book) } label: {
-                            LabeledContent {
-                                Text("\(book.noteCount) 条笔记")
-                            } label: {
-                                Label(book.title, systemImage: "book.closed")
+            .groupedList()
+        )
+    }
+
+    @ViewBuilder private var modesSection: some View {
+        // Milestone 2: each mode starts an ordinary DSH session that the engine tells the mode's
+        // instructions (engine/skills/learning-<mode>/SKILL.md) at each turn.
+        Section {
+            ForEach(LearningMode.allCases) { mode in
+                Button { Task { await start(mode) } } label: {
+                    HStack(alignment: .firstTextBaseline) {
+                        Label {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(mode.title).foregroundStyle(.primary)
+                                Text(mode.summary).font(.footnote).foregroundStyle(.secondary)
                             }
+                        } icon: {
+                            Image(systemName: mode.systemImage)
                         }
-                        .swipeActions {
-                            Button("删除", role: .destructive) { deleting = book }
-                            Button("重命名") { renameTitle = book.title; renaming = book }
+                        Spacer(minLength: 8)
+                        if starting == mode { ProgressView() }
+                    }
+                }
+                .disabled(starting != nil)
+            }
+        } header: {
+            Text("开始学习")
+        } footer: {
+            Text("每种模式都会新建一个普通会话。模式说明来自随 App 提供的 skill，在任何会话里也可以用 /learning-qa、/learning-socratic、/learning-quiz 调用。")
+        }
+    }
+
+    @ViewBuilder private var sessionsSection: some View {
+        if !openableSessions.isEmpty {
+            Section {
+                ForEach(openableSessions, id: \.sessionId) { entry in
+                    Button { open(entry.sessionId) } label: {
+                        LabeledContent {
+                            Text(entry.mode.title)
+                        } label: {
+                            Label(sessionTitle(entry.sessionId), systemImage: entry.mode.systemImage)
+                                .foregroundStyle(.primary)
                         }
-                        .contextMenu {
-                            Button("重命名", systemImage: "pencil") { renameTitle = book.title; renaming = book }
-                            Button("删除", systemImage: "trash", role: .destructive) { deleting = book }
-                        }
+                    }
+                    .swipeActions {
+                        Button("结束学习模式") { Task { await endMode(entry.sessionId) } }
+                    }
+                    .contextMenu {
+                        Button("结束学习模式", systemImage: "xmark.circle") { Task { await endMode(entry.sessionId) } }
                     }
                 }
             } header: {
-                Text("笔记本")
+                Text("学习会话")
+            } footer: {
+                Text("结束学习模式后，会话和聊天记录都还在，只是之后的回合不再按学习模式回答。")
             }
         }
-        .groupedList()
+    }
+
+    private var memorySection: some View {
+        Section {
+            NavigationLink { LearningMemoryPage() } label: {
+                Label("学习记忆", systemImage: "brain.head.profile")
+            }
+            Toggle(isOn: Binding(
+                get: { settings?.injectMemories ?? true },
+                set: { on in Task { await setInject(on) } }
+            )) {
+                Label("在学习会话中使用学习记忆", systemImage: "text.badge.plus")
+            }
+            .disabled(settings == nil)
+            NavigationLink { LearningSkillsPage() } label: {
+                Label("我的 Skills", systemImage: "wand.and.stars")
+            }
+        } footer: {
+            Text("学习记忆只供学习功能使用，和 Bot 的记忆分开保存。开启后，学习会话每一轮会按相关度附上最多 3 条学习记忆（合计不超过 800 字），普通会话不受影响。")
+        }
+    }
+
+    private var notebooksSection: some View {
+        Section {
+            if !loaded {
+                ProgressView().frame(maxWidth: .infinity)
+            } else if let loadError {
+                Text(loadError).font(.footnote).foregroundStyle(.red)
+            } else if notebooks.isEmpty {
+                Text("还没有笔记本。点右上角的 + 新建一个。").font(.footnote).foregroundStyle(.secondary)
+            } else {
+                ForEach(notebooks) { book in
+                    NavigationLink { NotebookPage(notebook: book) } label: {
+                        LabeledContent {
+                            Text("\(book.noteCount) 条笔记")
+                        } label: {
+                            Label(book.title, systemImage: "book.closed")
+                        }
+                    }
+                    .swipeActions {
+                        Button("删除", role: .destructive) { deleting = book }
+                        Button("重命名") { renameTitle = book.title; renaming = book }
+                    }
+                    .contextMenu {
+                        Button("重命名", systemImage: "pencil") { renameTitle = book.title; renaming = book }
+                        Button("删除", systemImage: "trash", role: .destructive) { deleting = book }
+                    }
+                }
+            }
+        } header: {
+            Text("笔记本")
+        }
+    }
+
+    /// The page around the sections: its title, toolbar and the notebook dialogs.
+    private func page<Content: View>(_ list: Content) -> some View {
+        list
         .navigationTitle("学习")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -98,6 +189,59 @@ struct LearningHomePage: View {
             loadError = error.localizedDescription
         }
         loaded = true
+        // The mode list and the setting are extras: a failure here leaves the notebooks usable.
+        if let modes = try? await client.sessionModes() { learningSessions = modes }
+        if let current = try? await client.settings() { settings = current }
+    }
+
+    private func sessionTitle(_ id: String) -> String {
+        let title = app.sessions[id]?.title?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return title.isEmpty ? String(localized: "新会话") : title
+    }
+
+    private func open(_ sessionId: String) {
+        if let openSession { openSession(sessionId) }
+        else { app.showToast(String(localized: "学习会话已建好，可在会话列表中打开")) }
+    }
+
+    /// A new session (or the blank one already there) in `mode`, then open it.
+    private func start(_ mode: LearningMode) async {
+        guard let workspace = app.workspaces.first else {
+            app.showToast(String(localized: "还没有工作区，暂时无法新建会话"), tone: .warning)
+            return
+        }
+        starting = mode
+        defer { starting = nil }
+        do {
+            let session = try await app.createSession(in: workspace)
+            guard !session.isEmpty else { throw LearningError(kind: "transport", message: String(localized: "新建会话失败"), status: 0) }
+            try await client.setMode(mode, for: session)
+            Haptics.select()
+            open(session)
+            if let modes = try? await client.sessionModes() { learningSessions = modes }
+        } catch {
+            app.showToast(error.localizedDescription, tone: .warning)
+        }
+    }
+
+    private func endMode(_ sessionId: String) async {
+        do {
+            try await client.setMode(nil, for: sessionId)
+            learningSessions.removeAll { $0.sessionId == sessionId }
+        } catch {
+            app.showToast(error.localizedDescription, tone: .warning)
+        }
+    }
+
+    private func setInject(_ on: Bool) async {
+        let before = settings
+        settings = LearningSettings(injectMemories: on)
+        do {
+            settings = try await client.setInjectMemories(on)
+        } catch {
+            settings = before
+            app.showToast(error.localizedDescription, tone: .warning)
+        }
     }
 
     private func create() async {

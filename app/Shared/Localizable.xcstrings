@@ -126963,6 +126963,1162 @@
           }
         }
       }
+    },
+    "普通问答" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ask"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "質問"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "질문"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一般問答"
+          }
+        }
+      }
+    },
+    "引导式学习" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guided learning"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprendizaje guiado"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ガイド学習"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "가이드 학습"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "引導式學習"
+          }
+        }
+      }
+    },
+    "出题测验" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiz"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuestionario"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "クイズ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "퀴즈"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "出題測驗"
+          }
+        }
+      }
+    },
+    "直接回答你的问题，讲清楚原因，再问一句确认你听懂了。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Answers your question directly, explains why, then asks one question to check you followed."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Responde a tu pregunta directamente, explica el porqué y luego te hace una pregunta para comprobar que lo entendiste."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "質問に直接答えて理由を説明し、理解できたかを一言確認します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "질문에 바로 답하고 이유를 설명한 뒤, 이해했는지 한 번 확인해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "直接回答你的問題，講清楚原因，再問一句確認你聽懂了。"
+          }
+        }
+      }
+    },
+    "一次只问一个问题，一步步带你自己想出答案，不直接给答案。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asks one question at a time and leads you to work out the answer yourself, without giving it away."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hace una pregunta cada vez y te guía paso a paso hasta que encuentres la respuesta tú mismo, sin dártela."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一度に一つだけ質問し、答えを教えずに、自分で答えにたどり着けるよう一歩ずつ導きます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "한 번에 하나씩 질문하며, 답을 바로 알려 주지 않고 스스로 답을 찾도록 한 걸음씩 이끌어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一次只問一個問題，一步步帶你自己想出答案，不直接給答案。"
+          }
+        }
+      }
+    },
+    "一次出一道题（单选或简答），批改并讲解，最后给出小结。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Asks one question at a time (multiple choice or short answer), marks and explains each answer, then sums up."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hace una pregunta cada vez (opción múltiple o respuesta corta), corrige y explica cada respuesta y al final hace un resumen."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一度に一問（選択式または記述式）出題し、採点と解説をして、最後にまとめます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "한 번에 한 문제(객관식 또는 단답형)를 내고 채점과 해설을 한 뒤, 마지막에 요약해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一次出一道題（單選或簡答），批改並講解，最後給出小結。"
+          }
+        }
+      }
+    },
+    "开始学习" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start learning"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar a aprender"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習を始める"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 시작"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開始學習"
+          }
+        }
+      }
+    },
+    "每种模式都会新建一个普通会话。模式说明来自随 App 提供的 skill，在任何会话里也可以用 /learning-qa、/learning-socratic、/learning-quiz 调用。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each mode starts an ordinary conversation. The mode's instructions come from skills that ship with the app, which you can also call in any conversation with /learning-qa, /learning-socratic or /learning-quiz."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada modo inicia una conversación normal. Las instrucciones del modo vienen de skills incluidos en la app, que también puedes usar en cualquier conversación con /learning-qa, /learning-socratic o /learning-quiz."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どのモードも通常の会話を新しく作ります。モードの指示はアプリに含まれる skill から来ており、どの会話でも /learning-qa、/learning-socratic、/learning-quiz で呼び出せます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모드마다 일반 대화를 새로 만들어요. 모드 지침은 앱에 포함된 skill에서 오며, 어느 대화에서든 /learning-qa, /learning-socratic, /learning-quiz로 불러올 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每種模式都會新增一個一般對話。模式說明來自隨 App 提供的 skill，在任何對話裡也可以用 /learning-qa、/learning-socratic、/learning-quiz 呼叫。"
+          }
+        }
+      }
+    },
+    "结束学习模式" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End learning mode"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salir del modo de aprendizaje"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習モードを終了"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 모드 종료"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結束學習模式"
+          }
+        }
+      }
+    },
+    "学习会话" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Learning conversations"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversaciones de aprendizaje"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習の会話"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 대화"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "學習對話"
+          }
+        }
+      }
+    },
+    "结束学习模式后，会话和聊天记录都还在，只是之后的回合不再按学习模式回答。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "After you end learning mode, the conversation and its messages stay; later turns are just no longer answered in the learning mode."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al salir del modo de aprendizaje, la conversación y sus mensajes se conservan; solo que los turnos siguientes ya no se responden en ese modo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習モードを終了しても会話とメッセージは残ります。以降のやり取りが学習モードで答えられなくなるだけです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 모드를 종료해도 대화와 메시지는 그대로 남아요. 이후 대화가 학습 모드로 답변되지 않을 뿐이에요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結束學習模式後，對話和聊天記錄都還在，只是之後的回合不再按學習模式回答。"
+          }
+        }
+      }
+    },
+    "在学习会话中使用学习记忆" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use learning memory in learning conversations"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar la memoria de aprendizaje en las conversaciones de aprendizaje"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習の会話で学習メモリを使う"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 대화에서 학습 메모리 사용"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在學習對話中使用學習記憶"
+          }
+        }
+      }
+    },
+    "我的 Skills" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Skills"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mis skills"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マイ Skill"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "내 Skill"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "我的 Skills"
+          }
+        }
+      }
+    },
+    "学习记忆只供学习功能使用，和 Bot 的记忆分开保存。开启后，学习会话每一轮会按相关度附上最多 3 条学习记忆（合计不超过 800 字），普通会话不受影响。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Learning memory is used only by the learning features and is kept apart from Bot memory. When this is on, each turn of a learning conversation gets up to 3 of the most relevant learning memories (800 characters in all at most); other conversations are not affected."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La memoria de aprendizaje solo la usan las funciones de aprendizaje y se guarda aparte de la memoria de los Bots. Si está activado, cada turno de una conversación de aprendizaje recibe hasta 3 recuerdos de aprendizaje, los más relevantes (800 caracteres en total como máximo); las demás conversaciones no se ven afectadas."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習メモリは学習機能だけが使い、Bot のメモリとは別に保存されます。オンにすると、学習の会話では毎回、関連度の高い学習メモリを最大 3 件（合計 800 文字まで）添えます。通常の会話には影響しません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 메모리는 학습 기능에서만 사용되며 Bot의 메모리와 따로 저장돼요. 켜 두면 학습 대화의 매 턴마다 관련성이 높은 학습 메모리를 최대 3개(합계 800자 이내) 함께 보내요. 일반 대화에는 영향이 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "學習記憶只供學習功能使用，和 Bot 的記憶分開儲存。開啟後，學習對話每一輪會按相關度附上最多 3 則學習記憶（合計不超過 800 字），一般對話不受影響。"
+          }
+        }
+      }
+    },
+    "学习会话已建好，可在会话列表中打开" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The learning conversation is ready; open it from the conversation list"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La conversación de aprendizaje está lista; ábrela desde la lista de conversaciones"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習の会話を作成しました。会話リストから開けます"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 대화를 만들었어요. 대화 목록에서 열 수 있어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "學習對話已建立，可在對話列表中開啟"
+          }
+        }
+      }
+    },
+    "还没有工作区，暂时无法新建会话" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There is no workspace yet, so a conversation cannot be created"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no hay ningún espacio de trabajo, así que no se puede crear una conversación"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ワークスペースがまだないため、会話を作成できません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 작업 공간이 없어서 대화를 만들 수 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "還沒有工作區，暫時無法新增對話"
+          }
+        }
+      }
+    },
+    "新建会话失败" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not create the conversation"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo crear la conversación"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会話を作成できませんでした"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화를 만들지 못했어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增對話失敗"
+          }
+        }
+      }
+    },
+    "还没有自己的 Skill。点右上角的 + 新建一个。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No skills of your own yet. Tap + in the top-right corner to create one."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no tienes skills propios. Toca + arriba a la derecha para crear uno."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自分の Skill はまだありません。右上の + で作成できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 직접 만든 Skill이 없어요. 오른쪽 위의 +를 눌러 만들어 보세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "還沒有自己的 Skill。點右上角的 + 新增一個。"
+          }
+        }
+      }
+    },
+    "格式有误" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid format"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Formato no válido"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "形式が不正"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "형식 오류"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "格式有誤"
+          }
+        }
+      }
+    },
+    "Skill 保存在 DSH 自己的 skills 文件夹里，所有会话都能用 /名称 调用，模型也会在需要时自己加载。标「只读」的不是在这里创建的，这里不修改它们；标「格式有误」的 DSH 不会加载。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skills are kept in DSH's own skills folder. Any conversation can call one with /name, and the model loads one by itself when it needs it. Skills marked \"Read-only\" were not created here and are not changed here; DSH does not load skills marked \"Invalid format\"."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los skills se guardan en la carpeta skills de DSH. Cualquier conversación puede usarlos con /nombre, y el modelo los carga por sí mismo cuando los necesita. Los marcados como «Solo lectura» no se crearon aquí y aquí no se modifican; DSH no carga los marcados como «Formato no válido»."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skill は DSH 自身の skills フォルダに保存され、どの会話でも /名前 で呼び出せます。モデルも必要に応じて自動で読み込みます。「読み取り専用」のものはここで作成されていないため、ここでは変更しません。「形式が不正」のものは DSH が読み込みません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skill은 DSH 자체 skills 폴더에 저장되며, 모든 대화에서 /이름으로 불러올 수 있고 모델도 필요할 때 스스로 불러와요. '읽기 전용'으로 표시된 Skill은 여기서 만든 것이 아니어서 여기서 수정하지 않아요. '형식 오류'로 표시된 Skill은 DSH가 불러오지 않아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skill 儲存在 DSH 自己的 skills 資料夾裡，所有對話都能用 /名稱 呼叫，模型也會在需要時自行載入。標「唯讀」的不是在這裡建立的，這裡不修改它們；標「格式有誤」的 DSH 不會載入。"
+          }
+        }
+      }
+    },
+    "新建 Skill" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Skill"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuevo skill"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新しい Skill"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새 Skill"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "新增 Skill"
+          }
+        }
+      }
+    },
+    "删除这个 Skill？" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this skill?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Eliminar este skill?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Skill を削除しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Skill을 삭제할까요?"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除這個 Skill？"
+          }
+        }
+      }
+    },
+    "会删除它的 SKILL.md 和所在的文件夹，删除后无法恢复。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Its SKILL.md and its folder will be deleted. This cannot be undone."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se eliminarán su SKILL.md y su carpeta. No se puede deshacer."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SKILL.md とそのフォルダが削除されます。元に戻せません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SKILL.md와 해당 폴더가 삭제돼요. 삭제하면 되돌릴 수 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "會刪除它的 SKILL.md 和所在的資料夾，刪除後無法復原。"
+          }
+        }
+      }
+    },
+    "名称只能用小写字母、数字和单个连字符，例如 exam-review；不能以 learning- 开头。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use only lowercase letters, digits and single hyphens, for example exam-review. Names cannot start with learning-."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa solo minúsculas, dígitos y guiones sueltos, por ejemplo exam-review. El nombre no puede empezar por learning-."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前には小文字、数字、単独のハイフンだけが使えます（例：exam-review）。learning- で始めることはできません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이름에는 소문자, 숫자, 하이픈 하나만 쓸 수 있어요(예: exam-review). learning-으로 시작할 수는 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名稱只能用小寫字母、數字和單個連字號，例如 exam-review；不能以 learning- 開頭。"
+          }
+        }
+      }
+    },
+    "名称建好后不能修改，在会话里用 /名称 调用。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The name cannot be changed later. Call the skill in a conversation with /name."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El nombre no se puede cambiar después. Usa el skill en una conversación con /nombre."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名前は後から変更できません。会話では /名前 で呼び出します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이름은 나중에 바꿀 수 없어요. 대화에서 /이름으로 불러와요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "名稱建立後不能修改，在對話裡用 /名稱 呼叫。"
+          }
+        }
+      }
+    },
+    "一句话说明它做什么、什么时候用" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One sentence on what it does and when to use it"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una frase sobre qué hace y cuándo usarlo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "何をするか、いつ使うかを一文で"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "무엇을 하고 언제 쓰는지 한 문장으로"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一句話說明它做什麼、什麼時候用"
+          }
+        }
+      }
+    },
+    "说明（必填）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Description (required)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descripción (obligatoria)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "説明（必須）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설명(필수)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "說明（必填）"
+          }
+        }
+      }
+    },
+    "模型靠这句话判断什么时候加载它。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The model uses this sentence to decide when to load the skill."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El modelo usa esta frase para decidir cuándo cargar el skill."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "モデルはこの一文を見て、いつ読み込むかを判断します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모델은 이 문장을 보고 언제 불러올지 판단해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "模型靠這句話判斷什麼時候載入它。"
+          }
+        }
+      }
+    },
+    "可选" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optional"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opcional"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "任意"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "선택 사항"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選填"
+          }
+        }
+      }
+    },
+    "适用场景" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When to use"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuándo usarlo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使う場面"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용 상황"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "適用情境"
+          }
+        }
+      }
+    },
+    "指令（Markdown）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Instructions (Markdown)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Instrucciones (Markdown)"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指示（Markdown）"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지침(Markdown)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指令（Markdown）"
+          }
+        }
+      }
+    },
+    "编辑 Skill" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit Skill"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar skill"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skill を編集"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skill 편집"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "編輯 Skill"
+          }
+        }
+      }
+    },
+    "这个 Skill 不是在这里创建的，这里只显示、不修改。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This skill was not created here, so it is shown but not changed here."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este skill no se creó aquí, así que aquí solo se muestra y no se modifica."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Skill はここで作成されていないため、表示のみで変更はしません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Skill은 여기서 만든 것이 아니어서 보여 주기만 하고 수정하지 않아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這個 Skill 不是在這裡建立的，這裡只顯示、不修改。"
+          }
+        }
+      }
+    },
+    "这个 Skill 的开头格式有误（缺少 name 或 description），DSH 不会加载它。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The header of this skill is invalid (name or description is missing), so DSH does not load it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El encabezado de este skill no es válido (falta name o description), así que DSH no lo carga."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Skill の先頭の形式が不正（name または description がない）なため、DSH は読み込みません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Skill의 머리말 형식이 잘못되어(name 또는 description 누락) DSH가 불러오지 않아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這個 Skill 的開頭格式有誤（缺少 name 或 description），DSH 不會載入它。"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

@@ -5,16 +5,18 @@ import path from 'node:path';
 import { test } from 'node:test';
 import Learning, { METHODS, ROUTE, call } from '../plugins/learning/index.mjs';
 
-/** A context that keeps the routes the plugin registers. */
+/** A context that keeps the routes and the pre-step handler the plugin registers. */
 function fakeContext(config) {
   const routes = new Map();
+  const handlers = new Map();
   const disposers = [];
   const ctx = {
     effect: (run) => { const dispose = run(); if (typeof dispose === 'function') disposers.push(dispose); },
+    on: (name, handler) => { handlers.set(name, handler); },
     connection: { fetch: { register: (route) => { routes.set(route.path, route); return () => routes.delete(route.path); } } },
   };
   new Learning(ctx, config);
-  return { routes, dispose: () => disposers.reverse().forEach((d) => d()) };
+  return { routes, preStep: handlers.get('agent/pre-step'), dispose: () => disposers.reverse().forEach((d) => d()) };
 }
 
 async function post(routes, method, body) {

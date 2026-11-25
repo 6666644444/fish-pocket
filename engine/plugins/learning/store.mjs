@@ -99,6 +99,19 @@ export const MIGRATIONS = [
     }
     db.prepare('INSERT OR REPLACE INTO meta(key, value) VALUES (?, ?)').run('fts', fts);
   },
+  // 3 (M2): the learning mode of each session the app started in one. Only the DSH session
+  // id is kept, never the conversation. `announced` is the mode whose full instructions the
+  // session has already been given; it is cleared whenever the mode changes.
+  (db) => {
+    db.exec(`
+      CREATE TABLE session_modes (
+        session_id TEXT PRIMARY KEY,
+        mode TEXT NOT NULL CHECK (mode IN ('qa', 'socratic', 'quiz')),
+        announced TEXT,
+        updated_at INTEGER NOT NULL
+      ) STRICT;
+    `);
+  },
 ];
 export const SCHEMA_VERSION = MIGRATIONS.length;
 
@@ -158,8 +171,10 @@ export class LearningStore {
     this.db = new DatabaseSync(file);
     try {
       this.db.exec('PRAGMA foreign_keys = ON');
-      if (file !== ':memory:') this.db.exec('PRAGMA journal_mode = WAL; PRAGMA synchronous = NORMAL');
+      // Check what the file is before changing anything about it: switching to WAL
+      // rewrites the header, and a file that is not ours must be left as it was.
       this.#migrate(options);
+      if (file !== ':memory:') this.db.exec('PRAGMA journal_mode = WAL; PRAGMA synchronous = NORMAL');
     } catch (error) {
       this.db.close();
       throw error;
@@ -385,4 +400,74 @@ export class LearningStore {
     const { changes } = this.db.prepare('DELETE FROM memories').run();
     return { deleted: Number(changes) };
   }
+
+  /** The newest `limit` memories, for picking what a turn gets (modes.mjs pickMemories). */
+  recentMemories(limit = 500) {
+    return this.db.prepare('SELECT * FROM memories ORDER BY updated_at DESC, id DESC LIMIT ?')
+      .all(Math.max(1, Math.min(Number(limit) || 500, 5_000))).map(memoryRow);
+  }
+
+  // Settings (M2): kept in `meta`, inside the learning library, so the engine's settings
+  // reset never moves them away and deleting learning data takes them too.
+
+  getSettings() {
+    const inject = this.db.prepare("SELECT value FROM meta WHERE key = 'inject_memories'").get()?.value;
+    return { injectMemories: inject !== 'off' };
+  }
+
+  updateSettings({ injectMemories }) {
+    if (typeof injectMemories !== 'boolean') throw new LearningError('invalid', 'injectMemories must be true or false');
+    this.db.prepare('INSERT OR REPLACE INTO meta(key, value) VALUES (?, ?)')
+      .run('inject_memories', injectMemories ? 'on' : 'off');
+    return this.getSettings();
+  }
+
+  // Session modes (M2)
+
+  /** The learning mode of a session, or null for a session the app did not start in one. */
+  getSessionMode({ sessionId }) {
+    const row = this.db.prepare('SELECT * FROM session_modes WHERE session_id = ?').get(sessionKey(sessionId));
+    return row ? { sessionId: row.session_id, mode: row.mode, announced: row.announced ?? null, updatedAt: row.updated_at } : null;
+  }
+
+  /** Put a session in `mode`, or take it out of learning with `mode: null`. */
+  setSessionMode({ sessionId, mode }) {
+    const key = sessionKey(sessionId);
+    if (mode === null) {
+      this.db.prepare('DELETE FROM session_modes WHERE session_id = ?').run(key);
+      return null;
+    }
+    if (!SESSION_MODES.includes(mode)) throw new LearningError('invalid', `mode must be one of ${SESSION_MODES.join(', ')} or null`);
+    this.db.prepare(`
+      INSERT INTO session_modes(session_id, mode, announced, updated_at) VALUES (?, ?, NULL, ?)
+      ON CONFLICT(session_id) DO UPDATE SET
+        announced = CASE WHEN session_modes.mode = excluded.mode THEN session_modes.announced ELSE NULL END,
+        mode = excluded.mode,
+        updated_at = excluded.updated_at
+    `).run(key, mode, this.now());
+    return this.getSessionMode({ sessionId: key });
+  }
+
+  /** Record that the session has been given `mode`'s full instructions. */
+  markAnnounced({ sessionId, mode }) {
+    this.db.prepare('UPDATE session_modes SET announced = ? WHERE session_id = ? AND mode = ?')
+      .run(mode, sessionKey(sessionId), mode);
+  }
+
+  /** The sessions in a learning mode, most recently set first. */
+  listSessionModes({ limit = 100 } = {}) {
+    const page = Math.min(Math.max(1, Number(limit) || 100), LIMITS.page);
+    return this.db.prepare('SELECT * FROM session_modes ORDER BY updated_at DESC, session_id LIMIT ?').all(page)
+      .map((row) => ({ sessionId: row.session_id, mode: row.mode, announced: row.announced ?? null, updatedAt: row.updated_at }));
+  }
+}
+
+/** The modes a session can be in; the table's CHECK holds the same list. */
+export const SESSION_MODES = ['qa', 'socratic', 'quiz'];
+
+function sessionKey(value) {
+  if (typeof value !== 'string' || !value.trim() || value.length > 200) {
+    throw new LearningError('invalid', 'sessionId must be a non-empty string of at most 200 characters');
+  }
+  return value.trim();
 }

@@ -56,6 +56,78 @@ struct LearningStatus: Codable, Sendable {
 struct LearningDeleted: Codable, Sendable { let deleted: Bool }
 struct LearningCleared: Codable, Sendable { let deleted: Int }
 
+// Milestone 2: learning modes, the memory-injection setting, the user's own skills.
+
+/// The three learning modes. Each is a skill that ships with the engine
+/// (engine/skills/learning-<mode>/SKILL.md); a session started in one is told its instructions.
+enum LearningMode: String, Codable, CaseIterable, Identifiable, Sendable {
+    case qa, socratic, quiz
+
+    var id: String { rawValue }
+    var skill: String { "learning-\(rawValue)" }
+
+    var title: String {
+        switch self {
+        case .qa: String(localized: "普通问答")
+        case .socratic: String(localized: "引导式学习")
+        case .quiz: String(localized: "出题测验")
+        }
+    }
+
+    var summary: String {
+        switch self {
+        case .qa: String(localized: "直接回答你的问题，讲清楚原因，再问一句确认你听懂了。")
+        case .socratic: String(localized: "一次只问一个问题，一步步带你自己想出答案，不直接给答案。")
+        case .quiz: String(localized: "一次出一道题（单选或简答），批改并讲解，最后给出小结。")
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .qa: "questionmark.bubble"
+        case .socratic: "figure.walk"
+        case .quiz: "checklist"
+        }
+    }
+}
+
+struct LearningSettings: Codable, Equatable, Sendable {
+    /// Whether learning sessions get a few relevant learning memories each turn.
+    var injectMemories: Bool
+}
+
+/// A session the app started in a learning mode. Only the DSH session id is kept.
+struct LearningSessionMode: Codable, Hashable, Sendable {
+    let sessionId: String
+    let mode: LearningMode
+    let updatedAt: Double
+}
+
+/// One skill in `$DSH_HOME/skills`, the folder DSH loads the user's skills from.
+struct LearningSkill: Codable, Identifiable, Hashable, Sendable {
+    let name: String
+    /// "bundle" (`<name>/SKILL.md`) or "file" (`<name>.md`).
+    let kind: String
+    let description: String
+    let whenToUse: String?
+    /// Created on the Skills page, so it can be edited and deleted there. Others are read-only here.
+    let managed: Bool
+    /// Has the frontmatter DSH needs; an invalid one is skipped by DSH.
+    let valid: Bool
+    /// Only in `skills.get`.
+    let body: String?
+
+    var id: String { name }
+}
+
+enum LearningSkillRules {
+    /// The engine's rule (dsh-skill isSkillName): lowercase letters and digits in words joined by single hyphens.
+    static func isValidName(_ name: String) -> Bool {
+        guard !name.isEmpty, name.count <= 64, !name.hasPrefix("learning-") else { return false }
+        return name.range(of: #"^[a-z0-9]+(-[a-z0-9]+)*$"#, options: .regularExpression) != nil
+    }
+}
+
 /// What a learning route refused, or why it could not be reached.
 struct LearningError: LocalizedError, Equatable, Sendable {
     /// The plugin's kind (invalid, not-found, conflict, unavailable, internal), or "transport".
@@ -151,5 +223,40 @@ struct LearningClient: Sendable {
     /// Clears the learning memory only; notes and Bot memory stay.
     func clearMemories() async throws -> Int {
         try await call("memories.clear", as: LearningCleared.self).deleted
+    }
+
+    func settings() async throws -> LearningSettings { try await call("settings.get") }
+    func setInjectMemories(_ on: Bool) async throws -> LearningSettings {
+        try await call("settings.update", ["injectMemories": .bool(on)])
+    }
+
+    func sessionModes() async throws -> [LearningSessionMode] { try await call("sessions.list", ["limit": 200]) }
+    func mode(of sessionId: String) async throws -> LearningSessionMode? {
+        try await call("sessions.getMode", ["sessionId": .string(sessionId)], as: LearningSessionMode?.self)
+    }
+    /// Put a session in `mode`, or take it out of learning with nil (the conversation itself stays).
+    @discardableResult
+    func setMode(_ mode: LearningMode?, for sessionId: String) async throws -> LearningSessionMode? {
+        try await call(
+            "sessions.setMode",
+            ["sessionId": .string(sessionId), "mode": mode.map { .string($0.rawValue) } ?? .null],
+            as: LearningSessionMode?.self
+        )
+    }
+
+    func skills() async throws -> [LearningSkill] { try await call("skills.list") }
+    func skill(_ name: String) async throws -> LearningSkill { try await call("skills.get", ["name": .string(name)]) }
+    func createSkill(name: String, description: String, whenToUse: String, body: String) async throws -> LearningSkill {
+        try await call("skills.create", [
+            "name": .string(name), "description": .string(description), "whenToUse": .string(whenToUse), "body": .string(body),
+        ])
+    }
+    func updateSkill(name: String, description: String, whenToUse: String, body: String) async throws -> LearningSkill {
+        try await call("skills.update", [
+            "name": .string(name), "description": .string(description), "whenToUse": .string(whenToUse), "body": .string(body),
+        ])
+    }
+    func deleteSkill(_ name: String) async throws {
+        _ = try await call("skills.delete", ["name": .string(name)], as: LearningDeleted.self)
     }
 }
