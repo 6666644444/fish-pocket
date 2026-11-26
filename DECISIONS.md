@@ -203,6 +203,12 @@
 - **没有改**：Bundle ID、App Group、Keychain 分组、签名、图标（用户还没想好）。所以已有数据、设置、钥匙串都还在，和上游同步也只会在这 4 行可能冲突（保留 `Firefly` 即可）。
 - App 内大量文案（如「喜欢 Fish Pocket 吗？」「Fish Pocket 额度」、手表设置页的说明）仍写 Fish Pocket：那些是上游的文案和功能名，逐条改会在每次同步时大面积冲突，先不动。
 
+## D32 主图标换成 Firefly 黎明图（2026-11-25，用户选定）
+
+- 图：用户选的剪纸风原图（夜空、大圆、黄外套红围巾的小人举星星棒），编码代理只调了颜色：天空下半部变成黎明渐变，大圆调成朝阳。原图和成品、各文件的来历在 `docs/design/brand/firefly/README.md`。
+- 替换：主 App 图标的普通 / 深色 / 着色三张、手表图标、设置里的预览图；设置 → App 图标 里默认那一项的名字从「大肥鱼」改成「Firefly」（1 条文案）。
+- 没动：上游的 10 个备选图标（还能切换）、Bot「大肥鱼」的头像和名字、启动图。上游以后改主图标时，合并会在这几张 PNG 上冲突，保留我们的（`git checkout --ours`）即可。
+
 ## 改过的上游文件
 
 | 文件 | 改了什么 | 为什么 |
@@ -211,7 +217,7 @@
 | `.github/workflows/ios-ci.yml` | 新增 `engine-tests` job，以及 macOS job 里的「Learning SQLite on NodeMobile」这一步、Test summary 里打印 NLEmbedding 评估（这个文件是 fork 自己加的，不是上游的） | 见 D5、D9 |
 | `docs/PLAN.md` | 从仓库根目录挪进来（git mv），然后补充内容 | fork 自己的文档 |
 | `app/DshIOS/Views/SettingsView.swift` | 新增一个 5 行的分区 | 见 D7 |
-| `app/Shared/Localizable.xcstrings` | 只在末尾追加：M1 34 条、M2 34、M3 41、M4 27、M5 27、M6 20、D29 1、D30 1，共 185 条；已有条目没动 | 见 D10；五种语言逐条翻译，覆盖率 3782/3782 |
+| `app/Shared/Localizable.xcstrings` | 只在末尾追加：M1 34 条、M2 34、M3 41、M4 27、M5 27、M6 20、D29 1、D30 1、D32 1，共 186 条；已有条目没动 | 见 D10；五种语言逐条翻译，覆盖率 3783/3783 |
 | `README.md`、`README.en.md` | M7：在「常见问题 / FAQ」前插入「学习功能」一节（含同步上游步骤），其他内容没动 | 总控 M7 |
 | `app/DshIOS/Views/ExploreTabView.swift` | 删去「分享 Fish Pocket」一行入口，换成一行注释 | D29 |
 | `app/DshIOS/Views/SettingsView.swift`（第二处） | 顶部分区删去「分享 Fish Pocket」一行入口，换成一行注释 | D29 |
@@ -219,11 +225,13 @@
 | `app/DshIOS/Views/SettingsView.swift`（第三处） | `SupportLink.all` 去掉评分和官网、加开源仓库；页脚换一句 | D30 |
 | `app/DshIOS/Core/SupportPrompt.swift` | `noteCompletedTurn()` 返回 false，原逻辑改名保留 | D30 |
 | `app/project.yml` | 4 处 `CFBundleDisplayName: Fish Pocket` → `Firefly`，其他没动 | D31 |
+| `app/DshIOS/Assets.xcassets/AppIcon.appiconset/*.png`、`app/Watch/Assets.xcassets/AppIcon.appiconset/AppIcon.png`、`AppIconPreview/Default.imageset/Default.png` | 换成 Firefly 图标（Contents.json 没动） | D32 |
+| `app/DshIOS/Views/AppIconPage.swift` | 默认图标的名字「大肥鱼」→「Firefly」 | D32 |
 | `native/ios-native/caps_nlp.m` | M3：新增 `vectors` 函数和分发里的一行，已有操作没动 | 见 D17 |
 | `native/ios-native/ios_native.m` | M3：能力表 `nlp` 一行里加了 `"vectors"` | 见 D17 |
 | `native/root/test/learning-sqlite.mjs` | M3：加一项知识库检查（这是 fork 自己加的文件） | 模拟器上验证 v4 表、trigram、float32 向量 |
 
-没有改：`node_modules`、引擎版本、`ios.patch.yml` 里已有的条目、`ios-build.yml`、`LICENSE`、`project.yml` 里除显示名以外的内容、Bundle ID、App Group、签名、图标、`test-root-sim.sh`、`conformance.mjs`。
+没有改：`node_modules`、引擎版本、`ios.patch.yml` 里已有的条目、`ios-build.yml`、`LICENSE`、`project.yml` 里除显示名以外的内容、Bundle ID、App Group、签名、`test-root-sim.sh`、`conformance.mjs`。
 
 ## 新增的依赖
 

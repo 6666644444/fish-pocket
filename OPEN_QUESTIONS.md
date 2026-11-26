@@ -41,7 +41,7 @@ X The job was not acquired by Runner of type hosted even after multiple attempts
 
 **状态（2026-11-24，用户）**：暂不决定。开发期间沿用原来的显示名和图标，现有的 Bundle ID 和 App Group 一律不改（见第 6 条）。
 
-**更新（2026-11-25，用户）**：只给自己用。显示名定为 **Firefly**（DECISIONS D31，只改了 `CFBundleDisplayName`）；图标还没想好，暂时沿用原图标。
+**更新（2026-11-25，用户）**：只给自己用。显示名定为 **Firefly**（DECISIONS D31，只改了 `CFBundleDisplayName`）；图标也换成了 Firefly 黎明图（D32）。
 
 **需要你决定**：新的 App 名称（中英文）和图标方向。
 

@@ -27,7 +27,8 @@ enum AppIconChoice: String, CaseIterable, Identifiable {
 
     var title: LocalizedStringKey {
         switch self {
-        case .standard: "大肥鱼"
+        // This branch's main icon is Firefly (DECISIONS.md D32), not the 大肥鱼 mascot.
+        case .standard: "Firefly"
         case .pink: "樱花粉"
         case .mint: "薄荷绿"
         case .violet: "葡萄紫"
