@@ -34,7 +34,7 @@ struct BotIMPage: View {
             } header: {
                 Text("添加")
             } footer: {
-                Text("连上以后，在这些聊天软件里给机器人发消息，就会交给你选的 Bot。消息只在 Fish Pocket 运行时收得到。")
+                Text("连上以后，在这些聊天软件里给机器人发消息，就会交给你选的 Bot。消息只在 Firefly 运行时收得到。")
             }
             .groupedRow()
         }

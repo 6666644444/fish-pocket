@@ -356,6 +356,7 @@ targets:
     sources:
       - path: ShareExtension
       - path: Shared/ShareInbox.swift
+      - path: Shared/AppGroup.swift
       - path: Shared/DshLink.swift
       # Its strings live in the app's catalog: scripts/sync-strings.sh collects them with the app's.
       - path: Shared/Localizable.xcstrings

@@ -143,7 +143,8 @@ export function noteSections({ mode, announce, instructions, memories = [] }) {
     sections.push({
       name: 'learning-mode',
       text: `This is a learning session in the mode "${spec.title}" (skill ${spec.skill}). Follow these instructions `
-        + `for the rest of the session, until the user changes the mode:\n\n${instructions}`,
+        + `for the rest of the session, until the user changes the mode; any learning mode given earlier in this `
+        + `session no longer applies:\n\n${instructions}`,
     });
   } else {
     sections.push({
@@ -161,6 +162,17 @@ export function noteSections({ mode, announce, instructions, memories = [] }) {
     });
   }
   return sections;
+}
+
+/** The once-only note after the user ended learning mode `mode` in a session. */
+export function leftSections(mode) {
+  const spec = MODES[mode];
+  return [{
+    name: 'learning-mode',
+    text: `The user ended learning mode${spec ? ` "${spec.title}"` : ''} for this session. From this turn on, answer as in `
+      + 'an ordinary conversation: do not keep quizzing, do not hold back answers or ask one guiding question at a time, '
+      + 'unless the user asks for that again.',
+  }];
 }
 
 /** The note as one message of its own source kind. */

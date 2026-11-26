@@ -60,7 +60,7 @@ private struct NewConversationView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 6) {
                 FishMark(size: 14)
-                Text(verbatim: "Fish Pocket").font(.footnote.weight(.semibold))
+                Text(verbatim: "Firefly").font(.footnote.weight(.semibold))
             }
             Spacer(minLength: 6)
             HStack(spacing: 8) {

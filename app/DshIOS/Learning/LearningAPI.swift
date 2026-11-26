@@ -107,6 +107,16 @@ struct LearningSessionMode: Codable, Hashable, Sendable {
     let updatedAt: Double
 }
 
+/// A session on the learning record (学习记录): its learning mode was ended, the conversation stays.
+struct LearningHistoryEntry: Codable, Hashable, Sendable {
+    let sessionId: String
+    /// The mode it was in.
+    let mode: LearningMode
+    /// When the mode was ended, ms since 1970.
+    let endedAt: Double
+    var endedDate: Date { Date(timeIntervalSince1970: endedAt / 1000) }
+}
+
 /// One skill in `$DSH_HOME/skills`, the folder DSH loads the user's skills from.
 struct LearningSkill: Codable, Identifiable, Hashable, Sendable {
     let name: String
@@ -235,6 +245,12 @@ struct LearningClient: Sendable {
     }
 
     func sessionModes() async throws -> [LearningSessionMode] { try await call("sessions.list", ["limit": 200]) }
+    /// The learning record: sessions whose mode was ended, most recently ended first.
+    func learningHistory() async throws -> [LearningHistoryEntry] { try await call("sessions.history", ["limit": 200]) }
+    /// Take a session off the learning record; the conversation is not touched.
+    func hideFromHistory(_ sessionId: String) async throws {
+        _ = try await call("sessions.hide", ["sessionId": .string(sessionId)], as: JSON.self)
+    }
     func mode(of sessionId: String) async throws -> LearningSessionMode? {
         try await call("sessions.getMode", ["sessionId": .string(sessionId)], as: LearningSessionMode?.self)
     }

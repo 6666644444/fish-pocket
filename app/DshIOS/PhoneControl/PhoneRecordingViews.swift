@@ -157,7 +157,7 @@ struct PhoneRecordingShareSheet: View {
                     }
                     .disabled(progress != nil)
                 } footer: {
-                    Text("在这台手机上生成，画面外加上 Fish Pocket 的标识。录像没有声音。")
+                    Text("在这台手机上生成，画面外加上 Firefly 的标识。录像没有声音。")
                 }
             }
             .navigationTitle("分享录像")

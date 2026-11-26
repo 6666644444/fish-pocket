@@ -89,7 +89,7 @@ struct HomeView: View {
 
     private var subline: LocalizedStringKey {
         switch model.mood {
-        case .offline: "在 iPhone 上打开 Fish Pocket"
+        case .offline: "在 iPhone 上打开 Firefly"
         case .unknown: "iPhone 上的 App 可能没在运行"
         case .waiting: "\(model.snapshot?.waiting.count ?? 0) 个会话在等你"
         case .running: "\(model.snapshot?.running.count ?? 0) 个会话在跑"

@@ -197,6 +197,86 @@ test('sessions.list: the sessions in a mode, most recently set first', () => {
   store.close();
 });
 
+test('ending a mode keeps the session on the learning record; it can be hidden or put back in a mode', () => {
+  let now = 1;
+  const store = new LearningStore(':memory:', { now: () => now });
+  store.setSessionMode({ sessionId: 'a', mode: 'socratic' });
+  store.setSessionMode({ sessionId: 'b', mode: 'quiz' });
+  now = 5;
+  store.setSessionMode({ sessionId: 'a', mode: null });
+  now = 6;
+  store.setSessionMode({ sessionId: 'b', mode: null });
+  assert.equal(store.setSessionMode({ sessionId: 'b', mode: null }), null, 'ending twice is harmless');
+  assert.deepEqual(store.listSessionModes(), []);
+  assert.deepEqual(store.listLearningHistory(), [
+    { sessionId: 'b', mode: 'quiz', endedAt: 6, updatedAt: 6 },
+    { sessionId: 'a', mode: 'socratic', endedAt: 5, updatedAt: 5 },
+  ]);
+  assert.deepEqual(store.hideLearningHistory({ sessionId: 'b' }), { hidden: true });
+  assert.deepEqual(store.listLearningHistory().map((s) => s.sessionId), ['a']);
+  assert.throws(() => store.hideLearningHistory({ sessionId: 'never' }), { kind: 'not-found' });
+  now = 7;
+  const again = store.setSessionMode({ sessionId: 'a', mode: 'qa' });
+  assert.deepEqual([again.mode, again.announced], ['qa', null], 'back in a mode: announced afresh');
+  assert.deepEqual(store.listLearningHistory(), []);
+  assert.deepEqual(store.listSessionModes().map((s) => s.sessionId), ['a']);
+  assert.throws(() => store.hideLearningHistory({ sessionId: 'a' }), { kind: 'not-found' }, 'a session in a mode is not on the record');
+  store.setSessionMode({ sessionId: 'b', mode: 'quiz' });
+  store.setSessionMode({ sessionId: 'b', mode: null });
+  assert.deepEqual(store.listLearningHistory().map((s) => s.sessionId), ['b'], 'hidden is undone by using it again');
+  store.close();
+});
+
+test('after ending a mode the next turn is told once that learning is over', () => {
+  const store = new LearningStore(':memory:');
+  store.setSessionMode({ sessionId: 's1', mode: 'socratic' });
+  assert.ok(turnNote(store, 's1', []));
+  store.setSessionMode({ sessionId: 's1', mode: null });
+  const note = turnNote(store, 's1', []);
+  assert.match(note.content[0].text, /ended learning mode/);
+  assert.match(note.content[0].text, /ordinary conversation/);
+  assert.equal(turnNote(store, 's1', []), undefined, 'only once');
+  store.setSessionMode({ sessionId: 's1', mode: 'quiz' });
+  store.setSessionMode({ sessionId: 's1', mode: 'qa' });
+  assert.match(turnNote(store, 's1', []).content[0].text, /no longer applies/, 'a new mode replaces the old one');
+  store.close();
+});
+
+test('a schema 6 library keeps its learning sessions at schema 7', () => {
+  const file = library();
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  const db = new DatabaseSync(file);
+  for (const step of MIGRATIONS.slice(0, 6)) step(db, {});
+  db.exec(`PRAGMA application_id = ${APPLICATION_ID}; PRAGMA user_version = 6`);
+  db.prepare("INSERT INTO session_modes(session_id, mode, announced, updated_at) VALUES ('old', 'quiz', 'quiz', 3)").run();
+  db.close();
+  const store = new LearningStore(file);
+  assert.ok(store.version >= 7);
+  assert.deepEqual(store.getSessionMode({ sessionId: 'old' }), { sessionId: 'old', mode: 'quiz', announced: 'quiz', updatedAt: 3 });
+  assert.deepEqual(store.listLearningHistory(), []);
+  store.close();
+});
+
+test('the learning record over the routes', async () => {
+  const home = temp('dsh-learning-history-');
+  const routes = new Map();
+  new Learning({
+    effect: (run) => run(),
+    on: () => {},
+    connection: { fetch: { register: (route) => { routes.set(route.path, route); return () => {}; } } },
+  }, { file: path.join(home, 'l.db'), embedder: null });
+  const post = async (method, body) => {
+    const response = await routes.get(`${ROUTE}/${method}`).fetch(new Request(`http://x${ROUTE}/${method}`, { method: 'POST', body: JSON.stringify(body ?? {}) }));
+    return { status: response.status, body: await response.json() };
+  };
+  await post('sessions.setMode', { sessionId: 'h1', mode: 'qa' });
+  await post('sessions.setMode', { sessionId: 'h1', mode: null });
+  assert.deepEqual((await post('sessions.history')).body.result.map((s) => [s.sessionId, s.mode]), [['h1', 'qa']]);
+  assert.equal((await post('sessions.hide', { sessionId: 'h1' })).status, 200);
+  assert.deepEqual((await post('sessions.history')).body.result, []);
+  assert.equal((await post('sessions.hide', { sessionId: 'h1' })).status, 404);
+});
+
 // A turn
 
 test('a session with no learning mode is left exactly as it was', async () => {

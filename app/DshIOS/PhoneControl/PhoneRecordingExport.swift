@@ -55,7 +55,7 @@ enum PhoneRecordingExport {
         let size = layout.canvas
 
         let output = FileManager.default.temporaryDirectory
-            .appendingPathComponent("Fish Pocket \(Int(Date().timeIntervalSince1970)).mp4")
+            .appendingPathComponent("Firefly \(Int(Date().timeIntervalSince1970)).mp4")
         try? FileManager.default.removeItem(at: output)
 
         let reader = try AVAssetReader(asset: asset)
@@ -181,7 +181,7 @@ enum PhoneRecordingExport {
                 icon.draw(in: rect)
                 cg.restoreGState()
             }
-            draw("Fish Pocket", at: CGPoint(x: 132, y: 80), font: .systemFont(ofSize: 36, weight: .semibold), color: .white, anchor: .midLeft)
+            draw("Firefly", at: CGPoint(x: 132, y: 80), font: .systemFont(ofSize: 36, weight: .semibold), color: .white, anchor: .midLeft)
 
             let speedText = speed == 1 ? String(localized: "原速") : String(localized: "\(speed.formatted())× 播放")
             pill(cg, speedText, right: size.width - 60, y: 52, height: 56,

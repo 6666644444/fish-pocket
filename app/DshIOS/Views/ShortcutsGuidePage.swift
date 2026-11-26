@@ -20,7 +20,7 @@ struct ShortcutsGuidePage: View {
                         .padding(.horizontal, 4)
                     steps
                 }
-                Text("Siri 也能直接用，比如说「用 Fish Pocket 打开大肥鱼」。Bot 或 Mini App 改了名字，过一会儿 Siri 就认得新名字。")
+                Text("Siri 也能直接用，比如说「用 Firefly 打开大肥鱼」。Bot 或 Mini App 改了名字，过一会儿 Siri 就认得新名字。")
                     .font(.footnote)
                     .foregroundStyle(Palette.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -47,7 +47,7 @@ struct ShortcutsGuidePage: View {
                 Text("一步打开常用的地方")
                     .font(.title3.weight(.bold))
                     .foregroundStyle(Palette.ink)
-                Text("在「快捷指令」里用 Fish Pocket 的操作，或者设成自动化，到点、到地方就打开某个 Bot 或 Mini App。")
+                Text("在「快捷指令」里用 Firefly 的操作，或者设成自动化，到点、到地方就打开某个 Bot 或 Mini App。")
                     .font(.subheadline)
                     .foregroundStyle(Palette.secondary)
                     .multilineTextAlignment(.center)
@@ -132,19 +132,19 @@ struct ShortcutsGuidePage: View {
         ]
         if #available(iOS 26, *) {
             list += [
-                Step(title: "点「创建新快捷指令」", detail: "不要点下面列表里的 Fish Pocket：那里选不了具体是哪个 Bot。"),
+                Step(title: "点「创建新快捷指令」", detail: "不要点下面列表里的 Firefly：那里选不了具体是哪个 Bot。"),
                 Step(title: "搜索「Bot」，点你要打开的 Bot", detail: "搜索结果里直接列出了你的每个 Bot。想打开 Mini App 就搜「Mini App」。"),
                 Step(title: "点右上角的 ✓ 存好", detail: "列表里只写「打开 Bot」，点进去能看到选的是哪个。"),
             ]
         } else if #available(iOS 18, *) {
             list += [
-                Step(title: "点「新建空白自动化」", detail: "不要点下面列表里的 Fish Pocket：那里选不了具体是哪个 Bot。"),
+                Step(title: "点「新建空白自动化」", detail: "不要点下面列表里的 Firefly：那里选不了具体是哪个 Bot。"),
                 Step(title: "搜索「Bot」，点你要打开的 Bot", detail: "搜索结果里直接列出了你的每个 Bot。想打开 Mini App 就搜「Mini App」。"),
                 Step(title: "点右上角的「完成」", detail: "列表里只写「打开 Bot」，点进去能看到选的是哪个。"),
             ]
         } else {
             list += [
-                Step(title: "点「新建空白自动化」", detail: "不要点下面列表里的 Fish Pocket：那里选不了具体是哪个 Bot。"),
+                Step(title: "点「新建空白自动化」", detail: "不要点下面列表里的 Firefly：那里选不了具体是哪个 Bot。"),
                 Step(title: "搜索「Bot」，点「打开 Bot」", detail: "想打开 Mini App 就搜「Mini App」。"),
                 Step(title: "点浅蓝色的「Bot」，选一个", detail: "选好后点右上角的「完成」。列表里只写「打开 Bot」，点进去能看到选的是哪个。"),
             ]

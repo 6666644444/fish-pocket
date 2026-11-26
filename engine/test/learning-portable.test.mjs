@@ -7,8 +7,8 @@ import { DatabaseSync } from 'node:sqlite';
 import { test } from 'node:test';
 import Learning, { ROUTE } from '../plugins/learning/index.mjs';
 import {
-  EXPORT_FORMAT, backupLibrary, documentText, dumpLibrary, exportLibrary, importExport, importLibrary, inspectBackup,
-  isEmpty, listBackups, safeName,
+  EXPORT_FORMAT, BEFORE_RESTORE, backupLibrary, documentText, dumpLibrary, exportLibrary, importExport, importLibrary, inspectBackup,
+  isEmpty, listBackups, safeName, stamp,
 } from '../plugins/learning/portable.mjs';
 import { LearningStore, SCHEMA_VERSION } from '../plugins/learning/store.mjs';
 
@@ -60,7 +60,7 @@ test('export writes notes as Markdown, reports as Markdown and everything as dat
   const dir = temp('dsh-learning-export-');
   const store = filled(new LearningStore(':memory:'));
   const result = exportLibrary(store, dir, Date.UTC(2026, 10, 25, 9, 30));
-  assert.equal(path.basename(result.path), 'learning-export-20261125-093000');
+  assert.equal(path.basename(result.path), 'learning-export-2026-11-25-09-30-00');
   assert.deepEqual({ n: result.notes, b: result.notebooks, d: result.documents, q: result.questions, r: result.research }, { n: 3, b: 2, d: 1, q: 1, r: 1 });
   const notes = path.join(result.path, 'notes');
   assert.deepEqual(fs.readdirSync(notes).sort(), ['English', '高中数学_代数']);
@@ -109,10 +109,11 @@ test('backup: a consistent copy; inspection checks application id and schema ver
   const dir = temp('dsh-learning-backup-');
   const store = filled(new LearningStore(path.join(dir, 'learning.db')));
   const backup = backupLibrary(store, dir, Date.UTC(2026, 0, 2, 3, 4, 5));
-  assert.equal(backup.name, 'learning-20260102-030405.db');
+  assert.equal(backup.name, 'learning-2026-01-02-03-04-05.db');
+  assert.equal(backup.kind, 'manual');
   assert.deepEqual(inspectBackup(backup.path), { schemaVersion: SCHEMA_VERSION });
   assert.deepEqual(listBackups(dir).map((b) => b.name), [backup.name]);
-  assert.equal(backupLibrary(store, dir, Date.UTC(2026, 0, 2, 3, 4, 5)).name, 'learning-20260102-030405-2.db', 'the same second gets a new name');
+  assert.equal(backupLibrary(store, dir, Date.UTC(2026, 0, 2, 3, 4, 5)).name, 'learning-2026-01-02-03-04-05-2.db', 'the same second gets a new name');
   const copy = new LearningStore(backup.path);
   assert.deepEqual(comparable(dumpLibrary(copy)), comparable(dumpLibrary(store)));
   copy.close();
@@ -217,6 +218,77 @@ test('restore: a backup replaces the library, the current one is kept as a backu
   const back = (await post('backup.restore', { name: restored.previous })).body.result;
   assert.equal(back.restored, restored.previous);
   assert.equal((await post('notebooks.list')).body.result.length, 2);
+});
+
+test('names: the phone\'s local time when the app sends it, UTC otherwise; a bad one is ignored', () => {
+  assert.equal(stamp(Date.UTC(2026, 10, 26, 17, 42, 17)), '2026-11-26-17-42-17');
+  assert.equal(stamp(Date.UTC(2026, 10, 26, 17, 42, 17), '2026-11-27-01-42-17'), '2026-11-27-01-42-17');
+  for (const bad of ['../x', '2026-11-27 01:42:17', '2026-11-27-01-42-17/..', 5]) {
+    assert.equal(stamp(Date.UTC(2026, 10, 26, 17, 42, 17), bad), '2026-11-26-17-42-17');
+  }
+  const dir = temp('dsh-learning-local-');
+  const store = new LearningStore(':memory:');
+  assert.equal(backupLibrary(store, dir, 0, { local: '2026-11-27-01-42-17' }).name, 'learning-2026-11-27-01-42-17.db');
+  assert.equal(path.basename(exportLibrary(store, dir, 0, { local: '2026-11-27-01-42-18' }).path), 'learning-export-2026-11-27-01-42-18');
+  store.close();
+});
+
+test('backups list newest first by time, old UTC names and new local ones together', () => {
+  const dir = temp('dsh-learning-order-');
+  const store = new LearningStore(':memory:');
+  const older = backupLibrary(store, dir, 0, { local: '2026-11-27-09-00-00' });
+  const old = path.join(dir, 'backups', 'learning-20261126-150349.db');
+  fs.copyFileSync(older.path, old);
+  const t = Date.now() / 1000;
+  fs.utimesSync(older.path, t - 200, t - 200);
+  fs.utimesSync(old, t - 100, t - 100);
+  const safety = backupLibrary(store, dir, 0, { local: '2026-11-27-08-00-00', tag: BEFORE_RESTORE });
+  assert.equal(safety.kind, BEFORE_RESTORE);
+  assert.deepEqual(listBackups(dir).map((b) => [b.name, b.kind]), [
+    ['learning-2026-11-27-08-00-00-before-restore.db', BEFORE_RESTORE],
+    ['learning-20261126-150349.db', 'manual'],
+    ['learning-2026-11-27-09-00-00.db', 'manual'],
+  ]);
+  store.close();
+});
+
+test('a new export replaces the earlier ones: only the newest folder is kept', () => {
+  const dir = temp('dsh-learning-exports-');
+  const store = new LearningStore(':memory:');
+  const first = exportLibrary(store, dir, 0, { local: '2026-11-27-01-00-00' }).path;
+  fs.mkdirSync(path.join(dir, 'exports', 'kept-by-someone-else'));
+  const second = exportLibrary(store, dir, 0, { local: '2026-11-27-01-00-05' }).path;
+  assert.equal(fs.existsSync(first), false);
+  assert.equal(fs.existsSync(second), true);
+  assert.deepEqual(fs.readdirSync(path.join(dir, 'exports')).sort(), ['kept-by-someone-else', path.basename(second)].sort(), 'only export folders are removed');
+  store.close();
+});
+
+test('deleting one backup: only an exact name from the list, nothing outside backups/', async () => {
+  const home = fakeHome();
+  const { post } = plugin(home);
+  await post('notebooks.create', { title: 'x' });
+  const a = (await post('backup.create', { local: '2026-11-27-01-00-00' })).body.result;
+  const b = (await post('backup.create', { local: '2026-11-27-01-00-01' })).body.result;
+  assert.equal('path' in a, false, 'the app is not given engine paths');
+  for (const bad of ['../learning.db', `../backups/${a.name}`, 'learning.db', '', a.name.toUpperCase()]) {
+    assert.equal((await post('backup.delete', { name: bad })).status, 404, bad);
+  }
+  assert.deepEqual((await post('backup.delete', { name: a.name })).body.result, { deleted: a.name });
+  assert.deepEqual((await post('backup.list')).body.result.map((x) => x.name), [b.name]);
+  assert.equal((await post('notebooks.list')).body.result.length, 1, 'the library is untouched');
+  assert.equal((await post('backup.delete', { name: a.name })).status, 404, 'already gone');
+});
+
+test('the backup taken before a restore is marked as such', async () => {
+  const home = fakeHome();
+  const { post } = plugin(home);
+  const backup = (await post('backup.create', { local: '2026-11-27-01-00-00' })).body.result;
+  const restored = (await post('backup.restore', { name: backup.name, local: '2026-11-27-01-05-00' })).body.result;
+  assert.equal(restored.previous, 'learning-2026-11-27-01-05-00-before-restore.db');
+  const list = (await post('backup.list')).body.result;
+  assert.deepEqual(list.map((x) => x.kind), ['before-restore', 'manual']);
+  assert.ok(list.every((x) => Number.isInteger(x.createdAt)));
 });
 
 test('import over the route: data.json content into an empty library', async () => {

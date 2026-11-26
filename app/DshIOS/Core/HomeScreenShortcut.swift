@@ -86,15 +86,15 @@ struct AddToHomeScreenSheet: View {
 
     private var shortcutText: String {
         switch target {
-        case .miniApp: String(localized: "点开直接进入，不经过网页。新建一个快捷指令，添加 Fish Pocket 的「打开 Mini App」动作并选上这个 Mini App，再点顶部的名称，选「添加到主屏幕」。")
-        case .web: String(localized: "点开直接进入，不经过网页。新建一个快捷指令，添加 Fish Pocket 的「打开网页版」动作，再点顶部的名称，选「添加到主屏幕」。")
+        case .miniApp: String(localized: "点开直接进入，不经过网页。新建一个快捷指令，添加 Firefly 的「打开 Mini App」动作并选上这个 Mini App，再点顶部的名称，选「添加到主屏幕」。")
+        case .web: String(localized: "点开直接进入，不经过网页。新建一个快捷指令，添加 Firefly 的「打开网页版」动作，再点顶部的名称，选「添加到主屏幕」。")
         }
     }
 
     private var widgetText: String {
         switch target {
-        case .miniApp: String(localized: "点开直接进入，不经过网页。长按主屏幕空白处，添加小组件，搜索 Fish Pocket，选「Mini Apps」。小号的放一个，加好后长按它，选「编辑小组件」挑这个 Mini App。")
-        case .web: String(localized: "点开直接进入，不经过网页。长按主屏幕空白处，添加小组件，搜索 Fish Pocket，选「网页版」。")
+        case .miniApp: String(localized: "点开直接进入，不经过网页。长按主屏幕空白处，添加小组件，搜索 Firefly，选「Mini Apps」。小号的放一个，加好后长按它，选「编辑小组件」挑这个 Mini App。")
+        case .web: String(localized: "点开直接进入，不经过网页。长按主屏幕空白处，添加小组件，搜索 Firefly，选「网页版」。")
         }
     }
 

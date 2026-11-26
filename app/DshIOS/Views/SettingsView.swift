@@ -235,7 +235,7 @@ private struct SettingsList: View {
         .alert("重启 App 后生效", isPresented: $languageChanged) {
             Button("好", role: .cancel) {}
         } message: {
-            Text("退出 Fish Pocket 再重新打开，界面就会换成新的语言。")
+            Text("退出 Firefly 再重新打开，界面就会换成新的语言。")
         }
         .alert("启用完全权限？", isPresented: $confirmingFullAccess) {
             Button("取消", role: .cancel) {}
@@ -722,7 +722,7 @@ struct SupportLink: Identifiable {
         ]
     }
 
-    static let footer = Text("本分支基于 Fish Pocket 开源项目，只供个人使用。")
+    static let footer = Text("本分支基于 Fish Pocket 和 DeepTutor 两大开源项目，只供 CDW 个人使用。")
 }
 
 extension View {
@@ -737,23 +737,11 @@ extension View {
 }
 
 /// `SupportLink`s in 设置 on an iPad before iOS 18; the arrow says each leaves the app.
+/// This branch shows no links there, only where it comes from (DECISIONS.md D37).
 struct SupportLinksSection: View {
     var body: some View {
         Section {
-            ForEach(SupportLink.all) { link in
-                Link(destination: link.url) {
-                    LabeledContent {
-                        HStack(spacing: 6) {
-                            Text(link.value).lineLimit(1)
-                            Image(systemName: "arrow.up.right").font(.caption).foregroundStyle(.tertiary)
-                        }
-                        .foregroundStyle(.secondary)
-                    } label: {
-                        Label(link.title, systemImage: link.symbol)
-                    }
-                }
-                .settlesRating(link.rates)
-            }
+            EmptyView()
         } footer: {
             SupportLink.footer
         }

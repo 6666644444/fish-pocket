@@ -25,7 +25,7 @@ struct CallActivityAttributes: ActivityAttributes {
 /// written by the app as the call starts, read by the widget extension.
 enum CallAvatarFile {
     static var folder: URL? {
-        guard let group = Bundle.main.object(forInfoDictionaryKey: "DshAppGroup") as? String,
+        guard let group = AppGroup.id,
               let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: group) else { return nil }
         return container.appending(path: "Call")
     }

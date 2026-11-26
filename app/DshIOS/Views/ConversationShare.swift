@@ -123,7 +123,7 @@ struct SharedPicture: Transferable {
     static var transferRepresentation: some TransferRepresentation {
         FileRepresentation(exportedContentType: .png) { picture in
             let safe = picture.name.replacingOccurrences(of: "/", with: "-").replacingOccurrences(of: ":", with: "-")
-            let url = FileManager.default.temporaryDirectory.appendingPathComponent(safe.isEmpty ? "Fish Pocket" : String(safe.prefix(60))).appendingPathExtension("png")
+            let url = FileManager.default.temporaryDirectory.appendingPathComponent(safe.isEmpty ? "Firefly" : String(safe.prefix(60))).appendingPathExtension("png")
             guard let data = picture.image.pngData() else { throw CocoaError(.fileWriteUnknown) }
             try data.write(to: url, options: .atomic)
             return SentTransferredFile(url)
@@ -249,7 +249,7 @@ struct ConversationShareCard: View {
                 }
                 .frame(width: 22, height: 22)
                 .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-                Text(verbatim: "Fish Pocket").font(.footnote.weight(.semibold)).foregroundStyle(Palette.ink)
+                Text(verbatim: "Firefly").font(.footnote.weight(.semibold)).foregroundStyle(Palette.ink)
                 Spacer(minLength: 0)
                 Text(Date.now, format: .dateTime.year().month().day())
                     .font(.caption)

@@ -6,7 +6,7 @@ import Foundation
 /// `DshIntentBridge` hands the link to a window.
 struct NewConversationIntent: AppIntent {
     static var title: LocalizedStringResource = "新对话"
-    static var description = IntentDescription("打开 Fish Pocket，开始一个新对话。")
+    static var description = IntentDescription("打开 Firefly，开始一个新对话。")
     static var openAppWhenRun = true
 
     @Parameter(title: "草稿", description: "放进输入框，不会自动发送。")

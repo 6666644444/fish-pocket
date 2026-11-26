@@ -17,7 +17,17 @@ import { APPLICATION_ID, LearningError, SCHEMA_VERSION } from './store.mjs';
 export const EXPORT_FORMAT = 'dsh-learning-export';
 export const EXPORT_VERSION = 1;
 
-const stamp = (now) => new Date(now).toISOString().replace(/[-:]/g, '').replace(/\..+$/, '').replace('T', '-');
+/** `YYYY-MM-DD-HH-mm-ss` the app sends: the phone's own clock and time zone. */
+export const LOCAL_STAMP = /^\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}$/;
+
+/**
+ * The time in a file name: the app's local time when it sent one (the engine on iOS may not
+ * know the time zone), else UTC, both as `YYYY-MM-DD-HH-mm-ss`.
+ */
+export function stamp(now, local) {
+  if (typeof local === 'string' && LOCAL_STAMP.test(local)) return local;
+  return new Date(now).toISOString().replace(/\..+$/, '').replace(/[T:]/g, '-');
+}
 
 /** A file or folder name from a title: no path separators or reserved characters, not empty. */
 export function safeName(title, fallback = 'untitled') {
@@ -68,7 +78,7 @@ export function dumpLibrary(store) {
     memories: db.prepare('SELECT * FROM memories ORDER BY created_at, id').all()
       .map((m) => ({ content: m.content, source: m.source, createdAt: m.created_at, updatedAt: m.updated_at })),
     sessionModes: db.prepare('SELECT * FROM session_modes ORDER BY session_id').all()
-      .map((s) => ({ sessionId: s.session_id, mode: s.mode, updatedAt: s.updated_at })),
+      .map((s) => ({ sessionId: s.session_id, mode: s.mode, updatedAt: s.updated_at, endedAt: s.ended_at ?? null, hidden: Boolean(s.hidden) })),
     documents: docs.map((d) => ({
       title: d.title, kind: d.kind, sourceName: d.source_name, createdAt: d.created_at,
       text: documentText(chunks.filter((c) => c.document_id === d.id)),
@@ -128,7 +138,8 @@ export function importLibrary(store, data) {
       db.prepare('INSERT INTO memories(content, source, created_at, updated_at) VALUES (?, ?, ?, ?)').run(m.content, m.source === 'agent' ? 'agent' : 'user', m.createdAt, m.updatedAt);
     }
     for (const s of list(data.sessionModes)) {
-      db.prepare('INSERT INTO session_modes(session_id, mode, updated_at) VALUES (?, ?, ?)').run(s.sessionId, s.mode, s.updatedAt);
+      db.prepare('INSERT INTO session_modes(session_id, mode, updated_at, ended_at, hidden) VALUES (?, ?, ?, ?, ?)')
+        .run(s.sessionId, s.mode, s.updatedAt, Number.isInteger(s.endedAt) ? s.endedAt : null, s.hidden === true ? 1 : 0);
     }
     for (const d of list(data.documents)) {
       const doc = store.importDocument({ title: d.title, kind: d.kind, text: d.text, sourceName: d.sourceName ?? '' });
@@ -160,10 +171,20 @@ export function importLibrary(store, data) {
   });
 }
 
-/** Write an export folder under `dir/exports/`; returns its path and what it holds. */
-export function exportLibrary(store, dir, now = Date.now()) {
+/**
+ * Write an export folder under `dir/exports/`; returns its path and what it holds. Earlier
+ * export folders go first: each is only a copy made to be shared, and the newest one is all
+ * the app offers.
+ */
+export function exportLibrary(store, dir, now = Date.now(), { local } = {}) {
   const data = dumpLibrary(store);
-  const root = path.join(dir, 'exports', `learning-export-${stamp(now)}`);
+  const exports = path.join(dir, 'exports');
+  if (fs.existsSync(exports)) {
+    for (const name of fs.readdirSync(exports)) {
+      if (name.startsWith('learning-export-')) fs.rmSync(path.join(exports, name), { recursive: true, force: true });
+    }
+  }
+  const root = path.join(exports, `learning-export-${stamp(now, local)}`);
   fs.mkdirSync(root, { recursive: true, mode: 0o700 });
   const used = new Set();
   const notesDir = path.join(root, 'notes');
@@ -207,21 +228,52 @@ export function importExport(store, from) {
   return importLibrary(store, data);
 }
 
-/** A consistent copy of the library under `dir/backups/`. */
-export function backupLibrary(store, dir, now = Date.now()) {
+/** The tag of the backup taken just before a restore replaces the library. */
+export const BEFORE_RESTORE = 'before-restore';
+
+/**
+ * A consistent copy of the library under `dir/backups/`, named
+ * `learning-YYYY-MM-DD-HH-mm-ss[-tag][-n].db` (`local`: the app's local time, see stamp()).
+ */
+export function backupLibrary(store, dir, now = Date.now(), { local, tag } = {}) {
   const folder = path.join(dir, 'backups');
   fs.mkdirSync(folder, { recursive: true, mode: 0o700 });
-  let file = path.join(folder, `learning-${stamp(now)}.db`);
-  for (let n = 2; fs.existsSync(file); n += 1) file = path.join(folder, `learning-${stamp(now)}-${n}.db`);
+  const base = `learning-${stamp(now, local)}${tag ? `-${tag}` : ''}`;
+  let file = path.join(folder, `${base}.db`);
+  for (let n = 2; fs.existsSync(file); n += 1) file = path.join(folder, `${base}-${n}.db`);
   store.db.prepare('VACUUM INTO ?').run(file);
-  return { path: file, name: path.basename(file), bytes: fs.statSync(file).size };
+  const stat = fs.statSync(file);
+  return { path: file, name: path.basename(file), bytes: stat.size, createdAt: Math.round(stat.mtimeMs), kind: tag === BEFORE_RESTORE ? BEFORE_RESTORE : 'manual' };
 }
 
+/**
+ * The backups, newest first by when the file was written (older names are UTC and sort
+ * differently from the newer local ones, so the name cannot order them).
+ */
 export function listBackups(dir) {
   const folder = path.join(dir, 'backups');
   if (!fs.existsSync(folder)) return [];
-  return fs.readdirSync(folder).filter((name) => name.endsWith('.db')).sort().reverse()
-    .map((name) => ({ name, path: path.join(folder, name), bytes: fs.statSync(path.join(folder, name)).size }));
+  return fs.readdirSync(folder).filter((name) => name.endsWith('.db'))
+    .map((name) => {
+      const stat = fs.statSync(path.join(folder, name));
+      return {
+        name, path: path.join(folder, name), bytes: stat.size, createdAt: Math.round(stat.mtimeMs),
+        kind: name.includes(`-${BEFORE_RESTORE}`) ? BEFORE_RESTORE : 'manual',
+      };
+    })
+    .sort((a, b) => b.createdAt - a.createdAt || b.name.localeCompare(a.name));
+}
+
+/**
+ * Delete one backup by its exact name as listBackups() gives it: nothing outside backups/
+ * (no paths, no other files) can be named.
+ */
+export function deleteBackup(dir, name) {
+  const wanted = String(name ?? '');
+  const found = listBackups(dir).find((b) => b.name === wanted);
+  if (!found || path.basename(wanted) !== wanted) throw new LearningError('not-found', `no backup named ${wanted}`);
+  fs.rmSync(found.path, { force: true });
+  return { deleted: found.name };
 }
 
 /** Check a would-be library without changing it: our application_id, a schema we can open. */

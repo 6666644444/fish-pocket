@@ -29,7 +29,26 @@ struct LearningExport: Codable, Sendable {
 struct LearningBackup: Codable, Identifiable, Hashable, Sendable {
     let name: String
     let bytes: Int
+    /// When the file was written, ms since 1970 (older engines: absent).
+    var createdAt: Double?
+    /// "manual", or "before-restore" for the copy taken just before a restore.
+    var kind: String?
     var id: String { name }
+    var date: Date? { createdAt.map { Date(timeIntervalSince1970: $0 / 1000) } }
+    var isBeforeRestore: Bool { kind == "before-restore" }
+}
+
+/// The phone's own clock and time zone as the engine puts it in file names
+/// (`YYYY-MM-DD-HH-mm-ss`, portable.mjs `stamp`): the engine may not know the time zone.
+enum LearningStamp {
+    static func now() -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.timeZone = .current
+        formatter.dateFormat = "yyyy-MM-dd-HH-mm-ss"
+        return formatter.string(from: .now)
+    }
 }
 
 struct LearningRestored: Codable, Sendable {
@@ -40,12 +59,16 @@ struct LearningRestored: Codable, Sendable {
 
 extension LearningClient {
     func dataSummary() async throws -> LearningDataSummary { try await call("data.summary") }
-    func exportData() async throws -> LearningExport { try await call("data.export") }
+    func exportData() async throws -> LearningExport { try await call("data.export", ["local": .string(LearningStamp.now())]) }
     /// Import the contents of an export's data.json into an empty library.
     func importData(_ data: JSON) async throws { _ = try await call("data.import", ["data": data], as: JSON.self) }
-    func createBackup() async throws -> LearningBackup { try await call("backup.create") }
+    func createBackup() async throws -> LearningBackup { try await call("backup.create", ["local": .string(LearningStamp.now())]) }
     func backups() async throws -> [LearningBackup] { try await call("backup.list") }
-    func restoreBackup(_ name: String) async throws -> LearningRestored { try await call("backup.restore", ["name": .string(name)]) }
+    func restoreBackup(_ name: String) async throws -> LearningRestored {
+        try await call("backup.restore", ["name": .string(name), "local": .string(LearningStamp.now())])
+    }
+    /// Deletes one backup, by its name in the list.
+    func deleteBackup(_ name: String) async throws { _ = try await call("backup.delete", ["name": .string(name)], as: JSON.self) }
     /// Deletes every piece of learning data. The engine refuses without this exact word.
     func deleteAllLearningData() async throws {
         _ = try await call("data.delete", ["confirm": "delete-learning-data"], as: JSON.self)
@@ -67,6 +90,8 @@ struct LearningDataPage: View {
     @State private var exported: URL?
     @State private var importing = false
     @State private var restoring: LearningBackup?
+    @State private var deleting: LearningBackup?
+    @State private var confirmingBackup = false
     @State private var confirmingDelete = false
     @State private var confirmingDeleteAgain = false
 
@@ -75,7 +100,11 @@ struct LearningDataPage: View {
     var body: some View {
         List {
             Section {
-                Button("导出全部学习数据") { Task { await export() } }.disabled(working)
+                // A second tap folds the share row away again; the next tap after that exports anew.
+                Button("导出全部学习数据") {
+                    if exported != nil { withAnimation { exported = nil } } else { Task { await export() } }
+                }
+                .disabled(working)
                 if let exported {
                     ShareLink(item: exported) { Label("分享或存到「文件」", systemImage: "square.and.arrow.up") }
                 }
@@ -86,17 +115,20 @@ struct LearningDataPage: View {
                 Text("导出是一个文件夹：笔记是 Markdown，研究报告是 Markdown，其余数据在 data.json 里。导入只能导入到空的学习库。")
             }
             Section {
-                Button("立即备份") { Task { await backup() } }.disabled(working)
+                Button("立即备份") { confirmingBackup = true }.disabled(working)
+                // Tap: restore. Long press: restore or delete.
                 ForEach(backups) { item in
-                    Button { restoring = item } label: {
-                        LabeledContent(item.name) { Text(ByteCountFormatter.string(fromByteCount: Int64(item.bytes), countStyle: .file)) }
-                    }
-                    .disabled(working)
+                    Button { restoring = item } label: { backupRow(item) }
+                        .disabled(working)
+                        .contextMenu {
+                            Button("恢复", systemImage: "arrow.counterclockwise") { restoring = item }
+                            Button("删除", systemImage: "trash", role: .destructive) { deleting = item }
+                        }
                 }
             } header: {
                 Text("备份与恢复")
             } footer: {
-                Text("备份是学习库的完整副本，保存在这台设备上。恢复前会检查备份文件，并先把当前学习库另存为一份备份。")
+                Text("备份是学习库的完整副本，保存在这台设备上。点一下恢复，长按可删除。恢复前会检查备份文件，并先把当前学习库另存为一份备份。")
             }
             Section {
                 Button("删除全部学习数据", role: .destructive) { confirmingDelete = true }.disabled(working || summary == nil)
@@ -121,6 +153,21 @@ struct LearningDataPage: View {
         } message: { _ in
             Text("当前学习库会先另存为一份备份。")
         }
+        .confirmationDialog("现在备份学习库？", isPresented: $confirmingBackup, titleVisibility: .visible) {
+            Button("备份") { Task { await backup() } }
+        } message: {
+            Text("会在这台设备上保存一份学习库的完整副本。")
+        }
+        .alert(
+            "删除这份备份？",
+            isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
+            presenting: deleting
+        ) { item in
+            Button("取消", role: .cancel) {}
+            Button("删除", role: .destructive) { Task { await deleteBackup(item) } }
+        } message: { item in
+            Text("\(item.name) 删除后无法找回。")
+        }
         .confirmationDialog("删除全部学习数据？", isPresented: $confirmingDelete, titleVisibility: .visible) {
             Button("继续", role: .destructive) { confirmingDeleteAgain = true }
         } message: {
@@ -134,6 +181,25 @@ struct LearningDataPage: View {
         }
         .task { await load() }
         .refreshable { await load() }
+    }
+
+    private func backupRow(_ item: LearningBackup) -> some View {
+        LabeledContent {
+            Text(ByteCountFormatter.string(fromByteCount: Int64(item.bytes), countStyle: .file))
+        } label: {
+            VStack(alignment: .leading, spacing: 2) {
+                if let date = item.date {
+                    Text(date.formatted(date: .abbreviated, time: .standard)).foregroundStyle(.primary)
+                } else {
+                    Text(verbatim: item.name).foregroundStyle(.primary)
+                }
+                Group {
+                    if item.isBeforeRestore { Text("恢复前自动备份 · \(item.name)") } else { Text(verbatim: item.name) }
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
+        }
     }
 
     private func load() async {
@@ -178,6 +244,14 @@ struct LearningDataPage: View {
             _ = try await client.restoreBackup(item.name)
             await load()
             app.showToast(String(localized: "已恢复备份"))
+        }
+    }
+
+    private func deleteBackup(_ item: LearningBackup) async {
+        await run {
+            try await client.deleteBackup(item.name)
+            await load()
+            app.showToast(String(localized: "已删除备份"))
         }
     }
 

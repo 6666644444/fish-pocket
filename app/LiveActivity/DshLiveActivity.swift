@@ -273,7 +273,7 @@ private struct CompactLeading: View {
 /// The brand mark: the Dynamic Island has no room for the full name.
 private struct Mark: View {
     var body: some View {
-        Image(systemName: "fish.fill").font(.system(size: 14, weight: .bold)).accessibilityLabel("Fish Pocket")
+        Image(systemName: "fish.fill").font(.system(size: 14, weight: .bold)).accessibilityLabel("Firefly")
     }
 }
 

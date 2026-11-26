@@ -59,8 +59,8 @@ enum ShareInbox {
 
     private static let manifest = "delivery.json"
 
-    /// `DshAppGroup` in Info.plist (`DSH_APP_GROUP` in project.yml).
-    static var groupId: String? { Bundle.main.object(forInfoDictionaryKey: "DshAppGroup") as? String }
+    /// The App Group in use (Shared/AppGroup.swift: Info.plist's `DshAppGroup`, or the one the signature allows).
+    static var groupId: String? { AppGroup.id }
 
     /// `Share/` in the App Group container: `inbox/<id>/` and the targets the app last listed.
     static var root: URL? {

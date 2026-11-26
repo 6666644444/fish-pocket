@@ -70,5 +70,13 @@ await check('the knowledge base (M3): chunks, trigram search, float32 vectors', 
   store.close();
 });
 
+// Not a check, a finding: whether research can read GBK pages here (engine/plugins/learning/
+// webtext.mjs). A small-ICU Node has no GBK decoder; then those pages stay unread.
+{
+  let gbk = 'no';
+  try { new TextDecoder('gb18030'); gbk = 'yes'; } catch { /* small ICU */ }
+  console.log(`GBK decoder on NodeMobile: ${gbk}`);
+}
+
 console.log(failed ? `${failed} failed` : 'all passed');
 process.exit(failed ? 1 : 0);

@@ -196,6 +196,43 @@ test('a conflicting claim opens a new sub-topic to resolve it', async () => {
   assert.match(done.report, /\*\*conflicting\*\*/);
 });
 
+test('search results are their own notes: no model call per result', async () => {
+  const store = new LearningStore(':memory:');
+  const job = newJob(store);
+  let noteCalls = 0;
+  const model = fakeModel({ onCall: (_n, system) => { if (system.startsWith('Summarise one tool result')) noteCalls += 1; } });
+  const done = await runResearch(store, job.id, { llm: model.llm, tools: fakeTools().tools });
+  assert.equal(done.status, 'done', done.error ?? '');
+  assert.equal(noteCalls, 0);
+  const cits = store.listCitations({ jobId: job.id });
+  assert.ok(cits.some((c) => c.note) && cits.every((c) => !c.note?.startsWith('A dense note')), 'the excerpt is the note');
+  store.close();
+});
+
+test('a page that cannot be read costs no model call, is not cited, and the report says how many', async () => {
+  const store = new LearningStore(':memory:');
+  const job = newJob(store);
+  const base = fakeModel();
+  let asked = 0;
+  let noteCalls = 0;
+  const llm = async (prompt) => {
+    if (prompt.system.startsWith('Summarise one tool result')) noteCalls += 1;
+    if (prompt.system.startsWith('You research') && asked < 2) {
+      asked += 1;
+      return JSON.stringify({ action: 'fetch', url: `https://blocked.example/${asked}` });
+    }
+    return base.llm(prompt);
+  };
+  const { tools } = fakeTools();
+  tools.fetch = async (url) => (url.endsWith('/1') ? { url, title: url, text: '请登录' } : { error: 'unsupported charset "gbk"' });
+  const done = await runResearch(store, job.id, { llm, tools });
+  assert.equal(done.status, 'done', done.error ?? '');
+  assert.equal(noteCalls, 0);
+  assert.ok(store.listCitations({ jobId: job.id }).every((c) => !c.url?.startsWith('https://blocked.example/')));
+  assert.match(done.report, /2 web pages could not be read/);
+  store.close();
+});
+
 test('the model-call budget stops expansion, and the report is still written and says so', async () => {
   const store = new LearningStore(':memory:');
   const job = newJob(store);
@@ -262,8 +299,8 @@ test('a schema 5 library opens at schema 6 with its data intact', () => {
   db.prepare("INSERT INTO quiz_questions(kind, prompt, answer, created_at) VALUES ('short', 'kept?', 'yes', 1)").run();
   db.close();
   const store = new LearningStore(file);
-  assert.equal(SCHEMA_VERSION, 6);
-  assert.equal(store.version, 6);
+  assert.ok(SCHEMA_VERSION >= 6);
+  assert.equal(store.version, SCHEMA_VERSION);
   assert.equal(store.listQuestions()[0].prompt, 'kept?');
   assert.deepEqual(store.listResearchJobs(), []);
   store.close();

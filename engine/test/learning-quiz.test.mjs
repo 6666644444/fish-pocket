@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { test } from 'node:test';
+import { isRemoteJsonValue } from '@deepseek-ai/dsh-typert-protocol';
 import Learning, { ROUTE } from '../plugins/learning/index.mjs';
 import {
   MASTERY, SHORT_GRADING, choiceIndex, grade, keyTerms, nextMistake, normalizeAnswer, normalizeQuestion,
@@ -237,6 +238,34 @@ test('the learning_quiz tool is offered only in learning sessions, saves and gra
   assert.equal((await p.post('quiz.answer', { id, answer: 'Z' })).status, 400);
   p.dispose();
   assert.equal(p.tools.length, 0, 'the tool goes away with the plugin');
+});
+
+// Every case the tool returns must cross DSH's Remote boundary: one undefined field (a short
+// answer's `chosen`, the `streak` of a question not in the book) failed the whole call on
+// the phone with "value is not lossless JSON" (only a wrong multiple-choice answer passed).
+test('every learning_quiz result is lossless JSON', async () => {
+  const p = plugin();
+  const { tool } = p.tools[0];
+  await p.post('sessions.setMode', { sessionId: 'quiz-json', mode: 'quiz' });
+  const ctx = { agent: agent('quiz-json') };
+  const lossless = (value, what) => assert.ok(isRemoteJsonValue(value), `${what}: ${JSON.stringify(value)}`);
+  const saved = await tool.execute({ action: 'save', questions: [choice, short, { kind: 'choice', prompt: '3 + 3 = ?', options: ['6', '7'], answer: 'A' }] }, ctx);
+  lossless(saved, 'save');
+  const [c, s, c2] = saved.saved.map((q) => q.id);
+  lossless(await tool.execute({ action: 'grade', questionId: c2, answer: 'A' }, ctx), 'choice right, never in the book');
+  lossless(await tool.execute({ action: 'grade', questionId: c, answer: 'A' }, ctx), 'choice wrong, into the book');
+  lossless(await tool.execute({ action: 'grade', questionId: c, answer: 'B' }, ctx), 'choice right, still in the book');
+  const out = await tool.execute({ action: 'grade', questionId: c, answer: 'B' }, ctx);
+  assert.equal(out.mistakeBook, 'removed');
+  assert.equal('streak' in out, false);
+  lossless(out, 'choice right, out of the book');
+  const shortRule = await tool.execute({ action: 'grade', questionId: s, answer: '切线的斜率' }, ctx);
+  assert.equal('chosen' in shortRule, false);
+  lossless(shortRule, 'short, graded by rule');
+  lossless(await tool.execute({ action: 'grade', questionId: s, answer: '斜率', judged: 'correct' }, ctx), 'short, judged by the model');
+  lossless(await tool.execute({ action: 'list' }, ctx), 'list');
+  lossless(await tool.execute({ action: 'list', mistakes: true }, ctx), 'list the book');
+  p.dispose();
 });
 
 test('the quiz skill tells the model to use the tool', () => {

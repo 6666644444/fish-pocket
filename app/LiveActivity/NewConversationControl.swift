@@ -15,6 +15,6 @@ struct NewConversationControl: ControlWidget {
             }
         }
         .displayName("新对话")
-        .description("打开 Fish Pocket，开始一个新对话。")
+        .description("打开 Firefly，开始一个新对话。")
     }
 }

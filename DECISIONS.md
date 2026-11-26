@@ -223,6 +223,51 @@
 - 用户改用自己的免费 Apple ID（Windows 上用 Sideloadly 一类工具）签名。Apple ID 只在用户自己的签名工具里登录，不经过编码代理。
 - 打包任务多出 `Firefly-…-free-apple-id.ipa`：用只属于用户的新 ID（仓库变量 `IPA_FREE_BUNDLE_ID` = `com.firefly.learn.2gafst`，`IPA_FREE_APP_GROUP` = `group.com.firefly.learn.2gafst`），上游的 ID 免费账号注册不了；保留分享扩展和小组件/实时活动扩展，去掉手表 App（免费账号一台手机最多 3 个自签 App，扩展也算）；每个 bundle 用 ad hoc 签名写入 App Group 权限，让签名工具知道要申请什么。HealthKit、HomeKit 没写进去：免费账号是否支持没能在官方页面确认，写了可能导致签名失败；需要时再试。
 - 限制：每 7 天重签（同一个包、同一个 Apple ID，覆盖安装，数据保留）；免费账号 7 天内最多注册 10 个 App ID，这个包占 3 个，所以不要频繁换 ID。签名工具若没申请到 App Group，主 App 照常可用，分享扩展和小组件拿不到数据。
+- 2026-11-26：用户实际改用 LocalDevVPN + AltLoad（手机上自签）。真机结果：灵动岛正常，小组件和分享失败（分享显示「没能读取分享的内容」，即打不开 App Group）→ D36。
+
+## 第一批真机问题（2026-11-26，用户测试后逐条确认）
+
+### D36 App Group 在运行时从签名里确定
+
+- 问题：免费 Apple ID 的签名工具会用自己注册的 App Group（常见是原名加 Team ID），而代码只读 Info.plist 里写死的 `DshAppGroup`，分享扩展和小组件就打不开共享文件夹。
+- 做法：新增 `app/Shared/AppGroup.swift`。候选是 Info.plist 的名字，再加本 bundle 自带 `embedded.mobileprovision` 里 `com.apple.security.application-groups` 列出的组；顺序固定（构建名 → 包含构建名的组 → 其余按名字排），取第一个 `containerURL` 能打开的，App 和每个扩展算出来一样。ShareInbox、WidgetSnapshotStore（MiniAppCatalog 跟着它）、CallAvatarFile 改用它。
+- 诊断：设置 → 学习 最下面「诊断」显示用的是哪个组、来自哪里；分享扩展打不开时在出错页上也显示。
+- 签名工具根本没申请到 App Group 时，代码无法补救，诊断里会显示「无」。聊天和学习数据都在 App 自己的目录，不在 App Group，覆盖安装不受影响。
+- 顺带（1b）：用户看得到的 App 名统一改成 Firefly：分享扩展、「不支持的设备」页、侧边栏标题、小组件和控制中心按钮、快捷指令动作说明、快捷指令/Siri 指南、主屏幕快捷方式说明、手表设置页和手表 App、插件市场说明（「Firefly 不提供插件市场」）、插件版本提示、IM 说明、健康权限说明、语言切换提示、「新功能」页里提到 App 的几句、对话分享图和录屏视频外框上的字、卡住时复制的报告头。翻译照抄原句五种语言并换名（40 条，脚本 `.tmp/firefly-strings.mjs`）。
+- 不改（指的是 Fish Pocket 这项服务或没有入口）：「Fish Pocket 账号」、额度/充值/登录/服务器、语音和生图的 Fish Pocket 线路、插件举报和下架（Fish Pocket 人工审核）、远程控制登录的设备名、语音文件里的编码器标识；隐藏的「分享 Fish Pocket」页和分享文案、「支持」弹窗（D37 5b）；「新功能」里写着 Fish Pocket 的字标图标（图标上就是这几个字）。
+
+### D37 反馈与社区只留一行来源说明
+
+- 探索页和 iOS 18 以前 iPad 设置页都不再列链接（开源仓库、问题反馈、微信群、Discord、关注我们），也不显示「反馈与社区」标题，只留页脚「本分支基于 Fish Pocket 和 DeepTutor 两大开源项目，只供 CDW 个人使用。」。取代 D30 里「保留问题反馈、微信群、Discord、关注我们」那一条。
+- `SupportLink.all` 和 `AppLinks` 留着不用，同步上游时少冲突。「支持」弹窗和远程控制页的开源仓库链接不动（用户决定）。
+
+### D38 LaunchMark 换成 Firefly
+
+- `LaunchMark.imageset` 的 4 张图（144/216，深色同图）由 `docs/design/brand/firefly/firefly-icon-dawn.png` 缩放、切成圆角（半径 22.5%）得到。它用在启动画面、「正在启动 DSH 引擎」页、主 Bot 默认头像、通话头像，用户选了全部换。手表的 Mascot、ShareMascot 没动。生成脚本在本机 `.tmp/firefly-launchmark.ps1`。
+- iOS 会缓存启动画面：覆盖安装后第一次可能还是旧图，重启手机后就是新的。
+
+### D39 备份和导出
+
+- 「立即备份」先确认；点备份 = 恢复（原有，带确认）；长按 = 「恢复 / 删除」，删除再确认一次；不做左滑（用户没要）。引擎新增 `backup.delete`：只接受 `backup.list` 列出的同名文件，不接受路径，恢复进行中拒绝。
+- 文件名改成 `learning-YYYY-MM-DD-HH-mm-ss.db`（导出文件夹同样），用**手机本地时间**：App 把时间传给引擎（iOS 上的 Node 不一定知道时区），引擎校验格式，没有就用 UTC。恢复前自动做的那份名字带 `-before-restore`，列表里写「恢复前自动备份」。列表按文件写入时间排（新旧两种名字混在一起按名字排会乱），显示本地日期时间，文件名作小字。旧备份不改名。
+- 「导出全部学习数据」再点一次收起「分享或存到文件」，收起后再点才重新导出；每次新导出先删掉 `exports/` 里旧的 `learning-export-*` 文件夹，只留最新一份。
+
+### D40 学习记录：结束学习模式不再忘掉会话（schema 7）
+
+- `session_modes` 加 `ended_at`、`hidden`、`left_mode` 三列（迁移 7，只加列）。结束学习模式 = 记下结束时间，不再删行；学习页新增「学习记录」（点开会话；长按重新开启某种模式，或从记录里移除，会话本身不删）。新路由 `sessions.history`、`sessions.hide`。导出/导入带上这两个字段。
+- 结束后的下一轮附一句「用户已退出学习模式，按普通对话回答」，只附一次；换模式时新模式的说明里写明「之前的学习模式不再适用」。
+
+### D41 深度研究：续跑、一次一个、读网页
+
+- 一个会话同时只跑一个研究：工具 `start` 和 App 的「继续研究」遇到同会话已有在跑的，都不开新的，返回那一个。同会话里有暂停的、题目相近（topicSimilarity ≥ 0.6）的任务时，`start` 改为续跑它。
+- 会话里有因关 App 而暂停的研究时，下一轮给模型一条说明（每个任务每次引擎启动只一次）：用 `resume` 续跑、不要另开，并告诉用户也可在 设置 → 学习 → 深度研究 继续。续跑仍是手动的（用户没选自动）。
+- 网页：正文提取去掉 script/style/nav/footer/aside/form 等，解码实体，取 `<title>`。DSH 拒绝的 GBK/GB2312/GB18030/Big5 页面，或只在 `<meta>` 里写编码、被当成 UTF-8 乱码的页面，插件再读一次并按 GB18030/Big5 解码（`webtext.mjs`）：只读 DSH 已接受的同一地址、只跟同源跳转、最多 3 MB、20 秒。需要 Node 带 full ICU，模拟器检查里打印「GBK decoder on NodeMobile: yes/no」；为 no 时这部分不生效，再问用户要不要自带编码表。没改 node_modules。
+- 省调用：搜索和知识库结果本身就是短摘录，直接当笔记，不再每条花一次模型调用（以前一次搜索最多花 5 次，是快速版 40 次预算很快用光的主因）；只有读到 600 字以上正文的网页才让模型摘要。正文不到 200 字或读取失败的网页不引用、不花调用，报告末尾注明有几个网页没读到。
+
+### D42 模型工具的返回值一律是无损 JSON
+
+- 真机上题库评分报「value is not lossless JSON」：DSH 把工具结果交给模型前用 `isRemoteJsonValue` 检查，任何一个字段是 `undefined` 就整个拒掉。`answerQuestion` 的 `chosen`（简答题）和 `streak`（不在错题本 / 刚移出）会是 `undefined`，所以只有「选择题答错」能过。报错发生在写库之后：失败的那些答题记录其实已经存下。
+- 修法：空字段不写；`learning_quiz` 和 `deep_research` 的返回值都过 `wire.mjs` 的 `plain()`；测试用 DSH 自己的 `isRemoteJsonValue` 断言各种情况。单元测试以前直接调用工具函数、绕过了这道检查，且恰好只测了「选择题答错」。
 
 ## 改过的上游文件
 
@@ -232,7 +277,7 @@
 | `.github/workflows/ios-ci.yml` | 新增 `engine-tests` job，以及 macOS job 里的「Learning SQLite on NodeMobile」这一步、Test summary 里打印 NLEmbedding 评估（这个文件是 fork 自己加的，不是上游的） | 见 D5、D9 |
 | `docs/PLAN.md` | 从仓库根目录挪进来（git mv），然后补充内容 | fork 自己的文档 |
 | `app/DshIOS/Views/SettingsView.swift` | 新增一个 5 行的分区 | 见 D7 |
-| `app/Shared/Localizable.xcstrings` | 只在末尾追加：M1 34 条、M2 34、M3 41、M4 27、M5 27、M6 20、D29 1、D30 1、D32 1，共 186 条；已有条目没动 | 见 D10；五种语言逐条翻译，覆盖率 3783/3783 |
+| `app/Shared/Localizable.xcstrings` | 只在末尾追加：M1 34 条、M2 34、M3 41、M4 27、M5 27、M6 20、D29 1、D30 1、D32 1、第一批真机问题 27、1b 换名 40，共 253 条；已有条目没动 | 见 D10；五种语言逐条翻译，覆盖率 3849/3849 |
 | `README.md`、`README.en.md` | M7：在「常见问题 / FAQ」前插入「学习功能」一节（含同步上游步骤），其他内容没动 | 总控 M7 |
 | `app/DshIOS/Views/ExploreTabView.swift` | 删去「分享 Fish Pocket」一行入口，换成一行注释 | D29 |
 | `app/DshIOS/Views/SettingsView.swift`（第二处） | 顶部分区删去「分享 Fish Pocket」一行入口，换成一行注释 | D29 |
@@ -244,7 +289,15 @@
 | `app/DshIOS/Views/AppIconPage.swift` | 默认图标的名字「大肥鱼」→「Firefly」 | D32 |
 | `native/ios-native/caps_nlp.m` | M3：新增 `vectors` 函数和分发里的一行，已有操作没动 | 见 D17 |
 | `native/ios-native/ios_native.m` | M3：能力表 `nlp` 一行里加了 `"vectors"` | 见 D17 |
-| `native/root/test/learning-sqlite.mjs` | M3：加一项知识库检查（这是 fork 自己加的文件） | 模拟器上验证 v4 表、trigram、float32 向量 |
+| `native/root/test/learning-sqlite.mjs` | M3：加一项知识库检查（这是 fork 自己加的文件）；D41：末尾打印 GBK 解码器是否可用 | 模拟器上验证 v4 表、trigram、float32 向量 |
+| `app/Shared/ShareInbox.swift`、`app/Shared/WidgetSnapshot.swift`、`app/Shared/CallActivity.swift` | 各 1 行：读 App Group 改成 `AppGroup.id` | D36 |
+| `app/project.yml`（第二处） | `DshShare` 的 sources 加 `Shared/AppGroup.swift` 一行 | D36 |
+| `app/ShareExtension/ShareView.swift` | 标题和两句提示里的 Fish Pocket → Firefly；打不开 App Group 时显示诊断 | D36 |
+| `app/DshIOS/DshIOSApp.swift` | 「不支持的设备」页两句里的 Fish Pocket → Firefly | D36（1b） |
+| `app/DshIOS/Views/SettingsView.swift`（第四处） | `SupportLinksSection` 只留页脚；页脚换成 D37 那一句 | D37 |
+| `app/DshIOS/Views/ExploreTabView.swift`（第二处） | 「反馈与社区」分区只留页脚 | D37 |
+| `app/DshIOS/Assets.xcassets/LaunchMark.imageset/*.png` | 4 张图换成 Firefly（同步上游冲突时 `git checkout --ours`） | D38 |
+| `HomeScreenShortcut.swift`、`WhatsNew.swift`、`PluginPins.swift`、`PhoneRecordingExport.swift`、`PhoneRecordingViews.swift`、`BotIMPage.swift`、`BotViews.swift`、`ConversationShare.swift`、`DrawerView.swift`、`NativeCapabilitiesView.swift`、`PluginStoreView.swift`、`ShortcutsGuidePage.swift`、`WatchSetupPage.swift`、`SettingsView.swift`（第五处）、`DshIOSApp.swift`（第二处）、`LiveActivity/*Widget*.swift`、`NewConversationControl.swift`、`DshLiveActivity.swift`、`Shared/NewConversationIntent.swift`、`Shared/OpenWebIntent.swift`、`Watch/Views/HomeView.swift`、`app/Watch/Localizable.xcstrings`（末尾 1 条） | 字符串里的 App 名 Fish Pocket → Firefly，只换名字；同步上游冲突时保留上游改动，再把名字换回来 | D36（1b） |
 
 没有改：`node_modules`、引擎版本、`ios.patch.yml` 里已有的条目、`ios-build.yml`、`LICENSE`、`project.yml` 里除显示名以外的内容、Bundle ID、App Group、签名、`test-root-sim.sh`、`conformance.mjs`。
 

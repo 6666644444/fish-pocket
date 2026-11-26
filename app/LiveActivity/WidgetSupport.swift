@@ -95,7 +95,7 @@ struct FishMark: View {
     var body: some View {
         Image(systemName: "fish.fill")
             .font(.system(size: size, weight: .bold))
-            .accessibilityLabel("Fish Pocket")
+            .accessibilityLabel("Firefly")
     }
 }
 

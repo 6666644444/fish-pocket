@@ -22,15 +22,18 @@
 // so an engine start never waits on it or fails because of it; it closes when the plugin
 // is disposed.
 import { LearningError, LearningStore, libraryFile, SCHEMA_VERSION } from './store.mjs';
-import { MODES, MODE_IDS, modeInstructions, noteMessage, noteSections, pickMemories, userTextOf } from './modes.mjs';
+import { MODES, MODE_IDS, leftSections, modeInstructions, noteMessage, noteSections, pickMemories, userTextOf } from './modes.mjs';
 import { SkillFiles, skillsDir } from './skills.mjs';
 import { appleEmbedder, appleQueryVectors, embedPending } from './embed.mjs';
 import { quizTool } from './quiz-tool.mjs';
 import { ResearchRunner, researchTool } from './research-tool.mjs';
 import {
-  backupLibrary, deleteLearningData, exportLibrary, importExport, importLibrary, listBackups, restoreLibrary,
+  BEFORE_RESTORE, backupLibrary, deleteBackup, deleteLearningData, exportLibrary, importExport, importLibrary, listBackups, restoreLibrary,
 } from './portable.mjs';
 import path from 'node:path';
+
+/** A backup as the app sees it: no engine path. */
+const publicBackup = ({ name, bytes, createdAt, kind }) => ({ name, bytes, createdAt, kind });
 
 /** What the library holds, for the deletion dialog. */
 function summary(store) {
@@ -73,6 +76,9 @@ export const METHODS = {
   'sessions.getMode': ({ store }, p) => store.getSessionMode(p),
   'sessions.setMode': ({ store }, p) => store.setSessionMode(p),
   'sessions.list': ({ store }, p) => store.listSessionModes(p),
+  // The learning record: sessions whose mode was ended (学习记录), and taking one off it.
+  'sessions.history': ({ store }, p) => store.listLearningHistory(p),
+  'sessions.hide': ({ store }, p) => store.hideLearningHistory(p),
   'skills.list': ({ skills }) => skills().list(),
   'skills.get': ({ skills }, p) => skills().get(p),
   'skills.create': ({ skills }, p) => skills().create(p),
@@ -138,11 +144,13 @@ export const METHODS = {
   // M6: export, import, backup, restore and deleting all learning data. Only `$DSH_HOME/learning`
   // is touched (portable.mjs).
   'data.summary': ({ store }) => summary(store),
-  'data.export': ({ portable }) => portable.export(),
+  'data.export': ({ portable }, p) => portable.export(p),
   'data.import': ({ portable }, p) => portable.import(p),
-  'backup.create': ({ portable }) => portable.backup(),
+  // `local`: the phone's time as YYYY-MM-DD-HH-mm-ss, for the file name (portable.mjs stamp).
+  'backup.create': ({ portable }, p) => portable.backup(p),
   'backup.list': ({ portable }) => portable.listBackups(),
   'backup.restore': ({ portable }, p) => portable.restore(p),
+  'backup.delete': ({ portable }, p) => portable.deleteBackup(p),
   'data.delete': ({ portable }, p) => portable.deleteAll(p),
 };
 
@@ -184,6 +192,30 @@ export function call(open, method, params, skills = () => new SkillFiles(skillsD
 }
 
 /**
+ * A note about research this conversation left paused (the app was closed mid-run), once per
+ * job and engine run: the model resumes it instead of starting over, and tells the learner
+ * where it can be continued. Undefined when there is nothing to say.
+ * @param {LearningStore} store
+ * @param {string} sessionId
+ * @param {{ running: Map<number, unknown>, told: Set<number> }} state
+ */
+export function pausedResearchNote(store, sessionId, { running, told }) {
+  const paused = store.listResearchJobs({ limit: 50 })
+    .filter((j) => j.sessionId === sessionId && j.status === 'paused' && !running.has(j.id) && !told.has(j.id));
+  if (!paused.length) return undefined;
+  for (const j of paused) told.add(j.id);
+  const lines = paused.map((j) => `- research #${j.id} "${j.topic}": ${j.blocksDone}/${j.blocks} parts done`);
+  return noteMessage([{
+    name: 'learning-research',
+    text: 'Deep research in this conversation was paused when the app was closed:\n'
+      + `${lines.join('\n')}\n`
+      + 'If the user wants to go on with it, call deep_research with action "resume" and that id: it continues from where '
+      + 'it stopped, keeping finished parts. Do not start a new research on the same question. If the user has not '
+      + 'brought it up, mention it briefly once: it can also be continued in the app under 设置 → 学习 → 深度研究.',
+  }]);
+}
+
+/**
  * The note for one turn of `sessionId`, or undefined when the session is not in a learning
  * mode. Marks the mode announced once its instructions are in a note.
  * @param {LearningStore} store
@@ -193,7 +225,11 @@ export function call(open, method, params, skills = () => new SkillFiles(skillsD
  */
 export function turnNote(store, sessionId, messages, options = {}) {
   const session = store.getSessionMode({ sessionId });
-  if (!session) return undefined;
+  if (!session) {
+    // Out of learning just now: say so once, or the model keeps to the mode it was given.
+    const left = store.takeLeftMode({ sessionId });
+    return left ? noteMessage(leftSections(left)) : undefined;
+  }
   const announce = session.announced !== session.mode;
   const instructions = announce ? modeInstructions(session.mode, options.skillDir) : undefined;
   const memories = store.getSettings().injectMemories
@@ -264,21 +300,32 @@ export default class Learning {
       store?.close();
       store = undefined;
     };
+    let restoring = false;
     const portable = {
-      export: () => exportLibrary(open(), learningDir()),
+      export: (p) => exportLibrary(open(), learningDir(), Date.now(), { local: p?.local }),
       import: (p) => (p?.data !== undefined ? importLibrary(open(), p.data) : importExport(open(), String(p?.path ?? ''))),
-      backup: () => backupLibrary(open(), learningDir()),
-      listBackups: () => listBackups(learningDir()).map(({ name, bytes }) => ({ name, bytes })),
+      backup: (p) => publicBackup(backupLibrary(open(), learningDir(), Date.now(), { local: p?.local })),
+      listBackups: () => listBackups(learningDir()).map(publicBackup),
+      deleteBackup: (p) => {
+        if (restoring) throw new LearningError('conflict', 'a restore is in progress');
+        return deleteBackup(learningDir(), p?.name);
+      },
       restore: async (p) => {
         busy();
+        if (restoring) throw new LearningError('conflict', 'a restore is in progress');
         const name = String(p?.name ?? '');
         const found = listBackups(learningDir()).find((b) => b.name === name);
         if (!found) throw new LearningError('not-found', `no backup named ${name}`);
-        const safety = backupLibrary(open(), learningDir(), Date.now() + 1_000);
-        await closeLibrary();
-        const result = restoreLibrary(libraryPath(), found.path, () => safety);
-        open();
-        return result;
+        restoring = true;
+        try {
+          const safety = backupLibrary(open(), learningDir(), Date.now(), { local: p?.local, tag: BEFORE_RESTORE });
+          await closeLibrary();
+          const result = restoreLibrary(libraryPath(), found.path, () => safety);
+          open();
+          return result;
+        } finally {
+          restoring = false;
+        }
       },
       deleteAll: async (p) => {
         if (p?.confirm !== 'delete-learning-data') throw new LearningError('invalid', 'confirm must be "delete-learning-data"');
@@ -320,19 +367,28 @@ export default class Learning {
 
     // Only a turn's first step, and only one that brings new messages: a retry (no
     // messages) already has the note. Learning trouble never fails the turn.
+    const toldPaused = new Set();
     ctx.on('agent/pre-step', async ({ agent, step, signal }, next) => {
       const decision = await next();
       if (decision.kind === 'reject' || signal?.aborted || step !== 1 || !decision.messages?.length) return decision;
       const sessionId = agent?.session?.id;
       if (typeof sessionId !== 'string' || !sessionId) return decision;
-      let note;
+      const notes = [];
       try {
-        note = turnNote(open(), sessionId, decision.messages, { skillDir: config.skillDir });
+        const note = turnNote(open(), sessionId, decision.messages, { skillDir: config.skillDir });
+        if (note) notes.push(note);
       } catch (error) {
         ctx.logger?.warn?.(`learning: no note for this turn: ${error?.message ?? error}`);
-        return decision;
       }
-      return note ? { ...decision, messages: [...decision.messages, note] } : decision;
+      if (agent?.session?.header?.origin !== 'subagent') {
+        try {
+          const note = pausedResearchNote(open(), sessionId, { running: runner.running, told: toldPaused });
+          if (note) notes.push(note);
+        } catch (error) {
+          ctx.logger?.warn?.(`learning: no research note for this turn: ${error?.message ?? error}`);
+        }
+      }
+      return notes.length ? { ...decision, messages: [...decision.messages, ...notes] } : decision;
     });
 
     ctx.effect(() => () => {

@@ -110,7 +110,7 @@ private struct SmallSessions: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 6) {
                 FishMark(size: 13)
-                Text(entry.unset ? "Fish Pocket" : String(localized: "都处理完了")).font(.footnote.weight(.semibold))
+                Text(entry.unset ? "Firefly" : String(localized: "都处理完了")).font(.footnote.weight(.semibold))
             }
             Text(entry.unset ? String(localized: "打开 App 后这里会显示会话状态") : String(localized: "没有进行中的任务"))
                 .font(.footnote)
@@ -261,7 +261,7 @@ private struct RectangularSessions: View {
                     Text(WidgetText.summary(snapshot)).font(.subheadline).lineLimit(2)
                 }
             } else {
-                Label { Text(verbatim: "Fish Pocket") } icon: { Image(systemName: "fish.fill") }
+                Label { Text(verbatim: "Firefly") } icon: { Image(systemName: "fish.fill") }
                     .font(.headline)
                 Text(entry.unset ? String(localized: "打开 App 后这里会显示会话状态") : String(localized: "没有进行中的任务"))
                     .font(.subheadline)

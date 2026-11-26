@@ -682,7 +682,7 @@ struct BotSetupView: View {
         VStack(spacing: 10) {
             switch team.status {
             case .wrongVersion(let version):
-                Text("已安装的 Bot 插件是 \(version) 版，Fish Pocket 目前只支持 \(PluginPins.version(of: BotModel.package) ?? "") 版。请先在插件页卸载它，再回来开启。")
+                Text("已安装的 Bot 插件是 \(version) 版，Firefly 目前只支持 \(PluginPins.version(of: BotModel.package) ?? "") 版。请先在插件页卸载它，再回来开启。")
                     .font(.footnote).foregroundStyle(Palette.secondary).multilineTextAlignment(.center)
                 Button("打开插件页") { app.pluginStoreRequest = UUID() }.buttonStyle(.capsule())
             case .unknown where !team.installing:

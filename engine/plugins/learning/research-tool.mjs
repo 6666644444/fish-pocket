@@ -11,9 +11,11 @@
 // the app killed) is resumed with `deep_research` action `resume`, from where it stopped.
 import { BlockAssembler } from '@deepseek-ai/dsh-llm';
 import { defineTool } from '@deepseek-ai/dsh-tools';
-import { runResearch, TERMINAL } from './research.mjs';
+import { runResearch, TERMINAL, topicSimilarity } from './research.mjs';
 import { appleQueryVectors } from './embed.mjs';
 import { LearningError } from './store.mjs';
+import { plain } from './wire.mjs';
+import { fetchLegacy, htmlTitle, htmlToText, legacyCharset, metaCharset, refusedCharset } from './webtext.mjs';
 
 export const TOOL = 'deep_research';
 
@@ -45,20 +47,46 @@ export function sessionTarget(agent) {
   return undefined;
 }
 
+/**
+ * One page as research reads it: DSH's fetch, then, for a page in a Chinese legacy charset
+ * DSH refused or read as UTF-8, a second read decoded properly (webtext.mjs).
+ */
+export async function fetchPage(web, url, signal, { fetchImpl } = {}) {
+  if (!/^https?:\/\//i.test(url)) throw new Error('only http(s) pages can be read');
+  let result;
+  try {
+    result = await web.fetch({ url }, signal);
+  } catch (error) {
+    const charset = refusedCharset(error);
+    const again = charset ? await fetchLegacy(url, charset, { signal, ...(fetchImpl ? { fetchImpl } : {}) }) : null;
+    if (!again) throw error;
+    return page(again.url, again.content, again.html);
+  }
+  const body = String(result?.body?.content ?? '');
+  const html = result?.body?.kind !== 'text';
+  const named = html ? legacyCharset(metaCharset(body)) : undefined;
+  // Named only in <meta>: DSH decoded it as UTF-8, so the Chinese came out as U+FFFD.
+  if (named && (body.match(/\uFFFD/g)?.length ?? 0) > 20) {
+    const again = await fetchLegacy(result?.url ?? url, named, { signal, ...(fetchImpl ? { fetchImpl } : {}) }).catch(() => null);
+    if (again) return page(again.url, again.content, again.html);
+  }
+  return page(result?.url ?? url, body, html);
+}
+
+function page(url, content, html) {
+  const text = html ? htmlToText(content) : String(content).replace(/\s+/g, ' ').trim();
+  return { url, title: (html && htmlTitle(content)) || url, text: text.slice(0, 20_000) };
+}
+
 /** The research sources for a job: web through ctx.web, the knowledge base through the library. */
-export function researchTools({ web, store, embedder, sources, signal }) {
+export function researchTools({ web, store, embedder, sources, signal, fetchImpl }) {
   const tools = {};
   if (sources.includes('web') && web) {
     tools.search = async (query) => {
       const result = await web.search({ query, maxResults: 5 }, signal);
       return { results: (result?.sources ?? []).map((s) => ({ title: s.title ?? s.url, url: s.url, snippet: s.snippet ?? s.summary ?? '' })) };
     };
-    tools.fetch = async (url) => {
-      if (!/^https?:\/\//i.test(url)) throw new Error('only http(s) pages can be read');
-      const result = await web.fetch({ url }, signal);
-      const text = String(result?.body?.content ?? '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-      return { url: result?.url ?? url, title: url, text: text.slice(0, 20_000) };
-    };
+    tools.fetch = (url) => fetchPage(web, url, signal, { fetchImpl });
   }
   if (sources.includes('kb') && store.listDocuments().length) {
     tools.kb = async (query) => {
@@ -88,12 +116,22 @@ export class ResearchRunner {
     this.stopped = new AbortController();
   }
 
+  /** The job running for session `sessionId`, if any: a session runs one research at a time. */
+  runningIn(sessionId) {
+    if (typeof sessionId !== 'string' || !sessionId) return undefined;
+    for (const [jobId, entry] of this.running) if (entry.sessionId === sessionId) return jobId;
+    return undefined;
+  }
+
   /** Start or resume job `jobId` for a session's agent; returns at once. */
   start(jobId, { agent, toolCall } = {}) {
     if (this.running.has(jobId)) return { started: false, reason: 'already running' };
     const store = this.open();
     const job = store.getResearchJob({ id: jobId, withReport: false });
     if (TERMINAL.includes(job.status)) return { started: false, reason: job.status };
+    const owner = agent?.session?.id ?? job.sessionId ?? undefined;
+    const other = this.runningIn(owner);
+    if (other !== undefined) return { started: false, reason: `research #${other} is already running in this conversation; one runs at a time` };
     const target = sessionTarget(agent) ?? job.target ?? undefined;
     const llm = this.get('llm');
     if (!llm || !target) throw new LearningError('unavailable', `${TOOL}: no model is available for research in this session`);
@@ -107,7 +145,6 @@ export class ResearchRunner {
       onProgress: progress,
     });
     const jobs = this.get('jobs');
-    const owner = agent?.session?.id ?? job.sessionId ?? undefined;
     let done;
     if (jobs && owner) {
       try {
@@ -135,7 +172,7 @@ export class ResearchRunner {
     done ??= run(() => {});
     const settled = Promise.resolve(done).catch((error) => this.logger?.warn?.(`learning: research #${jobId}: ${error?.message ?? error}`))
       .finally(() => this.running.delete(jobId));
-    this.running.set(jobId, { controller, settled });
+    this.running.set(jobId, { controller, settled, sessionId: typeof owner === 'string' ? owner : undefined });
     return { started: true };
   }
 
@@ -174,12 +211,24 @@ export function researchTool(open, runner) {
       schema: { type: 'json' },
       render: (args, value) => [{ type: 'text', text: render(args.action, value) }],
     },
-    execute: async (args, exec) => {
+    // Every result as lossless JSON (wire.mjs): one undefined field fails the whole call.
+    execute: async (args, exec) => plain(await (async () => {
       const store = open();
       const agent = exec?.agent;
       if (args.action === 'list') return { jobs: store.listResearchJobs({ limit: 10 }) };
       if (args.action === 'start') {
         const sessionId = agent?.session?.id;
+        // One research at a time in a conversation: a second start reports the running one.
+        const running = runner.runningIn(sessionId);
+        if (running !== undefined) {
+          return { started: false, reason: `research #${running} is already running in this conversation; wait for it or cancel it first`, job: store.getResearchJob({ id: running, withReport: false }) };
+        }
+        // A paused job on the same question in this conversation is resumed, not started over.
+        const topic = String(args.topic ?? '');
+        const paused = typeof sessionId === 'string' && topic.trim()
+          ? store.listResearchJobs({ limit: 50 }).find((j) => j.sessionId === sessionId && (j.status === 'paused' || j.status === 'planned') && topicSimilarity(j.topic, topic) >= 0.6)
+          : undefined;
+        if (paused) return { ...runner.start(paused.id, { agent, toolCall: exec?.toolCall }), resumed: true, job: store.getResearchJob({ id: paused.id, withReport: false }) };
         const allowWeb = store.getSettings().researchWeb !== false;
         let sources = Array.isArray(args.sources) && args.sources.length ? args.sources : ['web', 'kb'];
         if (!allowWeb) sources = sources.filter((s) => s !== 'web');
@@ -192,7 +241,7 @@ export function researchTool(open, runner) {
       if (args.action === 'cancel') return { job: runner.cancel(args.id) };
       const job = store.getResearchJob({ id: args.id, withReport: args.action === 'report' });
       return { job };
-    },
+    })()),
   });
 }
 
@@ -205,6 +254,7 @@ function render(action, value) {
   if (action === 'report' && j.status === 'done') return j.report ?? '(no report)';
   const head = `Research #${j.id} — ${j.status}${j.phase && j.phase !== j.status ? `, ${j.phase}` : ''}${j.progress ? ` (${j.progress})` : ''}`;
   const extra = value.started === false && value.reason ? ` Not started: ${value.reason}.` : value.started ? ' Running in the background; you will be told when it ends.' : '';
+  const resumed = value.resumed ? ` This continues paused research #${j.id} on the same question (finished parts are kept) instead of starting a new one.` : '';
   const err = j.error ? ` Error: ${j.error}` : '';
-  return `${head}: ${j.blocksDone}/${j.blocks} parts researched, ${j.citations} sources, ${j.callsUsed} model calls.${extra}${err}`;
+  return `${head}: ${j.blocksDone}/${j.blocks} parts researched, ${j.citations} sources, ${j.callsUsed} model calls.${extra}${resumed}${err}`;
 }

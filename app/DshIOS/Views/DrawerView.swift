@@ -195,7 +195,7 @@ struct DrawerView: View {
     /// The app's name, and search one tap away. No fill of its own: the list shows through.
     private var topBar: some View {
         HStack(spacing: 8) {
-            Text(verbatim: "Fish Pocket").font(.title2.weight(.bold)).foregroundStyle(Palette.ink)
+            Text(verbatim: "Firefly").font(.title2.weight(.bold)).foregroundStyle(Palette.ink)
                 .lineLimit(1)
                 .accessibilityAddTraits(.isHeader)
             Spacer(minLength: 8)

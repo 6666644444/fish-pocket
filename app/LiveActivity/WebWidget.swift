@@ -57,7 +57,7 @@ private struct WebWidgetView: View {
             }
             Spacer(minLength: 4)
             Text("网页版").font(.title3.weight(.bold))
-            Text(verbatim: "Fish Pocket").font(.footnote).foregroundStyle(WidgetPalette.secondary).lineLimit(1)
+            Text(verbatim: "Firefly").font(.footnote).foregroundStyle(WidgetPalette.secondary).lineLimit(1)
         }
         .foregroundStyle(WidgetPalette.ink)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

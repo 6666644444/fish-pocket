@@ -558,7 +558,7 @@ private struct CapabilityRow: View {
                 }
                 // 「已询问」三个字单独摆着没人看得懂，必须跟一句为什么只能这么说。
                 if case .asked = permission {
-                    Text("iOS 不告诉 App 你允许了哪几项健康数据，所以这里只能说问过了。要逐项查看和更改：打开「健康」App，点右上角的头像，在「隐私」下面进「App」，再选 Fish Pocket。")
+                    Text("iOS 不告诉 App 你允许了哪几项健康数据，所以这里只能说问过了。要逐项查看和更改：打开「健康」App，点右上角的头像，在「隐私」下面进「App」，再选 Firefly。")
                         .font(.footnote)
                         .foregroundStyle(Palette.secondary)
                         .fixedSize(horizontal: false, vertical: true)

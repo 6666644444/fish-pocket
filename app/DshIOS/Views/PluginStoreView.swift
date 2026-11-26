@@ -173,7 +173,7 @@ private struct StoreDiscoverPage: View {
         ContentUnavailableView {
             Label("没有启用插件市场", systemImage: "storefront")
         } description: {
-            Text("Fish Pocket 不提供插件市场。你可以自行启用第三方索引源浏览插件，也可以从 npm、Git 仓库直接安装。")
+            Text("Firefly 不提供插件市场。你可以自行启用第三方索引源浏览插件，也可以从 npm、Git 仓库直接安装。")
         } actions: {
             Button("选择索引源", action: manage).buttonStyle(.capsule(height: 44, fill: false))
             Button("安装第三方插件") { app.pluginInstall.openDialog() }
@@ -293,7 +293,7 @@ private struct StoreDiscoverPage: View {
 
     private var trustLine: some View {
         Button(action: manage) {
-            Text("来自第三方索引「\(localized(market.result?["title"] ?? .null) ?? "")」。Fish Pocket 不提供也不审核这些插件，请仔细甄别，只安装你信任的插件。")
+            Text("来自第三方索引「\(localized(market.result?["title"] ?? .null) ?? "")」。Firefly 不提供也不审核这些插件，请仔细甄别，只安装你信任的插件。")
                 .font(.footnote)
                 .foregroundStyle(Palette.secondary)
                 .multilineTextAlignment(.leading)
@@ -695,7 +695,7 @@ private struct StorePackageRow: View {
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 6) {
                         Text(package.title).font(.callout).foregroundStyle(Palette.ink).lineLimit(1)
-                        // Fish Pocket's review (`PluginReports`): a plugin taken down keeps running until switched off.
+                        // Firefly's review (`PluginReports`): a plugin taken down keeps running until switched off.
                         switch PluginReports.shared.takedown(package.name) {
                         case .removed?: PluginTag(text: String(localized: "已下架"), tone: Palette.removed)
                         case .reviewing?: PluginTag(text: String(localized: "审核中"), tone: Palette.waiting)
@@ -759,7 +759,7 @@ struct StoreSourcesSheet: View {
                 } header: {
                     Text("示例索引源")
                 } footer: {
-                    Text("列在这里只为方便你添加，默认不启用，不代表 Fish Pocket 推荐其中的内容。同一时间只能启用一个索引源，启用另一个会替换当前的。")
+                    Text("列在这里只为方便你添加，默认不启用，不代表 Firefly 推荐其中的内容。同一时间只能启用一个索引源，启用另一个会替换当前的。")
                 }
                 .groupedRow()
                 if !custom.isEmpty {
@@ -812,7 +812,7 @@ struct StoreSourcesSheet: View {
                     }
                 }
             } message: { index in
-                Text("「\(index.name)」（\(index.host)）是第三方运营的插件索引，这里只作为示例列出。Fish Pocket 不提供、不运营这个索引，也不审核或担保其中的插件。\n\n插件安装后会以你的权限在本机运行，可能读写文件、联网或执行命令。请仔细甄别插件的来源、作者和说明，只安装你信任的插件。安装和使用第三方插件的风险需由你自行承担，感谢理解。")
+                Text("「\(index.name)」（\(index.host)）是第三方运营的插件索引，这里只作为示例列出。Firefly 不提供、不运营这个索引，也不审核或担保其中的插件。\n\n插件安装后会以你的权限在本机运行，可能读写文件、联网或执行命令。请仔细甄别插件的来源、作者和说明，只安装你信任的插件。安装和使用第三方插件的风险需由你自行承担，感谢理解。")
             }
         }
         .inkTint()
@@ -821,7 +821,7 @@ struct StoreSourcesSheet: View {
     /// Before any switch: these are not ours, and what they list is for the user to judge.
     private var notice: some View {
         Label {
-            Text("Fish Pocket 不提供插件市场。下面的示例索引由第三方独立运营，我们不运营、不审核，也不对其中的插件作任何担保。是否启用、安装哪些插件，请你自行判断：仔细甄别插件的来源和作者，留意它能做什么，只安装你信任的插件。")
+            Text("Firefly 不提供插件市场。下面的示例索引由第三方独立运营，我们不运营、不审核，也不对其中的插件作任何担保。是否启用、安装哪些插件，请你自行判断：仔细甄别插件的来源和作者，留意它能做什么，只安装你信任的插件。")
                 .font(.footnote)
                 .foregroundStyle(Palette.ink)
         } icon: {

@@ -32,4 +32,23 @@ final class LearningDataAPITests: XCTestCase {
             XCTAssertEqual(error.localizedDescription, "the learning library is not empty")
         }
     }
+
+    func testBackupsCarryTheirTimeAndKind() throws {
+        let list = #"{"ok":true,"result":[{"name":"learning-2026-11-27-01-42-17-before-restore.db","bytes":1,"createdAt":1795714937000,"kind":"before-restore"},{"name":"learning-2026-11-27-01-40-00.db","bytes":2,"createdAt":1795714800000,"kind":"manual"}]}"#
+        let backups = try LearningAPI.decode([LearningBackup].self, data: data(list), status: 200)
+        XCTAssertEqual(backups.map(\.isBeforeRestore), [true, false])
+        XCTAssertEqual(backups[0].date, Date(timeIntervalSince1970: 1_795_714_937))
+    }
+
+    func testDecodesTheLearningRecord() throws {
+        let reply = #"{"ok":true,"result":[{"sessionId":"s1","mode":"socratic","endedAt":1795714937000,"updatedAt":1795714937000}]}"#
+        let record = try LearningAPI.decode([LearningHistoryEntry].self, data: data(reply), status: 200)
+        XCTAssertEqual(record.first?.mode, .socratic)
+        XCTAssertEqual(record.first?.endedDate, Date(timeIntervalSince1970: 1_795_714_937))
+    }
+
+    func testTheLocalStampIsWhatTheEngineAccepts() {
+        let stamp = LearningStamp.now()
+        XCTAssertNotNil(stamp.range(of: #"^\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}$"#, options: .regularExpression), stamp)
+    }
 }

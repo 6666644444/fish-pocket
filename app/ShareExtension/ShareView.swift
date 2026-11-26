@@ -10,7 +10,7 @@ struct ShareView: View {
     var body: some View {
         NavigationStack {
             content
-                .navigationTitle("发送到 Fish Pocket")
+                .navigationTitle("发送到 Firefly")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
@@ -26,11 +26,19 @@ struct ShareView: View {
     private var content: some View {
         switch model.phase {
         case .empty:
-            ContentUnavailableView("没能读取分享的内容", systemImage: "exclamationmark.triangle",
-                                   description: Text("换一种方式分享，或者在 Fish Pocket 里从文件添加。"))
+            ContentUnavailableView {
+                Label("没能读取分享的内容", systemImage: "exclamationmark.triangle")
+            } description: {
+                // Without an App Group nothing can reach the app: say which, so a signing problem shows.
+                if AppGroup.id == nil {
+                    Text("Firefly 的签名里没有可用的 App Group，分享的内容传不到 App。\n\n\(AppGroup.diagnostics)")
+                } else {
+                    Text("换一种方式分享，或者在 Firefly 里从文件添加。")
+                }
+            }
         case .waitingForApp:
             ContentUnavailableView("已经准备好", systemImage: "checkmark.circle",
-                                   description: Text("打开 Fish Pocket 就能在输入框里看到，确认后再发送。"))
+                                   description: Text("打开 Firefly 就能在输入框里看到，确认后再发送。"))
         case .reading where model.preset != nil, .ready where model.preset != nil:
             // From the top row: nothing to pick, just a moment to read what was shared.
             VStack(spacing: 10) {

@@ -68,16 +68,9 @@ struct ExploreTabView: View {
                 } header: {
                     Text("其他")
                 }
+                // This branch lists no feedback or community links, only where it comes from (DECISIONS.md D37).
                 Section {
-                    ForEach(SupportLink.all) { link in
-                        Link(destination: link.url) {
-                            label(Text(link.title), link.glyph, link.detail) { leavesArrow }
-                        }
-                        .foregroundStyle(Palette.ink)
-                        .settlesRating(link.rates)
-                    }
-                } header: {
-                    Text("反馈与社区")
+                    EmptyView()
                 } footer: {
                     SupportLink.footer
                 }

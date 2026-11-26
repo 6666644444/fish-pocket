@@ -132131,6 +132131,2250 @@
           }
         }
       }
+    },
+    "现在备份学习库？" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back up the learning library now?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Hacer ahora una copia de seguridad de la biblioteca de estudio?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "今すぐ学習ライブラリをバックアップしますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지금 학습 라이브러리를 백업할까요?"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "現在備份學習庫？"
+          }
+        }
+      }
+    },
+    "备份" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back Up"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copia de seguridad"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バックアップ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "백업"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "備份"
+          }
+        }
+      }
+    },
+    "会在这台设备上保存一份学习库的完整副本。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A complete copy of the learning library will be saved on this device."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se guardará en este dispositivo una copia completa de la biblioteca de estudio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習ライブラリの完全なコピーをこのデバイスに保存します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 라이브러리의 전체 사본을 이 기기에 저장합니다."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "會在這台裝置上保存一份學習庫的完整副本。"
+          }
+        }
+      }
+    },
+    "恢复" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restaurar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "復元"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "복원"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "恢復"
+          }
+        }
+      }
+    },
+    "删除这份备份？" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this backup?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Eliminar esta copia de seguridad?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このバックアップを削除しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 백업을 삭제할까요?"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "刪除這份備份？"
+          }
+        }
+      }
+    },
+    "%@ 删除后无法找回。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ can't be recovered once deleted."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ no se podrá recuperar una vez eliminada."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ は削除すると元に戻せません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@은(는) 삭제하면 되돌릴 수 없습니다."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 刪除後無法找回。"
+          }
+        }
+      }
+    },
+    "恢复前自动备份 · %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatic backup before restore · %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copia automática antes de restaurar · %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "復元前の自動バックアップ · %@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "복원 전 자동 백업 · %@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "恢復前自動備份 · %@"
+          }
+        }
+      }
+    },
+    "备份是学习库的完整副本，保存在这台设备上。点一下恢复，长按可删除。恢复前会检查备份文件，并先把当前学习库另存为一份备份。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A backup is a complete copy of the learning library, kept on this device. Tap one to restore it; touch and hold to delete it. Before restoring, the backup is checked and the current library is saved as a backup first."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una copia de seguridad es una copia completa de la biblioteca de estudio, guardada en este dispositivo. Toca una para restaurarla; mantenla pulsada para eliminarla. Antes de restaurar se comprueba la copia y la biblioteca actual se guarda primero como otra copia."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バックアップは学習ライブラリの完全なコピーで、このデバイスに保存されます。タップで復元、長押しで削除できます。復元の前にバックアップを確認し、現在のライブラリを先にバックアップとして保存します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "백업은 학습 라이브러리의 전체 사본으로, 이 기기에 저장됩니다. 탭하면 복원하고, 길게 누르면 삭제할 수 있습니다. 복원하기 전에 백업 파일을 확인하고, 현재 학습 라이브러리를 먼저 백업으로 저장합니다."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "備份是學習庫的完整副本，保存在這台裝置上。點一下恢復，長按可刪除。恢復前會檢查備份檔案，並先把目前學習庫另存為一份備份。"
+          }
+        }
+      }
+    },
+    "已删除备份" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backup deleted"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copia de seguridad eliminada"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "バックアップを削除しました"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "백업을 삭제했습니다"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已刪除備份"
+          }
+        }
+      }
+    },
+    "结束学习模式后，会话和聊天记录都还在，会放进下面的「学习记录」，之后的回合不再按学习模式回答。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "After you end learning mode, the conversation and its messages stay and move to Learning History below; later turns are no longer answered in learning mode."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Al terminar el modo de estudio, la conversación y sus mensajes se conservan y pasan al Historial de estudio de abajo; los turnos siguientes ya no se responden en modo de estudio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習モードを終了しても、会話とメッセージは残り、下の「学習の記録」に移ります。以降のターンは学習モードでは回答されません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 모드를 끝내도 대화와 메시지는 남아 아래 '학습 기록'으로 옮겨지며, 이후 턴은 더 이상 학습 모드로 답하지 않습니다."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結束學習模式後，會話和聊天記錄都還在，會放進下面的「學習記錄」，之後的回合不再按學習模式回答。"
+          }
+        }
+      }
+    },
+    "重新开启学习模式" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resume Learning Mode"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reanudar el modo de estudio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習モードを再開"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 모드 다시 켜기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新開啟學習模式"
+          }
+        }
+      }
+    },
+    "从记录里移除" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove from History"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quitar del historial"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "記録から削除"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기록에서 제거"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "從記錄裡移除"
+          }
+        }
+      }
+    },
+    "学习记录" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Learning History"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Historial de estudio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習の記録"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 기록"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "學習記錄"
+          }
+        }
+      }
+    },
+    "已结束学习模式的会话。点一下打开，长按可重新开启学习模式，或从记录里移除（会话本身不会删除）。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversations whose learning mode has ended. Tap to open; touch and hold to resume learning mode or remove it from history (the conversation itself is not deleted)."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversaciones cuyo modo de estudio ha terminado. Toca para abrir; mantén pulsado para reanudar el modo de estudio o quitarla del historial (la conversación no se elimina)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習モードを終了した会話です。タップで開き、長押しで学習モードを再開するか記録から削除できます（会話自体は削除されません）。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 모드가 끝난 대화입니다. 탭하면 열리고, 길게 누르면 학습 모드를 다시 켜거나 기록에서 제거할 수 있습니다(대화 자체는 삭제되지 않습니다)."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已結束學習模式的會話。點一下打開，長按可重新開啟學習模式，或從記錄裡移除（會話本身不會刪除）。"
+          }
+        }
+      }
+    },
+    "诊断" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diagnostics"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diagnóstico"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "診断"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "진단"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "診斷"
+          }
+        }
+      }
+    },
+    "分享扩展和小组件靠 App Group 和 App 交换数据。显示「无」时，说明这次签名没有可用的 App Group。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The share extension and the widgets exchange data with the app through an App Group. “None” means this signature has no App Group the app can use."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La extensión para compartir y los widgets intercambian datos con la app mediante un App Group. «Ninguno» significa que esta firma no tiene un App Group utilizable."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共有機能拡張とウィジェットは App Group を通じて App とデータをやり取りします。「なし」と表示される場合、この署名には使える App Group がありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "공유 확장과 위젯은 App Group을 통해 앱과 데이터를 주고받습니다. '없음'으로 표시되면 이번 서명에는 쓸 수 있는 App Group이 없다는 뜻입니다."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分享延伸功能和小工具靠 App Group 和 App 交換資料。顯示「無」時，說明這次簽名沒有可用的 App Group。"
+          }
+        }
+      }
+    },
+    "构建时的名字" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "the name it was built with"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "el nombre con que se compiló"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ビルド時の名前"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "빌드할 때의 이름"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "建置時的名稱"
+          }
+        }
+      }
+    },
+    "签名描述文件" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "the signing profile"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "el perfil de firma"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "署名プロファイル"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "서명 프로파일"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "簽名描述檔"
+          }
+        }
+      }
+    },
+    "都打不开" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "none could be opened"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "no se pudo abrir ninguno"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どれも開けません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모두 열 수 없음"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "都打不開"
+          }
+        }
+      }
+    },
+    "App Group：%@（%@）。构建时：%@；签名描述文件里：%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Group: %1$@ (%2$@). Built with: %3$@; in the signing profile: %4$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Group: %1$@ (%2$@). Al compilar: %3$@; en el perfil de firma: %4$@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Group：%1$@（%2$@）。ビルド時：%3$@；署名プロファイル内：%4$@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Group: %1$@ (%2$@). 빌드 시: %3$@; 서명 프로파일: %4$@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Group：%1$@（%2$@）。建置時：%3$@；簽名描述檔裡：%4$@"
+          }
+        }
+      }
+    },
+    "发送到 Firefly" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send to Firefly"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar a Firefly"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly に送信"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly로 보내기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "傳送到 Firefly"
+          }
+        }
+      }
+    },
+    "Firefly 的签名里没有可用的 App Group，分享的内容传不到 App。\n\n%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly's signature has no App Group it can use, so shared content can't reach the app.\n\n%@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La firma de Firefly no tiene un App Group utilizable, así que lo compartido no puede llegar a la app.\n\n%@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly の署名に使える App Group がないため、共有した内容を App に渡せません。\n\n%@"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly의 서명에 쓸 수 있는 App Group이 없어 공유한 내용을 앱으로 전달할 수 없습니다.\n\n%@"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly 的簽名裡沒有可用的 App Group，分享的內容傳不到 App。\n\n%@"
+          }
+        }
+      }
+    },
+    "换一种方式分享，或者在 Firefly 里从文件添加。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try sharing another way, or add it from Files in Firefly."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prueba a compartirlo de otra forma o añádelo desde Archivos en Firefly."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "別の方法で共有するか、Firefly で「ファイル」から追加してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다른 방법으로 공유하거나 Firefly에서 파일로 추가해 보세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "換一種方式分享，或者在 Firefly 裡從檔案加入。"
+          }
+        }
+      }
+    },
+    "打开 Firefly 就能在输入框里看到，确认后再发送。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Firefly to find it in the message box; check it, then send."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre Firefly y lo verás en el cuadro de mensaje; revísalo y luego envíalo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly を開くと入力欄に表示されます。確認してから送信してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly를 열면 입력란에서 볼 수 있습니다. 확인한 뒤 보내세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打開 Firefly 就能在輸入框裡看到，確認後再傳送。"
+          }
+        }
+      }
+    },
+    "这台设备暂时用不了 Firefly" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly can't run on this device yet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly aún no funciona en este dispositivo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このデバイスではまだ Firefly を使えません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 기기에서는 아직 Firefly를 사용할 수 없습니다"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "這台裝置暫時用不了 Firefly"
+          }
+        }
+      }
+    },
+    "Firefly 的引擎要用到处理器的一组指令，A10 系列芯片的设备没有，比如 iPad（第 6、7 代）和 iPad Pro（第 2 代）。引擎在这类设备上一启动就会闪退，所以这次没有启动它。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly's engine needs a set of processor instructions that devices with A10-series chips lack, such as iPad (6th and 7th generation) and iPad Pro (2nd generation). The engine crashes as soon as it starts on these devices, so it wasn't started this time."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El motor de Firefly necesita un conjunto de instrucciones del procesador que no tienen los dispositivos con chips de la serie A10, como el iPad (6.ª y 7.ª generación) y el iPad Pro (2.ª generación). En ellos el motor se cierra en cuanto arranca, así que esta vez no se ha iniciado."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly のエンジンには、A10 シリーズのチップを搭載したデバイス（iPad（第 6・7 世代）や iPad Pro（第 2 世代）など）にはない命令セットが必要です。これらのデバイスではエンジンが起動するとすぐに終了するため、今回は起動していません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly의 엔진에는 A10 시리즈 칩을 탑재한 기기(예: iPad 6·7세대, iPad Pro 2세대)에 없는 프로세서 명령어가 필요합니다. 이런 기기에서는 엔진이 시작하자마자 종료되므로 이번에는 시작하지 않았습니다."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly 的引擎要用到處理器的一組指令，A10 系列晶片的裝置沒有，比如 iPad（第 6、7 代）和 iPad Pro（第 2 代）。引擎在這類裝置上一啟動就會閃退，所以這次沒有啟動它。"
+          }
+        }
+      }
+    },
+    "本分支基于 Fish Pocket 和 DeepTutor 两大开源项目，只供 CDW 个人使用。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This branch is based on two open-source projects, Fish Pocket and DeepTutor, for CDW's personal use only."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta rama se basa en dos proyectos de código abierto, Fish Pocket y DeepTutor, y es solo para uso personal de CDW."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このブランチは Fish Pocket と DeepTutor の 2 つのオープンソースプロジェクトをもとにしており、CDW の個人利用に限ります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 브랜치는 Fish Pocket과 DeepTutor 두 오픈 소스 프로젝트를 기반으로 하며, CDW의 개인 용도로만 사용합니다."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本分支基於 Fish Pocket 和 DeepTutor 兩大開源專案，只供 CDW 個人使用。"
+          }
+        }
+      }
+    },
+    "Siri 也能直接用，比如说「用 Firefly 打开大肥鱼」。Bot 或 Mini App 改了名字，过一会儿 Siri 就认得新名字。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri works too, for example: “Open 大肥鱼 in Firefly.” When a Bot or mini app is renamed, Siri picks up the new name after a little while."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri también sirve, por ejemplo: «Abre 大肥鱼 en Firefly». Si cambias el nombre de un Bot o una miniapp, Siri lo reconoce al poco rato."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri でも使えます。たとえば「Firefly で 大肥鱼 を開く」と話しかけます。Bot やミニアプリの名前を変えると、少しして Siri も新しい名前を覚えます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri로도 바로 쓸 수 있어요. 예를 들어 “Firefly에서 大肥鱼 열기”라고 말해 보세요. Bot이나 미니 앱 이름을 바꾸면 잠시 후 Siri도 새 이름을 알아들어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri 也能直接用，比如說「用 Firefly 打開大肥魚」。Bot 或 Mini App 改了名字，過一會兒 Siri 就認得新名字。"
+          }
+        }
+      }
+    },
+    "不要点下面列表里的 Firefly：那里选不了具体是哪个 Bot。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Don’t tap Firefly in the list below: there you can’t choose which Bot."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No toques Firefly en la lista de abajo: ahí no puedes elegir qué Bot."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下のリストの Firefly はタップしないでください。そこではどの Bot かを選べません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아래 목록의 Firefly은 탭하지 마세요. 거기서는 어떤 Bot인지 고를 수 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不要點下面列表裡的 Firefly：那裡選不了具體是哪個 Bot。"
+          }
+        }
+      }
+    },
+    "你的 Firefly 来自 App Store，按这一页操作。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Firefly came from the App Store. Follow these steps."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu Firefly viene del App Store. Sigue estos pasos."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Firefly は App Store から入れたものです。この手順で進めてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Firefly은 App Store에서 설치했어요. 이 단계를 따라 하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的 Firefly 來自 App Store，按照這一頁操作。"
+          }
+        }
+      }
+    },
+    "你的 Firefly 来自 App Store，这一页是给 TestFlight 用户的。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Firefly came from the App Store. These steps are for TestFlight users."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu Firefly viene del App Store. Estos pasos son para usuarios de TestFlight."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Firefly は App Store から入れたものです。このページは TestFlight 利用者向けです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Firefly은 App Store에서 설치했어요. 이 페이지는 TestFlight 사용자용이에요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的 Firefly 來自 App Store，這一頁是給 TestFlight 使用者的。"
+          }
+        }
+      }
+    },
+    "你的 Firefly 来自 TestFlight，按这一页操作。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Firefly came from TestFlight. Follow these steps."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu Firefly viene de TestFlight. Sigue estos pasos."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Firefly は TestFlight から入れたものです。この手順で進めてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Firefly은 TestFlight에서 설치했어요. 이 단계를 따라 하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的 Firefly 來自 TestFlight，按照這一頁操作。"
+          }
+        }
+      }
+    },
+    "你的 Firefly 来自 TestFlight，这一页是给 App Store 用户的。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Firefly came from TestFlight. These steps are for App Store users."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu Firefly viene de TestFlight. Estos pasos son para usuarios del App Store."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この Firefly は TestFlight から入れたものです。このページは App Store 利用者向けです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 Firefly은 TestFlight에서 설치했어요. 이 페이지는 App Store 사용자용이에요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你的 Firefly 來自 TestFlight，這一頁是給 App Store 使用者的。"
+          }
+        }
+      }
+    },
+    "先确认 TestFlight 里的 Firefly 已经装好，详情页里「Apple Watch」一项写着「是」，手表系统是 watchOS 10 或更高版本。仍然没有的话，打开 iPhone 上的 Watch App，在「可用 App」里也能装。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make sure Firefly is installed from TestFlight, its page shows Apple Watch: Yes, and the watch runs watchOS 10 or later. If it still isn't there, open the Watch app on iPhone and install it from Available Apps."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprueba que Firefly esté instalada desde TestFlight, que su página indique Apple Watch: Sí y que el reloj tenga watchOS 10 o posterior. Si sigue sin aparecer, abre la app Watch del iPhone e instálala desde Apps disponibles."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TestFlight で Firefly がインストール済みか、詳細ページの「Apple Watch」が「はい」になっているか、Apple Watch が watchOS 10 以降かを確認してください。それでも表示されない場合は、iPhone の Watch App の「利用可能な App」からもインストールできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TestFlight에서 Firefly이 설치되어 있는지, 상세 페이지의 'Apple Watch' 항목이 '예'인지, 워치가 watchOS 10 이상인지 확인하세요. 그래도 없다면 iPhone의 Watch 앱 '사용 가능한 앱'에서도 설치할 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "先確認 TestFlight 裡的 Firefly 已經裝好，詳情頁裡「Apple Watch」一項寫著「是」，手錶系統是 watchOS 10 或更新版本。仍然沒有的話，打開 iPhone 上的 Watch App，在「可用的 App」裡也能安裝。"
+          }
+        }
+      }
+    },
+    "在「快捷指令」里用 Firefly 的操作，或者设成自动化，到点、到地方就打开某个 Bot 或 Mini App。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use Firefly’s actions in Shortcuts, or set up an automation that opens a Bot or a mini app at a set time or place."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa las acciones de Firefly en Atajos o crea una automatización que abra un Bot o una miniapp a una hora o en un lugar."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「ショートカット」で Firefly のアクションを使ったり、オートメーションにして決まった時刻や場所で Bot やミニアプリを開いたりできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "단축어에서 Firefly의 동작을 쓰거나, 자동화로 만들어 정한 시간이나 장소에서 Bot이나 미니 앱을 열 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在「捷徑」裡用 Firefly 的動作，或者設成自動化，到點、到地方就打開某個 Bot 或 Mini App。"
+          }
+        }
+      }
+    },
+    "在手表上打开 App Store 搜索 Firefly。想让以后的 App 自动装到手表上，在 Watch App 的「通用」里打开「自动安装 App」。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the App Store on the watch and search for Firefly. To have apps land on the watch automatically, turn on Automatic App Install under General in the Watch app."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre el App Store en el reloj y busca Firefly. Para que las apps se instalen solas en el reloj, activa Instalación automática de apps en General, en la app Watch."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Watch で App Store を開き、Firefly を検索します。今後 App を自動で入れるには、Watch App の「一般」で「App を自動インストール」をオンにします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "워치에서 App Store를 열고 Firefly을 검색하세요. 앞으로 앱이 워치에 자동으로 설치되게 하려면 Watch 앱의 '일반'에서 '앱 자동 설치'를 켜세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在手錶上打開 App Store 搜尋 Firefly。想讓以後的 App 自動裝到手錶上，在 Watch App 的「一般」裡打開「自動安裝 App」。"
+          }
+        }
+      }
+    },
+    "在手表上打开 Firefly 就能看到会话。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Firefly on the watch to see your sessions."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre Firefly en el reloj para ver tus sesiones."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Watch で Firefly を開くとセッションが見られます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "워치에서 Firefly을 열면 세션을 볼 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在手錶上打開 Firefly 就能看到對話。"
+          }
+        }
+      }
+    },
+    "在网页版右上角的「···」里选「添加到主屏幕」，以后点这个图标就进 Firefly，直接打开网页版。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In the Web UI, choose Add to Home Screen from the ··· menu at the top right. That icon then opens Firefly straight into the Web UI."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En la versión web, elige Añadir a pantalla de inicio en el menú ··· de arriba a la derecha. Ese icono abre Firefly directamente en la versión web."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web 版の右上の「···」から「ホーム画面に追加」を選ぶと、そのアイコンから Firefly の Web 版を直接開けます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "웹 버전 오른쪽 위의 ‘···’에서 ‘홈 화면에 추가’를 고르면, 그 아이콘을 누를 때 Firefly이 웹 버전으로 바로 열려요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在網頁版右上角的「···」裡選「加入主畫面」，之後點這個圖示就會進 Firefly，直接打開網頁版。"
+          }
+        }
+      }
+    },
+    "在这台手机上生成，画面外加上 Firefly 的标识。录像没有声音。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Made on this phone, with the Firefly mark around the screen. Recordings have no sound."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se genera en este teléfono, con la marca de Firefly alrededor de la pantalla. Las grabaciones no tienen sonido."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この iPhone 上で作成し、画面の外側に Firefly のロゴを入れます。録画に音声はありません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 iPhone에서 만들고, 화면 바깥에 Firefly 로고를 넣어요. 녹화에는 소리가 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在這支手機上產生，畫面外加上 Firefly 的標誌。錄影沒有聲音。"
+          }
+        }
+      }
+    },
+    "手表上不跑引擎，内容都由 iPhone 发过去：iPhone 在身边、Firefly 在运行时才会更新。需要 watchOS 10 或更高版本。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The engine doesn't run on the watch; everything comes from the iPhone, so it updates only while the iPhone is nearby and Firefly is running. Requires watchOS 10 or later."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El motor no se ejecuta en el reloj; todo llega desde el iPhone, así que solo se actualiza cuando el iPhone está cerca y Firefly está en marcha. Requiere watchOS 10 o posterior."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Watch ではエンジンは動かず、内容はすべて iPhone から送られます。iPhone が近くにあり、Firefly が動いているときだけ更新されます。watchOS 10 以降が必要です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "워치에서는 엔진이 돌지 않고 모든 내용은 iPhone에서 보내요. iPhone이 가까이 있고 Firefly이 실행 중일 때만 업데이트돼요. watchOS 10 이상이 필요해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手錶上不執行引擎，內容都由 iPhone 傳過去：iPhone 在身邊、Firefly 正在執行時才會更新。需要 watchOS 10 或以上版本。"
+          }
+        }
+      }
+    },
+    "手表上还没装 Firefly" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly isn't on your watch yet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly aún no está en el reloj"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Watch にまだ Firefly がありません"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "워치에 아직 Firefly이 없어요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手錶上還沒裝 Firefly"
+          }
+        }
+      }
+    },
+    "找到「可用 App」一栏里的 Firefly。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find Firefly under Available Apps."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Busca Firefly en Apps disponibles."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「利用可能な App」にある Firefly を探します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "'사용 가능한 앱'에서 Firefly을 찾으세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "找到「可用的 App」一欄裡的 Firefly。"
+          }
+        }
+      }
+    },
+    "把 Firefly 戴在手腕上" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly on your wrist"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly en tu muñeca"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly を手首に"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "손목 위의 Firefly"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "把 Firefly 戴在手腕上"
+          }
+        }
+      }
+    },
+    "智能体操作其他 App 时会把屏幕录下来，放在对话里，默认两倍速回看。分享时会生成一段带 Firefly 外框的视频。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When the agent works in other apps, the screen is recorded and kept in the conversation, playing at 2× by default. Sharing makes a video with a Firefly frame around it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando el agente trabaja en otras apps, la pantalla se graba y queda en la conversación, con reproducción a 2× por defecto. Al compartirla se genera un video con un marco de Firefly."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "エージェントがほかのアプリを操作すると画面が録画され、会話の中に残ります。標準では 2 倍速で再生されます。共有するときは Firefly の枠を付けた動画を作成します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "에이전트가 다른 앱을 조작하면 화면이 녹화되어 대화에 남아요. 기본 2배속으로 재생돼요. 공유할 때는 Firefly 테두리를 두른 동영상을 만들어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 代理操作其他 App 時會把螢幕錄下來，放在對話裡，預設兩倍速回看。分享時會產生一段帶有 Firefly 外框的影片。"
+          }
+        }
+      }
+    },
+    "点开直接进入，不经过网页。新建一个快捷指令，添加 Firefly 的「打开 Mini App」动作并选上这个 Mini App，再点顶部的名称，选「添加到主屏幕」。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens straight into the app, with no web page in between. Create a new shortcut, add Firefly’s Open Mini App action and pick this Mini App, then tap the name at the top and choose Add to Home Screen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre la app directamente, sin pasar por una página web. Crea un atajo nuevo, añade la acción Abrir miniapp de Firefly y elige esta miniapp; después toca el nombre de arriba y elige Añadir a pantalla de inicio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web ページを経由せず、直接開きます。新しいショートカットを作成し、Firefly の「ミニアプリを開く」アクションを追加してこのミニアプリを選んだら、上部の名前をタップして「ホーム画面に追加」を選びます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "웹 페이지를 거치지 않고 바로 열려요. 새로운 단축어를 만들고 Firefly의 ‘미니 앱 열기’ 동작을 추가해 이 미니 앱을 고른 다음, 위쪽의 이름을 눌러 ‘홈 화면에 추가’를 고르세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點開直接進入，不經過網頁。新增一個捷徑，加入 Firefly 的「打開 Mini App」動作並選好這個 Mini App，再點一下頂部的名稱，選「加入主畫面」。"
+          }
+        }
+      }
+    },
+    "点开直接进入，不经过网页。新建一个快捷指令，添加 Firefly 的「打开网页版」动作，再点顶部的名称，选「添加到主屏幕」。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens straight into the app, with no web page in between. Create a new shortcut, add Firefly’s Open Web UI action, then tap the name at the top and choose Add to Home Screen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre la app directamente, sin pasar por una página web. Crea un atajo nuevo y añade la acción Abrir versión web de Firefly; después toca el nombre de arriba y elige Añadir a pantalla de inicio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web ページを経由せず、直接開きます。新しいショートカットを作成し、Firefly の「Web 版を開く」アクションを追加したら、上部の名前をタップして「ホーム画面に追加」を選びます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "웹 페이지를 거치지 않고 바로 열려요. 새로운 단축어를 만들고 Firefly의 ‘웹 버전 열기’ 동작을 추가한 다음, 위쪽의 이름을 눌러 ‘홈 화면에 추가’를 고르세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點開直接進入，不經過網頁。新增一個捷徑，加入 Firefly 的「開啟網頁版」動作，再點一下頂部的名稱，選「加入主畫面」。"
+          }
+        }
+      }
+    },
+    "用对话定制 Firefly" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Customize Firefly by chatting"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personaliza Firefly conversando"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会話で Firefly をカスタマイズ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "대화로 Firefly 맞춤 설정"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "用對話客製化 Firefly"
+          }
+        }
+      }
+    },
+    "对 Siri 说「用 Firefly 打开大肥鱼」，就能直接进入和这个 Bot 的聊天；也能在「快捷指令」里设成自动化，到点打开某个 Bot 或 Mini App。怎么设置见探索 → 快捷指令（iOS 17 的 iPad 上在侧边栏）。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Say “Open 大肥鱼 in Firefly” to Siri to go straight to your chat with that Bot, or set up an automation in Shortcuts to open a Bot or mini app at a set time. See Explore → Shortcuts for how (in the sidebar on an iPad before iOS 18)."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dile a Siri «Abre 大肥鱼 en Firefly» para ir directo al chat con ese Bot, o crea una automatización en Atajos para abrir un Bot o una miniapp a una hora fija. Consulta cómo en Explorar → Atajos (en la barra lateral en un iPad con una versión anterior a iOS 18)."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri に「Firefly で 大肥鱼 を開いて」と話しかけると、その Bot とのチャットに直接入れます。ショートカットでオートメーションを作れば、決まった時間に Bot やミニアプリを開くこともできます。設定方法は 探索 → ショートカット（iOS 18 より前の iPad ではサイドバー）をご覧ください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siri에게 “Firefly에서 大肥鱼 열기”라고 말하면 그 Bot과의 채팅으로 바로 들어가요. 단축어에서 자동화를 만들면 정해진 시간에 Bot이나 미니 앱을 열 수도 있어요. 설정 방법은 탐색 → 단축어에서 확인하세요(iOS 18 이전 iPad에서는 사이드바)."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "對 Siri 說「用 Firefly 打開大肥魚」，就能直接進入和這個 Bot 的聊天；也能在「捷徑」裡設成自動化，到點開啟某個 Bot 或 Mini App。怎麼設定見探索 → 捷徑（iOS 17 的 iPad 上在側邊欄）。"
+          }
+        }
+      }
+    },
+    "装好后手表上会出现 Firefly 的图标，打开一次就连上了。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly's icon then appears on the watch. Open it once to connect."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Después aparece el icono de Firefly en el reloj. Ábrela una vez para conectarla."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "インストールすると Apple Watch に Firefly のアイコンが現れます。一度開けばつながります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설치하면 워치에 Firefly 아이콘이 나타나요. 한 번 열면 연결돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "裝好後手錶上會出現 Firefly 的圖示，打開一次就連上了。"
+          }
+        }
+      }
+    },
+    "要和装 Firefly 的是同一台 iPhone。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The same iPhone that has Firefly."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En el mismo iPhone que tiene Firefly."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly を入れたのと同じ iPhone で開きます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly이 설치된 같은 iPhone이어야 해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要和裝 Firefly 的是同一台 iPhone。"
+          }
+        }
+      }
+    },
+    "轻点 Firefly" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap Firefly"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca Firefly"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly をタップ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly 탭"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "輕點 Firefly"
+          }
+        }
+      }
+    },
+    "Firefly 不提供插件市场。你可以自行启用第三方索引源浏览插件，也可以从 npm、Git 仓库直接安装。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly doesn’t provide a plugin market. You can turn on a third-party index source yourself to browse plugins, or install straight from npm or a Git repository."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly no ofrece ningún mercado de complementos. Puedes activar por tu cuenta una fuente de índice de terceros para explorar complementos, o instalarlos directamente desde npm o un repositorio Git."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly はプラグインマーケットを提供していません。サードパーティのインデックスソースをご自身で有効にしてプラグインを探すか、npm や Git リポジトリから直接インストールできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly은 플러그인 마켓을 제공하지 않아요. 타사 인덱스 소스를 직접 켜서 플러그인을 둘러보거나, npm이나 Git 저장소에서 바로 설치할 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly 不提供外掛市集。你可以自行啟用第三方索引來源瀏覽外掛，也可以從 npm、Git 儲存庫直接安裝。"
+          }
+        }
+      }
+    },
+    "Firefly 目前固定使用 %@ %@，不能安装 %@。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly keeps %1$@ at %2$@; %3$@ can't be installed."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly mantiene %1$@ en la versión %2$@; no se puede instalar %3$@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly では %1$@ を %2$@ に固定しているため、%3$@ はインストールできません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly은 %1$@을(를) %2$@(으)로 고정해서 사용하므로 %3$@을(를) 설치할 수 없어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly 目前固定使用 %1$@ %2$@，無法安裝 %3$@。"
+          }
+        }
+      }
+    },
+    "iOS 不告诉 App 你允许了哪几项健康数据，所以这里只能说问过了。要逐项查看和更改：打开「健康」App，点右上角的头像，在「隐私」下面进「App」，再选 Firefly。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS does not tell an app which kinds of health data you allowed, so all this page can say is that you were asked. To see and change them one by one: open the Health app, tap your picture at the top right, go to Apps under Privacy, then choose Firefly."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS no le dice a una app qué datos de salud permitiste, así que esta página solo puede decir que se te preguntó. Para verlos y cambiarlos uno por uno: abre la app Salud, toca tu foto arriba a la derecha, entra en Apps dentro de Privacidad y elige Firefly."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS は、どの種類のヘルスケアデータを許可したかを App に伝えないため、ここでは確認済みであることしか表示できません。項目ごとに確認・変更するには、「ヘルスケア」App を開き、右上のプロフィール写真をタップし、「プライバシー」の「App」から Firefly を選択してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS는 어떤 건강 데이터를 허용했는지 앱에 알려 주지 않아서, 여기서는 요청했다는 사실만 표시할 수 있어요. 항목별로 확인하고 변경하려면 건강 앱을 열고 오른쪽 상단의 프로필 사진을 탭한 다음, ‘개인정보 보호’ 아래 ‘앱’으로 이동해 Firefly을 선택하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iOS 不告訴 App 你允許了哪幾項健康資料，所以這裡只能說問過了。要逐項查看和更改：打開「健康」App，點右上角的大頭貼，在「隱私權」下面進入「App」，再選 Firefly。"
+          }
+        }
+      }
+    },
+    "「%@」（%@）是第三方运营的插件索引，这里只作为示例列出。Firefly 不提供、不运营这个索引，也不审核或担保其中的插件。\n\n插件安装后会以你的权限在本机运行，可能读写文件、联网或执行命令。请仔细甄别插件的来源、作者和说明，只安装你信任的插件。安装和使用第三方插件的风险需由你自行承担，感谢理解。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%1$@” (%2$@) is a plugin index run by a third party and is listed here only as an example. Firefly doesn’t provide or run this index, and doesn’t review or vouch for the plugins in it.\n\nOnce installed, a plugin runs on this device with your permissions and may read and write files, access the network or run commands. Please check each plugin’s source, author and description carefully, and install only plugins you trust. You take on the risks of installing and using third-party plugins. Thank you for understanding."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "«%1$@» (%2$@) es un índice de complementos gestionado por un tercero y solo aparece aquí como ejemplo. Firefly no ofrece ni gestiona este índice, ni revisa o avala los complementos que contiene.\n\nUna vez instalado, un complemento se ejecuta en este dispositivo con tus permisos y puede leer y escribir archivos, acceder a la red o ejecutar comandos. Comprueba con cuidado el origen, el autor y la descripción de cada complemento, e instala solo los que te merezcan confianza. Los riesgos de instalar y usar complementos de terceros corren por tu cuenta. Gracias por tu comprensión."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%1$@」（%2$@）は第三者が運営するプラグインインデックスで、ここでは例として掲載しているだけです。Firefly はこのインデックスを提供・運営しておらず、掲載されているプラグインの審査や保証も行っていません。\n\nインストールしたプラグインは、このデバイス上であなたの権限で実行され、ファイルの読み書き、ネットワークへのアクセス、コマンドの実行を行う場合があります。プラグインの提供元、作者、説明をよく確認し、信頼できるものだけをインストールしてください。サードパーティ製プラグインのインストールと使用に伴うリスクは、ご自身の責任となります。ご理解のほどよろしくお願いします。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‘%1$@’(%2$@)은 제3자가 운영하는 플러그인 인덱스로, 여기에는 예시로만 보여 드려요. Firefly은 이 인덱스를 제공하거나 운영하지 않으며, 그 안의 플러그인을 검토하거나 보증하지 않아요.\n\n설치한 플러그인은 이 기기에서 사용자의 권한으로 실행되며 파일을 읽고 쓰거나, 네트워크에 접속하거나, 명령을 실행할 수 있어요. 플러그인의 출처, 작성자, 설명을 꼼꼼히 확인하고 신뢰하는 플러그인만 설치하세요. 타사 플러그인을 설치하고 사용하는 데 따르는 위험은 사용자 본인이 부담해요. 양해 부탁드려요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「%1$@」（%2$@）是第三方經營的外掛索引，這裡只作為範例列出。Firefly 不提供、不經營這個索引，也不審查或擔保其中的外掛。\n\n外掛安裝後會以你的權限在本機執行，可能讀寫檔案、連網或執行指令。請仔細辨別外掛的來源、作者和說明，只安裝你信任的外掛。安裝和使用第三方外掛的風險需由你自行承擔，感謝理解。"
+          }
+        }
+      }
+    },
+    "Firefly 不提供插件市场。下面的示例索引由第三方独立运营，我们不运营、不审核，也不对其中的插件作任何担保。是否启用、安装哪些插件，请你自行判断：仔细甄别插件的来源和作者，留意它能做什么，只安装你信任的插件。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly doesn’t provide a plugin market. The example indexes below are run independently by third parties; we don’t run or review them, and we make no guarantees about the plugins in them. Whether to turn one on and which plugins to install is your call: check each plugin’s source and author carefully, pay attention to what it can do, and install only plugins you trust."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly no ofrece ningún mercado de complementos. Los índices de ejemplo de abajo los gestionan terceros de forma independiente; no los gestionamos ni los revisamos, y no ofrecemos ninguna garantía sobre sus complementos. Decidir si activarlos y qué complementos instalar depende de ti: comprueba con cuidado el origen y el autor de cada complemento, fíjate en lo que puede hacer e instala solo los que te merezcan confianza."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly はプラグインマーケットを提供していません。以下のインデックスの例は第三者が独自に運営しているもので、私たちは運営も審査もしておらず、掲載されているプラグインについて一切保証しません。有効にするかどうか、どのプラグインをインストールするかはご自身で判断してください。プラグインの提供元と作者をよく確認し、何ができるのかに注意して、信頼できるものだけをインストールしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly은 플러그인 마켓을 제공하지 않아요. 아래 예시 인덱스는 제3자가 독립적으로 운영하며, 저희는 이를 운영하거나 검토하지 않고 그 안의 플러그인에 대해 어떠한 보증도 하지 않아요. 켤지, 어떤 플러그인을 설치할지는 직접 판단해 주세요. 플러그인의 출처와 작성자를 꼼꼼히 확인하고, 무엇을 할 수 있는지 살펴본 뒤 신뢰하는 플러그인만 설치하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly 不提供外掛市集。下面的範例索引由第三方獨立經營，我們不經營、不審查，也不對其中的外掛作任何擔保。是否啟用、安裝哪些外掛，請你自行判斷：仔細辨別外掛的來源和作者，留意它能做什麼，只安裝你信任的外掛。"
+          }
+        }
+      }
+    },
+    "在微信、相册、Safari 里点「分享」选 Firefly，文字、链接、图片和文件会放进新对话、某个 Bot 或群聊的输入框，确认后再发送。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap Share in WeChat, Photos or Safari and pick Firefly. Text, links, photos and files go into the message box of a new conversation, a Bot or a group chat, ready for you to send."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca Compartir en WeChat, Fotos o Safari y elige Firefly. El texto, los enlaces, las fotos y los archivos van al cuadro de mensaje de una conversación nueva, un Bot o un chat de grupo, listos para que los envíes."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WeChat、写真、Safari で「共有」から Firefly を選ぶと、テキスト、リンク、画像、ファイルが新しい会話、Bot、グループチャットのメッセージ欄に入ります。確認してから送信できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "WeChat, 사진, Safari에서 공유를 눌러 Firefly을 고르면 텍스트, 링크, 이미지, 파일이 새 대화, Bot 또는 그룹 채팅의 메시지 입력란에 들어갑니다. 확인한 뒤 보내면 됩니다."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在微信、照片、Safari 裡點「分享」選 Firefly，文字、連結、圖片和檔案會放進新對話、某個 Bot 或群組的輸入框，確認後再傳送。"
+          }
+        }
+      }
+    },
+    "打开 Firefly 的网页版。在快捷指令里把它添加到主屏幕，点一下就进入。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens Firefly’s Web UI. Add it to the Home Screen from Shortcuts to get there in one tap."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre la versión web de Firefly. Añádela a la pantalla de inicio desde Atajos para entrar con un toque."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly の Web 版を開きます。ショートカットからホーム画面に追加すると、タップ 1 回で開けます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly의 웹 버전을 열어요. 단축어에서 홈 화면에 추가하면 한 번만 눌러 들어갈 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開啟 Firefly 的網頁版。在捷徑裡把它加入主畫面，點一下就能進入。"
+          }
+        }
+      }
+    },
+    "打开 Firefly，开始一个新对话。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Firefly and start a new conversation."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre Firefly y empieza una conversación nueva."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly を開いて、新しい会話を始めましょう。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly을 열고 새 대화를 시작하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "開啟 Firefly，開始新的對話。"
+          }
+        }
+      }
+    },
+    "列在这里只为方便你添加，默认不启用，不代表 Firefly 推荐其中的内容。同一时间只能启用一个索引源，启用另一个会替换当前的。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listed here only to make adding them easier. They’re off by default, and listing them doesn’t mean Firefly recommends what they contain. Only one index source can be on at a time; turning on another replaces the current one."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se muestran aquí solo para que te resulte más fácil agregarlas. Están desactivadas de forma predeterminada, y que aparezcan no significa que Firefly recomiende su contenido. Solo puede haber una fuente de índice activada a la vez; al activar otra, sustituye a la actual."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追加しやすいようにここに載せているだけです。初期状態では無効で、Firefly が掲載内容を推奨しているわけではありません。同時に有効にできるインデックスソースは 1 つだけで、別のものを有効にすると現在のものと置き換わります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "추가하기 쉽도록 여기에 보여 줄 뿐이에요. 기본적으로 꺼져 있으며, Firefly이 그 안의 내용을 추천한다는 뜻은 아니에요. 인덱스 소스는 한 번에 하나만 켤 수 있으며, 다른 소스를 켜면 현재 소스를 대체해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "列在這裡只為方便你新增，預設不啟用，不代表 Firefly 推薦其中的內容。同一時間只能啟用一個索引來源，啟用另一個會取代目前的。"
+          }
+        }
+      }
+    },
+    "连上以后，在这些聊天软件里给机器人发消息，就会交给你选的 Bot。消息只在 Firefly 运行时收得到。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Once connected, messages sent to the bot in these chat apps go to the Bot you choose. Messages arrive only while Firefly is running."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una vez conectado, los mensajes que envíes al bot en estas apps de chat irán al bot que elijas. Solo llegan mientras Firefly está en ejecución."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "接続すると、これらのチャットアプリでボットに送ったメッセージは、選んだBotに届きます。メッセージはFireflyの実行中のみ受信できます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "연결하면 이 채팅 앱에서 봇에게 보낸 메시지가 선택한 Bot에게 전달돼요. 메시지는 Firefly이 실행 중일 때만 받을 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "連上以後，在這些聊天軟體裡傳訊息給機器人，就會交給你選的 Bot。訊息只在 Firefly 執行時收得到。"
+          }
+        }
+      }
+    },
+    "退出 Firefly 再重新打开，界面就会换成新的语言。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quit and reopen Firefly to see the interface in the new language."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cierra Firefly y vuelve a abrirlo para ver la interfaz en el nuevo idioma."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly を終了して再度開くと、新しい言語で表示されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Firefly을 종료했다가 다시 열면 새 언어로 표시돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "結束 Firefly 再重新打開，介面就會換成新的語言。"
+          }
+        }
+      }
+    },
+    "点开直接进入，不经过网页。长按主屏幕空白处，添加小组件，搜索 Firefly，选「Mini Apps」。小号的放一个，加好后长按它，选「编辑小组件」挑这个 Mini App。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens straight into the app, with no web page in between. Touch and hold an empty spot on the Home Screen, add a widget, search for Firefly and choose Mini Apps. The small size holds one: once it’s added, touch and hold it, choose Edit Widget and pick this Mini App."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre la app directamente, sin pasar por una página web. Mantén pulsado un espacio vacío de la pantalla de inicio, añade un widget, busca Firefly y elige Miniapps. El tamaño pequeño muestra una: cuando lo hayas añadido, mantenlo pulsado, elige Editar widget y escoge esta miniapp."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web ページを経由せず、直接開きます。ホーム画面の何もないところを長押ししてウィジェットを追加し、Firefly を検索して「ミニアプリ」を選びます。小サイズには 1 つ入ります。追加したら長押しして「ウィジェットを編集」を選び、このミニアプリを選んでください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "웹 페이지를 거치지 않고 바로 열려요. 홈 화면의 빈 곳을 길게 눌러 위젯을 추가하고, Firefly을 검색해 ‘미니 앱’을 고르세요. 작은 크기에는 하나가 들어가요. 추가한 뒤 길게 눌러 ‘위젯 편집’을 고르고 이 미니 앱을 선택하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點開直接進入，不經過網頁。長按主畫面空白處，加入小工具，搜尋 Firefly，選「Mini Apps」。小尺寸放一個，加好後長按它，選「編輯小工具」挑這個 Mini App。"
+          }
+        }
+      }
+    },
+    "点开直接进入，不经过网页。长按主屏幕空白处，添加小组件，搜索 Firefly，选「网页版」。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opens straight into the app, with no web page in between. Touch and hold an empty spot on the Home Screen, add a widget, search for Firefly and choose Web UI."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre la app directamente, sin pasar por una página web. Mantén pulsado un espacio vacío de la pantalla de inicio, añade un widget, busca Firefly y elige Web."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Web ページを経由せず、直接開きます。ホーム画面の何もないところを長押ししてウィジェットを追加し、Firefly を検索して「Web 版」を選びます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "웹 페이지를 거치지 않고 바로 열려요. 홈 화면의 빈 곳을 길게 눌러 위젯을 추가하고, Firefly을 검색해 ‘웹 버전’을 고르세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "點開直接進入，不經過網頁。長按主畫面空白處，加入小工具，搜尋 Firefly，選「網頁版」。"
+          }
+        }
+      }
+    },
+    "已安装的 Bot 插件是 %@ 版，Firefly 目前只支持 %@ 版。请先在插件页卸载它，再回来开启。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The installed Bot plugin is version %1$@; Firefly currently supports only version %2$@. Uninstall it on the Plugins page, then come back to turn Bot on."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El complemento de Bot instalado es la versión %1$@; Firefly solo admite la versión %2$@. Desinstálalo en Complementos y vuelve para activar Bot."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "インストール済みの Bot プラグインはバージョン %1$@ ですが、Firefly は現在バージョン %2$@ のみサポートしています。プラグインページでアンインストールしてから、もう一度オンにしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설치된 Bot 플러그인은 %1$@ 버전이지만, Firefly은 현재 %2$@ 버전만 지원해요. 플러그인 페이지에서 제거한 후 다시 켜세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已安裝的 Bot 外掛是 %1$@ 版，Firefly 目前只支援 %2$@ 版。請先在外掛頁解除安裝它，再回來開啟。"
+          }
+        }
+      }
+    },
+    "来自第三方索引「%@」。Firefly 不提供也不审核这些插件，请仔细甄别，只安装你信任的插件。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From the third-party index “%@”. Firefly doesn’t provide or review these plugins. Please check them carefully and install only plugins you trust."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Del índice de terceros «%@». Firefly no ofrece ni revisa estos complementos. Compruébalos con cuidado e instala solo los que te merezcan confianza."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "サードパーティのインデックス「%@」より。Firefly はこれらのプラグインを提供も審査もしていません。よく確認のうえ、信頼できるプラグインだけをインストールしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "타사 인덱스 ‘%@’에서 가져왔어요. Firefly은 이 플러그인들을 제공하거나 검토하지 않아요. 꼼꼼히 확인하고 신뢰하는 플러그인만 설치하세요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "來自第三方索引「%@」。Firefly 不提供也不審查這些外掛，請仔細辨別，只安裝你信任的外掛。"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

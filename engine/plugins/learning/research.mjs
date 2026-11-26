@@ -19,6 +19,10 @@ export const DEPTHS = {
   deep: { subtopics: 6, queue: 10, iterations: 6, verifyClaims: 10, gapRounds: 2, calls: 150 },
 };
 export const TERMINAL = ['done', 'failed', 'cancelled'];
+/** A fetched page with less text than this was not really read (a login wall, a script-only page). */
+export const MIN_PAGE_TEXT = 200;
+/** A fetched page shorter than this is kept as it is instead of being condensed by the model. */
+export const NOTE_MIN = 600;
 const NOTE_INPUT_CHARS = 8_000;
 
 export class ResearchCancelled extends Error {}
@@ -249,8 +253,19 @@ export async function runResearch(store, jobId, deps) {
       const key = `block:${block.ordinal}:turn:${i}:${name}`;
       const value = await tool(key, () => deps.tools[name](query));
       toolsUsed += 1;
+      // A page that could not be read (an error, or next to no text) is noted, not cited: it
+      // costs no model call, and the report says how many there were.
+      if (name === 'fetch' && (value?.error || String(value?.text ?? '').trim().length < MIN_PAGE_TEXT)) {
+        store.putResearchStep({ jobId, key: `${key}:unreadable`, kind: 'mark', output: String(value?.error ?? 'no text').slice(0, 300) });
+      }
       const citations = recordEvidence(key, block, name, query, value);
       for (const cit of citations) {
+        // Search and knowledge-base results are already short excerpts: they are their own note.
+        // Only a fetched page is long enough to be worth a model call to condense.
+        if (name !== 'fetch' || cit.raw.trim().length < NOTE_MIN) {
+          store.setCitationNote({ jobId, citId: cit.citId, note: cit.raw.trim().slice(0, 800) });
+          continue;
+        }
         const note = await llm(`${key}:note:${cit.citId}`, PROMPTS.note(name, query, cit.raw), 600);
         store.setCitationNote({ jobId, citId: cit.citId, note: note.trim() });
       }
@@ -270,6 +285,7 @@ export async function runResearch(store, jobId, deps) {
   // Search and kb results become one citation per result; a fetched page, one citation.
   const recordEvidence = (stepKey, block, name, query, value) => {
     if (!value || value.error) return [];
+    if (name === 'fetch' && String(value.text ?? '').trim().length < MIN_PAGE_TEXT) return [];
     const items = name === 'fetch'
       ? [{ title: value.title || value.url || query, url: value.url || query, raw: String(value.text ?? '') }]
       : name === 'kb'
@@ -401,6 +417,8 @@ export async function runResearch(store, jobId, deps) {
     const { body, references } = numberCitations(valid, citations);
     const notes = [];
     if (budgetHit) notes.push('The run reached its model-call budget, so some sub-topics or checks may be missing.');
+    const unreadable = store.listResearchSteps({ jobId }).filter((s) => s.key.endsWith(':unreadable')).length;
+    if (unreadable) notes.push(`${unreadable} web page${unreadable === 1 ? '' : 's'} could not be read (blocked, an unsupported encoding or format, or no text), so for ${unreadable === 1 ? 'it' : 'them'} only search snippets were used.`);
     const checkTable = claims.length ? ['## Claim checks', '', ...claims.map((c) => `- **${c.status}** — ${c.claim}${c.note ? ` (${c.note})` : ''}`)].join('\n') : '';
     return [`# ${title}`, body, checkTable, references.length ? `## References\n\n${references.join('\n')}` : '', notes.length ? `> ${notes.join(' ')}` : '']
       .filter(Boolean).join('\n\n');

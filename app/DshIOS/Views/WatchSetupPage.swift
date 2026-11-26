@@ -36,7 +36,7 @@ struct WatchSetupPage: View {
                 steps
                 tip
                 afterwards
-                Text("手表上不跑引擎，内容都由 iPhone 发过去：iPhone 在身边、Fish Pocket 在运行时才会更新。需要 watchOS 10 或更高版本。")
+                Text("手表上不跑引擎，内容都由 iPhone 发过去：iPhone 在身边、Firefly 在运行时才会更新。需要 watchOS 10 或更高版本。")
                     .font(.footnote)
                     .foregroundStyle(Palette.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -68,7 +68,7 @@ struct WatchSetupPage: View {
                 .frame(height: 230)
                 .padding(.top, 8)
             VStack(spacing: 6) {
-                Text("把 Fish Pocket 戴在手腕上")
+                Text("把 Firefly 戴在手腕上")
                     .font(.title3.weight(.bold))
                     .foregroundStyle(Palette.ink)
                 Text("抬腕看会话进度，等你确认时轻轻一震，允许或拒绝不用掏手机。")
@@ -125,10 +125,10 @@ struct WatchSetupPage: View {
     /// Which tab fits this copy, said once the store has told us.
     private var channelNote: LocalizedStringKey? {
         switch (AppDistribution.channel, channel) {
-        case (.appStore, .appStore): "你的 Fish Pocket 来自 App Store，按这一页操作。"
-        case (.appStore, .testFlight): "你的 Fish Pocket 来自 App Store，这一页是给 TestFlight 用户的。"
-        case (.testFlight, .testFlight): "你的 Fish Pocket 来自 TestFlight，按这一页操作。"
-        case (.testFlight, .appStore): "你的 Fish Pocket 来自 TestFlight，这一页是给 App Store 用户的。"
+        case (.appStore, .appStore): "你的 Firefly 来自 App Store，按这一页操作。"
+        case (.appStore, .testFlight): "你的 Firefly 来自 App Store，这一页是给 TestFlight 用户的。"
+        case (.testFlight, .testFlight): "你的 Firefly 来自 TestFlight，按这一页操作。"
+        case (.testFlight, .appStore): "你的 Firefly 来自 TestFlight，这一页是给 App Store 用户的。"
         default: nil
         }
     }
@@ -145,13 +145,13 @@ struct WatchSetupPage: View {
         case .appStore:
             [
                 Step(title: "打开 iPhone 上的「Watch」App", detail: "就是用来配对手表的那个 App。"),
-                Step(title: "在「我的手表」里往下滑", detail: "找到「可用 App」一栏里的 Fish Pocket。"),
-                Step(title: "轻点「安装」", detail: "装好后手表上会出现 Fish Pocket 的图标，打开一次就连上了。"),
+                Step(title: "在「我的手表」里往下滑", detail: "找到「可用 App」一栏里的 Firefly。"),
+                Step(title: "轻点「安装」", detail: "装好后手表上会出现 Firefly 的图标，打开一次就连上了。"),
             ]
         case .testFlight:
             [
-                Step(title: "打开 iPhone 上的 TestFlight", detail: "要和装 Fish Pocket 的是同一台 iPhone。"),
-                Step(title: "轻点 Fish Pocket", detail: "进入这个 App 的详情页。"),
+                Step(title: "打开 iPhone 上的 TestFlight", detail: "要和装 Firefly 的是同一台 iPhone。"),
+                Step(title: "轻点 Firefly", detail: "进入这个 App 的详情页。"),
                 Step(title: "打开「在 Apple Watch 上显示 App」", detail: "在详情页下方，和「自动更新」在同一组。打开后手表就开始安装，装好后在手表上打开一次就连上了。"),
             ]
         }
@@ -222,9 +222,9 @@ struct WatchSetupPage: View {
     private var tip: some View {
         let (title, text): (LocalizedStringKey, LocalizedStringKey) = switch channel {
         case .appStore:
-            ("也可以直接在手表上装", "在手表上打开 App Store 搜索 Fish Pocket。想让以后的 App 自动装到手表上，在 Watch App 的「通用」里打开「自动安装 App」。")
+            ("也可以直接在手表上装", "在手表上打开 App Store 搜索 Firefly。想让以后的 App 自动装到手表上，在 Watch App 的「通用」里打开「自动安装 App」。")
         case .testFlight:
-            ("没看到这个开关？", "先确认 TestFlight 里的 Fish Pocket 已经装好，详情页里「Apple Watch」一项写着「是」，手表系统是 watchOS 10 或更高版本。仍然没有的话，打开 iPhone 上的 Watch App，在「可用 App」里也能装。")
+            ("没看到这个开关？", "先确认 TestFlight 里的 Firefly 已经装好，详情页里「Apple Watch」一项写着「是」，手表系统是 watchOS 10 或更高版本。仍然没有的话，打开 iPhone 上的 Watch App，在「可用 App」里也能装。")
         }
         return HStack(alignment: .top, spacing: 12) {
             Image(systemName: "lightbulb")
@@ -350,7 +350,7 @@ private struct StatusCard: View {
         switch pairing {
         case .checking: "正在查看手表…"
         case .unpaired: "没有配对的 Apple Watch"
-        case .notInstalled: "手表上还没装 Fish Pocket"
+        case .notInstalled: "手表上还没装 Firefly"
         case .installed: "已经装在 Apple Watch 上"
         }
     }
@@ -360,7 +360,7 @@ private struct StatusCard: View {
         case .checking: "稍等一下。"
         case .unpaired: "先在 iPhone 的 Watch App 里配对手表，再按下面的步骤安装。"
         case .notInstalled: "按下面的步骤装上，装好后这里会自动更新。"
-        case .installed: "在手表上打开 Fish Pocket 就能看到会话。"
+        case .installed: "在手表上打开 Firefly 就能看到会话。"
         }
     }
 }

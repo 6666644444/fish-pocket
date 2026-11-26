@@ -5,6 +5,7 @@
 // learner gets wrong land in the mistake book the app shows.
 import { defineTool } from '@deepseek-ai/dsh-tools';
 import { KINDS, MASTERY, QUIZ_LIMITS, letter } from './quiz.mjs';
+import { plain } from './wire.mjs';
 
 export const TOOL = 'learning_quiz';
 
@@ -48,22 +49,25 @@ export function quizTool(open) {
       schema: { type: 'json' },
       render: (args, value) => [{ type: 'text', text: render(args.action, value) }],
     },
-    execute: async (args, exec) => {
-      const store = open();
-      if (args.action === 'save') {
-        const sessionId = exec?.agent?.session?.id;
-        const saved = store.saveQuestions({ questions: args.questions ?? [], sessionId: typeof sessionId === 'string' ? sessionId : undefined });
-        return { saved: saved.map((q) => ({ id: q.id, kind: q.kind, options: q.options.length })) };
-      }
-      if (args.action === 'grade') {
-        if (!Number.isInteger(args.questionId)) throw new Error(`${TOOL}: grade needs the questionId that save returned`);
-        if (typeof args.answer !== 'string' || !args.answer.trim()) throw new Error(`${TOOL}: grade needs the learner's answer`);
-        return store.answerQuestion({ id: args.questionId, answer: args.answer, judged: args.judged });
-      }
-      const questions = store.listQuestions({ topic: args.topic, mistakes: args.mistakes === true, limit: 20 });
-      return { questions: questions.map((q) => ({ id: q.id, kind: q.kind, prompt: q.prompt, options: q.options, topic: q.topic, inMistakes: q.inMistakes })) };
-    },
+    // Every result as lossless JSON (wire.mjs): one undefined field fails the whole call.
+    execute: async (args, exec) => plain(await run(args, exec)),
   });
+
+  async function run(args, exec) {
+    const store = open();
+    if (args.action === 'save') {
+      const sessionId = exec?.agent?.session?.id;
+      const saved = store.saveQuestions({ questions: args.questions ?? [], sessionId: typeof sessionId === 'string' ? sessionId : undefined });
+      return { saved: saved.map((q) => ({ id: q.id, kind: q.kind, options: q.options.length })) };
+    }
+    if (args.action === 'grade') {
+      if (!Number.isInteger(args.questionId)) throw new Error(`${TOOL}: grade needs the questionId that save returned`);
+      if (typeof args.answer !== 'string' || !args.answer.trim()) throw new Error(`${TOOL}: grade needs the learner's answer`);
+      return store.answerQuestion({ id: args.questionId, answer: args.answer, judged: args.judged });
+    }
+    const questions = store.listQuestions({ topic: args.topic, mistakes: args.mistakes === true, limit: 20 });
+    return { questions: questions.map((q) => ({ id: q.id, kind: q.kind, prompt: q.prompt, options: q.options, topic: q.topic, inMistakes: q.inMistakes })) };
+  }
 }
 
 function render(action, value) {

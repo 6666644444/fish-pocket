@@ -17,6 +17,7 @@ struct LearningHomePage: View {
     @State private var renameTitle = ""
     @State private var deleting: LearningNotebook?
     @State private var learningSessions: [LearningSessionMode] = []
+    @State private var history: [LearningHistoryEntry] = []
     @State private var settings: LearningSettings?
     @State private var starting: LearningMode?
 
@@ -27,13 +28,20 @@ struct LearningHomePage: View {
         learningSessions.filter { app.sessions[$0.sessionId] != nil }
     }
 
+    /// The learning record, for sessions the app still has.
+    private var openableHistory: [LearningHistoryEntry] {
+        history.filter { app.sessions[$0.sessionId] != nil }
+    }
+
     var body: some View {
         page(
             List {
                 modesSection
                 sessionsSection
+                historySection
                 memorySection
                 notebooksSection
+                diagnosticsSection
             }
             .groupedList()
         )
@@ -67,6 +75,21 @@ struct LearningHomePage: View {
         }
     }
 
+    /// Which App Group the share extension and the widgets reach the app through (Shared/AppGroup.swift):
+    /// after signing with a free Apple ID, this shows whether the signature kept one.
+    @ViewBuilder private var diagnosticsSection: some View {
+        Section {
+            Text(AppGroup.diagnostics)
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .textSelection(.enabled)
+        } header: {
+            Text("诊断")
+        } footer: {
+            Text("分享扩展和小组件靠 App Group 和 App 交换数据。显示「无」时，说明这次签名没有可用的 App Group。")
+        }
+    }
+
     @ViewBuilder private var sessionsSection: some View {
         if !openableSessions.isEmpty {
             Section {
@@ -89,7 +112,43 @@ struct LearningHomePage: View {
             } header: {
                 Text("学习会话")
             } footer: {
-                Text("结束学习模式后，会话和聊天记录都还在，只是之后的回合不再按学习模式回答。")
+                Text("结束学习模式后，会话和聊天记录都还在，会放进下面的「学习记录」，之后的回合不再按学习模式回答。")
+            }
+        }
+    }
+
+    /// Sessions whose learning mode was ended: still openable, and back into a mode with a long press.
+    @ViewBuilder private var historySection: some View {
+        if !openableHistory.isEmpty {
+            Section {
+                ForEach(openableHistory, id: \.sessionId) { entry in
+                    Button { open(entry.sessionId) } label: {
+                        LabeledContent {
+                            Text(entry.endedDate.formatted(date: .abbreviated, time: .shortened))
+                        } label: {
+                            Label {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(sessionTitle(entry.sessionId)).foregroundStyle(.primary)
+                                    Text(entry.mode.title).font(.footnote).foregroundStyle(.secondary)
+                                }
+                            } icon: {
+                                Image(systemName: entry.mode.systemImage)
+                            }
+                        }
+                    }
+                    .contextMenu {
+                        Menu("重新开启学习模式", systemImage: "arrow.uturn.backward.circle") {
+                            ForEach(LearningMode.allCases) { mode in
+                                Button(mode.title, systemImage: mode.systemImage) { Task { await reopen(entry.sessionId, in: mode) } }
+                            }
+                        }
+                        Button("从记录里移除", systemImage: "eye.slash") { Task { await hide(entry.sessionId) } }
+                    }
+                }
+            } header: {
+                Text("学习记录")
+            } footer: {
+                Text("已结束学习模式的会话。点一下打开，长按可重新开启学习模式，或从记录里移除（会话本身不会删除）。")
             }
         }
     }
@@ -203,6 +262,7 @@ struct LearningHomePage: View {
         loaded = true
         // The mode list and the setting are extras: a failure here leaves the notebooks usable.
         if let modes = try? await client.sessionModes() { learningSessions = modes }
+        if let ended = try? await client.learningHistory() { history = ended }
         if let current = try? await client.settings() { settings = current }
     }
 
@@ -240,6 +300,27 @@ struct LearningHomePage: View {
         do {
             try await client.setMode(nil, for: sessionId)
             learningSessions.removeAll { $0.sessionId == sessionId }
+            if let ended = try? await client.learningHistory() { history = ended }
+        } catch {
+            app.showToast(error.localizedDescription, tone: .warning)
+        }
+    }
+
+    private func reopen(_ sessionId: String, in mode: LearningMode) async {
+        do {
+            try await client.setMode(mode, for: sessionId)
+            Haptics.select()
+            if let modes = try? await client.sessionModes() { learningSessions = modes }
+            if let ended = try? await client.learningHistory() { history = ended }
+        } catch {
+            app.showToast(error.localizedDescription, tone: .warning)
+        }
+    }
+
+    private func hide(_ sessionId: String) async {
+        do {
+            try await client.hideFromHistory(sessionId)
+            history.removeAll { $0.sessionId == sessionId }
         } catch {
             app.showToast(error.localizedDescription, tone: .warning)
         }

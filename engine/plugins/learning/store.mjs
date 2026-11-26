@@ -282,6 +282,17 @@ export const MIGRATIONS = [
       ) STRICT;
     `);
   },
+  // 7: a session taken out of learning stays on record (学习记录) instead of being forgotten.
+  // ended_at: when its mode was ended (NULL while it is in one); hidden: taken off the record
+  // by the user (the session itself stays); left_mode: the mode it left, until the model has
+  // been told once that learning is over.
+  (db) => {
+    db.exec(`
+      ALTER TABLE session_modes ADD COLUMN ended_at INTEGER;
+      ALTER TABLE session_modes ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0;
+      ALTER TABLE session_modes ADD COLUMN left_mode TEXT;
+    `);
+  },
 ];
 export const SCHEMA_VERSION = MIGRATIONS.length;
 
@@ -607,28 +618,45 @@ export class LearningStore {
 
   // Session modes (M2)
 
-  /** The learning mode of a session, or null for a session the app did not start in one. */
+  /** The learning mode of a session, or null for one not in a mode (never, or ended). */
   getSessionMode({ sessionId }) {
-    const row = this.db.prepare('SELECT * FROM session_modes WHERE session_id = ?').get(sessionKey(sessionId));
+    const row = this.db.prepare('SELECT * FROM session_modes WHERE session_id = ? AND ended_at IS NULL').get(sessionKey(sessionId));
     return row ? { sessionId: row.session_id, mode: row.mode, announced: row.announced ?? null, updatedAt: row.updated_at } : null;
   }
 
-  /** Put a session in `mode`, or take it out of learning with `mode: null`. */
+  /**
+   * Put a session in `mode` (again), or take it out of learning with `mode: null`: it then
+   * stays on the learning record, and its next turn is told once that learning is over.
+   */
   setSessionMode({ sessionId, mode }) {
     const key = sessionKey(sessionId);
     if (mode === null) {
-      this.db.prepare('DELETE FROM session_modes WHERE session_id = ?').run(key);
+      const now = this.now();
+      this.db.prepare('UPDATE session_modes SET ended_at = ?, left_mode = mode, announced = NULL, updated_at = ? WHERE session_id = ? AND ended_at IS NULL')
+        .run(now, now, key);
       return null;
     }
     if (!SESSION_MODES.includes(mode)) throw new LearningError('invalid', `mode must be one of ${SESSION_MODES.join(', ')} or null`);
     this.db.prepare(`
       INSERT INTO session_modes(session_id, mode, announced, updated_at) VALUES (?, ?, NULL, ?)
       ON CONFLICT(session_id) DO UPDATE SET
-        announced = CASE WHEN session_modes.mode = excluded.mode THEN session_modes.announced ELSE NULL END,
+        announced = CASE WHEN session_modes.mode = excluded.mode AND session_modes.ended_at IS NULL THEN session_modes.announced ELSE NULL END,
         mode = excluded.mode,
-        updated_at = excluded.updated_at
+        updated_at = excluded.updated_at,
+        ended_at = NULL,
+        hidden = 0,
+        left_mode = NULL
     `).run(key, mode, this.now());
     return this.getSessionMode({ sessionId: key });
+  }
+
+  /** The mode an ended session left, if its model has not been told yet; telling is this call. */
+  takeLeftMode({ sessionId }) {
+    const key = sessionKey(sessionId);
+    const row = this.db.prepare('SELECT left_mode FROM session_modes WHERE session_id = ? AND ended_at IS NOT NULL').get(key);
+    if (!row?.left_mode) return null;
+    this.db.prepare('UPDATE session_modes SET left_mode = NULL WHERE session_id = ?').run(key);
+    return row.left_mode;
   }
 
   /** Record that the session has been given `mode`'s full instructions. */
@@ -640,8 +668,22 @@ export class LearningStore {
   /** The sessions in a learning mode, most recently set first. */
   listSessionModes({ limit = 100 } = {}) {
     const page = Math.min(Math.max(1, Number(limit) || 100), LIMITS.page);
-    return this.db.prepare('SELECT * FROM session_modes ORDER BY updated_at DESC, session_id LIMIT ?').all(page)
+    return this.db.prepare('SELECT * FROM session_modes WHERE ended_at IS NULL ORDER BY updated_at DESC, session_id LIMIT ?').all(page)
       .map((row) => ({ sessionId: row.session_id, mode: row.mode, announced: row.announced ?? null, updatedAt: row.updated_at }));
+  }
+
+  /** The learning record: sessions whose mode was ended, most recently ended first. */
+  listLearningHistory({ limit = 100 } = {}) {
+    const page = Math.min(Math.max(1, Number(limit) || 100), LIMITS.page);
+    return this.db.prepare('SELECT * FROM session_modes WHERE ended_at IS NOT NULL AND hidden = 0 ORDER BY ended_at DESC, session_id LIMIT ?').all(page)
+      .map((row) => ({ sessionId: row.session_id, mode: row.mode, endedAt: row.ended_at, updatedAt: row.updated_at }));
+  }
+
+  /** Take a session off the learning record. The session itself is not touched. */
+  hideLearningHistory({ sessionId }) {
+    const { changes } = this.db.prepare('UPDATE session_modes SET hidden = 1 WHERE session_id = ? AND ended_at IS NOT NULL AND hidden = 0').run(sessionKey(sessionId));
+    if (!changes) throw new LearningError('not-found', 'that session is not on the learning record');
+    return { hidden: true };
   }
 
   // Knowledge base (M3)
@@ -991,17 +1033,18 @@ export class LearningStore {
       } else if (next.action === 'remove') {
         this.db.prepare('DELETE FROM quiz_mistakes WHERE question_id = ?').run(question.id);
       }
+      // No field is ever undefined: the model tool hands this on as lossless JSON (wire.mjs).
       return {
         questionId: question.id,
         verdict: result.verdict,
         score: result.score,
         gradedBy: result.gradedBy,
-        chosen: result.chosen,
+        ...(result.chosen !== undefined ? { chosen: result.chosen } : {}),
         correctAnswer: question.answer,
-        explanation: question.explanation,
+        explanation: question.explanation ?? null,
         mistakeBook: next.action === 'none' ? 'not-in' : next.action === 'remove' ? 'removed'
           : next.action === 'add' ? 'added' : 'in',
-        streak: next.action === 'remove' || next.action === 'none' ? undefined : next.streak,
+        ...(next.action === 'remove' || next.action === 'none' ? {} : { streak: next.streak }),
         mastery: this.mastery,
       };
     });
