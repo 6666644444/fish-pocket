@@ -208,11 +208,11 @@ private struct StartupView: View {
 }
 
 /// Said wherever the engine's log is copied or shared. Plugins write into it what
-/// they please, and some quote what the user told a Bot, so it is not safe to post
-/// as it is; the app cannot clean every plugin's lines, so it says so instead.
+/// they please, so it is not safe to post as it is; the app cannot clean every
+/// plugin's lines, so it says so instead.
 struct LogPrivacyNote: View {
     var body: some View {
-        Label("日志可能包含你和 Bot 的对话、记忆等个人信息。分享前请先检查并去掉隐私内容，只发给你信任的人。", systemImage: "hand.raised")
+        Label("日志可能含有隐私信息，分享前请先检查，只发给你信任的人。", systemImage: "hand.raised")
             .font(.footnote)
             .foregroundStyle(Palette.secondary)
             .fixedSize(horizontal: false, vertical: true)
