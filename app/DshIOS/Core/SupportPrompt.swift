@@ -23,6 +23,12 @@ enum SupportPrompt {
 
     /// Counts a turn that finished well; true when an ask is due.
     static func noteCompletedTurn() -> Bool {
+        // This branch is for personal use and never asks for a rating or a share (DECISIONS.md D30).
+        return false
+    }
+
+    /// Upstream's version of noteCompletedTurn, kept so a merge from upstream stays simple.
+    private static func upstreamNoteCompletedTurn() -> Bool {
         guard reviewOpen || supportOpen else { return false }
         let defaults = UserDefaults.standard
         defaults.set(defaults.integer(forKey: turnsKey) + 1, forKey: turnsKey)

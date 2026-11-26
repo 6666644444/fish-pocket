@@ -705,13 +705,11 @@ struct SupportLink: Identifiable {
     var id: URL { url }
 
     static var all: [SupportLink] {
-        let site = AppLinks.site.host() ?? ""
         return [
-            // The App Store page, from any install: rating it there is what helps most now.
-            SupportLink(title: "给个评分", symbol: "star", glyph: .rate, value: "App Store",
-                        detail: Text("在 App Store 打分、写评价"), url: AppLinks.appStore, rates: true),
-            SupportLink(title: "官网", symbol: "safari", glyph: .site, value: site,
-                        detail: Text(verbatim: site), url: AppLinks.site),
+            // This branch is for personal use (DECISIONS.md D30): no App Store rating or website rows,
+            // and the open-source repository is listed so the origin stays visible.
+            SupportLink(title: "开源仓库", symbol: "chevron.left.forwardslash.chevron.right", glyph: .site,
+                        value: UpdateChecker.repository, detail: Text(verbatim: UpdateChecker.repository), url: AppLinks.repository),
             SupportLink(title: "问题反馈", symbol: "exclamationmark.bubble", glyph: .feedback, value: "GitHub Issues",
                         detail: Text("在 GitHub Issues 提问题和建议"), url: AppLinks.repository.appending(path: "issues")),
             // The site's picture is swapped in place when the 7-day code expires: always the current one.
@@ -724,7 +722,7 @@ struct SupportLink: Identifiable {
         ]
     }
 
-    static let footer = Text("觉得好用的话，去 App Store 给个评分 ⭐️，这是对项目最大的支持。")
+    static let footer = Text("本分支基于 Fish Pocket 开源项目，只供个人使用。")
 }
 
 extension View {

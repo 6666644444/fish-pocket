@@ -132063,6 +132063,40 @@
           }
         }
       }
+    },
+    "本分支基于 Fish Pocket 开源项目，只供个人使用。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This branch is based on the open-source Fish Pocket project, for personal use only."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta rama se basa en el proyecto de código abierto Fish Pocket y es solo para uso personal."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このブランチはオープンソースの Fish Pocket をもとにした個人用のものです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 브랜치는 오픈 소스 Fish Pocket을 바탕으로 한 개인용이에요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "本分支基於 Fish Pocket 開源專案，只供個人使用。"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
