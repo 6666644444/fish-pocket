@@ -71,9 +71,9 @@ enum RemoteFile: Hashable {
             return (text, data.count > limit, data.count)
         }
         guard online else { throw RemoteError(kind: .offline, message: String(localized: "电脑离线，暂时打不开电脑上的文件")) }
-        let root = root.flatMap { $0.isEmpty ? nil : $0 } ?? "."
+        let folder = root.flatMap { $0.isEmpty ? nil : $0 } ?? "."
         let value = try await client.post("/connectors/\(RemoteClient.encode(deviceId))/fs/readText",
-                                          ["path": .string(path), "maxBytes": .number(Double(limit))], query: ["root": root])
+                                          ["path": .string(path), "maxBytes": .number(Double(limit))], query: ["root": folder])
         guard value["ok"].bool != false else {
             throw RemoteError(kind: .rejected, message: value["error"]["message"].string ?? String(localized: "电脑没有返回这个文件"))
         }
