@@ -196,7 +196,7 @@ jobs:
             | jq -r '.. | objects | select(.nodeType? == "Test Case") | "\(.result)\t\(.name)"' || true
           total="$(echo "$summary" | jq -r '.totalTestCount // 0')"
           # Findings the learning tests print (NLEmbedding evaluation, docs/PLAN.md §12.6). -quiet
-          # hides test output, so read it back from the result bundle's console log.
+          # hides test output, so the test also writes them to the host's home and attaches them.
           if [ -s "$HOME/nlembed.txt" ]; then
             cat "$HOME/nlembed.txt"
           else
