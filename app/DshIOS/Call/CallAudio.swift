@@ -120,11 +120,16 @@ final class CallAudio: @unchecked Sendable {
     private func configureSession() throws {
         let session = AVAudioSession.sharedInstance()
         // `.default`, not `.voiceChat`: no system call processing in front of the echo canceller.
-        // Bluetooth headsets with a microphone (HFP) count as a way to talk. Mixable, like a
-        // WeChat call: another app's video or music plays alongside instead of interrupting it.
-        try session.setCategory(.playAndRecord, mode: .default, options: [.allowBluetoothHFP, .mixWithOthers])
+        // Bluetooth headsets with a microphone (HFP) count as a way to talk.
+        // Started like a phone call: activating a session that does not mix stops whatever was
+        // playing (music would otherwise go into the microphone, and the echo canceller only
+        // knows her voice). Then it turns mixable, so audio the user starts in another app during
+        // the call plays alongside instead of interrupting it, as in a WeChat call. What stopped
+        // at the start resumes at hang-up (`notifyOthersOnDeactivation`).
+        try session.setCategory(.playAndRecord, mode: .default, options: [.allowBluetoothHFP])
         try session.setPreferredIOBufferDuration(0.02)
         try session.setActive(true)
+        try session.setCategory(.playAndRecord, mode: .default, options: [.allowBluetoothHFP, .mixWithOthers])
         applySpeaker()
     }
 
@@ -191,7 +196,9 @@ final class CallAudio: @unchecked Sendable {
                 let type = (note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt).flatMap(AVAudioSession.InterruptionType.init)
                 guard let type, let self else { return }
                 let began = type == .began
-                self.queue.async { began ? self.pause() : self.resume() }
+                let options = (note.userInfo?[AVAudioSessionInterruptionOptionKey] as? UInt).map(AVAudioSession.InterruptionOptions.init)
+                let shouldResume = options?.contains(.shouldResume) ?? false
+                self.queue.async { began ? self.pause() : self.resume(allowed: shouldResume) }
             },
             center.addObserver(forName: .AVAudioEngineConfigurationChange, object: engine, queue: nil) { [weak self] _ in
                 guard let self else { return }
@@ -234,12 +241,19 @@ final class CallAudio: @unchecked Sendable {
         onPause?(true)
     }
 
-    /// The interruption ended: the audio comes back. Tried even without the system's
-    /// `shouldResume`, as a call the user is still on wants its sound back; if the system says
-    /// no, the call ends as before.
-    private func resume() {
+    /// The interruption ended. The audio comes back only when the system says so
+    /// (`shouldResume`, as after a phone call or Siri). Without it the user moved on to other
+    /// audio on purpose, and the call ends as it used to; so it does when taking the audio back fails.
+    private func resume(allowed: Bool) {
         guard running, paused else { return }
         paused = false
+        guard allowed else {
+            CallDiagnostics.note("interruption ended without shouldResume: hanging up")
+            running = false
+            teardown()
+            onHalt?(.interrupted)
+            return
+        }
         CallDiagnostics.note("interruption ended: resuming")
         do {
             try AVAudioSession.sharedInstance().setActive(true)
