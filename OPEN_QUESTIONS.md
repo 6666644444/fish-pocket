@@ -88,3 +88,10 @@ LICENSE 附加条款允许「为了向原仓库提 PR 而 fork」。但第 2 条
 
 learning-socratic 要求模型不说出最终答案，学习者明确要求两次才给。这只是提示词约束，没有程序检查，模型可能做不到。CI 里没有真实模型，无法验证效果，需要人工试用（见 汇报_里程碑2.md 的人工验证步骤）。
 
+
+## 9. GitHub Actions 对本仓库停用，M6、M7 的 CI 没有跑（2026-11-25）
+
+- 从 `430aea0`（M6）起推送的 `430aea0`、`956bd55`、`ae33f5f`、`3b6897e` 都没有产生任何 workflow run；新加的 `upstream-check.yml` 也没有被 GitHub 登记。
+- 手动触发 `gh workflow run ios-ci.yml` 返回 `HTTP 422: Actions has been disabled for this repository.`；但仓库的 Actions 设置读出来是 `enabled: true`，GitHub 状态页显示 Actions 正常。所以看起来是 GitHub 在平台一侧停用了这个仓库或账号的 Actions，不是仓库设置。
+- 编码代理不去改仓库或账号设置。需要维护者到 GitHub 查看：仓库 Settings → Actions，以及账号邮箱里是否有 GitHub 发来的说明（例如 Actions 用量、账单或审核）。恢复后重新推送或在 Actions 页面手动运行 iOS CI，即可补跑 M6、M7。
+- 最后一次全绿的 CI：run 45668381916（`fe211a2`，M5）。M6、M7 只在本机跑过 Node 测试（learning-* 120/120，全量失败数等于基线）。
