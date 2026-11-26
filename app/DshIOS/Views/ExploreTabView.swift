@@ -64,7 +64,7 @@ struct ExploreTabView: View {
                         label(Text("网页版"), .web, Text("插件自带的界面在这里打开")) { leavesArrow }
                     }
                     .foregroundStyle(Palette.ink)
-                    row(.share, Text("分享 Fish Pocket"), .share, "海报、二维码或链接")
+                    // This branch does not show 「分享 Fish Pocket」 here (DECISIONS.md D29); ShareAppPage stays.
                 } header: {
                     Text("其他")
                 }

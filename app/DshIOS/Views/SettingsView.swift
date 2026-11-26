@@ -82,7 +82,7 @@ private struct SettingsList: View {
             // Pushed from the 探索 tab, these two are on that page.
             if !pushed {
                 Section {
-                    NavigationLink { ShareAppPage() } label: { ShareAppRow() }
+                    // This branch does not show 「分享 Fish Pocket」 here (DECISIONS.md D29).
                     // iPad pairs with no watch.
                     if WCSession.isSupported() {
                         NavigationLink { WatchSetupPage() } label: { WatchSetupRow() }

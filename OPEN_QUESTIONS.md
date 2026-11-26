@@ -89,7 +89,9 @@ LICENSE 附加条款允许「为了向原仓库提 PR 而 fork」。但第 2 条
 learning-socratic 要求模型不说出最终答案，学习者明确要求两次才给。这只是提示词约束，没有程序检查，模型可能做不到。CI 里没有真实模型，无法验证效果，需要人工试用（见 汇报_里程碑2.md 的人工验证步骤）。
 
 
-## 9. GitHub Actions 对本仓库停用，M6、M7 的 CI 没有跑（2026-11-25）
+## 9. GitHub Actions 对本仓库停用，M6、M7 的 CI 没有跑（2026-11-25，已解决）
+
+- **已解决（2026-11-25 20:22 PST）**：Actions 页面显示「Workflows on this fork have been disabled」（GitHub 为节省算力默认停用 fork 的 workflow），维护者点了「I understand my workflows, go ahead and re-enable them」。之后 iOS CI 和 Upstream merge check 都正常运行。下面是当时的记录。
 
 - 从 `430aea0`（M6）起推送的 `430aea0`、`956bd55`、`ae33f5f`、`3b6897e` 都没有产生任何 workflow run；新加的 `upstream-check.yml` 也没有被 GitHub 登记。
 - 手动触发 `gh workflow run ios-ci.yml` 返回 `HTTP 422: Actions has been disabled for this repository.`；但仓库的 Actions 设置读出来是 `enabled: true`，GitHub 状态页显示 Actions 正常。所以看起来是 GitHub 在平台一侧停用了这个仓库或账号的 Actions，不是仓库设置。

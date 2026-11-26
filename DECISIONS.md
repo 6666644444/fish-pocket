@@ -183,6 +183,12 @@
 - 「我的 Skills」写在 DSH 的用户 skill 目录，属于 DSH 而不是学习库，不删（界面里写明）。学习模式记录在学习库里，随之删除；会话本身不删。
 - 研究运行中不让删、不让恢复，避免后台还在写一个刚被替换的库。
 
+## D29 不在列表里显示「分享 Fish Pocket」（2026-11-25，用户要求）
+
+- 探索页「其他」分区（iPhone）和设置页顶部（iPad 等不用探索页的布局）各删了一行入口，各 1 行；`ShareAppPage`、`ShareAppRow`、路由 `.share`、「支持」弹窗（SupportDialog）里的分享按钮和调试启动参数 `-dshOpen share` 都保留，不改上游其他代码。
+- 来源仍然写明：设置里「开源仓库 imsai-sh/fish-pocket」、NOTICE、README，满足 LICENSE 第 3 条。
+- 同步上游：只有上游改了这两行附近时才会冲突，解决办法是保留上游改动、再删掉那一行。
+
 ## 改过的上游文件
 
 | 文件 | 改了什么 | 为什么 |
@@ -193,6 +199,8 @@
 | `app/DshIOS/Views/SettingsView.swift` | 新增一个 5 行的分区 | 见 D7 |
 | `app/Shared/Localizable.xcstrings` | 只在末尾追加：M1 34 条、M2 34、M3 41、M4 27、M5 27、M6 20，共 183 条；已有条目没动 | 见 D10；五种语言逐条翻译，覆盖率 3780/3780 |
 | `README.md`、`README.en.md` | M7：在「常见问题 / FAQ」前插入「学习功能」一节（含同步上游步骤），其他内容没动 | 总控 M7 |
+| `app/DshIOS/Views/ExploreTabView.swift` | 删去「分享 Fish Pocket」一行入口，换成一行注释 | D29 |
+| `app/DshIOS/Views/SettingsView.swift`（第二处） | 顶部分区删去「分享 Fish Pocket」一行入口，换成一行注释 | D29 |
 | `native/ios-native/caps_nlp.m` | M3：新增 `vectors` 函数和分发里的一行，已有操作没动 | 见 D17 |
 | `native/ios-native/ios_native.m` | M3：能力表 `nlp` 一行里加了 `"vectors"` | 见 D17 |
 | `native/root/test/learning-sqlite.mjs` | M3：加一项知识库检查（这是 fork 自己加的文件） | 模拟器上验证 v4 表、trigram、float32 向量 |
