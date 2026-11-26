@@ -74,6 +74,13 @@ import WebKit
         let revived = tab.page == nil
         let page = browser.revive(tab)
         var answer = try await page.serially {
+            // A picture the user closed shows again when the agent comes back to the browser: in a
+            // turn begun after it was closed, or after it had left the page (`BrowserPresence`).
+            // Not while it goes on in the turn the user closed it in.
+            if let hidden = browser.previewHiddenAt,
+               page.presence.driver == nil || app.turnStarted[session].map({ $0 > hidden }) == true {
+                browser.showPreview()
+            }
             page.presence.began(op == "new_tab" ? "open" : op == "select_tab" ? "read" : op, driver: session)
             // The panel's stop button ends the turn of the conversation at work here.
             page.presence.stop = { [weak app] in
