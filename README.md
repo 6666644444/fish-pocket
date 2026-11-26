@@ -205,6 +205,39 @@ iOS 不允许起子进程，所以这些运行时的“进程”都是 App 里�
 
 这里的“可用”指插件能被引擎加载，功能没有逐个试用。逐个插件的结果见 [#18](https://github.com/imsai-sh/fish-pocket/issues/18)。
 
+## 学习功能
+
+> 这一节属于本分支（基于 [Fish Pocket](https://github.com/imsai-sh/fish-pocket)，见 [NOTICE](NOTICE)），不是上游的功能。
+
+入口：设置 → 学习。所有学习数据只存在手机上的 `~/.dsh/learning/learning.db`（SQLite），不上传。
+
+| 功能 | 说明 |
+|---|---|
+| 笔记本 | 按笔记本整理笔记，Markdown，可全文搜索 |
+| 学习记忆 | 你希望 AI 长期记住的事（目标、偏好、薄弱点）；学习会话里自动挑几条相关的带给模型，可关 |
+| 学习模式 | 答疑讲解 / 引导式学习（苏格拉底式，一次只问一个问题）/ 出题测验，三种模式是随包的 Skill |
+| 我的 Skills | 自己写 Skill（`SKILL.md`），任意会话用 `/名字` 调用 |
+| 知识库 | 导入 txt、Markdown、带文字的 PDF；分块后用关键词 + Apple 句向量混合检索，结果带「《文档》第 n/N 段」出处；可选 OpenAI 兼容的向量服务（Key 只存在钥匙串） |
+| 题库与错题本 | 出题测验模式里模型出的题自动入库，判分在本地；答错进错题本，连续答对 2 次移出 |
+| 深度研究 | 在会话里说「帮我深入研究……」：拆解问题、多轮联网和知识库检索、交叉核对关键结论、补查遗漏，几分钟后给出带编号来源的报告；每一步都落盘，中断后可以继续 |
+| 学习数据 | 导出（笔记和报告是 Markdown，其余是 data.json）、导入、备份、恢复、一键删除全部学习数据（不碰会话、Bot、插件和设置） |
+
+设计和取舍：[docs/PLAN.md](docs/PLAN.md)（§11–§15）、[DECISIONS.md](DECISIONS.md)；待确认的问题：[OPEN_QUESTIONS.md](OPEN_QUESTIONS.md)。测试：`cd engine && node --test test/learning-*.test.mjs`；CI 还会在 iOS 模拟器上跑单元测试和真实 NodeMobile 上的 SQLite 检查。
+
+### 同步上游
+
+本分支用 merge（不 rebase、不强推）跟进上游：
+
+```bash
+scripts/sync-upstream.sh --check   # 只试合并并跑测试，结束后撤销
+scripts/sync-upstream.sh           # 真正合并 upstream/main，再跑学习测试和英文翻译覆盖率
+git push origin feat/learning-tool # 确认无误后自己推送
+```
+
+脚本会自动添加 `upstream` 远端（`https://github.com/imsai-sh/fish-pocket.git`）、补全浅克隆的历史。有冲突时它会列出文件并停下，解决后 `git commit`，或 `git merge --abort` 放弃。最容易冲突的是本分支改过的上游文件，清单在 [DECISIONS.md 的「改过的上游文件」](DECISIONS.md#改过的上游文件)：`engine/ios.patch.yml`（末尾一项）、`app/Shared/Localizable.xcstrings`（末尾追加的条目）、`app/DshIOS/Views/SettingsView.swift`（5 行）、`native/ios-native/caps_nlp.m` 与 `ios_native.m`、两份 README。冲突时保留上游的改动，再把本分支的那几行加回去。
+
+`.github/workflows/upstream-check.yml` 每周一在 GitHub 上试合并一次（只在临时环境里，不推送），合不进去或测试失败就会报红。
+
 ## 常见问题
 
 ### Fish Pocket 是什么？

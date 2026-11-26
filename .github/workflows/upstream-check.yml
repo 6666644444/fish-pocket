@@ -1,0 +1,57 @@
+# Weekly check that upstream Fish Pocket still merges into this fork: try merging
+# imsai-sh/fish-pocket main into the learning branch on the runner, run the learning tests
+# and the English translation coverage, and fail (listing conflicting files) when it does not.
+# Nothing is committed or pushed: the merge only exists on the runner (contents: read).
+# To actually sync, run scripts/sync-upstream.sh locally (README, 学习功能 → 同步上游).
+#
+# GitHub runs schedules only from the default branch's copy of this file; until it is there,
+# the push trigger below runs it whenever this file or the script changes.
+name: Upstream merge check
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Fork branch to merge into"
+        default: feat/learning-tool
+  push:
+    branches: ["feat/**"]
+    paths: [".github/workflows/upstream-check.yml", "scripts/sync-upstream.sh"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: upstream-check
+  cancel-in-progress: true
+
+jobs:
+  merge-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.inputs.branch || (github.event_name == 'push' && github.ref) || 'feat/learning-tool' }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24.20'
+      - name: Try the merge and test it
+        run: |
+          git config user.name "upstream-check"
+          git config user.email "upstream-check@users.noreply.github.com"
+          scripts/sync-upstream.sh --check 2>&1 | tee check.log
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Upstream merge check"
+            echo
+            echo '```'
+            tail -n 60 check.log 2>/dev/null || echo "no log"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

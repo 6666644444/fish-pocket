@@ -1,0 +1,37 @@
+# NOTICE
+
+## 来源 / Origin
+
+这个分支基于 Fish Pocket（鱼兜）：<https://github.com/imsai-sh/fish-pocket>，在它之上增加了「学习功能」（笔记本、学习记忆、学习模式、自定义 Skills、知识库、题库与错题本、深度研究、学习数据的导出备份删除）。Fish Pocket 以 MIT 协议发布，附带的限制见 [LICENSE](LICENSE) 末尾：商用需要授权；公开发布改造版之前要先在 Fish Pocket 的 issue 里说明；改造版要写明基于 Fish Pocket 并使用自己的名称和图标。
+
+This branch is based on Fish Pocket, <https://github.com/imsai-sh/fish-pocket>, and adds learning features on top of it. Fish Pocket is released under the MIT license with the additional terms at the end of [LICENSE](LICENSE).
+
+- 授权来源 / Authorization (issue link)：
+
+（由仓库维护者在发布前填写 Fish Pocket issue 的链接。 / To be filled in by the maintainer with the Fish Pocket issue link before any release.）
+
+## DeepTutor（Apache-2.0）
+
+`engine/plugins/learning/research.mjs` 中深度研究的流程（拆解子课题、每个子课题的多轮检索循环与动态课题队列、每条检索结果的摘要笔记、引用编号规则、分节写报告）和部分提示词，改编自 DeepTutor 的研究模块（`deeptutor/agents/research`）：
+
+The deep research pipeline in `engine/plugins/learning/research.mjs` (sub-topic planning, the per-topic research loop with a dynamic topic queue, per-result notes, citation rules and sectioned report writing) and some of its prompts are adapted from DeepTutor's research agents (`deeptutor/agents/research`):
+
+    DeepTutor — https://github.com/HKUDS/DeepTutor
+    Copyright HKUDS (Data Intelligence Lab, The University of Hong Kong) and the DeepTutor contributors
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+改动：从 Python 改写为 JavaScript，跑在 DSH 引擎的学习插件里；模型和搜索换成 DSH 的服务；新增了关键结论交叉验证、全局盲区检查、逐步落盘与断点续跑、模型调用预算。没有复制 DeepTutor 的其他部分。
+
+Changes: rewritten from Python to JavaScript inside the DSH engine's learning plugin, using DSH's model and web services; cross-checking of key claims, a global gap review, step-by-step persistence with resume, and a model-call budget were added. No other part of DeepTutor is included.
+
+其余第三方组件见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。学习功能没有新增任何第三方依赖。 / Other third-party components: see THIRD_PARTY_NOTICES.md. The learning features add no third-party dependency.

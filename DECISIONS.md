@@ -188,10 +188,11 @@
 | 文件 | 改了什么 | 为什么 |
 |---|---|---|
 | `engine/ios.patch.yml` | 只在 `insert` 末尾追加了 `learning` 一项，已有条目没动 | 注册学习插件 |
-| `.github/workflows/ios-ci.yml` | 新增 `engine-tests` job，以及 macOS job 里的「Learning SQLite on NodeMobile」这一步（这个文件是 fork 自己加的，不是上游的） | 见 D5、D9 |
+| `.github/workflows/ios-ci.yml` | 新增 `engine-tests` job，以及 macOS job 里的「Learning SQLite on NodeMobile」这一步、Test summary 里打印 NLEmbedding 评估（这个文件是 fork 自己加的，不是上游的） | 见 D5、D9 |
 | `docs/PLAN.md` | 从仓库根目录挪进来（git mv），然后补充内容 | fork 自己的文档 |
 | `app/DshIOS/Views/SettingsView.swift` | 新增一个 5 行的分区 | 见 D7 |
-| `app/Shared/Localizable.xcstrings` | 在末尾追加 34 条（M1），M2 再追加 34 条 | 见 D10；M2 同样五种语言逐条翻译，覆盖率 3665/3665 |
+| `app/Shared/Localizable.xcstrings` | 只在末尾追加：M1 34 条、M2 34、M3 41、M4 27、M5 27、M6 20，共 183 条；已有条目没动 | 见 D10；五种语言逐条翻译，覆盖率 3780/3780 |
+| `README.md`、`README.en.md` | M7：在「常见问题 / FAQ」前插入「学习功能」一节（含同步上游步骤），其他内容没动 | 总控 M7 |
 | `native/ios-native/caps_nlp.m` | M3：新增 `vectors` 函数和分发里的一行，已有操作没动 | 见 D17 |
 | `native/ios-native/ios_native.m` | M3：能力表 `nlp` 一行里加了 `"vectors"` | 见 D17 |
 | `native/root/test/learning-sqlite.mjs` | M3：加一项知识库检查（这是 fork 自己加的文件） | 模拟器上验证 v4 表、trigram、float32 向量 |

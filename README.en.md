@@ -205,6 +205,39 @@ We took the 50 most-downloaded community DSH plugins as a sample and ran each on
 
 "Work" means the engine loads the plugin. We did not try each plugin's features. See [#18](https://github.com/imsai-sh/fish-pocket/issues/18) for per-plugin results.
 
+## Learning features
+
+> This section belongs to this branch (based on [Fish Pocket](https://github.com/imsai-sh/fish-pocket), see [NOTICE](NOTICE)), not to upstream.
+
+Find them under Settings → Learning. All learning data stays on the phone in `~/.dsh/learning/learning.db` (SQLite) and is never uploaded.
+
+| Feature | What it does |
+|---|---|
+| Notebooks | Notes in Markdown, grouped in notebooks, with full-text search |
+| Learning memory | Things the AI should remember about you (goals, preferences, weak spots); a few relevant ones go with each learning session, can be turned off |
+| Learning modes | Q&A tutor / guided (Socratic, one question at a time) / quiz, shipped as three skills |
+| My Skills | Write your own skills (`SKILL.md`) and call them with `/name` in any conversation |
+| Knowledge base | Import txt, Markdown and PDFs with text; chunked and searched by keywords plus Apple sentence vectors, with “《document》 part n/N” citations; optional OpenAI-compatible embedding service (key kept in the Keychain) |
+| Question bank & mistakes | Questions from the quiz mode are saved and graded on the device; wrong ones go into a mistake book and leave it after 2 correct answers in a row |
+| Deep research | Say “research … in depth” in a conversation: the question is broken down, searched in several rounds on the web and in your knowledge base, key claims are cross-checked and gaps filled, and a report with numbered sources follows after a few minutes; every step is saved, so a stopped run continues |
+| Learning data | Export (notes and reports as Markdown, the rest as data.json), import, backup, restore, and deleting all learning data (conversations, Bots, plugins and settings are not touched) |
+
+Design and trade-offs: [docs/PLAN.md](docs/PLAN.md) (§11–§15) and [DECISIONS.md](DECISIONS.md) (in Chinese); open questions: [OPEN_QUESTIONS.md](OPEN_QUESTIONS.md). Tests: `cd engine && node --test test/learning-*.test.mjs`; CI also runs the unit tests on an iOS simulator and a SQLite check on the real NodeMobile.
+
+### Syncing with upstream
+
+This branch follows upstream by merging (no rebase, no force push):
+
+```bash
+scripts/sync-upstream.sh --check   # try the merge and the tests, then undo
+scripts/sync-upstream.sh           # merge upstream/main, then run the learning tests and English translation coverage
+git push origin feat/learning-tool # push yourself once it looks right
+```
+
+The script adds the `upstream` remote (`https://github.com/imsai-sh/fish-pocket.git`) and deepens a shallow clone. On conflicts it lists the files and stops; resolve them and `git commit`, or `git merge --abort`. Conflicts are most likely in the upstream files this branch changed, listed in [DECISIONS.md, “改过的上游文件”](DECISIONS.md#改过的上游文件): `engine/ios.patch.yml` (one entry at the end), `app/Shared/Localizable.xcstrings` (entries appended at the end), `app/DshIOS/Views/SettingsView.swift` (5 lines), `native/ios-native/caps_nlp.m` and `ios_native.m`, and both READMEs. Keep upstream's change and add this branch's lines back.
+
+`.github/workflows/upstream-check.yml` tries the merge on GitHub every Monday (on the runner only, nothing is pushed) and fails when it does not merge or the tests fail.
+
 ## FAQ
 
 ### What is Fish Pocket?
