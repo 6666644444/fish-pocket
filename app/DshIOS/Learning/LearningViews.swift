@@ -118,6 +118,9 @@ struct LearningHomePage: View {
             NavigationLink { ResearchListPage() } label: {
                 Label("深度研究", systemImage: "doc.text.magnifyingglass")
             }
+            NavigationLink { LearningDataPage() } label: {
+                Label("学习数据", systemImage: "externaldrive")
+            }
         } footer: {
             Text("学习记忆只供学习功能使用，和 Bot 的记忆分开保存。开启后，学习会话每一轮会按相关度附上最多 3 条学习记忆（合计不超过 800 字），普通会话不受影响。")
         }

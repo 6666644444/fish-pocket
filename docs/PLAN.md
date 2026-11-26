@@ -126,7 +126,7 @@ SwiftUI 外壳（app/DshIOS）
 | 9 | 浏览器、手机控制、分享扩展、小组件、手表、快捷指令 | 否 | 各操作一次 |
 | 10 | iPad / iPhone Duo 的分栏和 Tab 布局 | 否 | 在这些机型的模拟器上打开首页 |
 | 11 | 「引擎修复」页的恢复和重置 | 部分（recovery.test.mjs，学习库不会被当成设置：learning-store.test.mjs）| 重置一次之后，学习数据仍然在 |
-| 12 | 学习功能（从 M1 起新增）：笔记本、学习记忆；M2 起：三种学习模式、学习记忆注入开关、我的 Skills；M3 起：知识库导入、搜索、向量设置；M4 起：题库与错题本、出题测验模式里的 learning_quiz 工具；M5 起：deep_research 工具、深度研究页 | Node 部分能 | 见各里程碑的汇报 |
+| 12 | 学习功能（从 M1 起新增）：笔记本、学习记忆；M2 起：三种学习模式、学习记忆注入开关、我的 Skills；M3 起：知识库导入、搜索、向量设置；M4 起：题库与错题本、出题测验模式里的 learning_quiz 工具；M5 起：deep_research 工具、深度研究页；M6 起：学习数据（导出、导入、备份、恢复、一键删除） | Node 部分能 | 见各里程碑的汇报 |
 | 13 | 普通会话不受学习功能影响（M2 起） | 能（learning-modes.test.mjs：没有模式的会话原样通过） | 新建普通会话发一句话，确认回答方式和以前一样 |
 
 ## 8. 学习库的数据模型（M1）
@@ -341,3 +341,34 @@ skills.* 不打开学习库。
 
 ### 14.6 界面
 设置 → 学习 →「深度研究」：联网开关、任务列表、任务详情（状态、进度、结论核查、报告、分享、继续、停止、删除）。研究本身在会话里由模型发起。只保证编译通过。
+
+## 15. 导出、备份、一键删除（M6）
+
+只操作 `$DSH_HOME/learning/`（学习库、WAL、`exports/`、`backups/`），不碰 DSH 自己的文件、ds-bot 的数据、会话、「我的 Skills」。代码在 plugins/learning/portable.mjs。
+
+### 15.1 导出与导入
+- 导出写到 `learning/exports/learning-export-<时间>/`：`notes/<笔记本>/<笔记>.md`（文件名去掉 `/\:*?"<>|`，同名加「 (2)」）、`research/<主题>.md`（已完成的研究报告）、`data.json`（全部数据，内部 id 换成导出内的引用；知识库资料存还原后的全文；研究存报告、结论核查和来源，不存中间步骤）、`README.md`。App 用 ShareLink 分享或存到「文件」。
+- 导入：读 data.json，只导入**空的**学习库（否则 409），一个事务，不合格就什么都不写；资料重新分块，向量之后重建。格式版本 `EXPORT_VERSION = 1`，比 App 新的拒绝。
+- 测试：导出 → 导入到空库 → 两边 dump 完全相等。
+
+### 15.2 备份与恢复
+- 备份：`VACUUM INTO learning/backups/learning-<时间>.db`（一致的快照，WAL 中的数据也在），同一秒重名加 `-2`。
+- 恢复：只接受 `backups/` 里列出的文件名；先检查 application_id 和 schema 版本（1..当前），再给当前库做一份安全备份，关闭学习库，替换文件，重新打开（旧版本备份会被迁移到当前版本）。研究运行中拒绝。
+
+### 15.3 一键删除
+- `data.delete` 必须带 `confirm: "delete-learning-data"`，研究运行中拒绝；关闭学习库后删除整个 `learning/` 目录，之后再打开就是空库。
+- App 两次确认，第一次列出要删除和不会删除的内容（带数量）。
+- 测试：在假 `$DSH_HOME` 里放 settings、会话、profiles、skills，删除后 `learning/` 不存在，其余文件逐字节不变（sha256）。
+
+### 15.4 接口
+| 方法 | 参数 | 返回 |
+|---|---|---|
+| data.summary | — | 各类数量 |
+| data.export | — | {path, 各类数量} |
+| data.import | {data} 或 {path} | {imported} |
+| backup.create / backup.list | — | {path, name, bytes} / [{name, bytes}] |
+| backup.restore | {name} | {restored, schemaVersion, previous} |
+| data.delete | {confirm} | {deleted} |
+
+### 15.5 界面
+设置 → 学习 →「学习数据」：导出并分享、从 data.json 导入、立即备份、备份列表（点一下恢复）、删除全部学习数据（两次确认）。只保证编译通过。

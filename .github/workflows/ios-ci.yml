@@ -197,8 +197,13 @@ jobs:
           total="$(echo "$summary" | jq -r '.totalTestCount // 0')"
           # Findings the learning tests print (NLEmbedding evaluation, docs/PLAN.md §12.6). -quiet
           # hides test output, so read it back from the result bundle's console log.
-          xcrun xcresulttool get log --path build/TestResults.xcresult --type console 2>/dev/null | grep -a 'NLEMBED' \
-            || echo "NLEMBED: no evaluation lines in the console log"
+          if [ -s "$HOME/nlembed.txt" ]; then
+            cat "$HOME/nlembed.txt"
+          else
+            mkdir -p build/attachments
+            xcrun xcresulttool export attachments --path build/TestResults.xcresult --output-path build/attachments >/dev/null 2>&1 || true
+            grep -rah 'NLEMBED' build/attachments 2>/dev/null || echo "NLEMBED: no evaluation lines found"
+          fi
           [ "$total" -gt 0 ] || { echo "no unit tests ran" >&2; exit 1; }
 
       # The learning plugin's SQLite on the real NodeMobile in the simulator booted above:

@@ -27,6 +27,19 @@ import { SkillFiles, skillsDir } from './skills.mjs';
 import { appleEmbedder, appleQueryVectors, embedPending } from './embed.mjs';
 import { quizTool } from './quiz-tool.mjs';
 import { ResearchRunner, researchTool } from './research-tool.mjs';
+import {
+  backupLibrary, deleteLearningData, exportLibrary, importExport, importLibrary, listBackups, restoreLibrary,
+} from './portable.mjs';
+import path from 'node:path';
+
+/** What the library holds, for the deletion dialog. */
+function summary(store) {
+  const count = (table) => store.db.prepare(`SELECT count(*) AS n FROM ${table}`).get().n;
+  return {
+    notebooks: count('notebooks'), notes: count('notes'), memories: count('memories'), documents: count('kb_documents'),
+    questions: count('quiz_questions'), mistakes: count('quiz_mistakes'), research: count('research_jobs'),
+  };
+}
 
 export const ROUTE = '/api/learning';
 
@@ -122,6 +135,15 @@ export const METHODS = {
     if (runner.running.has(p.id)) throw new LearningError('conflict', 'cancel the research before deleting it');
     return store.deleteResearchJob(p);
   },
+  // M6: export, import, backup, restore and deleting all learning data. Only `$DSH_HOME/learning`
+  // is touched (portable.mjs).
+  'data.summary': ({ store }) => summary(store),
+  'data.export': ({ portable }) => portable.export(),
+  'data.import': ({ portable }, p) => portable.import(p),
+  'backup.create': ({ portable }) => portable.backup(),
+  'backup.list': ({ portable }) => portable.listBackups(),
+  'backup.restore': ({ portable }, p) => portable.restore(p),
+  'data.delete': ({ portable }, p) => portable.deleteAll(p),
 };
 
 const STATUS = { invalid: 400, 'not-found': 404, conflict: 409, unsupported: 422, unavailable: 503 };
@@ -152,7 +174,7 @@ export function call(open, method, params, skills = () => new SkillFiles(skillsD
   };
   const done = (value) => json({ ok: true, result: value ?? null });
   try {
-    const where = { skills, embedder: kb.embedder ?? null, index: kb.index ?? (() => null), runner: kb.runner };
+    const where = { skills, embedder: kb.embedder ?? null, index: kb.index ?? (() => null), runner: kb.runner, portable: kb.portable };
     Object.defineProperty(where, 'store', { get: open });
     const value = run(where, params);
     return value && typeof value.then === 'function' ? value.then(done, fail) : done(value);
@@ -205,7 +227,7 @@ export default class Learning {
     // Apple's embedding (null off iOS, or when a test passes `embedder: null`). Indexing runs
     // in the background, one run at a time, and stops when the plugin is disposed.
     const embedder = config.embedder !== undefined ? config.embedder : appleEmbedder();
-    const stop = new AbortController();
+    let stop = new AbortController();
     let indexing = null;
     const index = () => {
       if (!embedder || stop.signal.aborted) return null;
@@ -229,7 +251,43 @@ export default class Learning {
     };
     const runner = new ResearchRunner({ open, get: service, embedder, logger: ctx.logger, ...(config.callModel ? { callModel: config.callModel } : {}) });
     this.research = runner;
-    const kb = { embedder, index, runner };
+    // M6: the library's own folder, and the operations that close and replace or remove it.
+    const libraryPath = () => config.file ?? libraryFile();
+    const learningDir = () => path.dirname(libraryPath());
+    const busy = () => {
+      if (runner.running.size) throw new LearningError('conflict', 'research is running; stop it first');
+    };
+    const closeLibrary = async () => {
+      stop.abort();
+      await indexing?.catch(() => {});
+      stop = new AbortController();
+      store?.close();
+      store = undefined;
+    };
+    const portable = {
+      export: () => exportLibrary(open(), learningDir()),
+      import: (p) => (p?.data !== undefined ? importLibrary(open(), p.data) : importExport(open(), String(p?.path ?? ''))),
+      backup: () => backupLibrary(open(), learningDir()),
+      listBackups: () => listBackups(learningDir()).map(({ name, bytes }) => ({ name, bytes })),
+      restore: async (p) => {
+        busy();
+        const name = String(p?.name ?? '');
+        const found = listBackups(learningDir()).find((b) => b.name === name);
+        if (!found) throw new LearningError('not-found', `no backup named ${name}`);
+        const safety = backupLibrary(open(), learningDir(), Date.now() + 1_000);
+        await closeLibrary();
+        const result = restoreLibrary(libraryPath(), found.path, () => safety);
+        open();
+        return result;
+      },
+      deleteAll: async (p) => {
+        if (p?.confirm !== 'delete-learning-data') throw new LearningError('invalid', 'confirm must be "delete-learning-data"');
+        busy();
+        await closeLibrary();
+        return deleteLearningData(learningDir());
+      },
+    };
+    const kb = { embedder, index, runner, portable };
     for (const method of Object.keys(METHODS)) {
       ctx.effect(() => ctx.connection.fetch.register({
         path: `${ROUTE}/${method}`,

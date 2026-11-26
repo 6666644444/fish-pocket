@@ -109,17 +109,33 @@ final class KnowledgeAPITests: XCTestCase {
             (.simplifiedChinese, "导数表示函数的变化率", "函数在一点的瞬时变化率就是导数", "今天下午去超市买苹果"),
             (.english, "The derivative measures how a function changes", "A derivative is the instantaneous rate of change", "I bought apples at the market"),
         ]
+        var lines: [String] = []
+        defer { record(lines) }
         for (language, query, related, unrelated) in cases {
             guard let embedding = NLEmbedding.sentenceEmbedding(for: language) else {
-                print("NLEMBED language=\(language.rawValue) available=false")
+                lines.append("NLEMBED language=\(language.rawValue) available=false")
                 continue
             }
             let near = embedding.distance(between: query, and: related, distanceType: .cosine)
             let far = embedding.distance(between: query, and: unrelated, distanceType: .cosine)
             let vector = embedding.vector(for: query)
-            print("NLEMBED language=\(language.rawValue) available=true dimension=\(embedding.dimension) revision=\(embedding.revision) vector=\(vector?.count ?? -1) near=\(near) far=\(far) order=\(near < far ? "ok" : "wrong")")
+            lines.append("NLEMBED language=\(language.rawValue) available=true dimension=\(embedding.dimension) revision=\(embedding.revision) vector=\(vector?.count ?? -1) near=\(near) far=\(far) order=\(near < far ? "ok" : "wrong")")
             XCTAssertEqual(vector?.count, embedding.dimension)
             // The order is recorded, not asserted: a poor ranking is a finding for DECISIONS, not a broken build.
+        }
+    }
+
+    /// `xcodebuild -quiet` hides print(): keep the lines as a test attachment and, on the
+    /// simulator, in the host's home folder, where the CI's Test summary step reads them.
+    private func record(_ lines: [String]) {
+        let text = lines.joined(separator: "\n") + "\n"
+        print(text, terminator: "")
+        let attachment = XCTAttachment(string: text)
+        attachment.name = "NLEMBED"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+        if let host = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"] {
+            try? text.write(toFile: (host as NSString).appendingPathComponent("nlembed.txt"), atomically: true, encoding: .utf8)
         }
     }
 }
