@@ -12,10 +12,10 @@ struct ConversationActivity: View {
     let openJobs: () -> Void
     @Environment(AppModel.self) private var app
 
-    /// A subagent works in the browser of the conversation that started it.
+    /// A subagent works in the browser of the conversation that started it, a Bot's chat in the Bot's.
     @MainActor
     static func browser(of sessionId: String, in app: AppModel) -> BrowserModel? {
-        guard let model = BrowserModel.existing(BrowserAgent.owner(of: sessionId, in: app)), model.hasPages else { return nil }
+        guard let model = BrowserOwnership.existing(of: sessionId, in: app), model.hasPages else { return nil }
         return model
     }
 

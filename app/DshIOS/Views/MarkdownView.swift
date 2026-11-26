@@ -262,6 +262,7 @@ extension EnvironmentValues {
 
 /// Where a conversation's web links open: its own browser (S-87), the page the agent drives too.
 struct BrowserLinks: Equatable {
+    /// The session the links are in; whose browser that is, `BrowserOwnership` says.
     let sessionId: String
     let origin: URL
     /// The workbench shows that browser beside the conversation, so the page opens there.
@@ -321,12 +322,15 @@ struct LinkOpening: ViewModifier {
             InAppSafari.open(url)
             return
         }
-        let model = BrowserModel.session(links.sessionId, origin: links.origin)
-        // A tab of its own: the page the user or the agent had open stays as it was.
-        model.openLink(url.absoluteString)
-        if !links.beside {
-            dismissKeyboard()
-            browser = model
+        guard let app = EngineConnection.shared.app else {
+            InAppSafari.open(url)
+            return
+        }
+        if !links.beside { dismissKeyboard() }
+        BrowserOwnership.open(links.sessionId, in: app) { model in
+            // A tab of its own: the page the user or the agent had open stays as it was.
+            model.openLink(url.absoluteString)
+            if !links.beside { browser = model }
         }
     }
 }
