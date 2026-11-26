@@ -207,7 +207,7 @@ iOS 不允许起子进程，所以这些运行时的“进程”都是 App 里�
 
 ## 学习功能
 
-> 这一节属于本分支（基于 [Fish Pocket](https://github.com/imsai-sh/fish-pocket)，见 [NOTICE](NOTICE)），不是上游的功能。
+> 这一节属于本分支，不是上游的功能。
 
 入口：设置 → 学习。所有学习数据只存在手机上的 `~/.dsh/learning/learning.db`（SQLite），不上传。
 

@@ -207,7 +207,7 @@ We took the 50 most-downloaded community DSH plugins as a sample and ran each on
 
 ## Learning features
 
-> This section belongs to this branch (based on [Fish Pocket](https://github.com/imsai-sh/fish-pocket), see [NOTICE](NOTICE)), not to upstream.
+> This section belongs to this branch, not to upstream.
 
 Find them under Settings → Learning. All learning data stays on the phone in `~/.dsh/learning/learning.db` (SQLite) and is never uploaded.
 
