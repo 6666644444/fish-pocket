@@ -167,6 +167,35 @@ jobs:
             overridden=yes
           fi
           pack "$one" "$base-single-profile.ipa"
+
+          # 3. Everything, retargeted to the maintainer's IDs: the app as in 2, and each bundle
+          #    inside it renamed by replacing the built app's ID prefix with IPA_BUNDLE_ID
+          #    (com.wsw.dsh-ios.Share -> <id>.Share, .LiveActivity, .watchkitapp), the App Group
+          #    the extensions read, and the watch app's companion ID. The signer then needs one
+          #    profile per bundle, each with that bundle's ID.
+          full_note="not made (IPA_BUNDLE_ID unset)"
+          if [ -n "${IPA_BUNDLE_ID:-}" ]; then
+            all="build/full-profile/DshIOS.app"
+            rm -rf build/full-profile && mkdir -p build/full-profile && cp -R "$app" "$all"
+            ids=""
+            while IFS= read -r plist; do
+              old="$($pb -c 'Print CFBundleIdentifier' "$plist" 2>/dev/null || true)"
+              case "$old" in "$built_id"|"$built_id".*) ;; *) continue ;; esac
+              new="$IPA_BUNDLE_ID${old#"$built_id"}"
+              $pb -c "Set :CFBundleIdentifier $new" "$plist"
+              if $pb -c 'Print DshAppGroup' "$plist" >/dev/null 2>&1 && [ -n "${IPA_APP_GROUP:-}" ]; then
+                $pb -c "Set :DshAppGroup $IPA_APP_GROUP" "$plist"
+              fi
+              if $pb -c 'Print WKCompanionAppBundleIdentifier' "$plist" >/dev/null 2>&1; then
+                $pb -c "Set :WKCompanionAppBundleIdentifier $IPA_BUNDLE_ID" "$plist"
+              fi
+              ids="$ids\n    $new  ($(dirname "${plist#"$all"/}" | sed 's#^\.$#app#'))"
+            done < <(find "$all" -name Info.plist -not -path '*/Frameworks/*' -not -path '*/python/*')
+            $pb -c "Add :BGTaskSchedulerPermittedIdentifiers: string $IPA_BUNDLE_ID.task.*" "$all/Info.plist" 2>/dev/null || true
+            pack "$all" "$base-full-profile.ipa"
+            full_note="bundle IDs:$ids"
+            printf "full-profile bundle IDs:%b\n" "$ids"
+          fi
           ls -lh Firefly-*.ipa
           {
             echo "## Unsigned IPA"
@@ -174,6 +203,11 @@ jobs:
             echo "- $name $version ($build), commit ${GITHUB_SHA:0:7}"
             echo "- \`$base.ipa\`: as built (bundle ID $built_id), with the share and Live Activity extensions and the watch app"
             echo "- \`$base-single-profile.ipa\`: no extensions or watch app; IDs set from repository variables: $overridden"
+            echo "- \`$base-full-profile.ipa\`: everything, retargeted; one provisioning profile per bundle"
+            echo
+            echo '```'
+            printf "%b\n" "$full_note"
+            echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload IPA
