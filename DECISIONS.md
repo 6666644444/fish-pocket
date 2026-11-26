@@ -218,6 +218,12 @@
 - 用户的描述文件（2026-11-25 查看，只读了 .mobileprovision，没打开 p12 和密码）：Ad Hoc，一个明确的 App ID、只含用户这一台设备，2027-01-07 到期；有 App Group、HealthKit、HomeKit，没有「通过 Apple 登录」。所以另出一个 `-single-profile` 包：去掉两个扩展和手表 App（它们各需要自己的 App ID），并用仓库变量 `IPA_BUNDLE_ID`、`IPA_APP_GROUP` 把 Info.plist 里的 Bundle ID、App Group 和后台任务前缀改成描述文件的。变量只存在仓库设置里，不进代码。
 - 用户想保留扩展和手表 App（2026-11-25）：再出一个 `-full-profile` 包，保留全部，每个 bundle 的 ID 把上游前缀 `com.wsw.dsh-ios` 换成 `IPA_BUNDLE_ID`（`.Share`、`.LiveActivity`、`.watchkitapp` 后缀不变），扩展的 `DshAppGroup` 换成 `IPA_APP_GROUP`，手表 App 的 `WKCompanionAppBundleIdentifier` 换成主 App 的新 ID。用户去要同一个 Team 下这三个 ID 的描述文件（两个扩展要开 App Group，手表的要包含手表 UDID）。
 
+## D35 免费 Apple ID 自签用的包（2026-11-26，用户决定）
+
+- 用户改用自己的免费 Apple ID（Windows 上用 Sideloadly 一类工具）签名。Apple ID 只在用户自己的签名工具里登录，不经过编码代理。
+- 打包任务多出 `Firefly-…-free-apple-id.ipa`：用只属于用户的新 ID（仓库变量 `IPA_FREE_BUNDLE_ID` = `com.firefly.learn.2gafst`，`IPA_FREE_APP_GROUP` = `group.com.firefly.learn.2gafst`），上游的 ID 免费账号注册不了；保留分享扩展和小组件/实时活动扩展，去掉手表 App（免费账号一台手机最多 3 个自签 App，扩展也算）；每个 bundle 用 ad hoc 签名写入 App Group 权限，让签名工具知道要申请什么。HealthKit、HomeKit 没写进去：免费账号是否支持没能在官方页面确认，写了可能导致签名失败；需要时再试。
+- 限制：每 7 天重签（同一个包、同一个 Apple ID，覆盖安装，数据保留）；免费账号 7 天内最多注册 10 个 App ID，这个包占 3 个，所以不要频繁换 ID。签名工具若没申请到 App Group，主 App 照常可用，分享扩展和小组件拿不到数据。
+
 ## 改过的上游文件
 
 | 文件 | 改了什么 | 为什么 |

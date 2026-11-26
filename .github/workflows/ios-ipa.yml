@@ -130,10 +130,13 @@ jobs:
       - name: Pack IPA
         working-directory: app
         env:
-          # Repository variables (Settings > Secrets and variables > Actions > Variables), set to match
-          # the maintainer's own provisioning profile. Empty: the single-profile IPA keeps the built IDs.
+          # Repository variables (Settings > Secrets and variables > Actions > Variables). Empty: that
+          # IPA is not made. IPA_BUNDLE_ID / IPA_APP_GROUP match the maintainer's provisioning profile;
+          # IPA_FREE_BUNDLE_ID / IPA_FREE_APP_GROUP are IDs of his own for signing with a free Apple ID.
           IPA_BUNDLE_ID: ${{ vars.IPA_BUNDLE_ID }}
           IPA_APP_GROUP: ${{ vars.IPA_APP_GROUP }}
+          IPA_FREE_BUNDLE_ID: ${{ vars.IPA_FREE_BUNDLE_ID }}
+          IPA_FREE_APP_GROUP: ${{ vars.IPA_FREE_APP_GROUP }}
         run: |
           set -euo pipefail
           app="build/DerivedData/Build/Products/Release-iphoneos/DshIOS.app"
@@ -144,69 +147,85 @@ jobs:
           name="$($pb -c 'Print CFBundleDisplayName' "$app/Info.plist")"
           built_id="$($pb -c 'Print CFBundleIdentifier' "$app/Info.plist")"
           base="Firefly-$version-$build"
+          notes=""
           pack() { rm -rf ipa && mkdir -p ipa/Payload && cp -R "$1" ipa/Payload/ && (cd ipa && zip -qry "../$2" Payload); }
-
-          # 1. Everything as built: the app, its share and Live Activity extensions, the watch app.
-          pack "$app" "$base.ipa"
-
-          # 2. For one provisioning profile with one explicit App ID: no extensions or watch app
-          #    (each needs its own App ID), and the IDs the app reads at run time set to the
-          #    profile's, so the signer has nothing to change.
-          one="build/single-profile/DshIOS.app"
-          rm -rf build/single-profile && mkdir -p build/single-profile && cp -R "$app" "$one"
-          rm -rf "$one/PlugIns" "$one/Watch"
-          overridden=no
-          if [ -n "${IPA_BUNDLE_ID:-}" ]; then
-            $pb -c "Set :CFBundleIdentifier $IPA_BUNDLE_ID" "$one/Info.plist"
-            # BackgroundKeeper registers "<bundle id>.task.<uuid>": permit the new prefix too.
-            $pb -c "Add :BGTaskSchedulerPermittedIdentifiers: string $IPA_BUNDLE_ID.task.*" "$one/Info.plist" 2>/dev/null || true
-            overridden=yes
-          fi
-          if [ -n "${IPA_APP_GROUP:-}" ]; then
-            $pb -c "Set :DshAppGroup $IPA_APP_GROUP" "$one/Info.plist"
-            overridden=yes
-          fi
-          pack "$one" "$base-single-profile.ipa"
-
-          # 3. Everything, retargeted to the maintainer's IDs: the app as in 2, and each bundle
-          #    inside it renamed by replacing the built app's ID prefix with IPA_BUNDLE_ID
-          #    (com.wsw.dsh-ios.Share -> <id>.Share, .LiveActivity, .watchkitapp), the App Group
-          #    the extensions read, and the watch app's companion ID. The signer then needs one
-          #    profile per bundle, each with that bundle's ID.
-          full_note="not made (IPA_BUNDLE_ID unset)"
-          if [ -n "${IPA_BUNDLE_ID:-}" ]; then
-            all="build/full-profile/DshIOS.app"
-            rm -rf build/full-profile && mkdir -p build/full-profile && cp -R "$app" "$all"
-            ids=""
+          copy() { rm -rf "build/$1" && mkdir -p "build/$1" && cp -R "$app" "build/$1/DshIOS.app" && echo "build/$1/DshIOS.app"; }
+          # Every bundle whose ID starts with the built app's gets NEW_ID in its place (.Share,
+          # .LiveActivity, .watchkitapp kept); the App Group the bundles read and the watch app's
+          # companion ID follow; the background-task prefix of the new ID is permitted.
+          retarget() {
+            local dir="$1" new_id="$2" group="$3" plist old new
             while IFS= read -r plist; do
               old="$($pb -c 'Print CFBundleIdentifier' "$plist" 2>/dev/null || true)"
               case "$old" in "$built_id"|"$built_id".*) ;; *) continue ;; esac
-              new="$IPA_BUNDLE_ID${old#"$built_id"}"
+              new="$new_id${old#"$built_id"}"
               $pb -c "Set :CFBundleIdentifier $new" "$plist"
-              if $pb -c 'Print DshAppGroup' "$plist" >/dev/null 2>&1 && [ -n "${IPA_APP_GROUP:-}" ]; then
-                $pb -c "Set :DshAppGroup $IPA_APP_GROUP" "$plist"
+              if [ -n "$group" ] && $pb -c 'Print DshAppGroup' "$plist" >/dev/null 2>&1; then
+                $pb -c "Set :DshAppGroup $group" "$plist"
               fi
               if $pb -c 'Print WKCompanionAppBundleIdentifier' "$plist" >/dev/null 2>&1; then
-                $pb -c "Set :WKCompanionAppBundleIdentifier $IPA_BUNDLE_ID" "$plist"
+                $pb -c "Set :WKCompanionAppBundleIdentifier $new_id" "$plist"
               fi
-              ids="$ids\n    $new  ($(dirname "${plist#"$all"/}" | sed 's#^\.$#app#'))"
-            done < <(find "$all" -name Info.plist -not -path '*/Frameworks/*' -not -path '*/python/*')
-            $pb -c "Add :BGTaskSchedulerPermittedIdentifiers: string $IPA_BUNDLE_ID.task.*" "$all/Info.plist" 2>/dev/null || true
+              notes="$notes\n    $new"
+            done < <(find "$dir" -name Info.plist -not -path '*/Frameworks/*' -not -path '*/python/*')
+            $pb -c "Add :BGTaskSchedulerPermittedIdentifiers: string $new_id.task.*" "$dir/Info.plist" 2>/dev/null || true
+          }
+
+          # 1. Everything as built (upstream's IDs).
+          pack "$app" "$base.ipa"
+          notes="$notes\n$base.ipa: as built ($built_id), extensions and watch app included"
+
+          # 2. One provisioning profile, one explicit App ID: no extensions or watch app.
+          if [ -n "${IPA_BUNDLE_ID:-}" ]; then
+            one="$(copy single-profile)"
+            rm -rf "$one/PlugIns" "$one/Watch"
+            notes="$notes\n$base-single-profile.ipa: no extensions or watch app"
+            retarget "$one" "$IPA_BUNDLE_ID" "${IPA_APP_GROUP:-}"
+            pack "$one" "$base-single-profile.ipa"
+
+            # 3. Everything, for one provisioning profile per bundle.
+            all="$(copy full-profile)"
+            notes="$notes\n$base-full-profile.ipa: extensions and watch app, one profile per bundle"
+            retarget "$all" "$IPA_BUNDLE_ID" "${IPA_APP_GROUP:-}"
             pack "$all" "$base-full-profile.ipa"
-            full_note="bundle IDs:$ids"
-            printf "full-profile bundle IDs:%b\n" "$ids"
           fi
+
+          # 4. A free Apple ID (Sideloadly and the like): IDs of our own, which a free account can
+          #    register; no watch app, as a free account installs at most 3 apps and each extension
+          #    counts. Signed ad hoc with the App Group entitlement, so the signer sees what to
+          #    request; it re-signs everything with the account's certificate.
+          if [ -n "${IPA_FREE_BUNDLE_ID:-}" ]; then
+            free="$(copy free-apple-id)"
+            rm -rf "$free/Watch"
+            notes="$notes\n$base-free-apple-id.ipa: share and widget extensions, no watch app"
+            retarget "$free" "$IPA_FREE_BUNDLE_ID" "${IPA_FREE_APP_GROUP:-}"
+            if [ -n "${IPA_FREE_APP_GROUP:-}" ]; then
+              ents="$RUNNER_TEMP/app-group.entitlements"
+              printf '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n<plist version="1.0"><dict><key>com.apple.security.application-groups</key><array><string>%s</string></array></dict></plist>\n' "$IPA_FREE_APP_GROUP" > "$ents"
+              if codesign --force --deep --sign - "$free" >/dev/null 2>&1; then
+                for ext in "$free"/PlugIns/*.appex; do
+                  if [ -d "$ext" ]; then codesign --force --sign - --entitlements "$ents" "$ext"; fi
+                done
+                codesign --force --sign - --entitlements "$ents" "$free"
+                if codesign -d --entitlements - "$free" 2>/dev/null | grep -q "$IPA_FREE_APP_GROUP"; then
+                  notes="$notes\n    (ad hoc signed with $IPA_FREE_APP_GROUP)"
+                fi
+              else
+                echo "::warning::ad hoc signing failed; the free-apple-id IPA is unsigned"
+              fi
+            fi
+            pack "$free" "$base-free-apple-id.ipa"
+          fi
+
           ls -lh Firefly-*.ipa
+          printf "%b\n" "$notes"
           {
             echo "## Unsigned IPA"
             echo
-            echo "- $name $version ($build), commit ${GITHUB_SHA:0:7}"
-            echo "- \`$base.ipa\`: as built (bundle ID $built_id), with the share and Live Activity extensions and the watch app"
-            echo "- \`$base-single-profile.ipa\`: no extensions or watch app; IDs set from repository variables: $overridden"
-            echo "- \`$base-full-profile.ipa\`: everything, retargeted; one provisioning profile per bundle"
+            echo "$name $version ($build), commit ${GITHUB_SHA:0:7}"
             echo
             echo '```'
-            printf "%b\n" "$full_note"
+            printf "%b\n" "$notes"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 

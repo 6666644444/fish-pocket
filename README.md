@@ -251,6 +251,8 @@ gh run download -R 6666644444/fish-pocket -n Firefly-unsigned-ipa   # 跑完后�
 
 每次会出三个包：`Firefly-….ipa` 是原样的完整版（带扩展和手表 App，ID 是上游的）；`Firefly-…-single-profile.ipa` 去掉了扩展和手表 App，适合只有一个描述文件（一个 App ID）的情况；`Firefly-…-full-profile.ipa` 保留全部，把每个 bundle 的 ID 改成 `<IPA_BUNDLE_ID>`、`<IPA_BUNDLE_ID>.Share`、`<IPA_BUNDLE_ID>.LiveActivity`、`<IPA_BUNDLE_ID>.watchkitapp`，签名时每个 bundle 配对应的描述文件。后两个包的 Bundle ID 和 App Group 来自仓库变量 `IPA_BUNDLE_ID`、`IPA_APP_GROUP`。
 
+用**免费 Apple ID** 自签（比如 Windows 上的 Sideloadly）时，用 `Firefly-…-free-apple-id.ipa`：它用仓库变量 `IPA_FREE_BUNDLE_ID`、`IPA_FREE_APP_GROUP` 里自己的 ID，带分享扩展和小组件，不带手表 App。免费签名 7 天过期，到时用同一个包、同一个 Apple ID 重签覆盖安装即可，数据不丢。
+
 ## 常见问题
 
 ### Fish Pocket 是什么？
