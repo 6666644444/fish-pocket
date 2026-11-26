@@ -197,6 +197,12 @@
 - `SupportPrompt.noteCompletedTurn()` 直接返回 false：不再自动弹「喜欢 Fish Pocket 吗？」求评分的卡片（自己签名的包不是 App Store 渠道，原来会弹，且按钮指向上游 App Store）。上游的原逻辑原样留在 `upstreamNoteCompletedTurn`，合并时好对照。
 - 没有改：检查更新（UpdateChecker 看上游的 GitHub Releases）、分享页里的二维码和链接、「本机能力 → 操控其他 App」的说明页（在上游官网上）。
 
+## D31 显示名改为 Firefly（2026-11-25，用户决定）
+
+- 只给自己用，取名 Firefly（「囊萤夜读」）。`app/project.yml` 里 4 个 target 的 `CFBundleDisplayName`（App、灵动岛/实时活动、分享扩展、手表）从 `Fish Pocket` 改成 `Firefly`；这个名字没有做本地化，各语言都显示 Firefly。
+- **没有改**：Bundle ID、App Group、Keychain 分组、签名、图标（用户还没想好）。所以已有数据、设置、钥匙串都还在，和上游同步也只会在这 4 行可能冲突（保留 `Firefly` 即可）。
+- App 内大量文案（如「喜欢 Fish Pocket 吗？」「Fish Pocket 额度」、手表设置页的说明）仍写 Fish Pocket：那些是上游的文案和功能名，逐条改会在每次同步时大面积冲突，先不动。
+
 ## 改过的上游文件
 
 | 文件 | 改了什么 | 为什么 |
@@ -212,11 +218,12 @@
 | `app/DshIOS/Views/SupportDialog.swift` | 去掉「分享给朋友」按钮（两行），说明文字换成只提评分的一句，`share` 参数保留 | D29 |
 | `app/DshIOS/Views/SettingsView.swift`（第三处） | `SupportLink.all` 去掉评分和官网、加开源仓库；页脚换一句 | D30 |
 | `app/DshIOS/Core/SupportPrompt.swift` | `noteCompletedTurn()` 返回 false，原逻辑改名保留 | D30 |
+| `app/project.yml` | 4 处 `CFBundleDisplayName: Fish Pocket` → `Firefly`，其他没动 | D31 |
 | `native/ios-native/caps_nlp.m` | M3：新增 `vectors` 函数和分发里的一行，已有操作没动 | 见 D17 |
 | `native/ios-native/ios_native.m` | M3：能力表 `nlp` 一行里加了 `"vectors"` | 见 D17 |
 | `native/root/test/learning-sqlite.mjs` | M3：加一项知识库检查（这是 fork 自己加的文件） | 模拟器上验证 v4 表、trigram、float32 向量 |
 
-没有改：`node_modules`、引擎版本、`ios.patch.yml` 里已有的条目、`ios-build.yml`、`LICENSE`、`project.yml`、Bundle ID、App Group、签名、`test-root-sim.sh`、`conformance.mjs`。
+没有改：`node_modules`、引擎版本、`ios.patch.yml` 里已有的条目、`ios-build.yml`、`LICENSE`、`project.yml` 里除显示名以外的内容、Bundle ID、App Group、签名、图标、`test-root-sim.sh`、`conformance.mjs`。
 
 ## 新增的依赖
 

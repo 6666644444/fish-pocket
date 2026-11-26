@@ -160,7 +160,7 @@ targets:
     info:
       path: DshIOS/Info.plist
       properties:
-        CFBundleDisplayName: Fish Pocket
+        CFBundleDisplayName: Firefly
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         # The fallback when none of the reader's languages is translated: English, not the Chinese source.
@@ -327,7 +327,7 @@ targets:
     info:
       path: LiveActivity/Info.plist
       properties:
-        CFBundleDisplayName: Fish Pocket
+        CFBundleDisplayName: Firefly
         CFBundleDevelopmentRegion: en
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
@@ -362,7 +362,7 @@ targets:
     info:
       path: ShareExtension/Info.plist
       properties:
-        CFBundleDisplayName: Fish Pocket
+        CFBundleDisplayName: Firefly
         CFBundleDevelopmentRegion: en
         CFBundleLocalizations: [zh-Hans, zh-Hant, en, es, ja, ko]
         CFBundleShortVersionString: $(MARKETING_VERSION)
@@ -405,7 +405,7 @@ targets:
     info:
       path: Watch/Info.plist
       properties:
-        CFBundleDisplayName: Fish Pocket
+        CFBundleDisplayName: Firefly
         CFBundleDevelopmentRegion: en
         CFBundleLocalizations: [zh-Hans, zh-Hant, en, es, ja, ko]
         CFBundleShortVersionString: $(MARKETING_VERSION)
