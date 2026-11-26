@@ -132029,6 +132029,40 @@
           }
         }
       }
+    },
+    "觉得好用的话，去 App Store 给个评分，能让更多人发现它。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you like it, rate it on the App Store to help more people find it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si te gusta, valórala en la App Store para que más personas la descubran."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "気に入ったら、App Store で評価して、より多くの人に届けてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마음에 드셨다면 App Store에서 평가해 주세요. 더 많은 사람이 알게 돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "覺得好用的話，去 App Store 給個評分，能讓更多人發現它。"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

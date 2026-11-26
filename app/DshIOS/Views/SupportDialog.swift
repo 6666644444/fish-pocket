@@ -7,6 +7,7 @@ import SwiftUI
 /// conversation can't spend the ask unseen.
 struct SupportDialog: View {
     let rate: () -> Void
+    /// Kept so MainView stays as upstream wrote it; this branch shows no share button (D29).
     let share: () -> Void
     let repository: () -> Void
     let later: () -> Void
@@ -25,7 +26,8 @@ struct SupportDialog: View {
                     .foregroundStyle(Palette.ink)
                     .padding(.top, 16)
                     .accessibilityAddTraits(.isHeader)
-                Text("觉得好用的话，去 App Store 给个评分，或者分享给朋友，能让更多人发现它。")
+                // This branch drops 「分享给朋友」 and its mention here (DECISIONS.md D29).
+                Text("觉得好用的话，去 App Store 给个评分，能让更多人发现它。")
                     .font(.subheadline)
                     .foregroundStyle(Palette.secondary)
                     .multilineTextAlignment(.center)
@@ -34,8 +36,6 @@ struct SupportDialog: View {
                 VStack(spacing: 8) {
                     Button(action: rate) { Label("去 App Store 评分", systemImage: "star.fill") }
                         .buttonStyle(.capsule(height: 48))
-                    Button(action: share) { Label("分享给朋友", systemImage: "square.and.arrow.up") }
-                        .buttonStyle(.capsule(.secondary, height: 48))
                     Button(action: repository) {
                         Label {
                             Text("代码完全开源")
