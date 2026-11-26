@@ -129,27 +129,51 @@ jobs:
 
       - name: Pack IPA
         working-directory: app
+        env:
+          # Repository variables (Settings > Secrets and variables > Actions > Variables), set to match
+          # the maintainer's own provisioning profile. Empty: the single-profile IPA keeps the built IDs.
+          IPA_BUNDLE_ID: ${{ vars.IPA_BUNDLE_ID }}
+          IPA_APP_GROUP: ${{ vars.IPA_APP_GROUP }}
         run: |
           set -euo pipefail
           app="build/DerivedData/Build/Products/Release-iphoneos/DshIOS.app"
           [ -d "$app" ] || { echo "no $app" >&2; ls build/DerivedData/Build/Products || true; exit 1; }
-          version="$(/usr/libexec/PlistBuddy -c 'Print CFBundleShortVersionString' "$app/Info.plist")"
-          build="$(/usr/libexec/PlistBuddy -c 'Print CFBundleVersion' "$app/Info.plist")"
-          name="$(/usr/libexec/PlistBuddy -c 'Print CFBundleDisplayName' "$app/Info.plist")"
-          rm -rf ipa && mkdir -p ipa/Payload
-          cp -R "$app" ipa/Payload/
-          (cd ipa && zip -qry "../Firefly-$version-$build.ipa" Payload)
+          pb=/usr/libexec/PlistBuddy
+          version="$($pb -c 'Print CFBundleShortVersionString' "$app/Info.plist")"
+          build="$($pb -c 'Print CFBundleVersion' "$app/Info.plist")"
+          name="$($pb -c 'Print CFBundleDisplayName' "$app/Info.plist")"
+          built_id="$($pb -c 'Print CFBundleIdentifier' "$app/Info.plist")"
+          base="Firefly-$version-$build"
+          pack() { rm -rf ipa && mkdir -p ipa/Payload && cp -R "$1" ipa/Payload/ && (cd ipa && zip -qry "../$2" Payload); }
+
+          # 1. Everything as built: the app, its share and Live Activity extensions, the watch app.
+          pack "$app" "$base.ipa"
+
+          # 2. For one provisioning profile with one explicit App ID: no extensions or watch app
+          #    (each needs its own App ID), and the IDs the app reads at run time set to the
+          #    profile's, so the signer has nothing to change.
+          one="build/single-profile/DshIOS.app"
+          rm -rf build/single-profile && mkdir -p build/single-profile && cp -R "$app" "$one"
+          rm -rf "$one/PlugIns" "$one/Watch"
+          overridden=no
+          if [ -n "${IPA_BUNDLE_ID:-}" ]; then
+            $pb -c "Set :CFBundleIdentifier $IPA_BUNDLE_ID" "$one/Info.plist"
+            # BackgroundKeeper registers "<bundle id>.task.<uuid>": permit the new prefix too.
+            $pb -c "Add :BGTaskSchedulerPermittedIdentifiers: string $IPA_BUNDLE_ID.task.*" "$one/Info.plist" 2>/dev/null || true
+            overridden=yes
+          fi
+          if [ -n "${IPA_APP_GROUP:-}" ]; then
+            $pb -c "Set :DshAppGroup $IPA_APP_GROUP" "$one/Info.plist"
+            overridden=yes
+          fi
+          pack "$one" "$base-single-profile.ipa"
           ls -lh Firefly-*.ipa
           {
             echo "## Unsigned IPA"
             echo
-            echo "- Name: $name, version $version ($build), commit ${GITHUB_SHA:0:7}"
-            echo "- Size: $(du -h Firefly-*.ipa | cut -f1)"
-            echo "- Bundle ID: $(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$app/Info.plist")"
-            echo "- Extensions and watch app inside (sign them too, or remove them in the signer):"
-            echo '```'
-            (cd "$app" && find PlugIns Watch -maxdepth 1 -name '*.app*' 2>/dev/null) || true
-            echo '```'
+            echo "- $name $version ($build), commit ${GITHUB_SHA:0:7}"
+            echo "- \`$base.ipa\`: as built (bundle ID $built_id), with the share and Live Activity extensions and the watch app"
+            echo "- \`$base-single-profile.ipa\`: no extensions or watch app; IDs set from repository variables: $overridden"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload IPA

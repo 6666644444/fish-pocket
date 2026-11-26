@@ -249,6 +249,8 @@ gh run download -R 6666644444/fish-pocket -n Firefly-unsigned-ipa   # 跑完后�
 
 签名时：分享扩展、实时活动和手表 App 要么一起签，要么在签名工具里去掉；描述文件没有 App Group / HealthKit / HomeKit / 通过 Apple 登录 权限时，对应功能不可用，学习功能不受影响。
 
+每次会出两个包：`Firefly-….ipa` 是完整版（带扩展和手表 App）；`Firefly-…-single-profile.ipa` 去掉了扩展和手表 App，适合只有一个描述文件（一个 App ID）的情况。若设了仓库变量 `IPA_BUNDLE_ID`、`IPA_APP_GROUP`，第二个包的 Bundle ID 和 App Group 会直接改成它们，和描述文件对上。
+
 ## 常见问题
 
 ### Fish Pocket 是什么？

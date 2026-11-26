@@ -215,6 +215,7 @@
 - 不加密（用户决定）。仓库是公开的，登录 GitHub 的人能下载 artifact；用户认为风险可接受。不发 Release、不上传到任何商店。
 - 触发：这个文件在 feat/** 分支上改动、推 `ipa-*` 标签、或手动运行。不随普通推送跑（macOS 分钟贵）。
 - 自签注意：App 内有分享扩展、实时活动扩展和手表 App，要么一起签，要么在签名工具里去掉；App Group、HealthKit、HomeKit、通过 Apple 登录需要描述文件里有对应权限，没有则这些功能不可用，学习功能不依赖它们。Fish Pocket 额度服务在源码构建里默认隐藏（`FISH_POCKET_API_URL` 为空）。
+- 用户的描述文件（2026-11-25 查看，只读了 .mobileprovision，没打开 p12 和密码）：Ad Hoc，一个明确的 App ID、只含用户这一台设备，2027-01-07 到期；有 App Group、HealthKit、HomeKit，没有「通过 Apple 登录」。所以另出一个 `-single-profile` 包：去掉两个扩展和手表 App（它们各需要自己的 App ID），并用仓库变量 `IPA_BUNDLE_ID`、`IPA_APP_GROUP` 把 Info.plist 里的 Bundle ID、App Group 和后台任务前缀改成描述文件的。变量只存在仓库设置里，不进代码。
 
 ## 改过的上游文件
 
