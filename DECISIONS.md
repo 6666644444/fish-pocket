@@ -209,6 +209,13 @@
 - 替换：主 App 图标的普通 / 深色 / 着色三张、手表图标、设置里的预览图；设置 → App 图标 里默认那一项的名字从「大肥鱼」改成「Firefly」（1 条文案）。
 - 没动：上游的 10 个备选图标（还能切换）、Bot「大肥鱼」的头像和名字、启动图。上游以后改主图标时，合并会在这几张 PNG 上冲突，保留我们的（`git checkout --ours`）即可。
 
+## D33 不签名的 IPA 打包任务（2026-11-25，用户要求）
+
+- 用户没有 Mac，有自己的签名，要自签。新增 `.github/workflows/ios-ipa.yml`：和 ios-ci.yml 同样的依赖与引擎步骤，然后 Release 配置、真机 arm64、关闭签名编译，打成 `Payload/DshIOS.app` 的 `Firefly-<版本>-<build>.ipa`，作为 workflow artifact 保留 10 天。
+- 不加密（用户决定）。仓库是公开的，登录 GitHub 的人能下载 artifact；用户认为风险可接受。不发 Release、不上传到任何商店。
+- 触发：这个文件在 feat/** 分支上改动、推 `ipa-*` 标签、或手动运行。不随普通推送跑（macOS 分钟贵）。
+- 自签注意：App 内有分享扩展、实时活动扩展和手表 App，要么一起签，要么在签名工具里去掉；App Group、HealthKit、HomeKit、通过 Apple 登录需要描述文件里有对应权限，没有则这些功能不可用，学习功能不依赖它们。Fish Pocket 额度服务在源码构建里默认隐藏（`FISH_POCKET_API_URL` 为空）。
+
 ## 改过的上游文件
 
 | 文件 | 改了什么 | 为什么 |

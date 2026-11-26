@@ -238,6 +238,17 @@ git push origin feat/learning-tool # 确认无误后自己推送
 
 `.github/workflows/upstream-check.yml` 每周一在 GitHub 上试合并一次（只在临时环境里，不推送），合不进去或测试失败就会报红。
 
+### 打包不签名的 IPA（自签用）
+
+`.github/workflows/ios-ipa.yml` 在 GitHub 的 Mac 上编译真机版、不签名，打成 `Firefly-<版本>-<build>.ipa`，在那次运行的 Artifacts 里保留 10 天。想重新打包：
+
+```bash
+git tag ipa-20261126 && git push origin ipa-20261126   # 标签名随意，以 ipa- 开头
+gh run download -R 6666644444/fish-pocket -n Firefly-unsigned-ipa   # 跑完后下载
+```
+
+签名时：分享扩展、实时活动和手表 App 要么一起签，要么在签名工具里去掉；描述文件没有 App Group / HealthKit / HomeKit / 通过 Apple 登录 权限时，对应功能不可用，学习功能不受影响。
+
 ## 常见问题
 
 ### Fish Pocket 是什么？
