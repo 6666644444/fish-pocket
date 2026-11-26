@@ -101955,6 +101955,40 @@
         }
       }
     },
+    "通话被系统暂停，结束后自动继续" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The system paused the call. It will continue afterward."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El sistema pausó la llamada. Continuará después."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "システムにより通話が一時停止中です。終わると自動で再開します"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시스템이 통화를 일시 정지했어요. 끝나면 자동으로 이어져요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通話被系統暫停，結束後會自動繼續"
+          }
+        }
+      }
+    },
     "通话静音" : {
       "localizations" : {
         "en" : {
