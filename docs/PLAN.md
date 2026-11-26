@@ -268,7 +268,7 @@ skills.* 不打开学习库。
 
 ### 12.6 NLEmbedding 评估
 - 怎么测：`DshIOSTests/KnowledgeAPITests.testEvaluateAppleSentenceEmbedding` 在 CI 的 iPhone 模拟器上跑，打印 `NLEMBED language=… available=… dimension=… revision=… near=… far=… order=…`（中文、英文各一组）。可用性和排序只记录、不判失败。
-- 结论：【待 CI】结果出来后填在这里。模拟器上有，不等于真机有（真机可能要下载语言资源）【待真机】。
+- 结论（CI run 45754965740，Xcode 27.2，iPhone 模拟器）：`NLEMBED language=zh-Hans available=false`、`NLEMBED language=en available=false`，**模拟器上中文和英文都没有句向量**，所以排序效果在 CI 上测不了。这台模拟器上知识库只按关键词检索（设计如此，不报错）。真机上系统可能会下载语言资源后提供句向量【待真机：知识库页脚注是否出现 `apple-nl-sentence/zh-Hans/…` 的向量数】。如果真机也没有，要语义检索就得用可选的 OpenAI 兼容向量服务（D18）。
 
 ## 13. 题库测验与错题本（M4）
 
