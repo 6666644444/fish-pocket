@@ -174,10 +174,8 @@ struct BotRoomView: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityHint("查看群聊设置")),
-                accessory: AnyView(VStack(alignment: .leading, spacing: 0) {
-                    LearningModeBar(owner: .room(room.id))
-                    RoomMentions(room: room)
-                }),
+                // Learning mode (D50): a chip in the @ row, kept fresh here.
+                accessory: AnyView(RoomMentions(room: room).learningModeRefresh(.room(room.id))),
                 menu: { model, _ in AnyView(BotChatMenu(target: .room(room.id), model: model)) }
             ))
             .environment(\.botTimeline, BotTimeline(room: true, earlierFrom: room.json["ownParts"].array.isEmpty ? nil : room.sessionId, showsThinking: team.showsThinking, sessionId: room.sessionId))
@@ -234,6 +232,7 @@ private struct RoomMentions: View {
             }
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 6) {
+                    LearningModeChip(owner: .room(room.id))
                     ForEach(members) { member in
                         Button {
                             Haptics.select()

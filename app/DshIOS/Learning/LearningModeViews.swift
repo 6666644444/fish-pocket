@@ -90,7 +90,8 @@ final class LearningModes {
     private(set) var now: [LearningOwner: LearningModeNow] = [:]
 
     func refresh(_ owner: LearningOwner, client: LearningClient) async {
-        if let value = try? await client.now(of: owner) { now[owner] = value }
+        // Written only when it changed: every view that reads `now` is drawn again on a write.
+        if let value = try? await client.now(of: owner), now[owner] != value { now[owner] = value }
     }
 
     /// Switch `owner` to `mode` (nil: back to normal), then read it again.
@@ -147,48 +148,69 @@ struct LearningModeMenu: View {
     }
 }
 
-/// Above the composer while a learning mode is on; a tap opens the same choices. It also keeps
-/// the cache fresh for the menu: read when the chat opens and when a group's admin changes.
-struct LearningModeBar: View {
+// Where a chat shows its mode without a row of its own (D50): a group's is a chip at the front of
+// the @ row, a Bot's own chat has a small mark in its title. The teacher and the choices are in the
+// menu. Nothing shows while no mode is on.
+
+/// Keeps the cache fresh for a chat's menu, chip and mark: read when the chat opens and when a
+/// group's admin changes.
+struct LearningModeRefresh: ViewModifier {
     @Environment(AppModel.self) private var app
     let owner: LearningOwner
 
-    private var refreshKey: String {
+    private var key: String {
         if case .room(let id) = owner { return "room:\(id):\(app.botTeam.room(id)?.admin ?? "")" }
         return "\(owner)"
     }
 
+    func body(content: Content) -> some View {
+        content.task(id: key) { await LearningModes.shared.refresh(owner, client: LearningClient(engine: app.client)) }
+    }
+}
+
+extension View {
+    func learningModeRefresh(_ owner: LearningOwner) -> some View { modifier(LearningModeRefresh(owner: owner)) }
+}
+
+/// A group's mode, first in its @ row and drawn like the @ chips; a tap opens the choices.
+struct LearningModeChip: View {
+    @Environment(AppModel.self) private var app
+    let owner: LearningOwner
+
     var body: some View {
         let now = LearningModes.shared.now[owner] ?? LearningModeNow()
-        Group {
-            if let mode = now.mode {
-                Menu {
-                    LearningModeOptions(now: now) { LearningModes.shared.choose($0, for: owner, app: app) }
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "book.closed.fill")
-                        Text(line(mode, now)).lineLimit(1)
-                        Image(systemName: "chevron.up.chevron.down").font(.caption2)
-                    }
-                    .font(.footnote.weight(.medium))
-                    .foregroundStyle(now.paused ? Color.orange : Palette.ink)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Capsule().fill(Palette.secondary.opacity(0.12)))
-                    .contentShape(Capsule())
+        if let mode = now.mode {
+            Menu {
+                LearningModeOptions(now: now) { LearningModes.shared.choose($0, for: owner, app: app) }
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "book.closed.fill").font(.caption)
+                    Text(now.paused ? String(localized: "已暂停") : mode.title)
                 }
-                .accessibilityHint("切换学习模式")
-                .padding(.bottom, 8)
-            } else {
-                Color.clear.frame(height: 0)
+                .font(.footnote)
+                .foregroundStyle(now.paused ? Color.orange : Palette.ink)
+                .padding(.horizontal, 12).frame(minHeight: 30)
+                .background(Palette.field, in: Capsule())
+                .contentShape(Capsule())
             }
+            .accessibilityLabel("学习模式")
+            .accessibilityValue(mode.title)
+            .accessibilityHint("切换学习模式")
         }
-        .task(id: refreshKey) { await LearningModes.shared.refresh(owner, client: LearningClient(engine: app.client)) }
     }
+}
 
-    private func line(_ mode: LearningMode, _ now: LearningModeNow) -> String {
-        if now.paused { return String(localized: "\(mode.title) · 已暂停：设一位群主后继续") }
-        if let teacher = now.teacher { return String(localized: "\(mode.title) · 老师：\(teacher)（群主）") }
-        return String(localized: "\(mode.title) · 学习模式")
+/// A Bot's mode as a small mark in its chat's title; switched from the chat's 「…」 menu.
+struct LearningModeMark: View {
+    let owner: LearningOwner
+
+    var body: some View {
+        if let mode = LearningModes.shared.now[owner]?.mode {
+            Image(systemName: "book.closed.fill")
+                .font(.caption2)
+                .foregroundStyle(Palette.secondary)
+                .accessibilityLabel("学习模式")
+                .accessibilityValue(mode.title)
+        }
     }
 }

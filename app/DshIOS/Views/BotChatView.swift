@@ -19,10 +19,8 @@ struct BotChatView: View {
                 title: AnyView(Button { detailOpen = true } label: { BotTitle(bot: bot).modifier(BotTitleCapsule()) }
                     .buttonStyle(.plain)
                     .accessibilityHint("查看 Bot 详情")),
-                accessory: AnyView(VStack(alignment: .leading, spacing: 0) {
-                    LearningModeBar(owner: .bot(bot.id))
-                    BotPending(bot: bot)
-                }),
+                // Learning mode (D50): a mark in the title, kept fresh here; the menu switches it.
+                accessory: AnyView(BotPending(bot: bot).learningModeRefresh(.bot(bot.id))),
                 menu: { model, tools in AnyView(BotChatMenu(target: .bot(bot.id), model: model, tools: tools)) },
                 tools: true
             ))
@@ -86,6 +84,7 @@ private struct BotTitle: View {
                     AIContentLabel()
                 }
             }
+            LearningModeMark(owner: .bot(bot.id))
         }
     }
 }
