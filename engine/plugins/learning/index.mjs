@@ -143,6 +143,9 @@ export const METHODS = {
   'quiz.topics': ({ store }) => store.quizTopics(),
   'quiz.answer': ({ store }, p) => store.answerQuestion(p),
   'quiz.attempts': ({ store }, p) => store.listAttempts(p),
+  // D53: today's review of the mistake book, and 学习统计. `tzOffset`: the phone's clock.
+  'quiz.review': ({ store }, p) => store.reviewPlan(p),
+  'stats.get': ({ store }, p) => store.learningStats(p),
   // M5: research jobs. The model starts them with the deep_research tool; the app lists them,
   // reads reports, resumes a paused job (with the model it started with) and cancels.
   'research.list': ({ store }, p) => store.listResearchJobs(p),

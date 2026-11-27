@@ -4,7 +4,7 @@
 // to grade each answer with it, so questions are kept, graded in Node, and answers the
 // learner gets wrong land in the mistake book the app shows.
 import { defineTool } from '@deepseek-ai/dsh-tools';
-import { KINDS, MASTERY, QUIZ_LIMITS, letter } from './quiz.mjs';
+import { DAY_MS, KINDS, MASTERY, QUIZ_LIMITS, REVIEW_DAYS, letter } from './quiz.mjs';
 import { plain } from './wire.mjs';
 
 export const TOOL = 'learning_quiz';
@@ -13,8 +13,10 @@ const DESCRIPTION = 'The learner\'s question bank. In a quiz: `save` each questi
   + 'and when the learner answers, `grade` that id with their answer exactly as they gave it. Grading is done here: a '
   + 'multiple-choice answer is checked against the saved option; a short answer is compared with the saved reference, '
   + 'and you may pass your own `judged` verdict when you can tell from the meaning. Use the result to tell the learner '
-  + `whether they were right, then explain. Wrong answers go into their mistake book and leave it after ${MASTERY} `
-  + 'correct answers in a row. `list` shows saved questions (with `mistakes: true`, the mistake book) for a review round. '
+  + `whether they were right, then explain. Wrong answers go into their mistake book and come up for review after `
+  + `${REVIEW_DAYS.join(', ')} days; they leave it after ${MASTERY} correct answers in a row, each on or after its review day `
+  + '(a correct answer before then does not count). `list` shows saved questions (with `mistakes: true`, the mistake book; '
+  + 'with `due: true`, the questions up for review today) for a review round. '
   + 'Never show the saved answer before the learner has answered.';
 
 export function quizTool(open) {
@@ -44,6 +46,7 @@ export function quizTool(open) {
       judged: { type: 'string', enum: ['correct', 'partial', 'incorrect'], description: 'grade, short answers only: your verdict from the meaning' },
       topic: { type: 'string', description: 'list: only this topic' },
       mistakes: { type: 'boolean', description: 'list: only questions in the mistake book' },
+      due: { type: 'boolean', description: 'list: only mistake-book questions up for review today' },
     },
     output: {
       schema: { type: 'json' },
@@ -65,17 +68,23 @@ export function quizTool(open) {
       if (typeof args.answer !== 'string' || !args.answer.trim()) throw new Error(`${TOOL}: grade needs the learner's answer`);
       return store.answerQuestion({ id: args.questionId, answer: args.answer, judged: args.judged });
     }
-    const questions = store.listQuestions({ topic: args.topic, mistakes: args.mistakes === true, limit: 20 });
+    const questions = store.listQuestions({ topic: args.topic, mistakes: args.mistakes === true, due: args.due === true, limit: 20 });
     return { questions: questions.map((q) => ({ id: q.id, kind: q.kind, prompt: q.prompt, options: q.options, topic: q.topic, inMistakes: q.inMistakes })) };
   }
 }
 
 function render(action, value) {
+  // "in 3 days": the model has no use for a timestamp.
+  const days = (dueAt) => {
+    const n = Math.max(0, Math.round((dueAt - Date.now()) / DAY_MS));
+    return n === 0 ? 'today' : n === 1 ? 'tomorrow' : `in ${n} days`;
+  };
   if (action === 'save') return `Saved: ${value.saved.map((q) => `#${q.id} (${q.kind})`).join(', ')}. Ask the learner now; do not reveal the answer.`;
   if (action === 'grade') {
-    const book = value.mistakeBook === 'added' ? 'It is now in the mistake book.'
+    const book = value.mistakeBook === 'added' ? `It is now in the mistake book, up for review ${days(value.dueAt)}.`
       : value.mistakeBook === 'removed' ? `It left the mistake book (${value.mastery} right in a row).`
-        : value.mistakeBook === 'in' ? `Still in the mistake book (${value.streak}/${value.mastery} right in a row).` : '';
+        : value.early ? `Still in the mistake book: answered before its review day, so this does not count (review ${days(value.dueAt)}).`
+          : value.mistakeBook === 'in' ? `Still in the mistake book (${value.streak}/${value.mastery} right in a row), next review ${days(value.dueAt)}.` : '';
     const chosen = value.chosen ? ` (chose ${value.chosen})` : '';
     return `#${value.questionId}: ${value.verdict}${chosen}, score ${value.score}, graded by ${value.gradedBy}. `
       + `Correct answer: ${value.correctAnswer}.${value.explanation ? ` Explanation: ${value.explanation}` : ''} ${book}`.trim();

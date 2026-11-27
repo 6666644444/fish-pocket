@@ -3,12 +3,27 @@
 // after it is answered right `MASTERY` times in a row.
 //
 // Pure logic, no I/O: validation, grading and the mistake-book rule. The tables are in
-// store.mjs (schema 5).
+// store.mjs (schema 5; review dates schema 9).
 
 export const KINDS = ['choice', 'short'];
 
-/** Correct answers in a row that take a question out of the mistake book (DECISIONS.md D21). */
-export const MASTERY = 2;
+/**
+ * Days from a mistake-book answer to the question's next review, by the run of correct
+ * answers it has (D53): a wrong answer comes back the next day, then after 3 and 7 days.
+ * Spacing the reviews out is what tells remembering from having just seen the answer.
+ */
+export const REVIEW_DAYS = [1, 3, 7];
+
+/** Correct answers in a row, each on or after its review day, that take a question out of the mistake book (D21, D53). */
+export const MASTERY = REVIEW_DAYS.length;
+
+export const DAY_MS = 86_400_000;
+
+/** Start of the local day `ms` falls in, `tzOffset` minutes east of UTC (UTC+8 → 480). */
+export function dayStart(ms, tzOffset = 0) {
+  const shift = tzOffset * 60_000;
+  return Math.floor((ms + shift) / DAY_MS) * DAY_MS - shift;
+}
 
 /**
  * Short answers: the share of the reference's key terms the answer must contain to count as
@@ -149,16 +164,23 @@ export function grade(question, answer, { judged } = {}) {
 }
 
 /**
- * The mistake book after one graded answer. Anything short of correct puts the question in
- * (again) with its streak reset; a correct answer to a question in the book adds one to the
- * streak, and `MASTERY` in a row takes it out. A correct answer to a question not in the
- * book changes nothing.
- * @param {{ streak:number } | null} entry - the question's mistake-book row, or null.
- * @returns {{ action:'add'|'reset'|'progress'|'remove'|'none', streak:number }}
+ * The mistake book after one graded answer (D53). Anything short of correct puts the question
+ * in (again) with its streak reset, due the next local day. A correct answer to a question in
+ * the book on or after its review day adds one to the streak and sets the next review
+ * (`REVIEW_DAYS`); `mastery` in a row take it out. A correct answer before the review day
+ * counts for nothing (`early`): the answer was still fresh. `counts: true` (the learner
+ * overruling a grade) takes a correct answer as on time. A correct answer to a question not
+ * in the book changes nothing.
+ * @param {{ streak:number, dueAt?:number|null } | null} entry - the question's mistake-book row, or null.
+ * @param {{ now?:number, tzOffset?:number, mastery?:number, counts?:boolean }} [options]
+ * @returns {{ action:'add'|'reset'|'progress'|'remove'|'early'|'none', streak:number, dueAt?:number }}
  */
-export function nextMistake(entry, verdict, mastery = MASTERY) {
-  if (verdict !== 'correct') return { action: entry ? 'reset' : 'add', streak: 0 };
+export function nextMistake(entry, verdict, { now = 0, tzOffset = 0, mastery = MASTERY, counts = false } = {}) {
+  const due = (days) => dayStart(now, tzOffset) + days * DAY_MS;
+  if (verdict !== 'correct') return { action: entry ? 'reset' : 'add', streak: 0, dueAt: due(REVIEW_DAYS[0]) };
   if (!entry) return { action: 'none', streak: 0 };
+  if (!counts && Number.isFinite(entry.dueAt) && entry.dueAt > now) return { action: 'early', streak: entry.streak, dueAt: entry.dueAt };
   const streak = entry.streak + 1;
-  return streak >= mastery ? { action: 'remove', streak } : { action: 'progress', streak };
+  if (streak >= mastery) return { action: 'remove', streak };
+  return { action: 'progress', streak, dueAt: due(REVIEW_DAYS[Math.min(streak, REVIEW_DAYS.length - 1)]) };
 }

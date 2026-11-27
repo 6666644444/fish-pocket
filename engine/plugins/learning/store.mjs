@@ -15,7 +15,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { blobToVector, chunkText, citationOf, cosine, fuseRanks, vectorToBlob } from './kb.mjs';
-import { MASTERY, QuizError, grade, letter, nextMistake, normalizeQuestion, QUIZ_LIMITS } from './quiz.mjs';
+import { DAY_MS, MASTERY, QuizError, dayStart, grade, letter, nextMistake, normalizeQuestion, QUIZ_LIMITS } from './quiz.mjs';
 
 /** `PRAGMA application_id`: 'LRN1'. DSH's session search uses 1146308689; this must differ. */
 export const APPLICATION_ID = 0x4c524e31;
@@ -316,6 +316,16 @@ export const MIGRATIONS = [
         told_end_at INTEGER,
         PRIMARY KEY (kind, id, session_id)
       ) STRICT;
+    `);
+  },
+  // 9 (D53): mistake-book reviews spaced out in time. due_at: when the question is next up
+  // for review, the start of a local day (quiz.mjs nextMistake). Those already in the book
+  // are due at once.
+  (db) => {
+    db.exec(`
+      ALTER TABLE quiz_mistakes ADD COLUMN due_at INTEGER;
+      UPDATE quiz_mistakes SET due_at = updated_at;
+      CREATE INDEX quiz_mistakes_by_due ON quiz_mistakes(due_at);
     `);
   },
 ];
@@ -639,6 +649,28 @@ export class LearningStore {
     const put = this.db.prepare('INSERT OR REPLACE INTO meta(key, value) VALUES (?, ?)');
     for (const [key, value] of changes) put.run(key, value ? 'on' : 'off');
     return this.getSettings();
+  }
+
+  /**
+   * Minutes east of UTC of the phone's clock (480 in China), as the app last sent it with a
+   * review or stats call; the engine's own until then. Review days and stats days are its
+   * local days, also when the model grades (the engine may not know the phone's zone).
+   */
+  get tzOffset() {
+    const saved = Number(this.db.prepare("SELECT value FROM meta WHERE key = 'tz_offset'").get()?.value);
+    return Number.isInteger(saved) ? saved : -new Date(this.now()).getTimezoneOffset();
+  }
+
+  /** The offset to use for a call: the one given (kept for later), or the last one. */
+  #clock(tzOffset) {
+    if (tzOffset === undefined || tzOffset === null) return this.tzOffset;
+    if (!Number.isInteger(tzOffset) || Math.abs(tzOffset) > 14 * 60) {
+      throw new LearningError('invalid', 'tzOffset must be whole minutes east of UTC, from -840 to 840');
+    }
+    if (this.db.prepare("SELECT value FROM meta WHERE key = 'tz_offset'").get()?.value !== String(tzOffset)) {
+      this.db.prepare('INSERT OR REPLACE INTO meta(key, value) VALUES (?, ?)').run('tz_offset', String(tzOffset));
+    }
+    return tzOffset;
   }
 
   // Session modes (M2)
@@ -1053,7 +1085,7 @@ export class LearningStore {
 
   getQuestion({ id: questionId, withAnswer = true }) {
     const row = this.db.prepare(`
-      SELECT q.*, m.streak AS mistake_streak, m.question_id IS NOT NULL AS in_mistakes,
+      SELECT q.*, m.streak AS mistake_streak, m.due_at AS mistake_due, m.question_id IS NOT NULL AS in_mistakes,
         (SELECT count(*) FROM quiz_attempts a WHERE a.question_id = q.id) AS attempts,
         (SELECT a.verdict FROM quiz_attempts a WHERE a.question_id = q.id ORDER BY a.created_at DESC, a.id DESC LIMIT 1) AS last_verdict
       FROM quiz_questions q LEFT JOIN quiz_mistakes m ON m.question_id = q.id WHERE q.id = ?
@@ -1062,21 +1094,102 @@ export class LearningStore {
     return questionRow(row, withAnswer);
   }
 
-  /** Questions newest first; `topic` filters, `mistakes: true` lists the mistake book. */
-  listQuestions({ topic, mistakes = false, limit = 100, offset = 0, withAnswer = false } = {}) {
+  /**
+   * Questions newest first; `topic` filters, `mistakes: true` lists the mistake book, `due:
+   * true` only its questions up for review now, the longest due first.
+   */
+  listQuestions({ topic, mistakes = false, due = false, limit = 100, offset = 0, withAnswer = false } = {}) {
     const page = Math.min(Math.max(1, Number(limit) || 100), LIMITS.page);
     const where = [];
     const args = [];
     if (topic !== undefined) { where.push('q.topic = ?'); args.push(text(topic, 'topic', QUIZ_LIMITS.topic).trim()); }
-    if (mistakes) where.push('m.question_id IS NOT NULL');
+    if (mistakes || due) where.push('m.question_id IS NOT NULL');
+    if (due) { where.push('coalesce(m.due_at, 0) <= ?'); args.push(this.now()); }
+    const order = due ? 'coalesce(m.due_at, 0), m.added_at, q.id,' : mistakes ? 'm.added_at DESC,' : '';
     return this.db.prepare(`
-      SELECT q.*, m.streak AS mistake_streak, m.question_id IS NOT NULL AS in_mistakes,
+      SELECT q.*, m.streak AS mistake_streak, m.due_at AS mistake_due, m.question_id IS NOT NULL AS in_mistakes,
         (SELECT count(*) FROM quiz_attempts a WHERE a.question_id = q.id) AS attempts,
         (SELECT a.verdict FROM quiz_attempts a WHERE a.question_id = q.id ORDER BY a.created_at DESC, a.id DESC LIMIT 1) AS last_verdict
       FROM quiz_questions q LEFT JOIN quiz_mistakes m ON m.question_id = q.id
       ${where.length ? `WHERE ${where.join(' AND ')}` : ''}
-      ORDER BY ${mistakes ? 'm.added_at DESC,' : ''} q.created_at DESC, q.id DESC LIMIT ? OFFSET ?
+      ORDER BY ${order} q.created_at DESC, q.id DESC LIMIT ? OFFSET ?
     `).all(...args, page, Math.max(0, Number(offset) || 0)).map((row) => questionRow(row, withAnswer));
+  }
+
+  /**
+   * Today's review (D53): the mistake-book questions due now (no answers), how many there
+   * are, and when every question in the book comes due (`dueTimes`, soonest first), which the
+   * widget counts from as the days go by. `tzOffset`: the phone's (`tzOffset` getter).
+   */
+  reviewPlan({ tzOffset, limit = 50 } = {}) {
+    const zone = this.#clock(tzOffset);
+    const now = this.now();
+    const count = (sql, ...args) => this.db.prepare(sql).get(...args).n;
+    return {
+      now,
+      tzOffset: zone,
+      due: count('SELECT count(*) AS n FROM quiz_mistakes WHERE coalesce(due_at, 0) <= ?', now),
+      total: count('SELECT count(*) AS n FROM quiz_mistakes'),
+      dueTimes: this.db.prepare('SELECT coalesce(due_at, 0) AS t FROM quiz_mistakes ORDER BY t LIMIT 500').all().map((row) => row.t),
+      questions: this.listQuestions({ due: true, limit }),
+    };
+  }
+
+  /**
+   * 学习统计: graded answers per local day over the last `days` (14), days studied in a row,
+   * totals, and the most practised topics. A day counts as studied when a question was
+   * answered, a note written, a learning memory saved or a research started on it.
+   */
+  learningStats({ tzOffset, days = 14 } = {}) {
+    const zone = this.#clock(tzOffset);
+    const span = Math.min(Math.max(1, Number.isInteger(days) ? days : 14), 90);
+    const now = this.now();
+    const today = dayStart(now, zone);
+    const from = today - (span - 1) * DAY_MS;
+    const perDay = Array.from({ length: span }, (_, i) => ({ day: from + i * DAY_MS, attempts: 0, correct: 0 }));
+    for (const row of this.db.prepare('SELECT verdict, created_at FROM quiz_attempts WHERE created_at >= ?').all(from)) {
+      const slot = perDay[Math.round((dayStart(row.created_at, zone) - from) / DAY_MS)];
+      if (!slot) continue;
+      slot.attempts += 1;
+      if (row.verdict === 'correct') slot.correct += 1;
+    }
+    const since = today - 400 * DAY_MS;
+    const studied = new Set();
+    for (const sql of [
+      'SELECT created_at AS t FROM quiz_attempts WHERE created_at >= ?',
+      'SELECT updated_at AS t FROM notes WHERE updated_at >= ?',
+      'SELECT created_at AS t FROM memories WHERE created_at >= ?',
+      'SELECT created_at AS t FROM research_jobs WHERE created_at >= ?',
+    ]) for (const row of this.db.prepare(sql).all(since)) studied.add(dayStart(row.t, zone));
+    // Today not studied yet does not break the run: it counts up to yesterday.
+    let day = studied.has(today) ? today : today - DAY_MS;
+    let streak = 0;
+    while (studied.has(day)) { streak += 1; day -= DAY_MS; }
+    const count = (sql, ...args) => this.db.prepare(sql).get(...args).n;
+    const totals = {
+      questions: count('SELECT count(*) AS n FROM quiz_questions'),
+      attempts: count('SELECT count(*) AS n FROM quiz_attempts'),
+      correct: count("SELECT count(*) AS n FROM quiz_attempts WHERE verdict = 'correct'"),
+      mistakes: count('SELECT count(*) AS n FROM quiz_mistakes'),
+      dueNow: count('SELECT count(*) AS n FROM quiz_mistakes WHERE coalesce(due_at, 0) <= ?', now),
+      dueThisWeek: count('SELECT count(*) AS n FROM quiz_mistakes WHERE coalesce(due_at, 0) < ?', today + 7 * DAY_MS),
+      // Once answered short of correct and out of the mistake book now.
+      mastered: count(`SELECT count(*) AS n FROM quiz_questions q
+        WHERE EXISTS (SELECT 1 FROM quiz_attempts a WHERE a.question_id = q.id AND a.verdict <> 'correct')
+          AND NOT EXISTS (SELECT 1 FROM quiz_mistakes m WHERE m.question_id = q.id)`),
+      notes: count('SELECT count(*) AS n FROM notes'),
+      memories: count('SELECT count(*) AS n FROM memories'),
+      documents: count('SELECT count(*) AS n FROM kb_documents'),
+      research: count("SELECT count(*) AS n FROM research_jobs WHERE status = 'done'"),
+    };
+    const topics = this.db.prepare(`
+      SELECT q.topic, count(DISTINCT q.id) AS questions, count(a.id) AS attempts,
+        coalesce(sum(a.verdict = 'correct'), 0) AS correct,
+        (SELECT count(*) FROM quiz_mistakes m JOIN quiz_questions q2 ON q2.id = m.question_id WHERE q2.topic = q.topic) AS mistakes
+      FROM quiz_questions q LEFT JOIN quiz_attempts a ON a.question_id = q.id
+      GROUP BY q.topic ORDER BY attempts DESC, questions DESC, q.topic LIMIT 12
+    `).all().map((row) => ({ topic: row.topic, questions: row.questions, attempts: row.attempts, correct: row.correct, mistakes: row.mistakes }));
+    return { now, tzOffset: zone, days: perDay, streakDays: streak, studiedToday: studied.has(today), totals, topics };
   }
 
   /** Topics with their question and mistake counts. */
@@ -1098,8 +1211,9 @@ export class LearningStore {
    * one transaction. `judged` is the model's own verdict for a short answer;
    * `gradedBy: 'user'` with `judged` is the learner overruling the grade in the app.
    */
-  answerQuestion({ id: questionId, answer, judged, gradedBy }) {
+  answerQuestion({ id: questionId, answer, judged, gradedBy, tzOffset }) {
     return this.transaction(() => {
+      const zone = this.#clock(tzOffset);
       const question = this.getQuestion({ id: questionId });
       if (gradedBy !== undefined && gradedBy !== 'user') throw new LearningError('invalid', "gradedBy can only be 'user'");
       const result = this.#quiz(() => {
@@ -1113,12 +1227,14 @@ export class LearningStore {
       const now = this.now();
       this.db.prepare('INSERT INTO quiz_attempts(question_id, answer, verdict, score, graded_by, created_at) VALUES (?, ?, ?, ?, ?, ?)')
         .run(question.id, result.chosen ?? given, result.verdict, result.score, result.gradedBy, now);
-      const entry = this.db.prepare('SELECT streak FROM quiz_mistakes WHERE question_id = ?').get(question.id) ?? null;
-      const next = nextMistake(entry, result.verdict, this.mastery);
+      const row = this.db.prepare('SELECT streak, due_at FROM quiz_mistakes WHERE question_id = ?').get(question.id);
+      const entry = row ? { streak: row.streak, dueAt: row.due_at ?? null } : null;
+      // The learner overruling a grade says how the answer went, not when: it counts.
+      const next = nextMistake(entry, result.verdict, { now, tzOffset: zone, mastery: this.mastery, counts: result.gradedBy === 'user' });
       if (next.action === 'add') {
-        this.db.prepare('INSERT INTO quiz_mistakes(question_id, streak, added_at, updated_at) VALUES (?, 0, ?, ?)').run(question.id, now, now);
+        this.db.prepare('INSERT INTO quiz_mistakes(question_id, streak, added_at, updated_at, due_at) VALUES (?, 0, ?, ?, ?)').run(question.id, now, now, next.dueAt);
       } else if (next.action === 'reset' || next.action === 'progress') {
-        this.db.prepare('UPDATE quiz_mistakes SET streak = ?, updated_at = ? WHERE question_id = ?').run(next.streak, now, question.id);
+        this.db.prepare('UPDATE quiz_mistakes SET streak = ?, updated_at = ?, due_at = ? WHERE question_id = ?').run(next.streak, now, next.dueAt, question.id);
       } else if (next.action === 'remove') {
         this.db.prepare('DELETE FROM quiz_mistakes WHERE question_id = ?').run(question.id);
       }
@@ -1133,7 +1249,9 @@ export class LearningStore {
         explanation: question.explanation ?? null,
         mistakeBook: next.action === 'none' ? 'not-in' : next.action === 'remove' ? 'removed'
           : next.action === 'add' ? 'added' : 'in',
-        ...(next.action === 'remove' || next.action === 'none' ? {} : { streak: next.streak }),
+        ...(next.action === 'remove' || next.action === 'none' ? {} : { streak: next.streak, dueAt: next.dueAt }),
+        // Right, but before its review day: it does not count toward leaving the book.
+        ...(next.action === 'early' ? { early: true } : {}),
         mastery: this.mastery,
       };
     });
@@ -1342,6 +1460,7 @@ const questionRow = (row, withAnswer) => row && ({
   topic: row.topic, source: row.source, sessionId: row.session_id ?? null, createdAt: row.created_at,
   attempts: row.attempts ?? 0, lastVerdict: row.last_verdict ?? null,
   inMistakes: Boolean(row.in_mistakes), mistakeStreak: row.in_mistakes ? row.mistake_streak : null,
+  reviewAt: row.in_mistakes ? (row.mistake_due ?? 0) : null,
 });
 
 /** The document kinds the knowledge base takes; the table's CHECK holds the same list. */

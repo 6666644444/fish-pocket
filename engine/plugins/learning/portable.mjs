@@ -94,7 +94,7 @@ export function dumpLibrary(store) {
       question: q.get(a.question_id), answer: a.answer, verdict: a.verdict, score: a.score, gradedBy: a.graded_by, createdAt: a.created_at,
     })),
     mistakes: db.prepare('SELECT * FROM quiz_mistakes ORDER BY added_at, question_id').all()
-      .map((m) => ({ question: q.get(m.question_id), streak: m.streak, addedAt: m.added_at, updatedAt: m.updated_at })),
+      .map((m) => ({ question: q.get(m.question_id), streak: m.streak, addedAt: m.added_at, updatedAt: m.updated_at, dueAt: m.due_at ?? null })),
     research: jobs.map((j) => ({
       topic: j.topic, depth: j.depth, sources: JSON.parse(j.sources), status: j.status, report: j.report ?? null, error: j.error ?? null,
       createdAt: j.created_at, updatedAt: j.updated_at,
@@ -160,7 +160,9 @@ export function importLibrary(store, data) {
         .run(questions[a.question], a.answer, a.verdict, a.score, a.gradedBy, a.createdAt);
     }
     for (const m of list(data.mistakes)) {
-      db.prepare('INSERT INTO quiz_mistakes(question_id, streak, added_at, updated_at) VALUES (?, ?, ?, ?)').run(questions[m.question], m.streak, m.addedAt, m.updatedAt);
+      // An export from before review dates (schema 9): due at once.
+      db.prepare('INSERT INTO quiz_mistakes(question_id, streak, added_at, updated_at, due_at) VALUES (?, ?, ?, ?, ?)')
+        .run(questions[m.question], m.streak, m.addedAt, m.updatedAt, Number.isInteger(m.dueAt) ? m.dueAt : m.updatedAt);
     }
     for (const j of list(data.research)) {
       const status = ['done', 'failed', 'cancelled'].includes(j.status) ? j.status : 'cancelled';
