@@ -46,3 +46,14 @@ Changes: rewritten from Python to JavaScript inside the DSH engine's learning pl
     Copyright © WHATWG (Apple, Google, Mozilla, Microsoft).
     Licensed under a Creative Commons Attribution 4.0 International License:
         https://creativecommons.org/licenses/by/4.0/
+
+## AI 伙伴的设计参考 / Design references for the companion (D55)
+
+`engine/plugins/learning/companion.mjs` 和 `companion-runtime.mjs` 是本分支自己写的代码，没有复制下面这些项目的源码，只参考了它们的设计思路。致谢：
+
+The companion layer is this branch's own code; no source was copied from these projects, only their ideas were used. With thanks:
+
+- dsh-fish-memory（Yuuyuko-uu）— 鲜活度半衰期、按证据决定是否想起、事实键 / freshness half-life, evidence-gated recall, fact keys — <https://github.com/Yuuyuko-uu/dsh-fish-memory>
+- dsh-speak-up（Yuuyuko-uu）— 骰子 + 冷却 + 安静时段的主动开口、自定义来源的触发消息 / dice, cooldown and quiet hours for speaking first — <https://github.com/Yuuyuko-uu/dsh-speak-up>
+- dsh-identity（Anarrogantcat，MIT）— 需要多次独立证据的 traits、复盘只读事实不读自己写的 / traits that need repeated evidence, reflection from facts only — <https://github.com/Anarrogantcat/dsh-identity>
+- LivingMemory（lxfight，AGPL-3.0）— 记忆生命周期与访问强化 / memory lifecycle with access reinforcement — <https://github.com/lxfight-s-Astrbot-Plugins/astrbot_plugin_livingmemory>

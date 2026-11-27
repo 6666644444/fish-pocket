@@ -328,6 +328,69 @@ export const MIGRATIONS = [
       CREATE INDEX quiz_mistakes_by_due ON quiz_mistakes(due_at);
     `);
   },
+  // 10 (D55): Firefly 伙伴. Episodes (shared experiences, with context and feelings), traits
+  // (what the companion has seen of the user, by the days it was seen), moods, which messages of
+  // a Session have been digested, what each Session was given, and the reaches (speaking first).
+  // New tables only: nothing that was there changes.
+  (db) => {
+    db.exec(`
+      CREATE TABLE companion_episodes (
+        id INTEGER PRIMARY KEY,
+        bot_id TEXT NOT NULL,
+        text TEXT NOT NULL,
+        cues TEXT NOT NULL DEFAULT '[]',
+        importance REAL NOT NULL DEFAULT 0.5,
+        emotion REAL NOT NULL DEFAULT 0.3,
+        mood TEXT NOT NULL DEFAULT '',
+        fact_key TEXT NOT NULL DEFAULT '',
+        follow_up TEXT NOT NULL DEFAULT '',
+        happened_at INTEGER NOT NULL,
+        created_at INTEGER NOT NULL,
+        recalls INTEGER NOT NULL DEFAULT 0,
+        last_recalled_at INTEGER,
+        followed_up_at INTEGER,
+        superseded_by INTEGER,
+        hidden INTEGER NOT NULL DEFAULT 0
+      ) STRICT;
+      CREATE INDEX companion_episodes_by_bot ON companion_episodes(bot_id, happened_at DESC);
+      CREATE TABLE companion_traits (
+        bot_id TEXT NOT NULL,
+        key TEXT NOT NULL,
+        text TEXT NOT NULL,
+        evidence TEXT NOT NULL DEFAULT '',
+        days TEXT NOT NULL DEFAULT '[]',
+        first_seen INTEGER NOT NULL,
+        last_seen INTEGER NOT NULL,
+        refuted INTEGER NOT NULL DEFAULT 0,
+        PRIMARY KEY (bot_id, key)
+      ) STRICT;
+      CREATE TABLE companion_moods (
+        id INTEGER PRIMARY KEY,
+        bot_id TEXT NOT NULL,
+        word TEXT NOT NULL,
+        valence REAL NOT NULL DEFAULT 0,
+        at INTEGER NOT NULL
+      ) STRICT;
+      CREATE TABLE companion_cursors (
+        session_id TEXT PRIMARY KEY,
+        digested INTEGER NOT NULL DEFAULT 0,
+        last_turn_at INTEGER,
+        announced INTEGER NOT NULL DEFAULT 0,
+        shown TEXT NOT NULL DEFAULT '[]'
+      ) STRICT;
+      CREATE TABLE companion_reaches (
+        id INTEGER PRIMARY KEY,
+        bot_id TEXT NOT NULL,
+        fire_at INTEGER NOT NULL,
+        text TEXT NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('planned', 'delivered', 'cancelled', 'expired')),
+        created_at INTEGER NOT NULL,
+        delivered_at INTEGER,
+        answered_at INTEGER,
+        ignored INTEGER NOT NULL DEFAULT 0
+      ) STRICT;
+    `);
+  },
 ];
 export const SCHEMA_VERSION = MIGRATIONS.length;
 
@@ -1260,6 +1323,207 @@ export class LearningStore {
   /** How many correct answers in a row take a question out of the mistake book. */
   get mastery() { return MASTERY; }
 
+  // Firefly 伙伴 (D55, companion.mjs)
+
+  /** The phone's clock for what follows (kept, as with a review call). */
+  useClock(tzOffset) { return this.#clock(tzOffset); }
+
+  /** Which Bot is the companion ('' for none), whether it may speak first, its quiet hours. */
+  companionSettings() {
+    const get = (key) => this.db.prepare('SELECT value FROM meta WHERE key = ?').get(key)?.value;
+    const hour = (key, fallback) => { const v = Number(get(key)); return Number.isInteger(v) && v >= 0 && v < 24 ? v : fallback; };
+    return { botId: get('companion_bot') ?? '', reach: get('companion_reach') !== 'off', quietStart: hour('companion_quiet_start', 23), quietEnd: hour('companion_quiet_end', 8) };
+  }
+
+  updateCompanionSettings({ botId, reach, quietStart, quietEnd }) {
+    const put = this.db.prepare('INSERT OR REPLACE INTO meta(key, value) VALUES (?, ?)');
+    if (botId !== undefined) put.run('companion_bot', text(botId, 'botId', 200).trim());
+    if (reach !== undefined) {
+      if (typeof reach !== 'boolean') throw new LearningError('invalid', 'reach must be true or false');
+      put.run('companion_reach', reach ? 'on' : 'off');
+    }
+    for (const [key, value] of [['companion_quiet_start', quietStart], ['companion_quiet_end', quietEnd]]) {
+      if (value === undefined) continue;
+      if (!Number.isInteger(value) || value < 0 || value > 23) throw new LearningError('invalid', 'quiet hours are whole hours from 0 to 23');
+      put.run(key, String(value));
+    }
+    return this.companionSettings();
+  }
+
+  /** A Bot's episodes, newest first; `all` includes hidden and superseded ones. */
+  companionEpisodes({ botId, all = false, limit = 500 } = {}) {
+    return this.db.prepare(`SELECT * FROM companion_episodes WHERE bot_id = ? ${all ? '' : 'AND hidden = 0 AND superseded_by IS NULL'}
+      ORDER BY happened_at DESC, id DESC LIMIT ?`).all(text(botId, 'botId', 200), Math.min(Math.max(1, Number(limit) || 500), 2000)).map(episodeRow);
+  }
+
+  /**
+   * Keep a digest: its episodes (one with a fact key takes the place of the older one with the
+   * same key, which stays as history), the traits it saw (a day of evidence each), the mood,
+   * and what the user asked to be forgotten (episodes holding every word of one are hidden).
+   */
+  saveDigest({ botId, digest, happenedAt }) {
+    const bot = text(botId, 'botId', 200);
+    return this.transaction(() => {
+      const now = this.now();
+      const zone = this.tzOffset;
+      const ids = [];
+      for (const e of digest.episodes ?? []) {
+        const { lastInsertRowid } = this.db.prepare(`INSERT INTO companion_episodes(bot_id, text, cues, importance, emotion, mood, fact_key, follow_up, happened_at, created_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(bot, e.text, JSON.stringify(e.cues ?? []), e.importance, e.emotion, e.mood ?? '', e.key ?? '', e.followUp ?? '', happenedAt ?? now, now);
+        const id = Number(lastInsertRowid);
+        ids.push(id);
+        if (e.key) {
+          this.db.prepare('UPDATE companion_episodes SET superseded_by = ? WHERE bot_id = ? AND fact_key = ? AND id <> ? AND superseded_by IS NULL').run(id, bot, e.key, id);
+        }
+      }
+      const day = dayStart(happenedAt ?? now, zone);
+      for (const t of digest.traits ?? []) {
+        const row = this.db.prepare('SELECT * FROM companion_traits WHERE bot_id = ? AND key = ?').get(bot, t.key);
+        if (!row) {
+          this.db.prepare('INSERT INTO companion_traits(bot_id, key, text, evidence, days, first_seen, last_seen) VALUES (?, ?, ?, ?, ?, ?, ?)')
+            .run(bot, t.key, t.text, t.evidence, JSON.stringify([day]), now, now);
+          continue;
+        }
+        const days = new Set(JSON.parse(row.days));
+        days.add(day);
+        // Seen again: the newer wording, the evidence of this time; a refuted one starts over.
+        this.db.prepare('UPDATE companion_traits SET text = ?, evidence = ?, days = ?, last_seen = ?, refuted = 0 WHERE bot_id = ? AND key = ?')
+          .run(t.text, t.evidence, JSON.stringify([...days].sort((a, b) => a - b).slice(-20)), now, bot, t.key);
+        if (row.refuted) this.db.prepare('UPDATE companion_traits SET days = ? WHERE bot_id = ? AND key = ?').run(JSON.stringify([day]), bot, t.key);
+      }
+      if (digest.mood) this.db.prepare('INSERT INTO companion_moods(bot_id, word, valence, at) VALUES (?, ?, ?, ?)').run(bot, digest.mood.word, digest.mood.valence, happenedAt ?? now);
+      let hidden = 0;
+      for (const words of digest.retract ?? []) {
+        for (const e of this.companionEpisodes({ botId: bot })) {
+          if (!ids.includes(e.id) && [e.text, ...e.cues].join(' ').includes(words)) {
+            this.db.prepare('UPDATE companion_episodes SET hidden = 1 WHERE id = ?').run(e.id);
+            hidden += 1;
+          }
+        }
+      }
+      return { episodes: ids, hidden };
+    });
+  }
+
+  /** Digests run today for a Bot (each is a model call; the daily limit counts them). */
+  companionDigestsToday(botId) {
+    const [day, count] = String(this.db.prepare('SELECT value FROM meta WHERE key = ?').get(`companion_digests:${botId}`)?.value ?? '').split(':').map(Number);
+    return day === dayStart(this.now(), this.tzOffset) && Number.isInteger(count) ? count : 0;
+  }
+
+  /** One more digest today, whatever it kept. */
+  countDigest(botId) {
+    const today = dayStart(this.now(), this.tzOffset);
+    this.db.prepare('INSERT OR REPLACE INTO meta(key, value) VALUES (?, ?)').run(`companion_digests:${botId}`, `${today}:${this.companionDigestsToday(botId) + 1}`);
+  }
+
+  companionTraits({ botId, all = false }) {
+    return this.db.prepare(`SELECT * FROM companion_traits WHERE bot_id = ? ${all ? '' : 'AND refuted = 0'} ORDER BY last_seen DESC`).all(text(botId, 'botId', 200))
+      .map((t) => ({ key: t.key, text: t.text, evidence: t.evidence, days: JSON.parse(t.days), firstSeen: t.first_seen, lastSeen: t.last_seen, refuted: Boolean(t.refuted) }));
+  }
+
+  /** The user says a trait is wrong: it leaves what the companion is told until seen again. */
+  refuteTrait({ botId, key }) {
+    const { changes } = this.db.prepare('UPDATE companion_traits SET refuted = 1 WHERE bot_id = ? AND key = ?').run(text(botId, 'botId', 200), text(key, 'key', 40));
+    if (!changes) throw new LearningError('not-found', `no trait ${key}`);
+    return { refuted: true };
+  }
+
+  companionMoods({ botId, limit = 30 }) {
+    return this.db.prepare('SELECT * FROM companion_moods WHERE bot_id = ? ORDER BY at DESC LIMIT ?').all(text(botId, 'botId', 200), limit)
+      .map((m) => ({ word: m.word, valence: m.valence, at: m.at }));
+  }
+
+  /** Hide (the user removed it) or show again an episode. Nothing is deleted. */
+  hideEpisode({ id: episodeId, hidden = true }) {
+    const { changes } = this.db.prepare('UPDATE companion_episodes SET hidden = ? WHERE id = ?').run(hidden ? 1 : 0, id(episodeId));
+    if (!changes) throw new LearningError('not-found', `no episode ${episodeId}`);
+    return { hidden };
+  }
+
+  /** Episodes came to mind: count it (they last longer) and remember the time (a pause before the next). */
+  markRecalled(ids, sessionId) {
+    const now = this.now();
+    for (const episodeId of ids) this.db.prepare('UPDATE companion_episodes SET recalls = recalls + 1, last_recalled_at = ? WHERE id = ?').run(now, episodeId);
+    const cursor = this.companionCursor(sessionId);
+    this.db.prepare('UPDATE companion_cursors SET shown = ? WHERE session_id = ?').run(JSON.stringify([...new Set([...cursor.shown, ...ids])].slice(-200)), sessionId);
+  }
+
+  markFollowedUp(episodeId) {
+    this.db.prepare('UPDATE companion_episodes SET followed_up_at = ? WHERE id = ?').run(this.now(), episodeId);
+  }
+
+  /** A Session's place: messages digested, its last turn, whether it got the session note, what it was shown. */
+  companionCursor(sessionId) {
+    const sid = sessionKey(sessionId);
+    this.db.prepare('INSERT OR IGNORE INTO companion_cursors(session_id) VALUES (?)').run(sid);
+    const row = this.db.prepare('SELECT * FROM companion_cursors WHERE session_id = ?').get(sid);
+    return { sessionId: sid, digested: row.digested, lastTurnAt: row.last_turn_at ?? null, announced: Boolean(row.announced), shown: JSON.parse(row.shown) };
+  }
+
+  updateCompanionCursor(sessionId, { digested, lastTurnAt, announced }) {
+    const sid = sessionKey(sessionId);
+    this.companionCursor(sid);
+    if (digested !== undefined) this.db.prepare('UPDATE companion_cursors SET digested = ? WHERE session_id = ?').run(digested, sid);
+    if (lastTurnAt !== undefined) this.db.prepare('UPDATE companion_cursors SET last_turn_at = ? WHERE session_id = ?').run(lastTurnAt, sid);
+    if (announced !== undefined) this.db.prepare('UPDATE companion_cursors SET announced = ? WHERE session_id = ?').run(announced ? 1 : 0, sid);
+  }
+
+  /** When the user last talked to a Bot (any of its Sessions). */
+  companionLastUserAt(botId) {
+    return this.db.prepare("SELECT CAST(value AS INTEGER) AS t FROM meta WHERE key = ?").get(`companion_last_user:${botId}`)?.t ?? null;
+  }
+
+  /**
+   * The user talked to the companion: planned reaches are called off (they came back on their
+   * own), and the last delivered one is answered if within the window, ignored if not.
+   */
+  companionUserTurn(botId, answerMs) {
+    const now = this.now();
+    this.db.prepare('INSERT OR REPLACE INTO meta(key, value) VALUES (?, ?)').run(`companion_last_user:${botId}`, String(now));
+    const cancelled = this.db.prepare("SELECT id FROM companion_reaches WHERE bot_id = ? AND status = 'planned'").all(botId).map((r) => r.id);
+    this.db.prepare("UPDATE companion_reaches SET status = 'cancelled' WHERE bot_id = ? AND status = 'planned'").run(botId);
+    const last = this.db.prepare("SELECT * FROM companion_reaches WHERE bot_id = ? AND status = 'delivered' AND answered_at IS NULL AND ignored = 0 ORDER BY delivered_at DESC LIMIT 1").get(botId);
+    if (last) {
+      if (now - last.delivered_at <= answerMs) this.db.prepare('UPDATE companion_reaches SET answered_at = ? WHERE id = ?').run(now, last.id);
+      else this.db.prepare('UPDATE companion_reaches SET ignored = 1 WHERE id = ?').run(last.id);
+    }
+    return { cancelled };
+  }
+
+  /** Delivered reaches unanswered past the window count as ignored now. */
+  settleIgnoredReaches(botId, answerMs) {
+    this.db.prepare("UPDATE companion_reaches SET ignored = 1 WHERE bot_id = ? AND status = 'delivered' AND answered_at IS NULL AND ignored = 0 AND delivered_at < ?")
+      .run(botId, this.now() - answerMs);
+  }
+
+  /** Ignored reaches in a row since the last answered one (expired ones count too). */
+  ignoredReaches(botId) {
+    let n = 0;
+    for (const r of this.db.prepare("SELECT * FROM companion_reaches WHERE bot_id = ? AND status IN ('delivered', 'expired') ORDER BY fire_at DESC LIMIT 10").all(botId)) {
+      if (r.answered_at) break;
+      if (r.ignored || r.status === 'expired') n += 1; else break;
+    }
+    return n;
+  }
+
+  companionReaches({ botId, status, limit = 20 } = {}) {
+    const rows = status
+      ? this.db.prepare('SELECT * FROM companion_reaches WHERE bot_id = ? AND status = ? ORDER BY fire_at DESC LIMIT ?').all(botId, status, limit)
+      : this.db.prepare('SELECT * FROM companion_reaches WHERE bot_id = ? ORDER BY fire_at DESC LIMIT ?').all(botId, limit);
+    return rows.map(reachRow);
+  }
+
+  addReach({ botId, fireAt, text: words }) {
+    const { lastInsertRowid } = this.db.prepare("INSERT INTO companion_reaches(bot_id, fire_at, text, status, created_at) VALUES (?, ?, ?, 'planned', ?)").run(botId, fireAt, words, this.now());
+    return reachRow(this.db.prepare('SELECT * FROM companion_reaches WHERE id = ?').get(Number(lastInsertRowid)));
+  }
+
+  setReachStatus(reachId, status) {
+    this.db.prepare(`UPDATE companion_reaches SET status = ?${status === 'delivered' ? ', delivered_at = ?' : ''} WHERE id = ?`)
+      .run(...(status === 'delivered' ? [status, this.now(), reachId] : [status, reachId]));
+  }
+
   /** One question's attempts, newest first. */
   listAttempts({ questionId, limit = 50 }) {
     this.getQuestion({ id: questionId });
@@ -1465,6 +1729,18 @@ const questionRow = (row, withAnswer) => row && ({
 
 /** The document kinds the knowledge base takes; the table's CHECK holds the same list. */
 export const DOCUMENT_KINDS = ['txt', 'md', 'pdf'];
+
+const episodeRow = (row) => row && ({
+  id: row.id, botId: row.bot_id, text: row.text, cues: JSON.parse(row.cues), importance: row.importance, emotion: row.emotion,
+  mood: row.mood, key: row.fact_key, followUp: row.follow_up, happenedAt: row.happened_at, createdAt: row.created_at,
+  recalls: row.recalls, lastRecalledAt: row.last_recalled_at ?? null, followedUpAt: row.followed_up_at ?? null,
+  supersededBy: row.superseded_by ?? null, hidden: Boolean(row.hidden),
+});
+
+const reachRow = (row) => row && ({
+  id: row.id, botId: row.bot_id, fireAt: row.fire_at, text: row.text, status: row.status, createdAt: row.created_at,
+  deliveredAt: row.delivered_at ?? null, answeredAt: row.answered_at ?? null, ignored: Boolean(row.ignored),
+});
 
 const documentRow = (row) => row && ({
   id: row.id, title: row.title, kind: row.kind, sourceName: row.source_name, chars: row.chars,

@@ -95,6 +95,15 @@ export function dumpLibrary(store) {
     })),
     mistakes: db.prepare('SELECT * FROM quiz_mistakes ORDER BY added_at, question_id').all()
       .map((m) => ({ question: q.get(m.question_id), streak: m.streak, addedAt: m.added_at, updatedAt: m.updated_at, dueAt: m.due_at ?? null })),
+    // Firefly 伙伴 (schema 10): what the companion lived through and has seen; not the reaches or cursors.
+    companionEpisodes: db.prepare('SELECT * FROM companion_episodes ORDER BY happened_at, id').all().map((e) => ({
+      botId: e.bot_id, text: e.text, cues: JSON.parse(e.cues), importance: e.importance, emotion: e.emotion, mood: e.mood, key: e.fact_key,
+      followUp: e.follow_up, happenedAt: e.happened_at, createdAt: e.created_at, recalls: e.recalls, hidden: Boolean(e.hidden), superseded: e.superseded_by !== null,
+    })),
+    companionTraits: db.prepare('SELECT * FROM companion_traits ORDER BY bot_id, key').all().map((t) => ({
+      botId: t.bot_id, key: t.key, text: t.text, evidence: t.evidence, days: JSON.parse(t.days), firstSeen: t.first_seen, lastSeen: t.last_seen, refuted: Boolean(t.refuted),
+    })),
+    companionMoods: db.prepare('SELECT * FROM companion_moods ORDER BY at, id').all().map((m) => ({ botId: m.bot_id, word: m.word, valence: m.valence, at: m.at })),
     research: jobs.map((j) => ({
       topic: j.topic, depth: j.depth, sources: JSON.parse(j.sources), status: j.status, report: j.report ?? null, error: j.error ?? null,
       createdAt: j.created_at, updatedAt: j.updated_at,
@@ -108,7 +117,8 @@ export function dumpLibrary(store) {
 
 const TABLES = ['research_claims', 'research_citations', 'research_steps', 'research_blocks', 'research_jobs',
   'quiz_mistakes', 'quiz_attempts', 'quiz_questions', 'kb_vectors', 'kb_chunks', 'kb_documents',
-  'learning_owner_sessions', 'learning_owners', 'session_modes', 'notes', 'notebooks', 'memories'];
+  'learning_owner_sessions', 'learning_owners', 'session_modes', 'notes', 'notebooks', 'memories',
+  'companion_episodes', 'companion_traits', 'companion_moods', 'companion_reaches', 'companion_cursors'];
 
 /** Whether the library holds any learning data (settings do not count). */
 export function isEmpty(store) {
@@ -163,6 +173,20 @@ export function importLibrary(store, data) {
       // An export from before review dates (schema 9): due at once.
       db.prepare('INSERT INTO quiz_mistakes(question_id, streak, added_at, updated_at, due_at) VALUES (?, ?, ?, ?, ?)')
         .run(questions[m.question], m.streak, m.addedAt, m.updatedAt, Number.isInteger(m.dueAt) ? m.dueAt : m.updatedAt);
+    }
+    for (const e of list(data.companionEpisodes)) {
+      // A superseded one comes back hidden: which one replaced it is not kept.
+      db.prepare(`INSERT INTO companion_episodes(bot_id, text, cues, importance, emotion, mood, fact_key, follow_up, happened_at, created_at, recalls, hidden)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(String(e.botId), String(e.text), JSON.stringify(Array.isArray(e.cues) ? e.cues : []),
+        Number(e.importance ?? 0.5), Number(e.emotion ?? 0.3), String(e.mood ?? ''), String(e.key ?? ''), String(e.followUp ?? ''),
+        e.happenedAt, e.createdAt ?? e.happenedAt, Number.isInteger(e.recalls) ? e.recalls : 0, e.hidden === true || e.superseded === true ? 1 : 0);
+    }
+    for (const t of list(data.companionTraits)) {
+      db.prepare('INSERT OR REPLACE INTO companion_traits(bot_id, key, text, evidence, days, first_seen, last_seen, refuted) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+        .run(String(t.botId), String(t.key), String(t.text), String(t.evidence ?? ''), JSON.stringify(Array.isArray(t.days) ? t.days : []), t.firstSeen, t.lastSeen, t.refuted === true ? 1 : 0);
+    }
+    for (const m of list(data.companionMoods)) {
+      db.prepare('INSERT INTO companion_moods(bot_id, word, valence, at) VALUES (?, ?, ?, ?)').run(String(m.botId), String(m.word), Number(m.valence ?? 0), m.at);
     }
     for (const j of list(data.research)) {
       const status = ['done', 'failed', 'cancelled'].includes(j.status) ? j.status : 'cancelled';

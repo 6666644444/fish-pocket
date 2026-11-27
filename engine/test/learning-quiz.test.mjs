@@ -282,7 +282,7 @@ test('schema 9: questions already in the mistake book are due at once, and expor
   db.prepare('INSERT INTO quiz_mistakes(question_id, streak, added_at, updated_at) VALUES (1, 1, 5, 7)').run();
   db.close();
   const store = new LearningStore(file, { now: () => T0 });
-  assert.equal(SCHEMA_VERSION, 9);
+  assert.ok(SCHEMA_VERSION >= 9);
   assert.deepEqual(store.listQuestions({ due: true }).map((q) => [q.id, q.mistakeStreak, q.reviewAt]), [[1, 1, 7]]);
   store.close();
 });

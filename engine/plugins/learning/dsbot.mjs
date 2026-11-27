@@ -40,7 +40,14 @@ export function indexTeam(state) {
   for (const [key, bot] of Object.entries(state?.bots ?? {})) {
     if (!bot || typeof bot !== 'object') continue;
     const botId = sessionIdOf(bot.id) ?? key;
-    bots.set(botId, { id: botId, name: typeof bot.name === 'string' ? bot.name : botId });
+    // Firefly 伙伴 (D55) reads the current Session, and the Bot's own description for its voice.
+    bots.set(botId, {
+      id: botId,
+      name: typeof bot.name === 'string' ? bot.name : botId,
+      sessionId: sessionIdOf(bot.sessionId),
+      role: typeof bot.role === 'string' ? bot.role : '',
+      instructions: typeof bot.instructions === 'string' ? bot.instructions.slice(0, 1200) : '',
+    });
     const owner = { kind: 'bot', botId };
     put(bot.sessionId, owner);
     for (const s of segmentsOf(bot.segments)) put(s, owner);

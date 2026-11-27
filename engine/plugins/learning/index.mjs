@@ -28,6 +28,7 @@ import { SkillFiles, skillsDir } from './skills.mjs';
 import { appleEmbedder, appleQueryVectors, embedPending } from './embed.mjs';
 import { quizTool } from './quiz-tool.mjs';
 import { ResearchRunner, backgroundOnly, researchTool } from './research-tool.mjs';
+import { Companion } from './companion-runtime.mjs';
 import {
   BEFORE_RESTORE, backupLibrary, deleteBackup, deleteLearningData, exportLibrary, importExport, importLibrary, listBackups, restoreLibrary,
 } from './portable.mjs';
@@ -168,6 +169,16 @@ export const METHODS = {
   'backup.restore': ({ portable }, p) => portable.restore(p),
   'backup.delete': ({ portable }, p) => portable.deleteBackup(p),
   'data.delete': ({ portable }, p) => portable.deleteAll(p),
+  // D55: Firefly 伙伴 (companion-runtime.mjs). `tzOffset`: the phone's clock.
+  'companion.status': ({ companion }) => companion.status(),
+  'companion.settings.set': ({ store }, p) => store.updateCompanionSettings(p),
+  'companion.episodes': ({ store }, p) => store.companionEpisodes({ botId: p.botId ?? store.companionSettings().botId, all: p.all === true }),
+  'companion.episodes.hide': ({ store }, p) => store.hideEpisode(p),
+  'companion.traits': ({ store }, p) => store.companionTraits({ botId: p.botId ?? store.companionSettings().botId, all: true }),
+  'companion.traits.refute': ({ store }, p) => store.refuteTrait({ botId: p.botId ?? store.companionSettings().botId, key: p.key }),
+  'companion.plan': ({ companion }, p) => companion.plan(p),
+  'companion.wake': ({ companion }, p) => companion.wake(p),
+  'companion.digest': ({ companion }) => companion.digestNow(),
 };
 
 const STATUS = { invalid: 400, 'not-found': 404, conflict: 409, unsupported: 422, unavailable: 503 };
@@ -217,7 +228,7 @@ export function call(open, method, params, skills = () => new SkillFiles(skillsD
   };
   const done = (value) => json({ ok: true, result: value ?? null });
   try {
-    const where = { skills, embedder: kb.embedder ?? null, index: kb.index ?? (() => null), runner: kb.runner, portable: kb.portable, team: kb.team };
+    const where = { skills, embedder: kb.embedder ?? null, index: kb.index ?? (() => null), runner: kb.runner, portable: kb.portable, team: kb.team, companion: kb.companion };
     Object.defineProperty(where, 'store', { get: open });
     const value = run(where, params);
     return value && typeof value.then === 'function' ? value.then(done, fail) : done(value);
@@ -433,6 +444,15 @@ export default class Learning {
       },
     };
     const kb = { embedder, index, runner, portable, team };
+    // D55: the companion layer, on the one Bot the user chose.
+    const companion = new Companion({
+      open, team, get: service, agents: config.agents ?? ctx.agents, logger: ctx.logger,
+      ...(config.callModel ? { callModel: config.callModel } : {}),
+      ...(config.random ? { random: config.random } : {}),
+      ...(config.timers ? { timers: config.timers } : {}),
+    });
+    this.companion = companion;
+    kb.companion = companion;
     for (const method of Object.keys(METHODS)) {
       ctx.effect(() => ctx.connection.fetch.register({
         path: `${ROUTE}/${method}`,
@@ -496,11 +516,17 @@ export default class Learning {
           ctx.logger?.warn?.(`learning: no research note for this turn: ${error?.message ?? error}`);
         }
       }
+      try {
+        notes.push(...companion.preStep({ agent, messages: decision.messages }));
+      } catch (error) {
+        ctx.logger?.warn?.(`companion: no note for this turn: ${error?.message ?? error}`);
+      }
       return notes.length ? { ...decision, messages: [...decision.messages, ...notes] } : decision;
     });
 
     ctx.effect(() => () => {
       stop.abort();
+      companion.dispose();
       void runner.dispose();
       store?.close();
       store = undefined;
