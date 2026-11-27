@@ -16,6 +16,8 @@ enum ShareInbox {
         case bot(String)
         /// A group chat, by the group's id.
         case room(String)
+        /// A conversation already there, by its session id (D51).
+        case session(String)
 
         /// Its key in the share sheet's suggestions (`INSendMessageIntent.conversationIdentifier`).
         var conversation: String {
@@ -23,6 +25,7 @@ enum ShareInbox {
             case .newConversation: "new"
             case .bot(let id): "bot:\(id)"
             case .room(let id): "room:\(id)"
+            case .session(let id): "session:\(id)"
             }
         }
 
@@ -32,6 +35,7 @@ enum ShareInbox {
             switch parts[0] {
             case "bot": self = .bot(parts[1])
             case "room": self = .room(parts[1])
+            case "session": self = .session(parts[1])
             default: return nil
             }
         }
@@ -135,9 +139,10 @@ enum ShareInbox {
     }
 }
 
-/// The Bots and group chats the share extension offers, as the app last listed them: written
-/// by the app (`ShareTargetsWriter`), each with its avatar drawn into `avatars/` next to it.
-/// Only names and pictures go here, no messages.
+/// The Bots, group chats and recent conversations the share extension offers, as the app last
+/// listed them: written by the app (`ShareTargetsWriter`), each Bot and group with its avatar
+/// drawn into `avatars/` next to it. Only names, pictures and conversation titles go here, no
+/// messages.
 struct ShareTargets: Codable, Equatable {
     struct Bot: Codable, Equatable, Identifiable {
         var id: String
@@ -149,6 +154,14 @@ struct ShareTargets: Codable, Equatable {
         var id: String
         var name: String
         var memberCount: Int
+    }
+
+    /// A conversation of this phone, as the session list names it (D51).
+    struct Session: Codable, Equatable, Identifiable {
+        var id: String
+        var title: String
+        /// Its workspace's name, nil for one in none.
+        var workspace: String?
     }
 
     /// A Bot or a group, as one list.
@@ -167,19 +180,23 @@ struct ShareTargets: Codable, Equatable {
     var rooms: [Room]
     /// The Bots and groups in one order, the Bot page's (`bot:<id>`, `room:<id>`).
     var order: [String]
+    /// The most recently updated conversations, newest first (not the Bots' or the groups').
+    var sessions: [Session]
 
-    init(bots: [Bot], rooms: [Room], order: [String] = []) {
+    init(bots: [Bot], rooms: [Room], order: [String] = [], sessions: [Session] = []) {
         self.bots = bots
         self.rooms = rooms
         self.order = order
+        self.sessions = sessions
     }
 
-    /// A file an older app wrote has no groups, or no order.
+    /// A file an older app wrote has no groups, no order or no conversations.
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         bots = try container.decode([Bot].self, forKey: .bots)
         rooms = try container.decodeIfPresent([Room].self, forKey: .rooms) ?? []
         order = try container.decodeIfPresent([String].self, forKey: .order) ?? []
+        sessions = try container.decodeIfPresent([Session].self, forKey: .sessions) ?? []
     }
 
     /// The Bots and groups as one list, in the Bot page's order. Without one (a file an older

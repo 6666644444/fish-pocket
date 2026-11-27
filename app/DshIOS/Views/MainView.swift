@@ -1250,6 +1250,22 @@ struct MainView: View {
     private func receive(_ shared: ShareInbox.Taken) async {
         let files = shared.files.isEmpty ? nil : SharedFiles(urls: shared.files, folder: shared.folder)
         if files == nil { try? FileManager.default.removeItem(at: shared.folder) }
+        if case .session(let id) = shared.target {
+            // A conversation already there (D51). A cold launch: the list arrives a moment after the engine.
+            let deadline = ContinuousClock.now + .seconds(10)
+            while app.sessions[id] == nil, ContinuousClock.now < deadline {
+                try? await Task.sleep(for: .milliseconds(100))
+            }
+            if app.sessions[id] != nil, !app.isArchived(id) {
+                deliver(text: shared.text, files: files, to: id)
+                launchedUnderBot = false
+                botOpen = false
+                selection = id
+                if usesTabs { showInTabs(id) }
+                return
+            }
+            app.showToast(String(localized: "找不到这个会话了，内容放进了新对话"), tone: .warning)
+        }
         if case .bot(let botId) = shared.target {
             // A cold launch: the team arrives a moment after the engine.
             let deadline = ContinuousClock.now + .seconds(10)

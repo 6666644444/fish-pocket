@@ -325,6 +325,13 @@
 - 读取时机不变（打开聊天、群主变化时），改由 `.learningModeRefresh(owner)` 挂在 accessory 上；`LearningModes.refresh` 只在值变了时写入。
 - 没有新文案。小条用过的 3 条（`%@ · 学习模式` 等）留在 xcstrings 里没删，不影响。
 
+### D51 分享可以发到已有的会话（2026-11-27 用户真机反馈）
+
+- 上游的分享扩展只列「新对话」和 Bot / 群聊。现在在它们下面加「最近的会话」：最近更新的 10 个会话，和会话列表的取法一样（`AppModel.sessions(in:)`：不含 Bot / 群的会话、已归档、空白、子代理），标题用 `app.title(of:)`，下面一行是工作区名。
+- 数据：`ShareTargets` 加 `sessions`（id、标题、工作区名，不含消息），旧文件没有这一项照样能读；由 `ShareTargetsWriter` 一起写，Bot 团队还没回应时不写（分不清哪些是 Bot 的会话）。`ShareInbox.Target` 加 `.session(id)`（`session:<id>`）。
+- App 收到后：等会话列表里出现这个会话（最多 10 秒），把文字和文件放进它的输入框并打开它，不自动发送；会话已删或已归档 → 提示「找不到这个会话了，内容放进了新对话」，放进新对话。
+- 文案 +2，覆盖率 3879/3879。测试 `ShareTargetsTests`。
+
 ## 改过的上游文件
 
 | 文件 | 改了什么 | 为什么 |
@@ -355,6 +362,10 @@
 | `app/DshIOS/Assets.xcassets/LaunchMark.imageset/*.png` | 4 张图换成 Firefly（同步上游冲突时 `git checkout --ours`） | D38 |
 | `app/DshIOS/Views/BotChatView.swift` | accessory 加 `.learningModeRefresh`；`BotTitle` 末尾加 `LearningModeMark`；`BotChatMenu` 末尾加一个 Section | D45、D50 |
 | `app/DshIOS/Views/BotRoomView.swift` | accessory 加 `.learningModeRefresh`；`RoomMentions` 的 @ 行最前面加 `LearningModeChip` | D45、D50 |
+| `app/Shared/ShareInbox.swift` | `Target` 加 `.session`；`ShareTargets` 加 `sessions` | D51 |
+| `app/DshIOS/ShareTargetsWriter.swift` | 一起写最近 10 个会话 | D51 |
+| `app/ShareExtension/ShareView.swift` | Bot 和群聊下面加「最近的会话」 | D51 |
+| `app/DshIOS/Views/MainView.swift` | `receive` 加 `.session`：放进那个会话的输入框并打开 | D51 |
 | `app/DshIOS/Models/PluginPins.swift` | 1b 批量换名误改了匹配引擎英文报错的正则，已改回 "in Fish Pocket" 并加测试 `PluginPinsTests` | D36（1b） |
 | `HomeScreenShortcut.swift`、`WhatsNew.swift`、`PluginPins.swift`、`PhoneRecordingExport.swift`、`PhoneRecordingViews.swift`、`BotIMPage.swift`、`BotViews.swift`、`ConversationShare.swift`、`DrawerView.swift`、`NativeCapabilitiesView.swift`、`PluginStoreView.swift`、`ShortcutsGuidePage.swift`、`WatchSetupPage.swift`、`SettingsView.swift`（第五处）、`DshIOSApp.swift`（第二处）、`LiveActivity/*Widget*.swift`、`NewConversationControl.swift`、`DshLiveActivity.swift`、`Shared/NewConversationIntent.swift`、`Shared/OpenWebIntent.swift`、`Watch/Views/HomeView.swift`、`app/Watch/Localizable.xcstrings`（末尾 1 条） | 字符串里的 App 名 Fish Pocket → Firefly，只换名字；同步上游冲突时保留上游改动，再把名字换回来 | D36（1b） |
 

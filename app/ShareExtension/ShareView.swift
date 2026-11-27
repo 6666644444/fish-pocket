@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// The sheet: what was shared on top, then where it goes: 新对话 first, then the Bots and the
-/// group chats in the Bot page's order. A tap opens the app there.
+/// group chats in the Bot page's order, then the recent conversations (D51). A tap opens the app there.
 struct ShareView: View {
     let model: ShareModel
     /// The app's ink, as in the app: an extension does not take `NSAccentColorName` by itself.
@@ -83,6 +83,23 @@ struct ShareView: View {
                                     TargetRow(title: Text(verbatim: room.name), detail: room.memberCount > 0 ? Text("\(room.memberCount) 个 Bot") : nil) {
                                         RoomPicture(room: room)
                                     }
+                                }
+                            }
+                        }
+                    }
+                }
+                // A conversation already there, as the session list names it (D51).
+                let sessions = model.targets.sessions
+                if !sessions.isEmpty {
+                    Section("最近的会话") {
+                        ForEach(sessions) { session in
+                            Button { model.send(to: .session(session.id)) } label: {
+                                TargetRow(title: Text(verbatim: session.title), detail: session.workspace.map { Text(verbatim: $0) }) {
+                                    Image(systemName: "bubble.left")
+                                        .font(.system(size: 15, weight: .medium))
+                                        .foregroundStyle(.secondary)
+                                        .frame(width: 36, height: 36)
+                                        .background(Color(uiColor: .tertiarySystemFill), in: Circle())
                                 }
                             }
                         }

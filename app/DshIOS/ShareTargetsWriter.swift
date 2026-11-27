@@ -12,6 +12,8 @@ final class ShareTargetsWriter {
     private static let debounce = Duration.seconds(1)
     /// The avatar's size in the extension's rows, in points.
     private static let avatarSize: CGFloat = 36
+    /// How many recent conversations the extension offers (D51).
+    static let recentSessions = 10
 
     private weak var app: AppModel?
     private var written: ShareTargets?
@@ -36,33 +38,47 @@ final class ShareTargetsWriter {
         pendingWrite = Task { [weak self] in
             try? await Task.sleep(for: Self.debounce)
             guard !Task.isCancelled else { return }
-            self?.write(bots: listed.bots, rooms: listed.rooms)
+            self?.write(bots: listed.bots, rooms: listed.rooms, sessions: listed.sessions)
         }
     }
 
-    /// nil while it is not known yet: the engine or the team is still loading.
-    private static func listed(in app: AppModel) -> (bots: [BotInfo], rooms: [RoomInfo])? {
+    /// nil while it is not known yet: the engine or the team is still loading (the Bots' own
+    /// sessions are told apart from the user's only once the team answers).
+    private static func listed(in app: AppModel) -> (bots: [BotInfo], rooms: [RoomInfo], sessions: [ShareTargets.Session])? {
         let team = app.botTeam
         switch team.status {
         case .ready:
             guard !team.team.isNull else { return nil }
             return (team.bots.filter { !$0.hidden && !$0.sessionId.isEmpty }.sorted(by: team.listOrder),
-                    team.rooms.filter { !$0.hidden && !$0.sessionId.isEmpty }.sorted(by: team.listOrder))
+                    team.rooms.filter { !$0.hidden && !$0.sessionId.isEmpty }.sorted(by: team.listOrder),
+                    recent(in: app))
         case .unknown:
             return nil
         default:
-            // No Bot plugin: the extension offers 新对话 alone.
-            return ([], [])
+            // No Bot plugin: the extension offers 新对话 and the recent conversations.
+            return ([], [], recent(in: app))
         }
     }
 
-    private func write(bots: [BotInfo], rooms: [RoomInfo]) {
+    /// The conversations the session list shows (no Bot's or group's, none archived, blank or a
+    /// subagent's: `AppModel.sessions(in:)`), the most recently updated first.
+    private static func recent(in app: AppModel) -> [ShareTargets.Session] {
+        let all = app.workspaces.flatMap { app.sessions(in: $0) } + app.sessions(in: nil)
+        var seen: Set<String> = []
+        return all.sorted { $0.updatedAt > $1.updatedAt }
+            .filter { seen.insert($0.id).inserted }
+            .prefix(recentSessions)
+            .map { ShareTargets.Session(id: $0.id, title: app.title(of: $0.id), workspace: app.workspace(of: $0.id)?.displayTitle) }
+    }
+
+    private func write(bots: [BotInfo], rooms: [RoomInfo], sessions: [ShareTargets.Session]) {
         guard let app, let folder = ShareTargets.avatarFolder else { return }
         let team = app.botTeam
         let targets = ShareTargets(
             bots: bots.map { ShareTargets.Bot(id: $0.id, name: $0.name, role: $0.role) },
             rooms: rooms.map { ShareTargets.Room(id: $0.id, name: team.name(of: $0), memberCount: $0.members.count) },
-            order: (bots.map(BotListEntry.bot) + rooms.map(BotListEntry.room)).sorted(by: team.listOrder).map(\.id)
+            order: (bots.map(BotListEntry.bot) + rooms.map(BotListEntry.room)).sorted(by: team.listOrder).map(\.id),
+            sessions: sessions
         )
         try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         var kept: Set<String> = []
