@@ -21,8 +21,8 @@ export const EPISODE = {
   halfLifeDays: 21,
   /** Below this freshness an episode is not recalled (it is still kept). */
   floor: 0.08,
-  /** Per digest, and digests per local day. */
-  perDigest: 4,
+  /** Per digest (most have 0 or 1), and digests per local day. */
+  perDigest: 3,
   digestsPerDay: 6,
   /** Recalled per turn, characters each, days before one recalled comes up again. */
   recallMax: 2,
@@ -162,6 +162,7 @@ export function sessionSections({ traits = [], mood, now, tzOffset = 0 }) {
     '像熟人那样聊：话不用说满，可以有自己的情绪、看法和小脾气，偶尔接梗、调侃；ta 只是闲聊时就闲聊，不要总把话题拉回"有什么能帮你"；不用客服腔（"很高兴为你服务""请问还有什么需要"），不动不动列清单或加小标题。',
     '你记得你们之间的事，但不刻意证明自己记得：只有真的相关时才自然带一句，更多时候只是让它影响你的语气和关心的点；不要说"我记得你说过""根据记忆"。',
     '往事可能记错或已经过时，ta 现在说的为准；ta 纠正你时就接受，别争。',
+    '只说真的有过的过去：没出现在这段对话或给你的往事里的旧事，不要说成"上次""又""每次都这样"；也不要编你自己在现实里做过、看到过的具体事（路过哪、用手机看到什么）。看法、情绪、玩笑随你。',
   ].join('\n')];
   if (traits.length) {
     sections.push(`【你对 ta 的了解】（相处中慢慢看出来的，可能会变）\n${traits.map((t) => `- ${cut(t.text, TRAIT.chars)}`).join('\n')}`);
@@ -188,7 +189,7 @@ export function turnSections({ episodes = [], thread, now, tzOffset = 0, rooms =
     sections.push(`【脑子里浮现的往事】只有你知道。真相关就自然地带一句或只影响语气，不相关就当没看见；别复述，别说"我记得"。\n${lines.join('\n')}`);
   }
   if (thread) {
-    sections.push(`【还没聊完的事】${whenSaid(thread.happenedAt, now, tzOffset)} ta 提到：${cut(thread.followUp, 80)}。如果 ta 现在没在忙别的、气氛合适，可以顺口问一句结果；不合适就别问。`);
+    sections.push(`【还没聊完的事】${whenSaid(thread.happenedAt, now, tzOffset)} ta 提到：${cut(thread.followUp, 80)}。如果这件事已经有结果了、ta 现在没在忙别的、气氛合适，可以顺口问一句；事情还没到时候（比如考试在之后），就问问准备得怎样或者干脆不提；不合适就别问。`);
   }
   return sections;
 }
@@ -271,11 +272,11 @@ export function groupLines(messages, selfName) {
 export const DIGEST_SYSTEM = [
   '你在帮一个 AI 伙伴整理它和用户（下面称 ta）刚才的一段聊天，像人睡前回想今天发生的事。只输出一个 JSON 对象，不要别的文字。',
   '格式：{"episodes":[{"text":"…","cues":["…"],"importance":0.5,"emotion":0.3,"mood":"","key":"","followUp":""}],"traits":[{"key":"…","text":"…","evidence":"…"}],"mood":{"word":"…","valence":0},"retract":[]}',
-  'episodes：值得以后想起的共同经历，0 到 4 条，没有就给空数组（大多数闲聊没有）。text 用伙伴的第一人称写（"我""ta"），40 到 120 字，保留当时的语境、细节和感受，像回忆而不是档案条目；不要写成"用户喜欢X"这种事实（那些由别的系统记）。cues 是 2 到 6 个以后能让它被想起的词（人名、事物、地点、事件）。importance 0 到 1：对 ta 有多重要。emotion 0 到 1：情绪有多强。mood：ta 当时的情绪，一两个词，没有就空。key：只在这件事是会变化的状态时填"对象.方面"（如"ta.作息""ta.数学成绩"），不要写具体值，拿不准就空。followUp：还没结果、以后可以问起的事（如"周五数学月考"），没有就空。',
+  'episodes：值得以后想起的共同经历。一段聊天通常 0 或 1 条（同一晚聊的几件小事合成一条），只有真的发生了几件互不相干的重要事才写 2 到 3 条；纯抱怨、寒暄、只有伙伴自己在说的部分不写。text 用伙伴的第一人称写（"我""ta"），40 到 120 字，保留当时的语境、细节和感受，像回忆而不是档案条目；不要写成"用户喜欢X"这种事实（那些由别的系统记）。cues 是 2 到 6 个以后能让它被想起的词（人名、事物、地点、事件）。importance 0 到 1：对 ta 有多重要。emotion 0 到 1：情绪有多强。mood：ta 当时的情绪，一两个词，没有就空。key：只在这件事是会变化的状态时填"对象.方面"（如"ta.作息""ta.数学成绩"），不要写具体值，拿不准就空。followUp：ta 说过的、之后会有结果、值得过后问一句的事，写清时间（如"周五的数学月考成绩"）；伙伴自己的追问、ta 没回应的话、小事不算，大多数时候为空。',
   'traits：这段聊天里能看出的 ta 的性格、习惯、偏好、喜欢被怎样对待，0 到 3 条。key 是"方面"（如"说话方式""压力来时""作息"），同一方面以后要用同一个 key；text 一句话；evidence 写这次聊天里的依据。没有依据就不要写，不要猜。',
   'mood：ta 在这段聊天结束时的整体状态，valence -1（很低落）到 1（很开心）；看不出就 null。',
   'retract：ta 明确要求忘掉、别记的事的关键词；没有就空数组。',
-  '只依据聊天内容，不要编造。伙伴自己说的话不能当成 ta 的特点的证据。',
+  '只依据聊天内容，不要编造。伙伴自己说的话不能当成 ta 的特点的证据；伙伴随口编的、聊天之外的经历（"我上次路过食堂"）不要写进往事。',
   '如果说明这是群聊：往事写成"在群里……"，可以提到当时在场的成员；只有 ta（用户）自己的话才算 ta 的性格和情绪的证据，其他成员的话不算。',
 ].join('\n');
 
