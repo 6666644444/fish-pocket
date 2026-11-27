@@ -18,6 +18,9 @@ struct LearningHomePage: View {
     @State private var deleting: LearningNotebook?
     @State private var learningSessions: [LearningSessionMode] = []
     @State private var history: [LearningHistoryEntry] = []
+    /// Bots and groups in a learning mode, and those whose mode was ended (batch 2).
+    @State private var owners: [LearningOwnerStatus] = []
+    @State private var ownerRecord: [LearningOwnerStatus] = []
     @State private var settings: LearningSettings?
     @State private var starting: LearningMode?
 
@@ -37,6 +40,7 @@ struct LearningHomePage: View {
         page(
             List {
                 modesSection
+                withBotSection
                 sessionsSection
                 historySection
                 memorySection
@@ -75,6 +79,47 @@ struct LearningHomePage: View {
         }
     }
 
+    /// 和 Bot 一起学: put a Bot or a group in a mode and open its chat. The mode follows the Bot
+    /// or the group (engine dsbot.mjs); in a group its admin teaches, so a group needs one.
+    @ViewBuilder private var withBotSection: some View {
+        let team = app.botTeam
+        let bots = team.bots.filter { !$0.hidden }
+        let rooms = team.rooms.filter { !$0.hidden }
+        if !bots.isEmpty || !rooms.isEmpty {
+            Section {
+                ForEach(bots) { bot in
+                    Menu {
+                        modeChoices { mode in Task { await learn(.bot(bot.id), in: mode) } }
+                    } label: {
+                        Label(bot.name, systemImage: "person.crop.circle").foregroundStyle(.primary)
+                    }
+                }
+                ForEach(rooms) { room in
+                    Menu {
+                        modeChoices { mode in Task { await learn(.room(room.id), in: mode) } }
+                    } label: {
+                        LabeledContent {
+                            if room.admin == nil { Text("没有群主") }
+                        } label: {
+                            Label(team.name(of: room), systemImage: "person.3").foregroundStyle(.primary)
+                        }
+                    }
+                    .disabled(room.admin == nil)
+                }
+            } header: {
+                Text("和 Bot 一起学")
+            } footer: {
+                Text("选一个 Bot 或群聊和一种模式，直接进入它的聊天。学习模式跟着 Bot 或群走；群聊里由群主当老师，没有群主的群要先在群详情里设一位。在任何聊天的菜单里也能随时切换。")
+            }
+        }
+    }
+
+    @ViewBuilder private func modeChoices(_ pick: @escaping (LearningMode) -> Void) -> some View {
+        ForEach(LearningMode.allCases) { mode in
+            Button(mode.title, systemImage: mode.systemImage) { pick(mode) }
+        }
+    }
+
     /// Which App Group the share extension and the widgets reach the app through (Shared/AppGroup.swift):
     /// after signing with a free Apple ID, this shows whether the signature kept one.
     @ViewBuilder private var diagnosticsSection: some View {
@@ -91,8 +136,26 @@ struct LearningHomePage: View {
     }
 
     @ViewBuilder private var sessionsSection: some View {
-        if !openableSessions.isEmpty {
+        if !openableSessions.isEmpty || !owners.isEmpty {
             Section {
+                ForEach(owners, id: \.self) { entry in
+                    if let mode = entry.mode {
+                        Button { openOwner(entry.owner) } label: {
+                            LabeledContent {
+                                Text(entry.paused == true ? String(localized: "已暂停") : mode.title)
+                            } label: {
+                                Label(ownerTitle(entry), systemImage: entry.kind == "room" ? "person.3" : "person.crop.circle")
+                                    .foregroundStyle(.primary)
+                            }
+                        }
+                        .swipeActions {
+                            Button("结束学习模式") { Task { await endOwner(entry) } }
+                        }
+                        .contextMenu {
+                            Button("结束学习模式", systemImage: "xmark.circle") { Task { await endOwner(entry) } }
+                        }
+                    }
+                }
                 ForEach(openableSessions, id: \.sessionId) { entry in
                     Button { open(entry.sessionId) } label: {
                         LabeledContent {
@@ -119,8 +182,30 @@ struct LearningHomePage: View {
 
     /// Sessions whose learning mode was ended: still openable, and back into a mode with a long press.
     @ViewBuilder private var historySection: some View {
-        if !openableHistory.isEmpty {
+        if !openableHistory.isEmpty || !ownerRecord.isEmpty {
             Section {
+                ForEach(ownerRecord, id: \.self) { entry in
+                    Button { openOwner(entry.owner) } label: {
+                        LabeledContent {
+                            if let ended = entry.endedDate { Text(ended.formatted(date: .abbreviated, time: .shortened)) }
+                        } label: {
+                            Label {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(ownerTitle(entry)).foregroundStyle(.primary)
+                                    if let mode = entry.mode { Text(mode.title).font(.footnote).foregroundStyle(.secondary) }
+                                }
+                            } icon: {
+                                Image(systemName: entry.kind == "room" ? "person.3" : "person.crop.circle")
+                            }
+                        }
+                    }
+                    .contextMenu {
+                        Menu("重新开启学习模式", systemImage: "arrow.uturn.backward.circle") {
+                            modeChoices { mode in Task { await learn(entry.owner, in: mode, open: false) } }
+                        }
+                        Button("从记录里移除", systemImage: "eye.slash") { Task { await hideOwner(entry) } }
+                    }
+                }
                 ForEach(openableHistory, id: \.sessionId) { entry in
                     Button { open(entry.sessionId) } label: {
                         LabeledContent {
@@ -263,7 +348,61 @@ struct LearningHomePage: View {
         // The mode list and the setting are extras: a failure here leaves the notebooks usable.
         if let modes = try? await client.sessionModes() { learningSessions = modes }
         if let ended = try? await client.learningHistory() { history = ended }
+        await loadOwners()
         if let current = try? await client.settings() { settings = current }
+    }
+
+    private func loadOwners() async {
+        if let active = try? await client.ownerModes() { owners = active }
+        if let ended = try? await client.ownerHistory() { ownerRecord = ended }
+    }
+
+    /// A Bot's or a group's name: the app's own list first (a group may be named after its members).
+    private func ownerTitle(_ entry: LearningOwnerStatus) -> String {
+        let team = app.botTeam
+        if entry.kind == "room", let room = team.room(entry.id) { return team.name(of: room) }
+        if entry.kind == "bot", let bot = team.bot(entry.id) { return bot.name }
+        return entry.name ?? entry.id
+    }
+
+    private func openOwner(_ owner: LearningOwner) {
+        switch owner {
+        case .bot(let id): app.botTeam.openRequest = BotOpenRequest(route: .bot(id))
+        case .room(let id): app.botTeam.openRequest = BotOpenRequest(route: .room(id))
+        case .session(let id): open(id)
+        }
+    }
+
+    /// Put a Bot or a group in `mode`, then (by default) open its chat.
+    private func learn(_ owner: LearningOwner, in mode: LearningMode, open: Bool = true) async {
+        do {
+            try await client.set(mode, for: owner)
+            Haptics.select()
+            await LearningModes.shared.refresh(owner, client: client)
+            await loadOwners()
+            if open { openOwner(owner) }
+        } catch {
+            app.showToast(error.localizedDescription, tone: .warning)
+        }
+    }
+
+    private func endOwner(_ entry: LearningOwnerStatus) async {
+        do {
+            try await client.set(nil, for: entry.owner)
+            await LearningModes.shared.refresh(entry.owner, client: client)
+            await loadOwners()
+        } catch {
+            app.showToast(error.localizedDescription, tone: .warning)
+        }
+    }
+
+    private func hideOwner(_ entry: LearningOwnerStatus) async {
+        do {
+            try await client.hideOwner(kind: entry.kind, id: entry.id)
+            ownerRecord.removeAll { $0 == entry }
+        } catch {
+            app.showToast(error.localizedDescription, tone: .warning)
+        }
     }
 
     private func sessionTitle(_ id: String) -> String {
@@ -299,6 +438,7 @@ struct LearningHomePage: View {
     private func endMode(_ sessionId: String) async {
         do {
             try await client.setMode(nil, for: sessionId)
+            await LearningModes.shared.refresh(.session(sessionId), client: client)
             learningSessions.removeAll { $0.sessionId == sessionId }
             if let ended = try? await client.learningHistory() { history = ended }
         } catch {
@@ -309,6 +449,7 @@ struct LearningHomePage: View {
     private func reopen(_ sessionId: String, in mode: LearningMode) async {
         do {
             try await client.setMode(mode, for: sessionId)
+            await LearningModes.shared.refresh(.session(sessionId), client: client)
             Haptics.select()
             if let modes = try? await client.sessionModes() { learningSessions = modes }
             if let ended = try? await client.learningHistory() { history = ended }

@@ -174,7 +174,10 @@ struct BotRoomView: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityHint("查看群聊设置")),
-                accessory: AnyView(RoomMentions(room: room)),
+                accessory: AnyView(VStack(alignment: .leading, spacing: 0) {
+                    LearningModeBar(owner: .room(room.id))
+                    RoomMentions(room: room)
+                }),
                 menu: { model, _ in AnyView(BotChatMenu(target: .room(room.id), model: model)) }
             ))
             .environment(\.botTimeline, BotTimeline(room: true, earlierFrom: room.json["ownParts"].array.isEmpty ? nil : room.sessionId, showsThinking: team.showsThinking, sessionId: room.sessionId))

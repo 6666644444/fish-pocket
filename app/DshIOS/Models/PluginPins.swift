@@ -22,7 +22,8 @@ enum PluginPins {
 
     /// The engine's refusal (`pinRefusal` in pins.mjs) as a sentence; nil for any other text.
     static func refusal(_ text: String?) -> String? {
-        guard let text, let match = text.firstMatch(of: /^(\S+) is pinned to (\S+) in Firefly; (.+) cannot be installed\.$/) else { return nil }
+        // The engine's own wording (engine/plugins/ios-host/pins.mjs pinRefusal), not the app's name: keep "Fish Pocket".
+        guard let text, let match = text.firstMatch(of: /^(\S+) is pinned to (\S+) in Fish Pocket; (.+) cannot be installed\.$/) else { return nil }
         let wanted = String(match.3) == "default branch" ? String(localized: "默认分支") : String(match.3)
         return String(localized: "Firefly 目前固定使用 \(String(match.1)) \(String(match.2))，不能安装 \(wanted)。")
     }

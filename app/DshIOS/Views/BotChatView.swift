@@ -19,7 +19,10 @@ struct BotChatView: View {
                 title: AnyView(Button { detailOpen = true } label: { BotTitle(bot: bot).modifier(BotTitleCapsule()) }
                     .buttonStyle(.plain)
                     .accessibilityHint("查看 Bot 详情")),
-                accessory: AnyView(BotPending(bot: bot)),
+                accessory: AnyView(VStack(alignment: .leading, spacing: 0) {
+                    LearningModeBar(owner: .bot(bot.id))
+                    BotPending(bot: bot)
+                }),
                 menu: { model, tools in AnyView(BotChatMenu(target: .bot(bot.id), model: model, tools: tools)) },
                 tools: true
             ))
@@ -337,6 +340,13 @@ struct BotChatMenu: View {
                     Button { copyToPasteboard(model.markdown(title: title, team: team, botName: nil)); app.showToast(String(localized: "已复制")) } label: {
                         Label("复制整段对话", systemImage: "doc.on.doc")
                     }
+                }
+            }
+            // Learning mode follows the Bot or the group; a group's admin teaches.
+            Section {
+                switch target {
+                case .bot(let id): LearningModeMenu(owner: .bot(id))
+                case .room(let id): LearningModeMenu(owner: .room(id))
                 }
             }
         } label: {

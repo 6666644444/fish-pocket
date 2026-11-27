@@ -23,6 +23,8 @@ struct QuizQuestion: Codable, Identifiable, Hashable, Sendable {
     /// Correct answers in a row since it went into the mistake book.
     let mistakeStreak: Int?
     let createdAt: Double
+    /// The conversation it was asked in; a Bot's or a group's names it in the list (batch 2).
+    var sessionId: String?
 
     static func letter(_ index: Int) -> String { String(UnicodeScalar(UInt8(65 + index))) }
 }
@@ -89,6 +91,17 @@ enum QuizText {
 
 struct QuizBankPage: View {
     @Environment(AppModel.self) private var app
+
+    /// The Bot or group a question was asked by, when it came from the Bot team.
+    private func askedIn(_ question: QuizQuestion) -> String? {
+        guard let sessionId = question.sessionId else { return nil }
+        let team = app.botTeam
+        switch team.route(ofSession: sessionId) {
+        case .bot(let id)?: return team.bot(id)?.name
+        case .room(let id)?: return team.room(id).map { team.name(of: $0) }
+        case nil: return nil
+        }
+    }
     @State private var showMistakes = true
     @State private var questions: [QuizQuestion] = []
     @State private var loaded = false
@@ -128,6 +141,7 @@ struct QuizBankPage: View {
                                 HStack(spacing: 8) {
                                     Text(question.kind == "choice" ? "单选" : "简答")
                                     if !question.topic.isEmpty { Text(question.topic) }
+                                    if let from = askedIn(question) { Text(verbatim: from) }
                                     Text(QuizText.verdict(question.lastVerdict))
                                     if let streak = question.mistakeStreak { Text("连对 \(streak)") }
                                 }

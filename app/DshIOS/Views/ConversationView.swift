@@ -276,6 +276,8 @@ struct ConversationView: View {
                 if blank && !composerFocused && model.composer.isEmpty {
                     suggestions(model).padding(.bottom, 10)
                 }
+                // Learning mode (Learning/LearningModeViews.swift): a Bot's chat and a group show theirs in `accessory`.
+                if bot == nil { LearningModeBar(owner: .session(sessionId)) }
                 if let accessory = bot?.accessory { accessory.padding(.bottom, 8) }
                 ComposerStatusBar(
                     model: model, keyboardUp: keyboardUp,
