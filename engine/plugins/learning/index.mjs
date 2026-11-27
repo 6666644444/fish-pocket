@@ -172,9 +172,10 @@ export const METHODS = {
   // D55: Firefly 伙伴 (companion-runtime.mjs). `tzOffset`: the phone's clock.
   'companion.status': ({ companion }) => companion.status(),
   'companion.settings.set': ({ store }, p) => store.updateCompanionSettings(p),
-  'companion.episodes': ({ store }, p) => store.companionEpisodes({ botId: p.botId ?? store.companionSettings().botId, all: p.all === true }),
+  // Every Bot's (the chosen one and group admins) unless `botId` names one.
+  'companion.episodes': ({ store }, p) => store.companionEpisodes({ botId: p.botId, all: p.all === true }),
   'companion.episodes.hide': ({ store }, p) => store.hideEpisode(p),
-  'companion.traits': ({ store }, p) => store.companionTraits({ botId: p.botId ?? store.companionSettings().botId, all: true }),
+  'companion.traits': ({ store }, p) => store.companionTraits({ botId: p.botId, all: true }),
   'companion.traits.refute': ({ store }, p) => store.refuteTrait({ botId: p.botId ?? store.companionSettings().botId, key: p.key }),
   'companion.plan': ({ companion }, p) => companion.plan(p),
   'companion.wake': ({ companion }, p) => companion.wake(p),

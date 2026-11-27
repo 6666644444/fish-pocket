@@ -88,7 +88,7 @@ test('the team index: Bot chats with every part, member Sessions, the group\'s o
   assert.deepEqual(index.sessions.get('s-g3-test-old'), { kind: 'member', botId: 'bot-test', roomId: 'room-g3' });
   assert.deepEqual(index.sessions.get('s-room'), { kind: 'room', roomId: 'room-g3' });
   assert.deepEqual(index.sessions.get('s-room-old'), { kind: 'room', roomId: 'room-g3' });
-  assert.deepEqual(index.rooms.get('room-g3'), { id: 'room-g3', name: '高三', members: ['bot-hei', 'bot-test'], admin: 'bot-hei', mode: 'admin' });
+  assert.deepEqual(index.rooms.get('room-g3'), { id: 'room-g3', name: '高三', members: ['bot-hei', 'bot-test'], admin: 'bot-hei', mode: 'admin', sessionId: 's-room' });
   assert.equal(indexTeam(team({ admin: 'gone-bot' })).rooms.get('room-g3').admin, undefined, 'an admin who is not a member is none');
 });
 

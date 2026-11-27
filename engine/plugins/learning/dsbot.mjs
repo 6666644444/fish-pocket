@@ -71,6 +71,7 @@ export function indexTeam(state) {
     for (const [botId, sid] of Object.entries(room.sessions ?? {})) put(sid, { kind: 'member', botId, roomId });
     for (const [botId, list] of Object.entries(room.segments ?? {})) for (const s of segmentsOf(list)) put(s, { kind: 'member', botId, roomId });
     const own = { kind: 'room', roomId };
+    rooms.get(roomId).sessionId = sessionIdOf(room.sessionId) ?? roomId;
     put(room.sessionId ?? roomId, own);
     for (const s of segmentsOf(room.parts)) put(s, own);
   }
@@ -109,6 +110,7 @@ export class TeamIndex {
 
   bot(botId) { return this.current().bots.get(botId); }
   room(roomId) { return this.current().rooms.get(roomId); }
+  rooms() { return [...this.current().rooms.values()]; }
 }
 
 /**

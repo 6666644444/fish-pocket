@@ -125,10 +125,10 @@ test('the transcript keeps who said what, newest kept when long', () => {
 
 // The store
 
-test('schema 10: episodes with a fact key replace the older state; traits gather days; retract hides', () => {
+test('schema 10+: episodes with a fact key replace the older state; traits gather days; retract hides', () => {
   let now = T0;
   const store = new LearningStore(':memory:', { now: () => now });
-  assert.equal(SCHEMA_VERSION, 10);
+  assert.ok(SCHEMA_VERSION >= 10);
   store.useClock(CN);
   store.saveDigest({ botId: 'b1', digest: { episodes: [{ text: 'ta 说最近都是一点才睡，第二天上课犯困', cues: ['熬夜'], importance: 0.5, emotion: 0.3, key: 'ta.作息' }], traits: [{ key: '作息', text: '习惯熬夜', evidence: '说一点才睡' }], mood: null, retract: [] } });
   now += DAY_MS;

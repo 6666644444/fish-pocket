@@ -98,7 +98,7 @@ export function dumpLibrary(store) {
     // Firefly 伙伴 (schema 10): what the companion lived through and has seen; not the reaches or cursors.
     companionEpisodes: db.prepare('SELECT * FROM companion_episodes ORDER BY happened_at, id').all().map((e) => ({
       botId: e.bot_id, text: e.text, cues: JSON.parse(e.cues), importance: e.importance, emotion: e.emotion, mood: e.mood, key: e.fact_key,
-      followUp: e.follow_up, happenedAt: e.happened_at, createdAt: e.created_at, recalls: e.recalls, hidden: Boolean(e.hidden), superseded: e.superseded_by !== null,
+      followUp: e.follow_up, happenedAt: e.happened_at, createdAt: e.created_at, recalls: e.recalls, hidden: Boolean(e.hidden), superseded: e.superseded_by !== null, scope: e.scope ?? 'dm',
     })),
     companionTraits: db.prepare('SELECT * FROM companion_traits ORDER BY bot_id, key').all().map((t) => ({
       botId: t.bot_id, key: t.key, text: t.text, evidence: t.evidence, days: JSON.parse(t.days), firstSeen: t.first_seen, lastSeen: t.last_seen, refuted: Boolean(t.refuted),
@@ -176,10 +176,11 @@ export function importLibrary(store, data) {
     }
     for (const e of list(data.companionEpisodes)) {
       // A superseded one comes back hidden: which one replaced it is not kept.
-      db.prepare(`INSERT INTO companion_episodes(bot_id, text, cues, importance, emotion, mood, fact_key, follow_up, happened_at, created_at, recalls, hidden)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(String(e.botId), String(e.text), JSON.stringify(Array.isArray(e.cues) ? e.cues : []),
+      db.prepare(`INSERT INTO companion_episodes(bot_id, text, cues, importance, emotion, mood, fact_key, follow_up, happened_at, created_at, recalls, hidden, scope)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(String(e.botId), String(e.text), JSON.stringify(Array.isArray(e.cues) ? e.cues : []),
         Number(e.importance ?? 0.5), Number(e.emotion ?? 0.3), String(e.mood ?? ''), String(e.key ?? ''), String(e.followUp ?? ''),
-        e.happenedAt, e.createdAt ?? e.happenedAt, Number.isInteger(e.recalls) ? e.recalls : 0, e.hidden === true || e.superseded === true ? 1 : 0);
+        e.happenedAt, e.createdAt ?? e.happenedAt, Number.isInteger(e.recalls) ? e.recalls : 0, e.hidden === true || e.superseded === true ? 1 : 0,
+        typeof e.scope === 'string' && (e.scope === 'dm' || e.scope.startsWith('room:')) ? e.scope : 'dm');
     }
     for (const t of list(data.companionTraits)) {
       db.prepare('INSERT OR REPLACE INTO companion_traits(bot_id, key, text, evidence, days, first_seen, last_seen, refuted) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')

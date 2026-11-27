@@ -28,8 +28,8 @@ export const EPISODE = {
   recallMax: 2,
   recallChars: 160,
   recallCooldownDays: 2,
-  /** Evidence an episode needs to come to mind. */
-  minEvidence: 1.6,
+  /** Without a rare cue, the summed rarity of two or more shared uncommon words an episode needs to come to mind. */
+  minEvidence: 2.5,
   /** A thread left open is asked about at most this many days later. */
   followUpDays: 3,
 };
@@ -61,37 +61,48 @@ export function episodeTokens(episode) {
   return relevanceTokens(`${episode.text} ${(episode.cues ?? []).join(' ')}`);
 }
 
+/** Words that prove nothing about which memory is meant: too common in everyday Chinese. */
+const COMMON = new Set(('ta 今天 昨天 明天 前天 我们 你们 他们 她们 什么 怎么 这个 那个 一个 没有 就是 还是 可以 知道 觉得 现在 时候 '
+  + '一下 不是 真的 有点 然后 因为 所以 但是 已经 晚上 早上 中午 下午 一起 自己 感觉 一直 出来 起来 这样 那样 这么 那么 东西 事情 '
+  + '还有 不过 而且 如果 的话 一点 好像 应该 我的 你的 他的 她的 说了 说话 聊了 了一 一些 很多 怎样 为什么 吗吗 哈哈 嗯嗯').split(' '));
+
 /**
- * The episodes that come to mind for `userText`, best first. Evidence is the shared tokens
- * weighted by how rare they are among all episodes (a word every episode has proves nothing),
- * over √(the episode's tokens); a cue the user said counts double. Only those with enough
- * evidence, fresh enough, current (not superseded or hidden), not shown in this conversation
- * and not recalled in the last days are considered.
+ * The episodes that come to mind for `userText`, best first. What counts is how specific the
+ * shared words are (a word every episode has, or an everyday one, proves nothing): an episode
+ * comes to mind when the user said one of its cues that is rare among the episodes, or at least
+ * two of its uncommon words. Only fresh enough, current (not superseded or hidden), not shown in
+ * this conversation and not recalled in the last days are considered.
  * @param {object[]} episodes - { id, text, cues, importance, emotion, happenedAt, recalls, lastRecalledAt, supersededBy, hidden }
  * @param {Set<number>} shown - ids already given in this conversation
  */
 export function recallEpisodes(episodes, userText, { now, shown = new Set(), max = EPISODE.recallMax } = {}) {
-  const query = relevanceTokens(userText ?? '');
+  const query = new Set([...relevanceTokens(userText ?? '')].filter((t) => !COMMON.has(t)));
   if (!query.size) return [];
   const live = episodes.filter((e) => !e.hidden && !e.supersededBy);
   const tokens = new Map(live.map((e) => [e.id, episodeTokens(e)]));
   const df = new Map();
   for (const set of tokens.values()) for (const t of set) df.set(t, (df.get(t) ?? 0) + 1);
   const n = Math.max(1, live.length);
-  const idf = (t) => Math.log(1 + n / (df.get(t) ?? 1)) + 0.5;
+  const idf = (t) => 1 + Math.log(n / (df.get(t) ?? 1));
+  const rare = (t) => n <= 2 || (df.get(t) ?? 1) / n <= 0.5;
   const scored = [];
   for (const episode of live) {
     if (shown.has(episode.id)) continue;
     if (episode.lastRecalledAt && now - episode.lastRecalledAt < EPISODE.recallCooldownDays * DAY_MS) continue;
     const fresh = freshness(episode, now);
     if (fresh < EPISODE.floor) continue;
-    const own = tokens.get(episode.id);
     const cues = relevanceTokens((episode.cues ?? []).join(' '));
-    let evidence = 0;
-    for (const t of own) if (query.has(t)) evidence += idf(t) * (cues.has(t) ? 2 : 1);
-    evidence /= Math.sqrt(Math.max(4, own.size)) / 2;
-    if (evidence < EPISODE.minEvidence) continue;
-    scored.push({ episode, score: evidence * (0.6 + 0.4 * fresh) + 0.3 * clamp01(episode.emotion ?? 0) });
+    let sum = 0;
+    let shared = 0;
+    let cueHit = false;
+    for (const t of tokens.get(episode.id)) {
+      if (!query.has(t)) continue;
+      shared += 1;
+      sum += idf(t);
+      if (cues.has(t) && rare(t)) cueHit = true;
+    }
+    if (!cueHit && !(shared >= 2 && sum >= EPISODE.minEvidence)) continue;
+    scored.push({ episode, score: (sum + (cueHit ? 1 : 0)) * (0.6 + 0.4 * fresh) + 0.3 * clamp01(episode.emotion ?? 0) });
   }
   return scored.sort((a, b) => b.score - a.score || b.episode.happenedAt - a.episode.happenedAt)
     .slice(0, max).map((s) => s.episode);
@@ -161,11 +172,19 @@ export function sessionSections({ traits = [], mood, now, tzOffset = 0 }) {
   return sections;
 }
 
-/** The episodes that came to mind this turn, and a thread to perhaps ask about. */
-export function turnSections({ episodes = [], thread, now, tzOffset = 0 }) {
+/**
+ * The episodes that came to mind this turn, and a thread to perhaps ask about. `rooms`: group
+ * names by id; `inGroup`: this turn is in a group, so a private memory is marked as private.
+ */
+export function turnSections({ episodes = [], thread, now, tzOffset = 0, rooms = new Map(), inGroup = false }) {
   const sections = [];
   if (episodes.length) {
-    const lines = episodes.map((e) => `- ${whenSaid(e.happenedAt, now, tzOffset)}：${cut(e.text.replace(/\s+/g, ' ').trim(), EPISODE.recallChars)}${e.mood ? `（当时 ta ${e.mood}）` : ''}`);
+    const where = (e) => {
+      if (!e.scope || e.scope === 'dm') return inGroup ? '（ta 私下跟你聊的，在群里提之前先想想 ta 愿不愿意让别人知道）' : '';
+      const name = rooms.get(e.scope.slice(5));
+      return name ? `（在群「${name}」里）` : '（在群里）';
+    };
+    const lines = episodes.map((e) => `- ${whenSaid(e.happenedAt, now, tzOffset)}${where(e)}：${cut(e.text.replace(/\s+/g, ' ').trim(), EPISODE.recallChars)}${e.mood ? `（当时 ta ${e.mood}）` : ''}`);
     sections.push(`【脑子里浮现的往事】只有你知道。真相关就自然地带一句或只影响语气，不相关就当没看见；别复述，别说"我记得"。\n${lines.join('\n')}`);
   }
   if (thread) {
@@ -174,7 +193,80 @@ export function turnSections({ episodes = [], thread, now, tzOffset = 0 }) {
   return sections;
 }
 
-// The digest: one model call after a conversation, turning it into experiences.
+/**
+ * Added to the session note in a group chat (D56): still yourself, a friend in the group; what
+ * ta said to you alone stays there (unless `recallDm`); in a learning mode the mode comes first.
+ */
+export function groupSections({ roomName, admin, learning, recallDm }) {
+  const lines = [`【在群里】这是群聊「${roomName}」。你在群里也还是你自己，是 ta 的朋友而不是主持人或客服；说话跟平时一样，可以接其他成员的话。`];
+  if (admin) lines.push('你是群主：气氛、节奏由你带，但别把每句话都变成安排或总结。');
+  lines.push(recallDm
+    ? 'ta 私下跟你说过的事，在群里提之前先想想 ta 愿不愿意让别人知道；拿不准就别提。'
+    : 'ta 私下跟你说的事不要在群里提，也别暗示；对 ta 状态的关心留在语气里。');
+  if (learning) lines.push('现在群里开着学习模式：学习模式的要求优先。语气可以像朋友，但不提前透露答案、不打乱出题和批改的节奏，也不要拉开话题去聊往事。');
+  return [lines.join('\n')];
+}
+
+// What a group member's Session reads (ds-bot 0.3.8 groups.js roomPrompt): a relay (source
+// kind 'bot', form 'relay') whose text holds sections like "This round so far …:" and
+// "Earlier in the group, before this round (context only):", each a transcript of lines
+// "User: …" / "<Bot name>: …" / "[notice]", sections apart by a blank line.
+const SECTION = /^(This round so far[^\n]*|Earlier in the group[^\n]*):\n/m;
+
+/** The transcript lines of a relay's sections, `current` only (this round) or every one. */
+export function relayEntries(text, { current = false } = {}) {
+  const entries = [];
+  let rest = String(text ?? '');
+  for (let match = rest.match(SECTION); match; match = rest.match(SECTION)) {
+    const start = match.index + match[0].length;
+    const end = rest.indexOf('\n\n', start);
+    const body = rest.slice(start, end < 0 ? undefined : end);
+    rest = end < 0 ? '' : rest.slice(end);
+    if (current && !match[1].startsWith('This round')) continue;
+    for (const raw of body.split('\n')) {
+      const line = raw.trimEnd();
+      const head = line.match(/^([^\n:：[\]]{1,40}): (.*)$/);
+      if (head) entries.push({ who: head[1].trim(), text: head[2] });
+      else if (line && !line.startsWith('[') && entries.length) entries.at(-1).text += `\n${line}`;
+    }
+  }
+  return entries;
+}
+
+const isRelay = (m) => m?.role === 'user' && m.source?.kind === 'bot' && m.source?.form === 'relay';
+const textOfMessage = (m) => (Array.isArray(m?.content) ? m.content : [])
+  .filter((b) => b?.type === 'text' && typeof b.text === 'string').map((b) => b.text).join('\n');
+
+/** What the user said in this step's group round. */
+export function groupUserText(messages) {
+  return (messages ?? []).filter(isRelay).flatMap((m) => relayEntries(textOfMessage(m), { current: true }))
+    .filter((e) => e.who === 'User').map((e) => e.text).join('\n');
+}
+
+/**
+ * A member Session's messages as a conversation: the user's and the other members' lines
+ * from the relays (each once), and this member's own replies.
+ */
+export function groupLines(messages, selfName) {
+  const lines = [];
+  const seen = new Set();
+  for (const m of messages ?? []) {
+    if (m?.role === 'assistant') {
+      const text = textOfMessage(m).trim();
+      if (text) lines.push({ role: 'assistant', text });
+      continue;
+    }
+    if (!isRelay(m)) continue;
+    for (const entry of relayEntries(textOfMessage(m))) {
+      if (entry.who === selfName) continue;
+      const key = `${entry.who}\u0000${entry.text}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      lines.push(entry.who === 'User' ? { role: 'user', text: entry.text } : { role: 'other', who: entry.who, text: entry.text });
+    }
+  }
+  return lines;
+}
 
 export const DIGEST_SYSTEM = [
   '你在帮一个 AI 伙伴整理它和用户（下面称 ta）刚才的一段聊天，像人睡前回想今天发生的事。只输出一个 JSON 对象，不要别的文字。',
@@ -184,6 +276,7 @@ export const DIGEST_SYSTEM = [
   'mood：ta 在这段聊天结束时的整体状态，valence -1（很低落）到 1（很开心）；看不出就 null。',
   'retract：ta 明确要求忘掉、别记的事的关键词；没有就空数组。',
   '只依据聊天内容，不要编造。伙伴自己说的话不能当成 ta 的特点的证据。',
+  '如果说明这是群聊：往事写成"在群里……"，可以提到当时在场的成员；只有 ta（用户）自己的话才算 ta 的性格和情绪的证据，其他成员的话不算。',
 ].join('\n');
 
 /** The transcript a digest reads: who said what, the user's lines kept longest. */
@@ -191,7 +284,7 @@ export function transcript(lines, { botName = '我', max = 6_000 } = {}) {
   const out = [];
   let left = max;
   for (const line of [...lines].reverse()) {
-    const who = line.role === 'user' ? 'ta' : botName === '我' ? '我' : `我（${botName}）`;
+    const who = line.role === 'user' ? 'ta' : line.role === 'other' ? line.who : botName === '我' ? '我' : `我（${botName}）`;
     const text = cut(line.text.replace(/\s+/g, ' ').trim(), line.role === 'user' ? 800 : 400);
     if (!text) continue;
     const entry = `${who}：${text}`;
@@ -288,8 +381,8 @@ export const OPENER_SYSTEM = [
   '不要："在吗"、客服腔、一次问好几个问题、说你在想念 ta 或你记得什么、提到你是 AI、提到通知或系统、表情包堆砌。',
 ].join('\n');
 
-/** What the opener writer is told: who the companion is, what it knows, when it is. */
-export function openerPrompt({ botName, persona, traits = [], episodes = [], fireAt, tzOffset = 0, now }) {
+/** What the opener writer is told: who the companion is, what it knows, when it is, and where (a group: `room`). */
+export function openerPrompt({ botName, persona, traits = [], episodes = [], fireAt, tzOffset = 0, now, room }) {
   const local = new Date(fireAt + tzOffset * 60_000);
   const weekday = '日一二三四五六'[local.getUTCDay()];
   const time = `星期${weekday} ${String(local.getUTCHours()).padStart(2, '0')}:${String(local.getUTCMinutes()).padStart(2, '0')}`;
@@ -297,7 +390,9 @@ export function openerPrompt({ botName, persona, traits = [], episodes = [], fir
     `你是「${botName}」。${persona ? `你的设定：${cut(persona, 600)}` : ''}`,
     traits.length ? `你对 ta 的了解：\n${traits.map((t) => `- ${t.text}`).join('\n')}` : '',
     episodes.length ? `你们最近的事：\n${episodes.map((e) => `- ${whenSaid(e.happenedAt, now, tzOffset)}：${cut(e.text, 120)}${e.followUp ? `（还没结果：${e.followUp}）` : ''}`).join('\n')}` : '',
-    `消息会在 ${time} 发出。`,
+    room
+      ? `消息会在 ${time} 发在群聊「${room.name}」里（你是群主，群里还有 ${room.members.join('、') || '别的 Bot'} 和 ta）。只用群里的事开头，不提 ta 私下说过的事；可以是招呼大家的一句。${room.learning ? '群里开着学习模式，可以自然地提一句学习，但不要出题。' : ''}`
+      : `消息会在 ${time} 发出。`,
   ].filter(Boolean).join('\n\n');
 }
 
