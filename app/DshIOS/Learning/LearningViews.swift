@@ -22,7 +22,6 @@ struct LearningHomePage: View {
     @State private var owners: [LearningOwnerStatus] = []
     @State private var ownerRecord: [LearningOwnerStatus] = []
     @State private var settings: LearningSettings?
-    @State private var starting: LearningMode?
 
     private var client: LearningClient { LearningClient(engine: app.client) }
 
@@ -39,7 +38,7 @@ struct LearningHomePage: View {
     var body: some View {
         page(
             List {
-                modesSection
+                // Learning happens with a Bot or a group (D49): no new learning conversation from here.
                 withBotSection
                 sessionsSection
                 historySection
@@ -49,34 +48,6 @@ struct LearningHomePage: View {
             }
             .groupedList()
         )
-    }
-
-    @ViewBuilder private var modesSection: some View {
-        // Milestone 2: each mode starts an ordinary DSH session that the engine tells the mode's
-        // instructions (engine/skills/learning-<mode>/SKILL.md) at each turn.
-        Section {
-            ForEach(LearningMode.allCases) { mode in
-                Button { Task { await start(mode) } } label: {
-                    HStack(alignment: .firstTextBaseline) {
-                        Label {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(mode.title).foregroundStyle(.primary)
-                                Text(mode.summary).font(.footnote).foregroundStyle(.secondary)
-                            }
-                        } icon: {
-                            Image(systemName: mode.systemImage)
-                        }
-                        Spacer(minLength: 8)
-                        if starting == mode { ProgressView() }
-                    }
-                }
-                .disabled(starting != nil)
-            }
-        } header: {
-            Text("开始学习")
-        } footer: {
-            Text("每种模式都会新建一个普通会话。模式说明来自随 App 提供的 skill，在任何会话里也可以用 /learning-qa、/learning-socratic、/learning-quiz 调用。")
-        }
     }
 
     /// 和 Bot 一起学: put a Bot or a group in a mode and open its chat. The mode follows the Bot
@@ -135,6 +106,8 @@ struct LearningHomePage: View {
         }
     }
 
+    /// The Bots and groups in a learning mode. A conversation put in one before D49 is listed too,
+    /// only so that it can still be opened and ended: no new one is started from the app.
     @ViewBuilder private var sessionsSection: some View {
         if !openableSessions.isEmpty || !owners.isEmpty {
             Section {
@@ -173,9 +146,9 @@ struct LearningHomePage: View {
                     }
                 }
             } header: {
-                Text("学习会话")
+                Text("正在学习")
             } footer: {
-                Text("结束学习模式后，会话和聊天记录都还在，会放进下面的「学习记录」，之后的回合不再按学习模式回答。")
+                Text("正在按学习模式回答的 Bot 和群聊。结束学习模式后会放进下面的「学习记录」，聊天记录都还在。")
             }
         }
     }
@@ -221,19 +194,15 @@ struct LearningHomePage: View {
                             }
                         }
                     }
+                    // A conversation is not put back in a mode (D49): learning goes on with a Bot.
                     .contextMenu {
-                        Menu("重新开启学习模式", systemImage: "arrow.uturn.backward.circle") {
-                            ForEach(LearningMode.allCases) { mode in
-                                Button(mode.title, systemImage: mode.systemImage) { Task { await reopen(entry.sessionId, in: mode) } }
-                            }
-                        }
                         Button("从记录里移除", systemImage: "eye.slash") { Task { await hide(entry.sessionId) } }
                     }
                 }
             } header: {
                 Text("学习记录")
             } footer: {
-                Text("已结束学习模式的会话。点一下打开，长按可重新开启学习模式，或从记录里移除（会话本身不会删除）。")
+                Text("已结束学习模式的 Bot、群聊和会话。点一下打开；长按可从记录里移除（聊天本身不会删除），Bot 和群聊还能重新开启学习模式。")
             }
         }
     }
@@ -415,43 +384,11 @@ struct LearningHomePage: View {
         else { app.showToast(String(localized: "学习会话已建好，可在会话列表中打开")) }
     }
 
-    /// A new session (or the blank one already there) in `mode`, then open it.
-    private func start(_ mode: LearningMode) async {
-        guard let workspace = app.workspaces.first else {
-            app.showToast(String(localized: "还没有工作区，暂时无法新建会话"), tone: .warning)
-            return
-        }
-        starting = mode
-        defer { starting = nil }
-        do {
-            let session = try await app.createSession(in: workspace)
-            guard !session.isEmpty else { throw LearningError(kind: "transport", message: String(localized: "新建会话失败"), status: 0) }
-            try await client.setMode(mode, for: session)
-            Haptics.select()
-            open(session)
-            if let modes = try? await client.sessionModes() { learningSessions = modes }
-        } catch {
-            app.showToast(error.localizedDescription, tone: .warning)
-        }
-    }
-
     private func endMode(_ sessionId: String) async {
         do {
             try await client.setMode(nil, for: sessionId)
             await LearningModes.shared.refresh(.session(sessionId), client: client)
             learningSessions.removeAll { $0.sessionId == sessionId }
-            if let ended = try? await client.learningHistory() { history = ended }
-        } catch {
-            app.showToast(error.localizedDescription, tone: .warning)
-        }
-    }
-
-    private func reopen(_ sessionId: String, in mode: LearningMode) async {
-        do {
-            try await client.setMode(mode, for: sessionId)
-            await LearningModes.shared.refresh(.session(sessionId), client: client)
-            Haptics.select()
-            if let modes = try? await client.sessionModes() { learningSessions = modes }
             if let ended = try? await client.learningHistory() { history = ended }
         } catch {
             app.showToast(error.localizedDescription, tone: .warning)

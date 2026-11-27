@@ -287,7 +287,7 @@
 
 ### D45 入口与界面
 
-- 普通会话标题菜单、Bot / 群的「…」菜单加「学习模式」子菜单（普通模式 / 三种模式，当前打勾；群里显示老师或「先设群主」）。输入框上方模式小条（普通会话在 ConversationView dock，Bot / 群放进各自 accessory），点它同一组选项。两者共用 `LearningModes` 缓存，小条在聊天打开时和群主变化时读。
+- 普通会话标题菜单、Bot / 群的「…」菜单加「学习模式」子菜单（普通模式 / 三种模式，当前打勾；群里显示老师或「先设群主」）。输入框上方模式小条（普通会话在 ConversationView dock，Bot / 群放进各自 accessory），点它同一组选项。两者共用 `LearningModes` 缓存，小条在聊天打开时和群主变化时读。D49 起普通会话的菜单和小条已去掉，只剩 Bot / 群。
 - 学习页：「和 Bot 一起学」（选 Bot / 群 + 模式 → 打开那个聊天；没有群主的群置灰）；「学习会话」「学习记录」列出 Bot / 群；错题本里标出题目来自哪个 Bot / 群。
 
 ### D46 深度研究按对象「一次一个」
@@ -311,6 +311,13 @@
 - 语义检查：上游没动引擎和 ds-bot 版本锁定（`PluginPins`）；上游 App 的 `BotInfo.chatSessions` 把 `openParts` 也算作 Bot 自己的对话，和我们 `dsbot.mjs` 的认定一致。
 - 文案：上游新加 26 条，覆盖率 3874/3874。其中提到 Fish Pocket 的 2 条是账号和服务器的名字（「Fish Pocket 账号」「Fish Pocket 服务器」），按 D36 不改。
 - 测试：learning 165/165；全量 395，失败 32 = 基线，无新增。
+
+### D49 去掉「学习会话」的界面，学习只跟 Bot 和群聊（2026-11-27 用户决定）
+
+- 用户只用 Bot 学。App 里去掉：学习页「开始学习」（新建学习会话）、普通会话标题菜单的「学习模式」、普通会话输入框上方的模式小条、学习记录里给会话「重新开启学习模式」。保留：和 Bot 一起学、Bot / 群的菜单和小条、学习记录、题库、错题本、深度研究。
+- 引擎和数据不动：`session_modes`、`sessions.*` 路由照旧；以前的学习会话仍在「学习记录」里能打开。还开着学习模式的旧会话列在「正在学习」里，只为了能打开和结束。
+- 顺带消掉一个 bug：旧的「开始学习」用 `app.workspaces.first` 建会话，而引擎列在第一个的是 Bot 团队的工作区（`MainView.workspace` 特意避开它），学习会话都建在那里，旧版「按工作区」会整组藏起来，结束学习模式后在会话列表里找不到；还可能复用那个工作区里的空白会话。入口去掉后不会再发生。
+- `ConversationView.swift`、`SessionHeader.swift` 回到和上游完全一致。文案 +3（正在学习、两条页脚），覆盖率 3877/3877。
 
 ## 改过的上游文件
 
@@ -340,8 +347,6 @@
 | `app/DshIOS/Views/SettingsView.swift`（第四处） | `SupportLinksSection` 只留页脚；页脚换成 D37 那一句 | D37 |
 | `app/DshIOS/Views/ExploreTabView.swift`（第二处） | 「反馈与社区」分区只留页脚 | D37 |
 | `app/DshIOS/Assets.xcassets/LaunchMark.imageset/*.png` | 4 张图换成 Firefly（同步上游冲突时 `git checkout --ours`） | D38 |
-| `app/DshIOS/Views/ConversationView.swift` | dock 里加 1 行：普通会话的 `LearningModeBar` | D45 |
-| `app/DshIOS/Views/SessionHeader.swift` | 标题菜单末尾加一个 Section：`LearningModeMenu` | D45 |
 | `app/DshIOS/Views/BotChatView.swift` | accessory 包一层 VStack 加 `LearningModeBar`；`BotChatMenu` 末尾加一个 Section | D45 |
 | `app/DshIOS/Views/BotRoomView.swift` | accessory 包一层 VStack 加 `LearningModeBar` | D45 |
 | `app/DshIOS/Models/PluginPins.swift` | 1b 批量换名误改了匹配引擎英文报错的正则，已改回 "in Fish Pocket" 并加测试 `PluginPinsTests` | D36（1b） |

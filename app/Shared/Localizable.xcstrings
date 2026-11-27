@@ -135757,6 +135757,108 @@
           }
         }
       }
+    },
+    "正在学习" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Learning now"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudiando ahora"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習中"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 중"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在學習"
+          }
+        }
+      }
+    },
+    "正在按学习模式回答的 Bot 和群聊。结束学习模式后会放进下面的「学习记录」，聊天记录都还在。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bots and group chats answering in a learning mode. When you end it, they move to Learning History below; the chats stay as they are."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bots y chats de grupo que responden en un modo de estudio. Al terminarlo pasan al Historial de estudio de abajo; los chats se conservan."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習モードで答えている Bot とグループチャットです。終了すると下の「学習の記録」に移ります。チャットはそのまま残ります。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 모드로 답하고 있는 Bot과 그룹 채팅입니다. 끝내면 아래 ‘학습 기록’으로 옮겨지고, 채팅은 그대로 남습니다."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在按學習模式回答的 Bot 和群聊。結束學習模式後會放進下面的「學習記錄」，聊天記錄都還在。"
+          }
+        }
+      }
+    },
+    "已结束学习模式的 Bot、群聊和会话。点一下打开；长按可从记录里移除（聊天本身不会删除），Bot 和群聊还能重新开启学习模式。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bots, group chats and conversations whose learning mode has ended. Tap to open; touch and hold to remove one from the history (the chat itself is not deleted). Bots and group chats can also go back into a learning mode."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bots, chats de grupo y conversaciones cuyo modo de estudio terminó. Toca para abrir; mantén pulsado para quitarlo del historial (el chat no se borra). Los bots y los chats de grupo también pueden volver a un modo de estudio."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習モードを終了した Bot、グループチャット、会話です。タップで開き、長押しで記録から外せます（チャット自体は削除されません）。Bot とグループチャットは学習モードをもう一度オンにすることもできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "학습 모드를 끝낸 Bot, 그룹 채팅, 대화입니다. 탭하면 열리고, 길게 누르면 기록에서 뺄 수 있습니다(채팅 자체는 삭제되지 않습니다). Bot과 그룹 채팅은 학습 모드를 다시 켤 수도 있습니다."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已結束學習模式的 Bot、群聊和會話。點一下打開；長按可從記錄裡移除（聊天本身不會刪除），Bot 和群聊還能重新開啟學習模式。"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

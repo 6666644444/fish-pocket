@@ -46,8 +46,6 @@ struct SessionTitleMenu: View {
                 Button(action: exportLog) { Label("导出日志", systemImage: "square.and.arrow.up") }
                 Button { app.copySessionId(sessionId) } label: { Label("复制会话 ID", systemImage: "doc.on.doc") }
             }
-            // Learning mode for this conversation (Learning/LearningModeViews.swift).
-            Section { LearningModeMenu(owner: .session(sessionId)) }
         } label: {
             VStack(spacing: 0) {
                 HStack(spacing: 4) {
