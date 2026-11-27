@@ -22,11 +22,12 @@
 // so an engine start never waits on it or fails because of it; it closes when the plugin
 // is disposed.
 import { LearningError, LearningStore, libraryFile, SCHEMA_VERSION } from './store.mjs';
-import { MODES, MODE_IDS, leftSections, modeInstructions, noteMessage, noteSections, pickMemories, userTextOf } from './modes.mjs';
+import { MODES, MODE_IDS, botSections, learnerTextOf, leftSections, memberSections, modeInstructions, noteMessage, noteSections, pickMemories, teacherSections, userTextOf } from './modes.mjs';
+import { TeamIndex, learningOwner, learningTurn, ownerKey, teamFile } from './dsbot.mjs';
 import { SkillFiles, skillsDir } from './skills.mjs';
 import { appleEmbedder, appleQueryVectors, embedPending } from './embed.mjs';
 import { quizTool } from './quiz-tool.mjs';
-import { ResearchRunner, researchTool } from './research-tool.mjs';
+import { ResearchRunner, backgroundOnly, researchTool } from './research-tool.mjs';
 import {
   BEFORE_RESTORE, backupLibrary, deleteBackup, deleteLearningData, exportLibrary, importExport, importLibrary, listBackups, restoreLibrary,
 } from './portable.mjs';
@@ -79,6 +80,18 @@ export const METHODS = {
   // The learning record: sessions whose mode was ended (学习记录), and taking one off it.
   'sessions.history': ({ store }, p) => store.listLearningHistory(p),
   'sessions.hide': ({ store }, p) => store.hideLearningHistory(p),
+  // Learning modes of Bots and group chats (dsbot.mjs): `kind` 'bot' or 'room', `id` the
+  // Bot's or the group's id. A group needs an admin: the admin teaches.
+  'owners.get': ({ store, team }, p) => ownerStatus(store, team, p, store.getOwnerMode(p)),
+  'owners.set': ({ store, team }, p) => {
+    if (p?.kind === 'room' && p?.mode !== null && !team?.room(String(p?.id ?? ''))?.admin) {
+      throw new LearningError('conflict', 'the group has no admin; set one in the group\'s details first');
+    }
+    return ownerStatus(store, team, p, store.setOwnerMode(p));
+  },
+  'owners.list': ({ store, team }) => store.listOwnerModes().map((o) => ownerStatus(store, team, o, o)),
+  'owners.history': ({ store, team }) => store.listOwnerHistory().map((o) => ownerStatus(store, team, o, o)),
+  'owners.hide': ({ store }, p) => store.hideOwnerHistory(p),
   'skills.list': ({ skills }) => skills().list(),
   'skills.get': ({ skills }, p) => skills().get(p),
   'skills.create': ({ skills }, p) => skills().create(p),
@@ -156,6 +169,25 @@ export const METHODS = {
 
 const STATUS = { invalid: 400, 'not-found': 404, conflict: 409, unsupported: 422, unavailable: 503 };
 
+/** A Bot's or a group's learning mode as the app shows it: with names, the teacher, and whether it is paused. */
+function ownerStatus(store, team, ref, record) {
+  const kind = String(ref?.kind ?? '');
+  const id = String(ref?.id ?? '');
+  const out = { kind, id, mode: record?.mode ?? null, updatedAt: record?.updatedAt ?? null, endedAt: record?.endedAt ?? null };
+  if (kind === 'bot') {
+    const bot = team?.bot(id);
+    if (bot) out.name = bot.name;
+  } else if (kind === 'room') {
+    const room = team?.room(id);
+    if (room) {
+      out.name = room.name;
+      if (room.admin) out.teacher = { id: room.admin, name: team.bot(room.admin)?.name ?? room.admin };
+      out.paused = out.mode !== null && !room.admin;
+    }
+  }
+  return out;
+}
+
 const json = (value, status = 200) =>
   new Response(JSON.stringify(value), { status, headers: { 'content-type': 'application/json' } });
 
@@ -182,7 +214,7 @@ export function call(open, method, params, skills = () => new SkillFiles(skillsD
   };
   const done = (value) => json({ ok: true, result: value ?? null });
   try {
-    const where = { skills, embedder: kb.embedder ?? null, index: kb.index ?? (() => null), runner: kb.runner, portable: kb.portable };
+    const where = { skills, embedder: kb.embedder ?? null, index: kb.index ?? (() => null), runner: kb.runner, portable: kb.portable, team: kb.team };
     Object.defineProperty(where, 'store', { get: open });
     const value = run(where, params);
     return value && typeof value.then === 'function' ? value.then(done, fail) : done(value);
@@ -199,9 +231,10 @@ export function call(open, method, params, skills = () => new SkillFiles(skillsD
  * @param {string} sessionId
  * @param {{ running: Map<number, unknown>, told: Set<number> }} state
  */
-export function pausedResearchNote(store, sessionId, { running, told }) {
+export function pausedResearchNote(store, sessionId, { running, told, keyOf = (id) => id }) {
+  const key = keyOf(sessionId);
   const paused = store.listResearchJobs({ limit: 50 })
-    .filter((j) => j.sessionId === sessionId && j.status === 'paused' && !running.has(j.id) && !told.has(j.id));
+    .filter((j) => j.sessionId && keyOf(j.sessionId) === key && j.status === 'paused' && !running.has(j.id) && !told.has(j.id));
   if (!paused.length) return undefined;
   for (const j of paused) told.add(j.id);
   const lines = paused.map((j) => `- research #${j.id} "${j.topic}": ${j.blocksDone}/${j.blocks} parts done`);
@@ -216,14 +249,18 @@ export function pausedResearchNote(store, sessionId, { running, told }) {
 }
 
 /**
- * The note for one turn of `sessionId`, or undefined when the session is not in a learning
- * mode. Marks the mode announced once its instructions are in a note.
+ * The note for one turn of `sessionId`, or undefined when there is nothing to say. A plain
+ * conversation keeps its own mode; a Bot's chat and a group member's Session follow the
+ * Bot's or the group's (dsbot.mjs); a group's own Session gets nothing.
  * @param {LearningStore} store
  * @param {string} sessionId
  * @param {readonly object[]} messages - the step's new messages.
- * @param {{ skillDir?: string }} [options]
+ * @param {{ skillDir?: string, team?: import('./dsbot.mjs').TeamIndex }} [options]
  */
 export function turnNote(store, sessionId, messages, options = {}) {
+  const owner = learningOwner(options.team, sessionId);
+  if (owner.kind === 'relay') return undefined;
+  if (owner.kind !== 'session') return ownerNote(store, owner, sessionId, messages, options);
   const session = store.getSessionMode({ sessionId });
   if (!session) {
     // Out of learning just now: say so once, or the model keeps to the mode it was given.
@@ -238,6 +275,59 @@ export function turnNote(store, sessionId, messages, options = {}) {
   const message = noteMessage(noteSections({ mode: session.mode, announce, instructions, memories }));
   if (announce) store.markAnnounced({ sessionId, mode: session.mode });
   return message;
+}
+
+/**
+ * The note for a Bot's chat or a group member's Session. The full note is given once per
+ * Session and role (a Bot's fresh part, a member new to the group, a new admin get it again);
+ * an ended mode is told once to each Session that had it. A group without an admin is paused.
+ */
+function ownerNote(store, owner, sessionId, messages, { skillDir, team }) {
+  const record = store.ownerRecord(owner);
+  if (!record) return undefined;
+  const seen = store.ownerSession({ ...owner, sessionId });
+  if (record.endedAt !== null) {
+    if (!seen?.announced || seen.toldEndAt === record.endedAt) return undefined;
+    store.markOwnerSession({ ...owner, sessionId, announced: null, toldEndAt: record.endedAt });
+    return noteMessage(leftSections(record.mode));
+  }
+  let role = 'bot';
+  let room;
+  if (owner.kind === 'room') {
+    room = team?.room(owner.id);
+    if (!room?.admin) return undefined;
+    role = owner.botId === room.admin ? 'teacher' : 'member';
+  }
+  const tag = `${record.mode}:${role}`;
+  const announce = seen?.announced !== tag;
+  let sections;
+  if (role === 'member') {
+    sections = memberSections({ mode: record.mode, announce, roomName: room.name, teacher: team.bot(room.admin)?.name ?? room.admin });
+  } else {
+    const instructions = announce ? modeInstructions(record.mode, skillDir) : undefined;
+    const memories = store.getSettings().injectMemories ? pickMemories(store.recentMemories(), learnerTextOf(messages)) : [];
+    sections = noteSections({ mode: record.mode, announce, instructions, memories });
+    if (announce) {
+      sections = role === 'teacher'
+        ? [...sections, ...teacherSections({ roomName: room.name, members: room.members.filter((id) => id !== room.admin).map((id) => team.bot(id)?.name ?? id) })]
+        : [...sections, ...botSections()];
+    }
+  }
+  const message = noteMessage(sections);
+  if (announce) store.markOwnerSession({ ...owner, sessionId, announced: tag, toldEndAt: seen?.toldEndAt ?? null });
+  return message;
+}
+
+/**
+ * Whether `sessionId` is learning now with the quiz tool: a plain learning session, a Bot in
+ * a learning mode, or the admin of a group in one.
+ */
+export function quizAllowed(store, team, sessionId) {
+  const owner = learningOwner(team, sessionId);
+  if (owner.kind === 'session') return store.getSessionMode({ sessionId }) !== null;
+  if (owner.kind === 'bot') return store.getOwnerMode(owner) !== null;
+  if (owner.kind === 'room') return store.getOwnerMode(owner) !== null && team.room(owner.id)?.admin === owner.botId;
+  return false;
 }
 
 export default class Learning {
@@ -287,6 +377,11 @@ export default class Learning {
     };
     const runner = new ResearchRunner({ open, get: service, embedder, logger: ctx.logger, ...(config.callModel ? { callModel: config.callModel } : {}) });
     this.research = runner;
+    // ds-bot's saved team, read only (dsbot.mjs): which Bot or group a Session belongs to.
+    const team = new TeamIndex(() => config.teamFile ?? teamFile(path.dirname(path.dirname(config.file ?? libraryFile()))));
+    this.team = team;
+    // One research at a time per Bot or group, not per Session (a group runs one per member).
+    runner.keyOf = (sessionId) => ownerKey(team, sessionId);
     // M6: the library's own folder, and the operations that close and replace or remove it.
     const libraryPath = () => config.file ?? libraryFile();
     const learningDir = () => path.dirname(libraryPath());
@@ -334,7 +429,7 @@ export default class Learning {
         return deleteLearningData(learningDir());
       },
     };
-    const kb = { embedder, index, runner, portable };
+    const kb = { embedder, index, runner, portable, team };
     for (const method of Object.keys(METHODS)) {
       ctx.effect(() => ctx.connection.fetch.register({
         path: `${ROUTE}/${method}`,
@@ -354,15 +449,19 @@ export default class Learning {
     }
 
     // M4: the model's way into the question bank, offered only in learning sessions.
+    // Sessions whose current turn a background-job notice opened (set at each turn's first step).
+    const backgroundTurns = new Set();
+    this.backgroundTurns = backgroundTurns;
     if (ctx.tools?.register) {
       const inLearning = ({ agent }) => {
         const sessionId = agent?.session?.id;
         if (typeof sessionId !== 'string' || !sessionId || agent?.session?.header?.origin === 'subagent') return false;
-        try { return open().getSessionMode({ sessionId }) !== null; } catch { return false; }
+        try { return quizAllowed(open(), team, sessionId); } catch { return false; }
       };
       ctx.effect(() => ctx.tools.register(quizTool(open), { when: inLearning }), 'learning: quiz tool');
-      // M5: deep research, offered in every main session (not to subagents).
-      ctx.effect(() => ctx.tools.register(researchTool(open, runner), { when: ({ agent }) => agent?.session?.header?.origin !== 'subagent' }), 'learning: research tool');
+      // M5: deep research, offered in every main session (not to subagents). A turn opened by a
+      // background job's notice alone may not start or resume research (research-tool.mjs).
+      ctx.effect(() => ctx.tools.register(researchTool(open, runner, { backgroundTurn: (id) => backgroundTurns.has(id) }), { when: ({ agent }) => agent?.session?.header?.origin !== 'subagent' }), 'learning: research tool');
     }
 
     // Only a turn's first step, and only one that brings new messages: a retry (no
@@ -373,16 +472,22 @@ export default class Learning {
       if (decision.kind === 'reject' || signal?.aborted || step !== 1 || !decision.messages?.length) return decision;
       const sessionId = agent?.session?.id;
       if (typeof sessionId !== 'string' || !sessionId) return decision;
+      if (backgroundOnly(decision.messages)) backgroundTurns.add(sessionId); else backgroundTurns.delete(sessionId);
       const notes = [];
       try {
-        const note = turnNote(open(), sessionId, decision.messages, { skillDir: config.skillDir });
+        // Only the learner's own turns (dsbot.mjs learningTurn): not a reminder, a Bot's errand,
+        // a kickoff or a profile update.
+        const owner = learningOwner(team, sessionId);
+        const note = learningTurn(owner.kind, decision.messages)
+          ? turnNote(open(), sessionId, decision.messages, { skillDir: config.skillDir, team })
+          : undefined;
         if (note) notes.push(note);
       } catch (error) {
         ctx.logger?.warn?.(`learning: no note for this turn: ${error?.message ?? error}`);
       }
       if (agent?.session?.header?.origin !== 'subagent') {
         try {
-          const note = pausedResearchNote(open(), sessionId, { running: runner.running, told: toldPaused });
+          const note = pausedResearchNote(open(), sessionId, { running: runner.running, told: toldPaused, keyOf: runner.keyOf });
           if (note) notes.push(note);
         } catch (error) {
           ctx.logger?.warn?.(`learning: no research note for this turn: ${error?.message ?? error}`);

@@ -164,6 +164,59 @@ export function noteSections({ mode, announce, instructions, memories = [] }) {
   return sections;
 }
 
+/**
+ * The learner's words in a turn: their own messages, or, in a Bot team, the relays that
+ * carry them (a group round shows the user's lines among the members'). The relay's first
+ * line, ds-bot's header ("[Group chat …]"), is left out.
+ */
+export function learnerTextOf(messages) {
+  const own = userTextOf(messages);
+  if (own) return own;
+  return messages
+    .filter((message) => message?.role === 'user' && message.source?.kind === 'bot' && message.source?.form === 'relay')
+    .flatMap((message) => (Array.isArray(message.content) ? message.content : []))
+    .filter((block) => block?.type === 'text' && typeof block.text === 'string')
+    .map((block) => block.text.replace(/^\[[^\]\n]*\]\n?/, ''))
+    .join('\n');
+}
+
+/** Extra for a Bot's own chat: the Bot stays itself. */
+export function botSections() {
+  return [{
+    name: 'learning-bot',
+    text: 'You keep your own character, voice and memory; follow the learning mode in your own way.',
+  }];
+}
+
+/**
+ * Extra for the group's admin, who teaches in learning mode. `members`: the other
+ * members' names.
+ */
+export function teacherSections({ roomName, members }) {
+  const others = members.length ? members.join(', ') : 'no one else yet';
+  return [{
+    name: 'learning-teacher',
+    text: `In the group chat "${roomName}" you, as its admin, are the teacher while learning mode is on. `
+      + `The other members (${others}) only add to what you say; you alone set quiz questions. When a member can help, `
+      + 'call on them, and you may pass on the one or two things about the learner that matter for it, in your own words; '
+      + 'never the whole list.',
+  }];
+}
+
+/** The note for a group member who is not the teacher: full when announcing, else one line. */
+export function memberSections({ mode, announce, roomName, teacher }) {
+  const spec = MODES[mode];
+  if (!announce) {
+    return [{ name: 'learning-member', text: `Learning mode "${spec.title}" in "${roomName}": ${teacher} leads; add, don't answer for the learner, set no questions, or pass.` }];
+  }
+  return [{
+    name: 'learning-member',
+    text: `The group chat "${roomName}" is in learning mode "${spec.title}". Its admin, ${teacher}, leads it as the teacher. `
+      + `You may add to what ${teacher} says, encourage the learner, or point out something missing. Do not give the answer `
+      + `outright, and do not set questions of your own: only ${teacher} does. When you have nothing to add, pass.`,
+  }];
+}
+
 /** The once-only note after the user ended learning mode `mode` in a session. */
 export function leftSections(mode) {
   const spec = MODES[mode];

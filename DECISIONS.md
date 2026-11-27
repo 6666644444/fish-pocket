@@ -269,6 +269,38 @@
 - 真机上题库评分报「value is not lossless JSON」：DSH 把工具结果交给模型前用 `isRemoteJsonValue` 检查，任何一个字段是 `undefined` 就整个拒掉。`answerQuestion` 的 `chosen`（简答题）和 `streak`（不在错题本 / 刚移出）会是 `undefined`，所以只有「选择题答错」能过。报错发生在写库之后：失败的那些答题记录其实已经存下。
 - 修法：空字段不写；`learning_quiz` 和 `deep_research` 的返回值都过 `wire.mjs` 的 `plain()`；测试用 DSH 自己的 `isRemoteJsonValue` 断言各种情况。单元测试以前直接调用工具函数、绕过了这道检查，且恰好只测了「选择题答错」。
 
+## 第二批：Bot 与群聊的学习模式（2026-11-27，方案见本机 `.tmp/fp-control/第二批方案.md`）
+
+### D43 学习模式跟着 Bot 或群走；插件只读 ds-bot 自己的 state.json
+
+- 对象三种：普通会话（照旧 `session_modes`）、Bot（它单聊的所有会话段）、群（所有成员的群会话）。新表 `learning_owners` / `learning_owner_sessions`（schema 8，只加表）。后者按会话记「给过哪种完整说明」和「告知过哪次结束」：Bot 换新段、成员新进群、换了群主，都会再拿一次完整说明；结束后每个用过的会话各告知一次。
+- 会话属于谁：`engine/plugins/learning/dsbot.mjs` 只读 `$DSH_HOME/bot/state.json`（ds-bot 0.3.8 index.js:74–80，iOS 上 ds-bot 没改 home），按 mtime+size 缓存，绝不写。读不到 / 格式不对 → 当普通会话。不靠 App 同步：ds-bot 给 App 的数据里把成员会话和 Bot 的对应拍扁了（channel.js:92），而且 App 没打开 Bot 页时（IM 来消息）也没法同步。
+- 哪些回合按学习模式（`learningTurn`，按来源判断）：普通会话——除定时提醒（source.kind `schedule`）外都按；Bot 单聊——用户消息（含 IM，ds-bot 用 sessionController.prompt 发，kind `user`）、relay 的 continue/resume；群成员——relay 的 room/report/continue/resume。不按：别的 Bot 来办事（request/reply/report/stopped，单聊里）、kickoff、update、secret、goal、定时提醒。群自己的会话（只转发）什么都不附。
+- 绑定 ds-bot 0.3.8 的 state.json 格式和 relay role；ds-bot 是固定版本（pins.json），升级时要重新核对这两处（测试 `learning-team.test.mjs` 里的假数据就是按 0.3.8 写的）。
+
+### D44 群里群主就是老师
+
+- 学习模式下群主 = 老师，普通模式下群主照原样工作（用户决定）。不另设老师、不存老师；换老师 = 在群详情里换群主，下一轮生效。
+- 老师：完整学习规则 + 学习记忆 + 出题工具，外加一句「你是老师，其他成员只补充；需要时可用自己的话转述一两条相关学习记忆，不整份贴」。其他成员：短说明（首轮完整、之后一行），不直接给答案、不出题、没补充就跳过；没有出题工具、不给学习记忆（用户决定）。学习记忆从 relay 里用户那几行挑（`learnerTextOf`）。
+- 没有群主的群开不了学习模式（`owners.set` 409）；学习中没了群主 → 暂停（不附说明），小条提示，设了群主自动恢复。群目标（goal）的回合不按学习模式。
+
+### D45 入口与界面
+
+- 普通会话标题菜单、Bot / 群的「…」菜单加「学习模式」子菜单（普通模式 / 三种模式，当前打勾；群里显示老师或「先设群主」）。输入框上方模式小条（普通会话在 ConversationView dock，Bot / 群放进各自 accessory），点它同一组选项。两者共用 `LearningModes` 缓存，小条在聊天打开时和群主变化时读。
+- 学习页：「和 Bot 一起学」（选 Bot / 群 + 模式 → 打开那个聊天；没有群主的群置灰）；「学习会话」「学习记录」列出 Bot / 群；错题本里标出题目来自哪个 Bot / 群。
+
+### D46 深度研究按对象「一次一个」
+
+- 「同时只跑一个」、暂停研究的提醒、相近题目自动续跑，都从按会话改为按对象（`ownerKey`）：同一个 Bot 的各段、同一个群的各成员算一个。
+
+### D47 深度研究的后台任务永远不结束（严重 bug，2026-11-27 用户真机发现）
+
+- 现象：研究跑完后，DSH 的后台任务一直显示「运行中」（真机 10 小时 50 分），点「停止」也清不掉；用户额度被用光。
+- 原因：M5 起我们交给 dsh-jobs 的结束结果写成了 `{ kind: 'completed' | 'killed' | 'failed', result }`，而 dsh-jobs 要的是 `JobOutcome { status, detail? }`（dsh-jobs types.d.ts:62；dsh-jobs-local settle() 直接 `job.status = outcome.status`）。于是每个研究任务的状态都变成 undefined：既不算结束（isTerminal 只认 completed/killed/failed），也停不掉（kill 把它设成 stopping 后，再没有人来收尾），完成通知写着「[status: undefined]」照样唤醒会话。单元测试的假 jobs 把错的格式当成正确的断言了下来，所以测试一直是绿的。
+- 额度怎么花掉的：手机上看不到日志，没法逐条确认。能确定的是：每次研究结束都会唤醒一次会话（一次带完整上下文的模型调用），模型看到「paused / status undefined」，按工具说明可以自己 resume 或再 start，而每跑一次研究就是几十次模型调用；任务看起来一直在跑，也给了模型和用户错误的信号。
+- 修法：`jobOutcome()` 按 JobOutcome 返回（done → completed，cancelled/paused → killed，其他 → failed，均带 detail）；任务最后一行写明「已暂停，不要自己继续，告诉用户」。新增护栏：一轮对话如果只是被后台任务的完成通知唤醒（source.kind `tool-jobs`），这一轮里 `start` / `resume` 一律拒绝——一个研究结束，永远不会自己引出下一个；用户发话的轮次、App 研究页的「继续研究」不受影响。工具说明也改成「resume 只在用户要求时」。
+- 测试：所有结束方式都断言 status ∈ completed/killed/failed、没有 kind 字段；通过任务停止 → killed + 暂停说明；通知唤醒的轮次 start/resume 被拒且没建任何任务，用户发话后可以继续；App 研究页照常续跑。
+
 ## 改过的上游文件
 
 | 文件 | 改了什么 | 为什么 |
@@ -277,7 +309,7 @@
 | `.github/workflows/ios-ci.yml` | 新增 `engine-tests` job，以及 macOS job 里的「Learning SQLite on NodeMobile」这一步、Test summary 里打印 NLEmbedding 评估（这个文件是 fork 自己加的，不是上游的） | 见 D5、D9 |
 | `docs/PLAN.md` | 从仓库根目录挪进来（git mv），然后补充内容 | fork 自己的文档 |
 | `app/DshIOS/Views/SettingsView.swift` | 新增一个 5 行的分区 | 见 D7 |
-| `app/Shared/Localizable.xcstrings` | 只在末尾追加：M1 34 条、M2 34、M3 41、M4 27、M5 27、M6 20、D29 1、D30 1、D32 1、第一批真机问题 27、1b 换名 40，共 253 条；已有条目没动 | 见 D10；五种语言逐条翻译，覆盖率 3849/3849 |
+| `app/Shared/Localizable.xcstrings` | 只在末尾追加：M1 34 条、M2 34、M3 41、M4 27、M5 27、M6 20、D29 1、D30 1、D32 1、第一批真机问题 27、1b 换名 40、第二批 13，共 266 条；已有条目没动 | 见 D10；五种语言逐条翻译，覆盖率 3862/3862 |
 | `README.md`、`README.en.md` | M7：在「常见问题 / FAQ」前插入「学习功能」一节（含同步上游步骤），其他内容没动 | 总控 M7 |
 | `app/DshIOS/Views/ExploreTabView.swift` | 删去「分享 Fish Pocket」一行入口，换成一行注释 | D29 |
 | `app/DshIOS/Views/SettingsView.swift`（第二处） | 顶部分区删去「分享 Fish Pocket」一行入口，换成一行注释 | D29 |
@@ -297,6 +329,11 @@
 | `app/DshIOS/Views/SettingsView.swift`（第四处） | `SupportLinksSection` 只留页脚；页脚换成 D37 那一句 | D37 |
 | `app/DshIOS/Views/ExploreTabView.swift`（第二处） | 「反馈与社区」分区只留页脚 | D37 |
 | `app/DshIOS/Assets.xcassets/LaunchMark.imageset/*.png` | 4 张图换成 Firefly（同步上游冲突时 `git checkout --ours`） | D38 |
+| `app/DshIOS/Views/ConversationView.swift` | dock 里加 1 行：普通会话的 `LearningModeBar` | D45 |
+| `app/DshIOS/Views/SessionHeader.swift` | 标题菜单末尾加一个 Section：`LearningModeMenu` | D45 |
+| `app/DshIOS/Views/BotChatView.swift` | accessory 包一层 VStack 加 `LearningModeBar`；`BotChatMenu` 末尾加一个 Section | D45 |
+| `app/DshIOS/Views/BotRoomView.swift` | accessory 包一层 VStack 加 `LearningModeBar` | D45 |
+| `app/DshIOS/Models/PluginPins.swift` | 1b 批量换名误改了匹配引擎英文报错的正则，已改回 "in Fish Pocket" 并加测试 `PluginPinsTests` | D36（1b） |
 | `HomeScreenShortcut.swift`、`WhatsNew.swift`、`PluginPins.swift`、`PhoneRecordingExport.swift`、`PhoneRecordingViews.swift`、`BotIMPage.swift`、`BotViews.swift`、`ConversationShare.swift`、`DrawerView.swift`、`NativeCapabilitiesView.swift`、`PluginStoreView.swift`、`ShortcutsGuidePage.swift`、`WatchSetupPage.swift`、`SettingsView.swift`（第五处）、`DshIOSApp.swift`（第二处）、`LiveActivity/*Widget*.swift`、`NewConversationControl.swift`、`DshLiveActivity.swift`、`Shared/NewConversationIntent.swift`、`Shared/OpenWebIntent.swift`、`Watch/Views/HomeView.swift`、`app/Watch/Localizable.xcstrings`（末尾 1 条） | 字符串里的 App 名 Fish Pocket → Firefly，只换名字；同步上游冲突时保留上游改动，再把名字换回来 | D36（1b） |
 
 没有改：`node_modules`、引擎版本、`ios.patch.yml` 里已有的条目、`ios-build.yml`、`LICENSE`、`project.yml` 里除显示名以外的内容、Bundle ID、App Group、签名、`test-root-sim.sh`、`conformance.mjs`。

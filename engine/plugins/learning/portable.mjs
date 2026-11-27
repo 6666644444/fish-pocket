@@ -79,6 +79,9 @@ export function dumpLibrary(store) {
       .map((m) => ({ content: m.content, source: m.source, createdAt: m.created_at, updatedAt: m.updated_at })),
     sessionModes: db.prepare('SELECT * FROM session_modes ORDER BY session_id').all()
       .map((s) => ({ sessionId: s.session_id, mode: s.mode, updatedAt: s.updated_at, endedAt: s.ended_at ?? null, hidden: Boolean(s.hidden) })),
+    // Learning modes of Bots and groups (schema 8); which Session was told what is not kept.
+    learningOwners: db.prepare('SELECT * FROM learning_owners ORDER BY kind, id').all()
+      .map((o) => ({ kind: o.kind, id: o.id, mode: o.mode, updatedAt: o.updated_at, endedAt: o.ended_at ?? null, hidden: Boolean(o.hidden) })),
     documents: docs.map((d) => ({
       title: d.title, kind: d.kind, sourceName: d.source_name, createdAt: d.created_at,
       text: documentText(chunks.filter((c) => c.document_id === d.id)),
@@ -105,7 +108,7 @@ export function dumpLibrary(store) {
 
 const TABLES = ['research_claims', 'research_citations', 'research_steps', 'research_blocks', 'research_jobs',
   'quiz_mistakes', 'quiz_attempts', 'quiz_questions', 'kb_vectors', 'kb_chunks', 'kb_documents',
-  'session_modes', 'notes', 'notebooks', 'memories'];
+  'learning_owner_sessions', 'learning_owners', 'session_modes', 'notes', 'notebooks', 'memories'];
 
 /** Whether the library holds any learning data (settings do not count). */
 export function isEmpty(store) {
@@ -140,6 +143,10 @@ export function importLibrary(store, data) {
     for (const s of list(data.sessionModes)) {
       db.prepare('INSERT INTO session_modes(session_id, mode, updated_at, ended_at, hidden) VALUES (?, ?, ?, ?, ?)')
         .run(s.sessionId, s.mode, s.updatedAt, Number.isInteger(s.endedAt) ? s.endedAt : null, s.hidden === true ? 1 : 0);
+    }
+    for (const o of list(data.learningOwners)) {
+      db.prepare('INSERT INTO learning_owners(kind, id, mode, updated_at, ended_at, hidden) VALUES (?, ?, ?, ?, ?, ?)')
+        .run(o.kind, o.id, o.mode, o.updatedAt, Number.isInteger(o.endedAt) ? o.endedAt : null, o.hidden === true ? 1 : 0);
     }
     for (const d of list(data.documents)) {
       const doc = store.importDocument({ title: d.title, kind: d.kind, text: d.text, sourceName: d.sourceName ?? '' });

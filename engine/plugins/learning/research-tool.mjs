@@ -101,6 +101,39 @@ export function researchTools({ web, store, embedder, sources, signal, fetchImpl
 }
 
 /**
+ * How a research run ends, as dsh-jobs takes it (`JobOutcome`: `status` 'completed' |
+ * 'killed' | 'failed', optional `detail`). An outcome of any other shape leaves the job
+ * neither running nor finished: it shows as running for ever, cannot be stopped, and its
+ * completion notice reads "[status: undefined]" — what happened with `{ kind }` before.
+ */
+export function jobOutcome(final) {
+  if (final.status === 'done') return { status: 'completed', detail: 'report ready' };
+  if (final.status === 'cancelled') return { status: 'killed', detail: 'cancelled' };
+  if (final.status === 'paused') return { status: 'killed', detail: 'paused before it finished' };
+  return { status: 'failed', detail: String(final.error ?? final.status ?? 'failed').slice(0, 300) };
+}
+
+/** The job's last line, which the completion notice shows the model. */
+export function finalLine(jobId, final) {
+  if (final.status === 'done') return `Research #${jobId} finished. Read the report with ${TOOL} action "report", id ${jobId}.\n`;
+  if (final.status === 'paused') {
+    return `Research #${jobId} was stopped before it finished and is paused. Do not resume it on your own: `
+      + 'tell the user, who can continue it if they want.\n';
+  }
+  return `Research #${jobId} ended ${final.status}${final.error ? `: ${final.error}` : ''}. Do not start it again on your own.\n`;
+}
+
+/**
+ * Whether a turn's new messages are only background-job notices (dsh-tool-jobs wakes an idle
+ * conversation with one when a job ends). Such a turn was not asked for by anyone, so it may
+ * not start or resume research: one research ending must never set off the next.
+ */
+export function backgroundOnly(messages) {
+  const own = (messages ?? []).filter((m) => m?.role === 'user');
+  return own.length > 0 && own.every((m) => m.source?.kind === 'tool-jobs');
+}
+
+/**
  * Runs research jobs: at most one run per job at a time, each inside a dsh-jobs job when
  * the composition has them (else in the background of the engine).
  */
@@ -113,13 +146,19 @@ export class ResearchRunner {
     this.logger = logger;
     this.call = call;
     this.running = new Map();
+    /** What groups Sessions for "one at a time": the plugin sets it to the Bot or group (dsbot.mjs). */
+    this.keyOf = (sessionId) => sessionId;
     this.stopped = new AbortController();
   }
 
-  /** The job running for session `sessionId`, if any: a session runs one research at a time. */
+  /**
+   * The job running for `sessionId`'s owner, if any: a conversation, a Bot (all its parts)
+   * or a group (all its members) runs one research at a time.
+   */
   runningIn(sessionId) {
     if (typeof sessionId !== 'string' || !sessionId) return undefined;
-    for (const [jobId, entry] of this.running) if (entry.sessionId === sessionId) return jobId;
+    const key = this.keyOf(sessionId);
+    for (const [jobId, entry] of this.running) if (entry.sessionId && this.keyOf(entry.sessionId) === key) return jobId;
     return undefined;
   }
 
@@ -156,11 +195,9 @@ export class ResearchRunner {
           outputLimitBytes: 4_000,
           run: (handle) => {
             done = run((line) => { handle.updateProgress(line); }).then((final) => {
-              handle.append(final.status === 'done'
-                ? `Research #${jobId} finished. Read the report with ${TOOL} action "report", id ${jobId}.\n`
-                : `Research #${jobId} ended ${final.status}${final.error ? `: ${final.error}` : ''}.\n`);
-              return { kind: final.status === 'done' ? 'completed' : final.status === 'cancelled' ? 'killed' : 'failed', result: final.status };
-            }, (error) => ({ kind: 'failed', detail: String(error?.message ?? error) }));
+              handle.append(finalLine(jobId, final));
+              return jobOutcome(final);
+            }, (error) => ({ status: 'failed', detail: String(error?.message ?? error).slice(0, 300) }));
             return { cancel: () => controller.abort(), done };
           },
         });
@@ -194,9 +231,16 @@ const DESCRIPTION = 'Deep research: plans the question, researches each part wit
   + 'Use it when the user asks for research, a deep dive or a sourced report, not for a quick fact. '
   + '`start` with a clear topic (clarify the scope with the user first if it is vague) returns a job id at once; you are told when it ends. '
   + '`status` shows progress, `report` returns the finished report (show it to the user as it is, with its sources), '
-  + '`resume` continues a paused job, `cancel` stops one, `list` shows recent jobs.';
+  + '`resume` continues a paused job, only when the user asks for it; `cancel` stops one, `list` shows recent jobs. '
+  + 'Never start or resume research because a background job ended: tell the user and let them decide.';
 
-export function researchTool(open, runner) {
+/**
+ * @param {() => object} open
+ * @param {ResearchRunner} runner
+ * @param {{ backgroundTurn?: (sessionId: string) => boolean }} [options] - whether the session's
+ *   current turn was opened by a background-job notice alone (index.mjs records it per turn).
+ */
+export function researchTool(open, runner, { backgroundTurn = () => false } = {}) {
   return defineTool({
     name: TOOL,
     description: DESCRIPTION,
@@ -216,6 +260,12 @@ export function researchTool(open, runner) {
       const store = open();
       const agent = exec?.agent;
       if (args.action === 'list') return { jobs: store.listResearchJobs({ limit: 10 }) };
+      // A turn no one asked for (a job's completion notice) never spends on research.
+      if ((args.action === 'start' || args.action === 'resume') && backgroundTurn(agent?.session?.id)) {
+        const reason = 'not started: this turn was opened by a background job ending, not by the user. Tell the user what happened; research starts or continues only when they ask';
+        const known = Number.isInteger(args.id) ? (() => { try { return store.getResearchJob({ id: args.id, withReport: false }); } catch { return undefined; } })() : undefined;
+        return known ? { started: false, reason, job: known } : { started: false, reason, refused: true };
+      }
       if (args.action === 'start') {
         const sessionId = agent?.session?.id;
         // One research at a time in a conversation: a second start reports the running one.
@@ -226,7 +276,7 @@ export function researchTool(open, runner) {
         // A paused job on the same question in this conversation is resumed, not started over.
         const topic = String(args.topic ?? '');
         const paused = typeof sessionId === 'string' && topic.trim()
-          ? store.listResearchJobs({ limit: 50 }).find((j) => j.sessionId === sessionId && (j.status === 'paused' || j.status === 'planned') && topicSimilarity(j.topic, topic) >= 0.6)
+          ? store.listResearchJobs({ limit: 50 }).find((j) => j.sessionId && runner.keyOf(j.sessionId) === runner.keyOf(sessionId) && (j.status === 'paused' || j.status === 'planned') && topicSimilarity(j.topic, topic) >= 0.6)
           : undefined;
         if (paused) return { ...runner.start(paused.id, { agent, toolCall: exec?.toolCall }), resumed: true, job: store.getResearchJob({ id: paused.id, withReport: false }) };
         const allowWeb = store.getSettings().researchWeb !== false;
@@ -250,6 +300,7 @@ function render(action, value) {
     if (!value.jobs.length) return 'No research jobs yet.';
     return value.jobs.map((j) => `#${j.id} ${j.status} (${j.blocksDone}/${j.blocks} parts, ${j.citations} sources): ${j.topic}`).join('\n');
   }
+  if (value.refused) return `Not started: ${value.reason}.`;
   const j = value.job;
   if (action === 'report' && j.status === 'done') return j.report ?? '(no report)';
   const head = `Research #${j.id} — ${j.status}${j.phase && j.phase !== j.status ? `, ${j.phase}` : ''}${j.progress ? ` (${j.progress})` : ''}`;

@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import { parse as parseYaml } from 'yaml';
 import { isRemoteJsonValue } from '@deepseek-ai/dsh-typert-protocol';
 import Learning, { ROUTE, pausedResearchNote } from '../plugins/learning/index.mjs';
-import { TOOL, fetchPage, researchTools, sessionTarget } from '../plugins/learning/research-tool.mjs';
+import { TOOL, backgroundOnly, fetchPage, finalLine, jobOutcome, researchTools, sessionTarget } from '../plugins/learning/research-tool.mjs';
 import { LearningStore } from '../plugins/learning/store.mjs';
 import { canDecodeGbk, decodeGbk, htmlTitle, htmlToText, legacyCharset, metaCharset, nativeGbk, refusedCharset } from '../plugins/learning/webtext.mjs';
 
@@ -45,9 +45,10 @@ function plugin({ withJobs = true } = {}) {
       return `research-${started.length}`;
     },
   };
+  const handlers = new Map();
   const ctx = {
     effect: (run) => { const d = run(); if (typeof d === 'function') disposers.push(d); },
-    on: () => {},
+    on: (name, handler) => { handlers.set(name, handler); },
     connection: { fetch: { register: (route) => { routes.set(route.path, route); return () => routes.delete(route.path); } } },
     tools: { register: (tool, options) => { tools.push({ tool, options }); return () => {}; } },
   };
@@ -58,7 +59,9 @@ function plugin({ withJobs = true } = {}) {
     return { status: response.status, body: await response.json() };
   };
   const research = tools.find((t) => t.tool.name === TOOL);
-  return { file, instance, research, started, post, dispose: () => disposers.reverse().forEach((d) => d()) };
+  // One turn's first step in `sessionId`, bringing `messages` (as DSH's agent/pre-step does).
+  const turn = (sessionId, messages) => handlers.get('agent/pre-step')({ agent: { session: { id: sessionId, header: {} } }, step: 1, signal: { aborted: false } }, async () => ({ kind: 'proceed', messages }));
+  return { file, instance, research, started, post, turn, dispose: () => disposers.reverse().forEach((d) => d()) };
 }
 
 const agent = {
@@ -108,7 +111,7 @@ test('the tool starts a job owned by the session, the run finishes, the report r
   assert.equal(p.started[0].owner, 'sess-r');
   assert.equal(p.started[0].kind, 'research');
   const outcome = await p.started[0].hooks.done;
-  assert.deepEqual(outcome, { kind: 'completed', result: 'done' });
+  assert.deepEqual(outcome, { status: 'completed', detail: 'report ready' }, 'dsh-jobs reads `status`');
   assert.match(p.started[0].appended, /finished/);
   const report = await p.research.tool.execute({ action: 'report', id: start.job.id }, { agent });
   assert.equal(report.job.status, 'done');
@@ -325,5 +328,74 @@ test('every deep_research result is lossless JSON', async () => {
   ]) {
     assert.ok(isRemoteJsonValue(value), JSON.stringify(value).slice(0, 300));
   }
+  p.dispose();
+});
+
+// The job's ending, as dsh-jobs reads it. dsh-jobs-local settle() does `job.status =
+// outcome.status` and treats only completed / killed / failed as finished: anything else left
+// the job "running" for ever on the phone (10 hours and more), unstoppable, and woke the
+// conversation with "[status: undefined]".
+const TERMINAL_JOB = ['completed', 'killed', 'failed'];
+
+test('every way a research run ends is a finished dsh-jobs outcome', () => {
+  for (const final of [{ status: 'done' }, { status: 'cancelled' }, { status: 'paused' }, { status: 'failed', error: 'x' }, {}]) {
+    const outcome = jobOutcome(final);
+    assert.ok(TERMINAL_JOB.includes(outcome.status), JSON.stringify(final));
+    assert.equal('kind' in outcome, false);
+    assert.ok(isRemoteJsonValue(outcome));
+  }
+  assert.equal(jobOutcome({ status: 'paused' }).status, 'killed');
+  assert.match(finalLine(3, { status: 'paused' }), /Do not resume it on your own/);
+});
+
+test('a run stopped through its job settles killed and says it is paused', async () => {
+  const p = plugin();
+  p.instance.research.call = (_llm, _target, _prompt, signal) => new Promise((_, reject) => signal.addEventListener('abort', () => reject(new Error('aborted'))));
+  const start = await p.research.tool.execute({ action: 'start', topic: 'Stop me' }, { agent });
+  assert.equal(start.started, true);
+  const spec = p.started.at(-1);
+  spec.hooks.cancel('cancelled by the user');
+  const outcome = await spec.hooks.done;
+  assert.equal(outcome.status, 'killed');
+  assert.match(spec.appended, /paused\. Do not resume it on your own/);
+  assert.equal((await p.post('research.get', { id: start.job.id })).body.result.status, 'paused');
+  p.dispose();
+});
+
+test('a turn opened only by a background job notice cannot start or resume research', async () => {
+  const notice = { role: 'user', source: { kind: 'tool-jobs', form: 'notice', summary: 'research done' }, content: [{ type: 'text', text: '[status: completed]' }] };
+  const user = { role: 'user', source: { kind: 'user' }, content: [{ type: 'text', text: '继续研究' }] };
+  assert.equal(backgroundOnly([notice]), true);
+  assert.equal(backgroundOnly([notice, user]), false);
+  assert.equal(backgroundOnly([]), false);
+  const p = plugin();
+  const store = new LearningStore(p.file);
+  const paused = store.createResearchJob({ topic: 'Paused before', depth: 'quick', sessionId: 'sess-r' });
+  store.setResearchStatus({ id: paused.id, status: 'paused' });
+  store.close();
+  await p.turn('sess-r', [notice]);
+  const resumed = await p.research.tool.execute({ action: 'resume', id: paused.id }, { agent });
+  assert.equal(resumed.started, false);
+  assert.match(resumed.reason, /background job ending/);
+  const fresh = await p.research.tool.execute({ action: 'start', topic: 'Anything new' }, { agent });
+  assert.equal(fresh.started, false);
+  assert.match(p.research.tool.output.render({ action: 'start' }, fresh)[0].text, /^Not started/);
+  assert.equal(p.started.length, 0, 'no job was started');
+  assert.equal((await p.post('research.list')).body.result.length, 1, 'no research was created');
+  assert.ok(isRemoteJsonValue(resumed) && isRemoteJsonValue(fresh));
+  await p.turn('sess-r', [user]);
+  assert.equal((await p.research.tool.execute({ action: 'resume', id: paused.id }, { agent })).started, true, 'the user asking is enough');
+  p.dispose();
+});
+
+test('the app can still resume a paused research from its page', async () => {
+  const p = plugin();
+  const store = new LearningStore(p.file);
+  const paused = store.createResearchJob({ topic: 'From the app', depth: 'quick', sessionId: 'sess-r' });
+  store.setResearchTarget({ id: paused.id, target: { provider: 'deepseek', model: 'deepseek-chat' } });
+  store.setResearchStatus({ id: paused.id, status: 'paused' });
+  store.close();
+  p.instance.backgroundTurns.add('sess-r');
+  assert.equal((await p.post('research.resume', { id: paused.id })).body.result.started, true, 'the research page is the user');
   p.dispose();
 });

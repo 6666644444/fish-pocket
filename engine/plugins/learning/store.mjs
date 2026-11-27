@@ -293,6 +293,31 @@ export const MIGRATIONS = [
       ALTER TABLE session_modes ADD COLUMN left_mode TEXT;
     `);
   },
+  // 8: learning modes that follow a Bot or a group chat (ds-bot) rather than one Session:
+  // a Bot's chat moves on to fresh Sessions, and a group runs one Session per member
+  // (dsbot.mjs). learning_owner_sessions keeps, per Session the owner spoke in, what full
+  // note it was given (mode and role) and which ending it was told about.
+  (db) => {
+    db.exec(`
+      CREATE TABLE learning_owners (
+        kind TEXT NOT NULL CHECK (kind IN ('bot', 'room')),
+        id TEXT NOT NULL,
+        mode TEXT NOT NULL CHECK (mode IN ('qa', 'socratic', 'quiz')),
+        updated_at INTEGER NOT NULL,
+        ended_at INTEGER,
+        hidden INTEGER NOT NULL DEFAULT 0,
+        PRIMARY KEY (kind, id)
+      ) STRICT;
+      CREATE TABLE learning_owner_sessions (
+        kind TEXT NOT NULL,
+        id TEXT NOT NULL,
+        session_id TEXT NOT NULL,
+        announced TEXT,
+        told_end_at INTEGER,
+        PRIMARY KEY (kind, id, session_id)
+      ) STRICT;
+    `);
+  },
 ];
 export const SCHEMA_VERSION = MIGRATIONS.length;
 
@@ -684,6 +709,70 @@ export class LearningStore {
     const { changes } = this.db.prepare('UPDATE session_modes SET hidden = 1 WHERE session_id = ? AND ended_at IS NOT NULL AND hidden = 0').run(sessionKey(sessionId));
     if (!changes) throw new LearningError('not-found', 'that session is not on the learning record');
     return { hidden: true };
+  }
+
+  // Learning modes of Bots and group chats (schema 8)
+
+  /** A Bot's or a group's learning mode, or null when it is not in one. */
+  getOwnerMode({ kind, id: ownerId }) {
+    const row = this.db.prepare('SELECT * FROM learning_owners WHERE kind = ? AND id = ? AND ended_at IS NULL').get(ownerKind(kind), sessionKey(ownerId));
+    return row ? ownerRow(row) : null;
+  }
+
+  /** Put a Bot or a group in `mode`, or end it with `mode: null` (it stays on the record). */
+  setOwnerMode({ kind, id: ownerId, mode }) {
+    const k = ownerKind(kind);
+    const key = sessionKey(ownerId);
+    const now = this.now();
+    if (mode === null) {
+      this.db.prepare('UPDATE learning_owners SET ended_at = ?, updated_at = ? WHERE kind = ? AND id = ? AND ended_at IS NULL').run(now, now, k, key);
+      return null;
+    }
+    if (!SESSION_MODES.includes(mode)) throw new LearningError('invalid', `mode must be one of ${SESSION_MODES.join(', ')} or null`);
+    this.db.prepare(`
+      INSERT INTO learning_owners(kind, id, mode, updated_at) VALUES (?, ?, ?, ?)
+      ON CONFLICT(kind, id) DO UPDATE SET mode = excluded.mode, updated_at = excluded.updated_at, ended_at = NULL, hidden = 0
+    `).run(k, key, mode, now);
+    return this.getOwnerMode({ kind: k, id: key });
+  }
+
+  /** Bots and groups in a learning mode, most recently set first. */
+  listOwnerModes() {
+    return this.db.prepare('SELECT * FROM learning_owners WHERE ended_at IS NULL ORDER BY updated_at DESC, kind, id').all().map(ownerRow);
+  }
+
+  /** Bots and groups whose learning mode was ended, most recently ended first. */
+  listOwnerHistory() {
+    return this.db.prepare('SELECT * FROM learning_owners WHERE ended_at IS NOT NULL AND hidden = 0 ORDER BY ended_at DESC, kind, id').all().map(ownerRow);
+  }
+
+  hideOwnerHistory({ kind, id: ownerId }) {
+    const { changes } = this.db.prepare('UPDATE learning_owners SET hidden = 1 WHERE kind = ? AND id = ? AND ended_at IS NOT NULL AND hidden = 0').run(ownerKind(kind), sessionKey(ownerId));
+    if (!changes) throw new LearningError('not-found', 'that Bot or group is not on the learning record');
+    return { hidden: true };
+  }
+
+  /**
+   * What one Session of an owner was given: `announced` ("<mode>:<role>" of the full note it
+   * had) and `toldEndAt` (the ending it was told about). Null for a Session never seen.
+   */
+  ownerSession({ kind, id: ownerId, sessionId }) {
+    const row = this.db.prepare('SELECT announced, told_end_at FROM learning_owner_sessions WHERE kind = ? AND id = ? AND session_id = ?')
+      .get(ownerKind(kind), sessionKey(ownerId), sessionKey(sessionId));
+    return row ? { announced: row.announced ?? null, toldEndAt: row.told_end_at ?? null } : null;
+  }
+
+  markOwnerSession({ kind, id: ownerId, sessionId, announced, toldEndAt }) {
+    this.db.prepare(`
+      INSERT INTO learning_owner_sessions(kind, id, session_id, announced, told_end_at) VALUES (?, ?, ?, ?, ?)
+      ON CONFLICT(kind, id, session_id) DO UPDATE SET announced = excluded.announced, told_end_at = excluded.told_end_at
+    `).run(ownerKind(kind), sessionKey(ownerId), sessionKey(sessionId), announced ?? null, toldEndAt ?? null);
+  }
+
+  /** The owner's row whatever its state (for the ending note), or null. */
+  ownerRecord({ kind, id: ownerId }) {
+    const row = this.db.prepare('SELECT * FROM learning_owners WHERE kind = ? AND id = ?').get(ownerKind(kind), sessionKey(ownerId));
+    return row ? ownerRow(row) : null;
   }
 
   // Knowledge base (M3)
@@ -1278,6 +1367,18 @@ function modelName(value) {
 
 /** The modes a session can be in; the table's CHECK holds the same list. */
 export const SESSION_MODES = ['qa', 'socratic', 'quiz'];
+
+/** The kinds of learning owner other than a single Session (dsbot.mjs). */
+export const OWNER_KINDS = ['bot', 'room'];
+
+function ownerKind(value) {
+  if (!OWNER_KINDS.includes(value)) throw new LearningError('invalid', `kind must be one of ${OWNER_KINDS.join(', ')}`);
+  return value;
+}
+
+const ownerRow = (row) => ({
+  kind: row.kind, id: row.id, mode: row.mode, updatedAt: row.updated_at, endedAt: row.ended_at ?? null,
+});
 
 function sessionKey(value) {
   if (typeof value !== 'string' || !value.trim() || value.length > 200) {
