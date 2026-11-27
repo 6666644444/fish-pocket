@@ -43,6 +43,7 @@ struct LearningHomePage: View {
             List {
                 // Learning happens with a Bot or a group (D49): no new learning conversation from here.
                 reviewSection
+                companionSection
                 withBotSection
                 sessionsSection
                 historySection
@@ -52,6 +53,17 @@ struct LearningHomePage: View {
             }
             .groupedList()
         )
+    }
+
+    /// Firefly 伙伴 (D55).
+    private var companionSection: some View {
+        Section {
+            NavigationLink { CompanionPage() } label: {
+                Label("AI 伙伴", systemImage: "heart.text.square")
+            }
+        } footer: {
+            Text("选一个 Bot 做长期伙伴：记住你们一起经历的事，慢慢了解你，也会在合适的时候主动找你。")
+        }
     }
 
     /// 今日复习 and 学习统计 (D53).

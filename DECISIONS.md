@@ -356,6 +356,25 @@
 - 冷启动时 ds-bot 要等引擎和插件加载（几秒），以前这段时间是「正在准备…」。现在每次拿到新的 team 就把 bots/rooms/mainBotIds 存到 Caches `bot-team-preview.json`；状态是 `.unknown` 且有缓存时显示 `BotPreviewList`（变淡、「正在连接 Bot…」、行点不开），ds-bot 一回答就换成真列表。
 - 只用来看：不放进 `team`，所以会话归属、语音消息、学习模式等读 `team` 的地方都不受影响；插件关掉/没装/版本不对时状态不是 `.unknown`，照旧显示 `BotSetupView`。
 
+### D55 AI 伙伴：ds-bot 记忆（事实层）+ Firefly 伙伴层（情景、了解、情绪、主动开口）
+
+- 读了 4 个项目的源码（只读副本 `.tmp/companion-src`），**一个都不装**，原因见本机 `.tmp/fp-control/伙伴方案.md`：
+  - dsh-fish-memory：记忆按会话存，ds-bot 的 Bot 一换分段就接不上；设置页只在网页版；和 ds-bot 记忆重叠会抢着注入。
+  - dsh-identity：以 QQ 为主，带支付、pwsh、Edge、WSL 语音等桌面能力；身份段注入所有会话，会和 Bot 自己的人设、学习模式冲突。
+  - LivingMemory：AstrBot 的 Python 插件（faiss/numpy），手机引擎跑不了；AGPL。
+  - dsh-speak-up：靠引擎内定时器，iPhone 进后台引擎就停，正好在需要它的时候不工作。
+- 采用：**ds-bot 自带记忆**继续管事实（跨会话、空闲复盘、每日整理矛盾、可撤销）；新写 Firefly 伙伴层（`engine/plugins/learning/companion.mjs` 纯逻辑、`companion-runtime.mjs` 接线），只借思路不搬代码，NOTICE 已注明来源。
+- 只对用户选的**一个** Bot 的单聊生效（设置 › 学习 › AI 伙伴，默认不开）；群聊、其他 Bot、子智能体、定时提醒都不受影响。
+- 情景记忆：对话停 20 分钟（或下一轮发现间隔 >30 分钟）后台调一次模型，整理成 0–4 条第一人称、带语境和感受的往事，附线索词、重要度、情绪、可选事实键和"没聊完的事"；同时记下观察到的性格/习惯（带依据）、ta 的情绪、要求忘掉的事。每天最多 6 次。
+- 召回（每轮本地计算，不花 token）：命中词按稀有度加权（人人都有的词不算证据），线索词加倍，× 鲜活度；证据不够就什么都不给；每轮最多 2 条、每条 ≤160 字；同一段对话不重复、想起过的 2 天内不再想起。隔 3 小时以上回来时，3 天内"没聊完的事"可能被顺口问起（只问一次）。
+- 遗忘：鲜活度 2^(-天数/H)，H = 21 天 × 2^(2×重要度−1) × (1+0.5×log2(1+被想起次数))，即随口一提 10.5 天减半、重要的事 42 天减半、常被想起的更久；<0.08 不再想起；从不自动删除，App 里可看、可"忘了它"。
+- 冲突：同一事实键新的取代旧的（旧的留作历史、不再当现在想起）；"别记了"按关键词隐藏；性格观察要在 **≥2 个不同日子**看到才进提示，用户说"不对"即退出，60 天没再看到退休；提示里写明"往事可能过时，以 ta 现在说的为准"。
+- 人格连续：Bot 的性格仍是 ds-bot 里的设定；每段对话开头只给一次（不破坏前缀缓存）：说话方式（不客服腔、不刻意展示记忆、不动不动列清单）+ 对 ta 的了解 + ta 最近 36 小时的状态。往事只在相关的那一轮附上。
+- 主动开口：App 进后台时（申请几秒后台时间）引擎决定要不要、什么时候（安静时段默认 23–8 点、聊完至少 6 小时、每天最多 1 次、骰子随间隔天数提高、连续 2 次没回推后 3 天、4 次停到你再来聊），再让模型用 Bot 的设定写一句开场（没自然理由就不发）；App 用本地通知按时提醒（只在通知已允许时）。回到前台时，到点的那句由 Bot 在单聊里说出来（`source.kind = firefly-companion-reach`，ds-bot 不把它显示成你的消息）；过了 18 小时就作废；你先回来聊了就取消并撤掉通知。每 6 小时最多考虑一次（每次可能是一次模型调用）。
+- schema 10：只新增 `companion_*` 表；导出/导入带往事、了解、情绪（不带计划和游标）。
+- 测试：引擎 `learning-companion.test.mjs` 16 条（含"一个月"模拟：重要的事 70 天后还在、随口的事淡掉、作息改了只认新的）；App `CompanionTests`。真实模型的"活人感"评估脚本 `scripts/companion-eval.mjs`（需自己设置 `DEEPSEEK_API_KEY`，本机没有跑）。
+- 已知限制：模型整理、开场和 ds-bot 显示主动消息都**没在真机和真实模型上测过**；冷启动时点通知能否直接跳到单聊取决于委托设置时机（已在 App init 里设置）。
+
 ## 改过的上游文件
 
 | 文件 | 改了什么 | 为什么 |
@@ -395,6 +414,9 @@
 | `app/LiveActivity/DshLiveActivity.swift` | `DshWidgets` 加 `ReviewWidget()` 一行 | D53 |
 | `app/DshIOS/Models/BotModel.swift` | 加 `preview`；`refreshState` 里 `team = value` 后存一份 | D54 |
 | `app/DshIOS/Views/BotViews.swift` | `BotHomeView` 状态未知且有缓存时显示 `BotPreviewList` | D54 |
+| `app/DshIOS/DshIOSApp.swift`（第三处） | `init` 里加一行 `CompanionNotifications.install()`（通知委托，只处理伙伴自己的通知） | D55 |
+| `app/DshIOS/Views/MainView.swift`（第三处） | 进后台时 `CompanionNotifications.leaving`，回前台和冷启动时 `CompanionNotifications.back` | D55 |
+| `engine/plugins/learning/dsbot.mjs` | `bots` 多存 `sessionId`、`role`、`instructions`（这是 fork 自己的文件） | D55 |
 | `app/DshIOS/Models/PluginPins.swift` | 1b 批量换名误改了匹配引擎英文报错的正则，已改回 "in Fish Pocket" 并加测试 `PluginPinsTests` | D36（1b） |
 | `HomeScreenShortcut.swift`、`WhatsNew.swift`、`PluginPins.swift`、`PhoneRecordingExport.swift`、`PhoneRecordingViews.swift`、`BotIMPage.swift`、`BotViews.swift`、`ConversationShare.swift`、`DrawerView.swift`、`NativeCapabilitiesView.swift`、`PluginStoreView.swift`、`ShortcutsGuidePage.swift`、`WatchSetupPage.swift`、`SettingsView.swift`（第五处）、`DshIOSApp.swift`（第二处）、`LiveActivity/*Widget*.swift`、`NewConversationControl.swift`、`DshLiveActivity.swift`、`Shared/NewConversationIntent.swift`、`Shared/OpenWebIntent.swift`、`Watch/Views/HomeView.swift`、`app/Watch/Localizable.xcstrings`（末尾 1 条） | 字符串里的 App 名 Fish Pocket → Firefly，只换名字；同步上游冲突时保留上游改动，再把名字换回来 | D36（1b） |
 

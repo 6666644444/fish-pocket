@@ -351,8 +351,14 @@ struct MainView: View {
                 ReadAloud.shared.scope = onScreen
                 // The 错题复习 widget: what the model graded in a chat since (D53).
                 Task { await LearningReviewSync.refresh(LearningClient(engine: app.client)) }
+                // Firefly 伙伴 (D55): a message it planned to send is said now; called-off ones leave.
+                Task { await CompanionNotifications.back(LearningClient(engine: app.client)) }
             }
-            if phase == .background { widthOnLeaving = windowWidth }
+            if phase == .background {
+                widthOnLeaving = windowWidth
+                // Firefly 伙伴 (D55): whether and when it speaks first, while the engine still runs.
+                CompanionNotifications.leaving(LearningClient(engine: app.client))
+            }
         }
         // Reading aloud belongs to the conversation on screen: moving to another one stops it.
         .onChange(of: onScreen, initial: true) { _, session in ReadAloud.shared.scope = session }
@@ -360,6 +366,7 @@ struct MainView: View {
         .task {
             try? await Task.sleep(for: .seconds(3))
             await LearningReviewSync.refresh(LearningClient(engine: app.client))
+            await CompanionNotifications.back(LearningClient(engine: app.client))
         }
         .onChange(of: shownBotChat, initial: true) { _, chat in app.botTeam.visibleChat = chat }
         .onChange(of: selection) { _, id in

@@ -137661,6 +137661,822 @@
           }
         }
       }
+    },
+    "AI 伙伴" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI Companion"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compañero IA"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI パートナー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 동반자"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "AI 夥伴"
+          }
+        }
+      }
+    },
+    "伙伴" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Companion"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compañero"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "パートナー"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "동반자"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "夥伴"
+          }
+        }
+      }
+    },
+    "不使用" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguno"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使わない"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용 안 함"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不使用"
+          }
+        }
+      }
+    },
+    "选一个 Bot 作为长期伙伴。只影响它的单聊：它会慢慢记住你们一起经历的事和你的习惯，在合适的时候自然想起，不会每句话都翻旧账。它原本的性格和 Bot 记忆不变。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick a Bot as your long-term companion. Only its own chat changes: it slowly remembers what you went through together and your habits, and brings them up naturally when it fits, not in every reply. Its personality and Bot memory stay as they are."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige un Bot como compañero a largo plazo. Solo cambia su chat: poco a poco recuerda lo que vivieron juntos y tus costumbres, y lo menciona con naturalidad cuando viene al caso, no en cada respuesta. Su personalidad y su memoria de Bot no cambian."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "長く付き合うパートナーにする Bot を選びます。変わるのはその Bot との個別チャットだけです。一緒に経験したことやあなたの習慣を少しずつ覚え、ふさわしいときに自然に思い出します。毎回昔の話を持ち出すことはありません。もとの性格と Bot のメモリーはそのままです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오래 함께할 동반자로 Bot 하나를 고르세요. 그 Bot과의 개인 채팅만 달라져요. 함께 겪은 일과 당신의 습관을 천천히 기억하고, 어울릴 때 자연스럽게 떠올려요. 매번 옛날 얘기를 꺼내지는 않아요. 원래 성격과 Bot 메모리는 그대로예요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選一個 Bot 作為長期夥伴。只影響它的單聊：它會慢慢記住你們一起經歷的事和你的習慣，在適合的時候自然想起，不會每句話都翻舊帳。它原本的個性和 Bot 記憶不變。"
+          }
+        }
+      }
+    },
+    "主动找我" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reach Out to Me"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escribirme primero"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自分から話しかけてくる"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "먼저 연락하기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "主動找我"
+          }
+        }
+      }
+    },
+    "安静时段开始" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiet hours start"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inicio de horas de silencio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "おやすみ時間の開始"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "방해 금지 시작"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "安靜時段開始"
+          }
+        }
+      }
+    },
+    "安静时段结束" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiet hours end"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fin de horas de silencio"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "おやすみ時間の終了"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "방해 금지 종료"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "安靜時段結束"
+          }
+        }
+      }
+    },
+    "下一次" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próxima"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "次回"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다음"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下一次"
+          }
+        }
+      }
+    },
+    "通知没有打开，它没法主动找你。可以在系统设置里给 Firefly 打开通知。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications are off, so it can't reach out to you. You can turn on notifications for Firefly in Settings."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las notificaciones están desactivadas, así que no puede escribirte primero. Puedes activarlas para Firefly en Ajustes."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知がオフなので、自分から話しかけられません。設定で Firefly の通知をオンにできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "알림이 꺼져 있어서 먼저 연락할 수 없어요. 설정에서 Firefly 알림을 켤 수 있어요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知沒有開啟，它沒辦法主動找你。可以在「設定」裡為 Firefly 開啟通知。"
+          }
+        }
+      }
+    },
+    "每天最多一次，安静时段不打扰，你刚聊过不会马上又找你；连续不回它就会少找你，你一回来就恢复。离开 App 时决定要不要找、什么时候找，到时用通知提醒，点开后这句话会出现在它的单聊里。你先回来聊天，这次就取消。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At most once a day, never in quiet hours, and not right after you've talked. If you don't answer a few times it reaches out less, and goes back to normal once you're back. When you leave the app it decides whether and when to write; a notification shows up then, and the message appears in its chat when you open it. If you come back and talk first, it's called off."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Como mucho una vez al día, nunca en horas de silencio y no justo después de hablar. Si no respondes varias veces te escribe menos, y vuelve a lo normal cuando regresas. Al salir de la app decide si escribirte y cuándo; entonces llega una notificación, y el mensaje aparece en su chat al abrirla. Si vuelves y hablas tú primero, se cancela."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 日に最大 1 回、おやすみ時間は邪魔せず、話したばかりのときはすぐには来ません。何度か返事がないと回数を減らし、あなたが戻ってくると元に戻ります。App を離れるときに話しかけるかどうかと時間を決め、その時刻に通知でお知らせします。開くとそのメッセージが個別チャットに表示されます。先にあなたから話しかけた場合は取り消されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "하루에 최대 한 번, 방해 금지 시간에는 연락하지 않고, 방금 대화했다면 바로 다시 찾지 않아요. 몇 번 답하지 않으면 덜 찾고, 다시 돌아오면 원래대로 돌아가요. 앱을 나갈 때 연락할지와 언제 할지 정하고, 그때 알림으로 알려 줘요. 열면 그 메시지가 개인 채팅에 나타나요. 먼저 돌아와서 대화하면 이번 연락은 취소돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每天最多一次，安靜時段不打擾，你剛聊過不會馬上又找你；連續不回它就會少找你，你一回來就恢復。離開 App 時決定要不要找、什麼時候找，到時用通知提醒，點開後這句話會出現在它的單聊裡。你先回來聊天，這次就取消。"
+          }
+        }
+      }
+    },
+    "你最近的状态" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How you've been lately"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cómo has estado últimamente"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最近のあなたの様子"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최근 당신의 상태"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你最近的狀態"
+          }
+        }
+      }
+    },
+    "还没有。它要在不同的日子里多次看到，才会把一点印象当成对你的了解。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing yet. It has to see something on several different days before an impression becomes something it knows about you."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada todavía. Tiene que verlo varias veces en días distintos antes de que una impresión se convierta en algo que sabe de ti."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだありません。別々の日に何度か見て初めて、印象をあなたについての理解として扱います。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 없어요. 서로 다른 날에 여러 번 봐야 인상을 당신에 대한 이해로 여겨요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "還沒有。它要在不同的日子裡多次看到，才會把一點印象當成對你的了解。"
+          }
+        }
+      }
+    },
+    "看到过 %lld 天" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seen on %lld days"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visto %lld días"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 日見かけた"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld일 동안 봄"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "看到過 %lld 天"
+          }
+        }
+      }
+    },
+    "你说不对" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You said it's wrong"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dijiste que no es así"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "違うと言われた"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "틀렸다고 함"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你說不對"
+          }
+        }
+      }
+    },
+    "还只是印象" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Just an impression so far"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por ahora solo una impresión"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだ印象だけ"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 인상일 뿐"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "還只是印象"
+          }
+        }
+      }
+    },
+    "不对" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not True"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No es así"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "違う"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "틀려요"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不對"
+          }
+        }
+      }
+    },
+    "它对你的了解" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What It Knows About You"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que sabe de ti"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "あなたについて知っていること"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "당신에 대해 아는 것"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "它對你的了解"
+          }
+        }
+      }
+    },
+    "左滑「不对」，它就不再这样认为，除非以后又多次看到。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swipe left and tap Not True, and it stops thinking so, unless it sees it again several times later."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desliza a la izquierda y toca «No es así» para que deje de pensarlo, salvo que vuelva a verlo varias veces más adelante."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左にスワイプして「違う」をタップすると、その見方をやめます。あとでまた何度も見た場合は別です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "왼쪽으로 밀어 '틀려요'를 누르면 더 이상 그렇게 생각하지 않아요. 나중에 여러 번 다시 보면 예외예요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "左滑「不對」，它就不再這樣認為，除非以後又多次看到。"
+          }
+        }
+      }
+    },
+    "还没有。聊完一段停 20 分钟左右，它会把值得记住的事整理成回忆；大多数闲聊不会留下。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing yet. About 20 minutes after a conversation pauses, it turns what's worth keeping into memories; most small talk leaves nothing."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada todavía. Unos 20 minutos después de que se detenga una conversación, convierte lo que vale la pena en recuerdos; la mayoría de la charla casual no deja nada."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "まだありません。会話が 20 分ほど止まると、覚えておく価値のあることを思い出として整理します。ほとんどの雑談は残りません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 없어요. 대화가 20분쯤 멈추면 기억할 만한 일을 추억으로 정리해요. 대부분의 잡담은 남지 않아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "還沒有。聊完一段停 20 分鐘左右，它會把值得記住的事整理成回憶；大多數閒聊不會留下。"
+          }
+        }
+      }
+    },
+    "想起过 %lld 次" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recalled %lld times"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recordado %lld veces"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 回思い出した"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld번 떠올림"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "想起過 %lld 次"
+          }
+        }
+      }
+    },
+    "你们一起经历的事" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What You Went Through Together"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que vivieron juntos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "一緒に経験したこと"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "함께 겪은 일"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "你們一起經歷的事"
+          }
+        }
+      }
+    },
+    "越久越淡，重要的、常被想起的淡得慢；不会自动删除。左滑「忘了它」，它就不会再想起。也可以直接在聊天里跟它说「这件事别记了」。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memories fade over time; important ones and ones it often recalls fade slower. Nothing is deleted automatically. Swipe left and tap Forget so it won't recall it again, or just tell it in the chat to forget something."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los recuerdos se desvanecen con el tiempo; los importantes y los que recuerda a menudo, más despacio. Nada se borra solo. Desliza a la izquierda y toca «Olvidar» para que no lo recuerde más, o dile en el chat que lo olvide."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "時間が経つほど薄れていきます。大事なことやよく思い出すことはゆっくり薄れます。自動では削除しません。左にスワイプして「忘れる」をタップすると、もう思い出しません。チャットで「これは忘れて」と伝えることもできます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시간이 지날수록 흐려지고, 중요한 일이나 자주 떠올린 일은 천천히 흐려져요. 자동으로 삭제하지는 않아요. 왼쪽으로 밀어 '잊기'를 누르면 다시 떠올리지 않아요. 채팅에서 '이건 잊어 줘'라고 말해도 돼요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "越久越淡，重要的、常被想起的淡得慢；不會自動刪除。左滑「忘了它」，它就不會再想起。也可以直接在聊天裡跟它說「這件事別記了」。"
+          }
+        }
+      }
+    },
+    "选一个 Bot 做长期伙伴：记住你们一起经历的事，慢慢了解你，也会在合适的时候主动找你。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick a Bot as a long-term companion: it remembers what you went through together, gets to know you over time, and reaches out when the moment is right."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige un Bot como compañero a largo plazo: recuerda lo que vivieron juntos, te va conociendo y te escribe cuando es buen momento."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot を長く付き合うパートナーに。一緒に経験したことを覚え、少しずつあなたを知り、いいタイミングで自分から話しかけてきます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bot 하나를 오래 함께할 동반자로: 함께 겪은 일을 기억하고, 천천히 당신을 알아 가며, 알맞은 때에 먼저 연락해요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "選一個 Bot 做長期夥伴：記住你們一起經歷的事，慢慢了解你，也會在適合的時候主動找你。"
+          }
+        }
+      }
+    },
+    "忘了它" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forget"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Olvidar"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "忘れる"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "잊기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "忘了它"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

@@ -12,6 +12,8 @@ struct DshIOSApp: App {
         WhatsNew.noteLaunch()
         // Siri, Shortcuts and the Control Center button: the window in front follows the link.
         DshIntentBridge.open = { LinkInbox.shared.request = LinkRequest(link: $0) }
+        // Firefly 伙伴 (D55): its notification's tap reaches the app even when it launches it.
+        CompanionNotifications.install()
         // The phrases that name a Bot or a Mini App, from the lists the app last wrote.
         DshShortcuts.updateAppShortcutParameters()
         WatchLink.shared.activate()
