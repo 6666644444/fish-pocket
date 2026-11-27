@@ -70,13 +70,21 @@ await check('the knowledge base (M3): chunks, trigram search, float32 vectors', 
   store.close();
 });
 
-// Not a check, a finding: whether research can read GBK pages here (engine/plugins/learning/
-// webtext.mjs). A small-ICU Node has no GBK decoder; then those pages stay unread.
+// Not a check, a finding: whether this Node has a GBK decoder of its own (a small-ICU Node
+// does not). Then the check that research can read GBK pages anyway, with the bundled table
+// (engine/plugins/learning/webtext.mjs).
 {
   let gbk = 'no';
   try { new TextDecoder('gb18030'); gbk = 'yes'; } catch { /* small ICU */ }
   console.log(`GBK decoder on NodeMobile: ${gbk}`);
 }
+
+await check('GBK pages decode with the bundled table', async () => {
+  const { decodeGbk, legacyDecoder } = await import('./plugins/learning/webtext.mjs');
+  const bytes = Uint8Array.of(0x3c, 0x70, 0x3e, 0xd6, 0xd0, 0xce, 0xc4, 0xd2, 0xb3, 0xc3, 0xe6, 0x3c, 0x2f, 0x70, 0x3e);
+  assert.equal(decodeGbk(bytes), '<p>中文页面</p>');
+  assert.equal(legacyDecoder('gb2312').decode(bytes), '<p>中文页面</p>');
+});
 
 console.log(failed ? `${failed} failed` : 'all passed');
 process.exit(failed ? 1 : 0);

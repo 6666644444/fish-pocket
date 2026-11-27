@@ -261,7 +261,7 @@
 
 - 一个会话同时只跑一个研究：工具 `start` 和 App 的「继续研究」遇到同会话已有在跑的，都不开新的，返回那一个。同会话里有暂停的、题目相近（topicSimilarity ≥ 0.6）的任务时，`start` 改为续跑它。
 - 会话里有因关 App 而暂停的研究时，下一轮给模型一条说明（每个任务每次引擎启动只一次）：用 `resume` 续跑、不要另开，并告诉用户也可在 设置 → 学习 → 深度研究 继续。续跑仍是手动的（用户没选自动）。
-- 网页：正文提取去掉 script/style/nav/footer/aside/form 等，解码实体，取 `<title>`。DSH 拒绝的 GBK/GB2312/GB18030/Big5 页面，或只在 `<meta>` 里写编码、被当成 UTF-8 乱码的页面，插件再读一次并按 GB18030/Big5 解码（`webtext.mjs`）：只读 DSH 已接受的同一地址、只跟同源跳转、最多 3 MB、20 秒。需要 Node 带 full ICU，模拟器检查里打印「GBK decoder on NodeMobile: yes/no」；为 no 时这部分不生效，再问用户要不要自带编码表。没改 node_modules。
+- 网页：正文提取去掉 script/style/nav/footer/aside/form 等，解码实体，取 `<title>`。DSH 拒绝的 GBK/GB2312/GB18030/Big5 页面，或只在 `<meta>` 里写编码、被当成 UTF-8 乱码的页面，插件再读一次并按 GB18030/Big5 解码（`webtext.mjs`）：只读 DSH 已接受的同一地址、只跟同源跳转、最多 3 MB、20 秒。需要 Node 带 full ICU；CI 证实 NodeMobile 是 small ICU、没有 GBK 解码器（`GBK decoder on NodeMobile: no`），所以用户决定自带编码表（2026-11-27）：`gbk-table.mjs`（GBK 双字节 23940 个码位，Uint16 base64，源文件 67 KB，由本机带 full ICU 的 Node 生成、逐码核对，生成脚本 `.tmp/gen-gbk-table.mjs`），没有原生解码器时用它；四字节 GB18030 码位极少见，显示为 U+FFFD。Big5 仍只在 Node 自带解码器时可读。来源 WHATWG Encoding Standard（CC BY 4.0），已写进 NOTICE。模拟器检查新增一项「GBK pages decode with the bundled table」。没改 node_modules。
 - 省调用：搜索和知识库结果本身就是短摘录，直接当笔记，不再每条花一次模型调用（以前一次搜索最多花 5 次，是快速版 40 次预算很快用光的主因）；只有读到 600 字以上正文的网页才让模型摘要。正文不到 200 字或读取失败的网页不引用、不花调用，报告末尾注明有几个网页没读到。
 
 ### D42 模型工具的返回值一律是无损 JSON

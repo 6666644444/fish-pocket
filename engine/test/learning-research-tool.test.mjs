@@ -8,7 +8,7 @@ import { isRemoteJsonValue } from '@deepseek-ai/dsh-typert-protocol';
 import Learning, { ROUTE, pausedResearchNote } from '../plugins/learning/index.mjs';
 import { TOOL, fetchPage, researchTools, sessionTarget } from '../plugins/learning/research-tool.mjs';
 import { LearningStore } from '../plugins/learning/store.mjs';
-import { canDecodeGbk, htmlTitle, htmlToText, legacyCharset, metaCharset, refusedCharset } from '../plugins/learning/webtext.mjs';
+import { canDecodeGbk, decodeGbk, htmlTitle, htmlToText, legacyCharset, metaCharset, nativeGbk, refusedCharset } from '../plugins/learning/webtext.mjs';
 
 // A canned model good enough for a full quick run (same shapes as learning-research's fake).
 async function cannedModel(_llm, target, { system, user }) {
@@ -191,6 +191,32 @@ test('charset labels: what DSH refused, what a page names in <meta>', () => {
   assert.equal(metaCharset('<meta http-equiv="Content-Type" content="text/html; charset=gb2312">'), 'gb2312');
   assert.equal(metaCharset('<meta charset="GB18030" />'), 'gb18030');
   assert.equal(legacyCharset('utf-8'), undefined);
+});
+
+test('the bundled GBK table decodes every two-byte code as Node with full ICU does', { skip: !nativeGbk() && 'no native decoder to compare with' }, () => {
+  const native = new TextDecoder('gbk');
+  let checked = 0;
+  for (let lead = 0x81; lead <= 0xfe; lead += 1) {
+    for (let trail = 0x40; trail <= 0xfe; trail += 1) {
+      if (trail === 0x7f) continue;
+      const pair = Uint8Array.of(lead, trail);
+      assert.equal(decodeGbk(pair), native.decode(pair), `${lead.toString(16)} ${trail.toString(16)}`);
+      checked += 1;
+    }
+  }
+  assert.equal(checked, 23_940);
+});
+
+test('the bundled GBK table: ASCII, euro, mixed text, broken and four-byte sequences', () => {
+  const page = gbkPage();
+  assert.equal(decodeGbk(page), '<html><head><meta charset="gbk"><title>T</title></head><body><p>中文页面</p></body></html>');
+  assert.equal(decodeGbk(Uint8Array.of(0x80, 0x41)), '\u20ACA');
+  assert.equal(decodeGbk(Uint8Array.of(0xd6)), '\uFFFD', 'a lead byte at the end');
+  assert.equal(decodeGbk(Uint8Array.of(0xd6, 0x20, 0x41)), '\uFFFD A', 'a bad trail byte is not eaten');
+  assert.equal(decodeGbk(Uint8Array.of(0x81, 0x30, 0x81, 0x30, 0x41)), '\uFFFDA', 'a four-byte GB18030 code');
+  assert.equal(decodeGbk(Uint8Array.of(0xff, 0x41)), '\uFFFDA');
+  const long = new Uint8Array(20_000).fill(0x41);
+  assert.equal(decodeGbk(long).length, 20_000);
 });
 
 // "中文页面" in GBK, inside a small page.
