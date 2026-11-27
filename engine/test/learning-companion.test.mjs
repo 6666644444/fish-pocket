@@ -42,7 +42,8 @@ test('recall needs evidence: a rare word the user said, not a common one; fresh,
   assert.deepEqual(recallEpisodes(episodes, '在吗', { now }), [], 'nothing shared: nothing comes to mind');
   assert.deepEqual(recallEpisodes(episodes, '今天', { now }), [], 'a word every episode has is no evidence');
   assert.deepEqual(recallEpisodes(episodes, '月考', { now, shown: new Set([1]) }), [], 'once per conversation');
-  assert.deepEqual(recallEpisodes(episodes.map((e) => (e.id === 1 ? { ...e, lastRecalledAt: now - DAY_MS } : e)), '月考', { now }), [], 'a pause after being recalled');
+  assert.deepEqual(recallEpisodes(episodes.map((e) => (e.id === 1 ? { ...e, lastRecalledAt: now - 6 * HOUR } : e)), '月考', { now }), [], 'a pause after being recalled');
+  assert.deepEqual(recallEpisodes(episodes.map((e) => (e.id === 1 ? { ...e, lastRecalledAt: now - 2 * DAY_MS + 5 * 60_000 } : e)), '月考', { now }).map((e) => e.id), [1], 'two days later it may come up again (the grade after the worry)');
   assert.deepEqual(recallEpisodes(episodes.map((e) => (e.id === 1 ? { ...e, supersededBy: 9 } : e)), '月考', { now }), [], 'superseded: history, not now');
   assert.deepEqual(recallEpisodes(episodes.map((e) => ({ ...e, importance: 0 })), '月考', { now: T0 + 120 * DAY_MS }), [], 'faded below the floor: kept, not recalled');
   assert.ok(recallEpisodes(episodes, '月考 食堂', { now }).length <= EPISODE.recallMax);

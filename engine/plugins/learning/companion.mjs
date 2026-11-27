@@ -27,7 +27,8 @@ export const EPISODE = {
   /** Recalled per turn, characters each, days before one recalled comes up again. */
   recallMax: 2,
   recallChars: 160,
-  recallCooldownDays: 2,
+  /** Hours before an episode recalled in an earlier conversation may come up again (within one, never twice). */
+  recallCooldownDays: 0.75,
   /** Without a rare cue, the summed rarity of two or more shared uncommon words an episode needs to come to mind. */
   minEvidence: 2.5,
   /** A thread left open is asked about at most this many days later. */
@@ -162,7 +163,7 @@ export function sessionSections({ traits = [], mood, now, tzOffset = 0 }) {
     '像熟人那样聊：话不用说满，可以有自己的情绪、看法和小脾气，偶尔接梗、调侃；ta 只是闲聊时就闲聊，不要总把话题拉回"有什么能帮你"；不用客服腔（"很高兴为你服务""请问还有什么需要"），不动不动列清单或加小标题。',
     '你记得你们之间的事，但不刻意证明自己记得：只有真的相关时才自然带一句，更多时候只是让它影响你的语气和关心的点；不要说"我记得你说过""根据记忆"。',
     '往事可能记错或已经过时，ta 现在说的为准；ta 纠正你时就接受，别争。',
-    '只说真的有过的过去：没出现在这段对话或给你的往事里的旧事，不要说成"上次""又""每次都这样"；也不要编你自己在现实里做过、看到过的具体事（路过哪、用手机看到什么）。看法、情绪、玩笑随你。',
+    '只说真的有过的过去：没出现在这段对话或给你的往事里的旧事，不要说成"上次""又""每次都这样"，也不要替 ta 编习惯或性格（"你平时不是挺能忍的吗"），没依据就直接问；也不要编你自己在现实里做过、看到过的具体事（路过哪、用手机看到什么）。看法、情绪、玩笑随你。',
   ].join('\n')];
   if (traits.length) {
     sections.push(`【你对 ta 的了解】（相处中慢慢看出来的，可能会变）\n${traits.map((t) => `- ${cut(t.text, TRAIT.chars)}`).join('\n')}`);
@@ -378,7 +379,7 @@ export function planReach({ now, tzOffset = 0, lastUserAt, lastReachAt, ignored 
 
 export const OPENER_SYSTEM = [
   '你要以下面这个角色的身份，主动给一个很熟的人发一条消息。只输出这条消息本身；如果现在没有自然的理由找 ta，只输出 SKIP。',
-  '要求：一两句，不超过 40 字，像朋友随手发的；可以接着之前没聊完的事、关心一下 ta 当时提到的事、或者分享一个和 ta 有关的小念头。',
+  '要求：一两句，不超过 40 字，像朋友随手发的；可以接着之前没聊完的事、关心一下 ta 当时提到的事、或者就是一个小念头。只说一件事、最多问一个问题；优先接最近一次聊的事（标着「最近一次」的那条），尤其是开心或难过的事。',
   '不要："在吗"、客服腔、一次问好几个问题、说你在想念 ta 或你记得什么、提到你是 AI、提到通知或系统、表情包堆砌。',
 ].join('\n');
 
@@ -390,7 +391,7 @@ export function openerPrompt({ botName, persona, traits = [], episodes = [], fir
   return [
     `你是「${botName}」。${persona ? `你的设定：${cut(persona, 600)}` : ''}`,
     traits.length ? `你对 ta 的了解：\n${traits.map((t) => `- ${t.text}`).join('\n')}` : '',
-    episodes.length ? `你们最近的事：\n${episodes.map((e) => `- ${whenSaid(e.happenedAt, now, tzOffset)}：${cut(e.text, 120)}${e.followUp ? `（还没结果：${e.followUp}）` : ''}`).join('\n')}` : '',
+    episodes.length ? `你们最近的事（新的在前）：\n${episodes.map((e, i) => `- ${i === 0 ? '【最近一次】' : ''}${whenSaid(e.happenedAt, now, tzOffset)}：${cut(e.text, 120)}${e.followUp ? `（还没结果：${e.followUp}）` : ''}`).join('\n')}` : '',
     room
       ? `消息会在 ${time} 发在群聊「${room.name}」里（你是群主，群里还有 ${room.members.join('、') || '别的 Bot'} 和 ta）。只用群里的事开头，不提 ta 私下说过的事；可以是招呼大家的一句。${room.learning ? '群里开着学习模式，可以自然地提一句学习，但不要出题。' : ''}`
       : `消息会在 ${time} 发出。`,
