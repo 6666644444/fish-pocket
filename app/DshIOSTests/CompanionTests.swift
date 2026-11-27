@@ -33,4 +33,17 @@ final class CompanionTests: XCTestCase {
         XCTAssertEqual(DshLink(url: DshLink.bot("b1").url), .bot("b1"))
         XCTAssertTrue(CompanionNotifications.prefix.hasPrefix("firefly-"))
     }
+
+    func testDecodesAGroupReachAndGroupSettings() throws {
+        let plan = #"{"ok":true,"result":{"plan":{"id":7,"botId":"bot-hei","roomId":"room-g3","fireAt":9000,"text":"早，昨晚谁最后睡的？","status":"planned","createdAt":1,"deliveredAt":null,"answeredAt":null,"ignored":false,"botName":"嘿","roomName":"高三","sessionId":"s-room"}}}"#
+        let reach = try XCTUnwrap(try LearningAPI.decode(CompanionPlan.self, data: data(plan), status: 200).plan)
+        XCTAssertEqual(reach.roomName, "高三")
+        XCTAssertEqual(reach.sessionId, "s-room")
+        let settings = #"{"ok":true,"result":{"botId":"","reach":true,"quietStart":23,"quietEnd":8,"groupAdmins":true,"groupRecallDm":false}}"#
+        let decoded = try LearningAPI.decode(CompanionSettings.self, data: data(settings), status: 200)
+        XCTAssertEqual(decoded.groupAdmins, true)
+        XCTAssertEqual(decoded.groupRecallDm, false)
+        let episode = #"{"ok":true,"result":[{"id":1,"botId":"bot-hei","text":"在群里 ta 约我们去爬山","cues":["爬山"],"importance":0.7,"emotion":0.6,"mood":"","key":"","followUp":"","happenedAt":1,"createdAt":1,"recalls":0,"lastRecalledAt":null,"followedUpAt":null,"supersededBy":null,"hidden":false,"scope":"room:room-g3"}]}"#
+        XCTAssertEqual(try LearningAPI.decode([CompanionEpisode].self, data: data(episode), status: 200).first?.scope, "room:room-g3")
+    }
 }

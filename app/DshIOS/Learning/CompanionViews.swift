@@ -14,9 +14,14 @@ struct CompanionSettings: Codable, Hashable, Sendable {
     var reach: Bool
     var quietStart: Int
     var quietEnd: Int
+    /// D56: each group's admin is a companion in its group too.
+    var groupAdmins: Bool?
+    /// D56: what ta said in private may come to mind in a group.
+    var groupRecallDm: Bool?
 }
 
 struct CompanionTrait: Codable, Hashable, Identifiable, Sendable {
+    var botId: String?
     let key: String
     let text: String
     let evidence: String
@@ -24,7 +29,7 @@ struct CompanionTrait: Codable, Hashable, Identifiable, Sendable {
     let firstSeen: Double
     let lastSeen: Double
     let refuted: Bool
-    var id: String { key }
+    var id: String { "\(botId ?? ""):\(key)" }
 }
 
 struct CompanionMood: Codable, Hashable, Sendable {
@@ -35,6 +40,7 @@ struct CompanionMood: Codable, Hashable, Sendable {
 
 struct CompanionEpisode: Codable, Hashable, Identifiable, Sendable {
     let id: Int
+    var botId: String?
     let text: String
     let cues: [String]
     let importance: Double
@@ -44,6 +50,8 @@ struct CompanionEpisode: Codable, Hashable, Identifiable, Sendable {
     let recalls: Int
     let supersededBy: Int?
     let hidden: Bool
+    /// "dm" or "room:<id>".
+    var scope: String?
 }
 
 struct CompanionReach: Codable, Hashable, Sendable {
@@ -53,6 +61,11 @@ struct CompanionReach: Codable, Hashable, Sendable {
     let text: String
     let status: String
     var botName: String?
+    /// A group's admin posting in its group (D56).
+    var roomId: String?
+    var roomName: String?
+    /// The chat a tap opens: the Bot's own, or the group's.
+    var sessionId: String?
 }
 
 struct CompanionStatus: Codable, Sendable {
@@ -84,9 +97,11 @@ extension LearningClient {
         _ = try await call("companion.episodes.hide", ["id": .number(Double(id)), "hidden": .bool(hidden)], as: Done.self)
     }
     func companionTraits() async throws -> [CompanionTrait] { try await call("companion.traits") }
-    func refuteTrait(_ key: String) async throws {
+    func refuteTrait(_ key: String, botId: String?) async throws {
         struct Done: Codable { let refuted: Bool }
-        _ = try await call("companion.traits.refute", ["key": .string(key)], as: Done.self)
+        var params: [String: JSON] = ["key": .string(key)]
+        if let botId { params["botId"] = .string(botId) }
+        _ = try await call("companion.traits.refute", params, as: Done.self)
     }
     func planReach(allowed: Bool) async throws -> CompanionPlan {
         try await call("companion.plan", ["tzOffset": Self.tzOffset, "allowed": .bool(allowed)])
@@ -128,11 +143,14 @@ enum CompanionNotifications {
         let wait = reach.fireAt / 1000 - Date.now.timeIntervalSince1970
         guard wait > 30 else { return }
         let content = UNMutableNotificationContent()
-        content.title = reach.botName ?? "Firefly"
+        let name = reach.botName?.isEmpty == false ? reach.botName! : "Firefly"
+        content.title = reach.roomName.map { "\(name) · \($0)" } ?? name
         content.body = reach.text
         content.sound = .default
         content.threadIdentifier = "firefly-companion"
-        content.userInfo = ["link": DshLink.bot(reach.botId).url.absoluteString]
+        // A group's post opens the group (its own Session routes to it); the chat opens the Bot's.
+        let link: DshLink = reach.roomId != nil ? reach.sessionId.map(DshLink.session) ?? .bot(reach.botId) : .bot(reach.botId)
+        content.userInfo = ["link": link.url.absoluteString]
         try? await center.add(UNNotificationRequest(identifier: id, content: content, trigger: UNTimeIntervalNotificationTrigger(timeInterval: wait, repeats: false)))
     }
 
@@ -197,7 +215,8 @@ struct CompanionPage: View {
         List {
             if let status {
                 botSection(status)
-                if !status.settings.botId.isEmpty {
+                groupSection(status)
+                if !status.settings.botId.isEmpty || status.settings.groupAdmins != false {
                     reachSection(status)
                     knowSection(status)
                     episodesSection
@@ -219,13 +238,8 @@ struct CompanionPage: View {
         notificationsAllowed = await CompanionNotifications.allowed()
         do {
             status = try await client.companionStatus()
-            if status?.settings.botId.isEmpty == false {
-                episodes = try await client.companionEpisodes()
-                traits = try await client.companionTraits()
-            } else {
-                episodes = []
-                traits = []
-            }
+            episodes = try await client.companionEpisodes()
+            traits = try await client.companionTraits()
             loadError = nil
         } catch {
             loadError = error.localizedDescription
@@ -251,8 +265,38 @@ struct CompanionPage: View {
                 ForEach(app.botTeam.bots) { bot in Text(verbatim: bot.name).tag(bot.id) }
             }
         } footer: {
-            Text("选一个 Bot 作为长期伙伴。只影响它的单聊：它会慢慢记住你们一起经历的事和你的习惯，在合适的时候自然想起，不会每句话都翻旧账。它原本的性格和 Bot 记忆不变。")
+            Text("选一个 Bot 作为长期伙伴。它的单聊和它在的群里都会生效：慢慢记住你们一起经历的事和你的习惯，在合适的时候自然想起，不会每句话都翻旧账。它原本的性格和 Bot 记忆不变。")
         }
+    }
+
+    /// D56: groups.
+    private func groupSection(_ status: CompanionStatus) -> some View {
+        Section {
+            Toggle(isOn: Binding(
+                get: { status.settings.groupAdmins != false },
+                set: { on in Task { await set(["groupAdmins": .bool(on)]) } }
+            )) {
+                Label("群主也像朋友一样", systemImage: "person.2.wave.2")
+            }
+            Toggle(isOn: Binding(
+                get: { status.settings.groupRecallDm == true },
+                set: { on in Task { await set(["groupRecallDm": .bool(on)]) } }
+            )) {
+                Label("群里也能想起私聊的事", systemImage: "lock.open")
+            }
+        } header: {
+            Text("群聊")
+        } footer: {
+            Text("群主在群里会记住大家一起聊过的事，说话像朋友，也可能在你最近去过的群里先开口；群开着学习模式时只保留语气，不提往事，不打乱出题和批改。你选的伙伴 Bot 进群也还是它自己。私聊里的事默认不在群里提。")
+        }
+    }
+
+    /// A memory's Bot and place, as a row says it.
+    private func origin(botId: String?, scope: String?) -> String {
+        let name = botId.flatMap { app.botTeam.bot($0)?.name } ?? ""
+        guard let scope, scope.hasPrefix("room:") else { return name }
+        let room = app.botTeam.room(String(scope.dropFirst(5))).map { app.botTeam.name(of: $0) } ?? String(localized: "群聊")
+        return name.isEmpty ? room : "\(name) · \(room)"
     }
 
     private func reachSection(_ status: CompanionStatus) -> some View {
@@ -287,7 +331,7 @@ struct CompanionPage: View {
             if status.settings.reach && !notificationsAllowed {
                 Text("通知没有打开，它没法主动找你。可以在系统设置里给 Firefly 打开通知。")
             } else {
-                Text("每天最多一次，安静时段不打扰，你刚聊过不会马上又找你；连续不回它就会少找你，你一回来就恢复。离开 App 时决定要不要找、什么时候找，到时用通知提醒，点开后这句话会出现在它的单聊里。你先回来聊天，这次就取消。")
+                Text("每天最多一次（单聊和群加起来），安静时段不打扰，你刚聊过不会马上又找你；连续不回就会少找你，你一回来就恢复。离开 App 时决定要不要找、在哪找、什么时候找，到时用通知提醒：伙伴在单聊里找你，或者群主在你最近去过的群里开口。你先回来聊天，这次就取消。")
             }
         }
     }
@@ -307,6 +351,8 @@ struct CompanionPage: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(verbatim: trait.text).foregroundStyle(trait.refuted ? .secondary : .primary)
                     HStack(spacing: 8) {
+                        let from = origin(botId: trait.botId, scope: nil)
+                        if !from.isEmpty { Text(verbatim: from) }
                         Text(verbatim: trait.key)
                         Text("看到过 \(trait.days.count) 天")
                         if trait.refuted { Text("你说不对") } else if trait.days.count < 2 { Text("还只是印象") }
@@ -315,7 +361,7 @@ struct CompanionPage: View {
                 }
                 .swipeActions {
                     if !trait.refuted {
-                        Button("不对") { Task { try? await client.refuteTrait(trait.key); await load() } }.tint(.orange)
+                        Button("不对") { Task { try? await client.refuteTrait(trait.key, botId: trait.botId); await load() } }.tint(.orange)
                     }
                 }
             }
@@ -335,6 +381,8 @@ struct CompanionPage: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(verbatim: episode.text)
                     HStack(spacing: 8) {
+                        let from = origin(botId: episode.botId, scope: episode.scope)
+                        if !from.isEmpty { Text(verbatim: from) }
                         Text(Date(timeIntervalSince1970: episode.happenedAt / 1000), format: .dateTime.month().day().hour().minute())
                         if !episode.mood.isEmpty { Text(verbatim: episode.mood) }
                         if episode.recalls > 0 { Text("想起过 \(episode.recalls) 次") }

@@ -137764,36 +137764,36 @@
         }
       }
     },
-    "选一个 Bot 作为长期伙伴。只影响它的单聊：它会慢慢记住你们一起经历的事和你的习惯，在合适的时候自然想起，不会每句话都翻旧账。它原本的性格和 Bot 记忆不变。" : {
+    "选一个 Bot 作为长期伙伴。它的单聊和它在的群里都会生效：慢慢记住你们一起经历的事和你的习惯，在合适的时候自然想起，不会每句话都翻旧账。它原本的性格和 Bot 记忆不变。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pick a Bot as your long-term companion. Only its own chat changes: it slowly remembers what you went through together and your habits, and brings them up naturally when it fits, not in every reply. Its personality and Bot memory stay as they are."
+            "value" : "Pick a Bot as your long-term companion. It applies in its own chat and in the groups it is in: it slowly remembers what you went through together and your habits, and brings them up naturally when it fits, not in every reply. Its personality and Bot memory stay as they are."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige un Bot como compañero a largo plazo. Solo cambia su chat: poco a poco recuerda lo que vivieron juntos y tus costumbres, y lo menciona con naturalidad cuando viene al caso, no en cada respuesta. Su personalidad y su memoria de Bot no cambian."
+            "value" : "Elige un Bot como compañero a largo plazo. Funciona en su chat y en los grupos donde está: poco a poco recuerda lo que vivieron juntos y tus costumbres, y lo menciona con naturalidad cuando viene al caso, no en cada respuesta. Su personalidad y su memoria de Bot no cambian."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "長く付き合うパートナーにする Bot を選びます。変わるのはその Bot との個別チャットだけです。一緒に経験したことやあなたの習慣を少しずつ覚え、ふさわしいときに自然に思い出します。毎回昔の話を持ち出すことはありません。もとの性格と Bot のメモリーはそのままです。"
+            "value" : "長く付き合うパートナーにする Bot を選びます。その Bot との個別チャットと、その Bot がいるグループで有効です。一緒に経験したことやあなたの習慣を少しずつ覚え、ふさわしいときに自然に思い出します。毎回昔の話を持ち出すことはありません。もとの性格と Bot のメモリーはそのままです。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "오래 함께할 동반자로 Bot 하나를 고르세요. 그 Bot과의 개인 채팅만 달라져요. 함께 겪은 일과 당신의 습관을 천천히 기억하고, 어울릴 때 자연스럽게 떠올려요. 매번 옛날 얘기를 꺼내지는 않아요. 원래 성격과 Bot 메모리는 그대로예요."
+            "value" : "오래 함께할 동반자로 Bot 하나를 고르세요. 그 Bot과의 개인 채팅과 그 Bot이 있는 그룹에서 적용돼요. 함께 겪은 일과 당신의 습관을 천천히 기억하고, 어울릴 때 자연스럽게 떠올려요. 매번 옛날 얘기를 꺼내지는 않아요. 원래 성격과 Bot 메모리는 그대로예요."
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "選一個 Bot 作為長期夥伴。只影響它的單聊：它會慢慢記住你們一起經歷的事和你的習慣，在適合的時候自然想起，不會每句話都翻舊帳。它原本的個性和 Bot 記憶不變。"
+            "value" : "選一個 Bot 作為長期夥伴。它的單聊和它所在的群組裡都會生效：慢慢記住你們一起經歷的事和你的習慣，在適合的時候自然想起，不會每句話都翻舊帳。它原本的個性和 Bot 記憶不變。"
           }
         }
       }
@@ -137968,36 +137968,36 @@
         }
       }
     },
-    "每天最多一次，安静时段不打扰，你刚聊过不会马上又找你；连续不回它就会少找你，你一回来就恢复。离开 App 时决定要不要找、什么时候找，到时用通知提醒，点开后这句话会出现在它的单聊里。你先回来聊天，这次就取消。" : {
+    "每天最多一次（单聊和群加起来），安静时段不打扰，你刚聊过不会马上又找你；连续不回就会少找你，你一回来就恢复。离开 App 时决定要不要找、在哪找、什么时候找，到时用通知提醒：伙伴在单聊里找你，或者群主在你最近去过的群里开口。你先回来聊天，这次就取消。" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "At most once a day, never in quiet hours, and not right after you've talked. If you don't answer a few times it reaches out less, and goes back to normal once you're back. When you leave the app it decides whether and when to write; a notification shows up then, and the message appears in its chat when you open it. If you come back and talk first, it's called off."
+            "value" : "At most once a day across the chat and the groups, never in quiet hours, and not right after you have talked. If you do not answer a few times it reaches out less, and goes back to normal once you are back. When you leave the app it decides whether, where and when; a notification shows up then: the companion writes in its chat, or a group admin speaks up in a group you were in lately. If you come back and talk first, it is called off."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Como mucho una vez al día, nunca en horas de silencio y no justo después de hablar. Si no respondes varias veces te escribe menos, y vuelve a lo normal cuando regresas. Al salir de la app decide si escribirte y cuándo; entonces llega una notificación, y el mensaje aparece en su chat al abrirla. Si vuelves y hablas tú primero, se cancela."
+            "value" : "Como mucho una vez al día entre el chat y los grupos, nunca en horas de silencio y no justo después de hablar. Si no respondes varias veces te escribe menos, y vuelve a lo normal cuando regresas. Al salir de la app decide si, dónde y cuándo; entonces llega una notificación: el compañero te escribe en su chat, o el administrador de un grupo donde estuviste hace poco habla en el grupo. Si vuelves y hablas tú primero, se cancela."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1 日に最大 1 回、おやすみ時間は邪魔せず、話したばかりのときはすぐには来ません。何度か返事がないと回数を減らし、あなたが戻ってくると元に戻ります。App を離れるときに話しかけるかどうかと時間を決め、その時刻に通知でお知らせします。開くとそのメッセージが個別チャットに表示されます。先にあなたから話しかけた場合は取り消されます。"
+            "value" : "個別チャットとグループを合わせて 1 日に最大 1 回、おやすみ時間は邪魔せず、話したばかりのときはすぐには来ません。何度か返事がないと回数を減らし、あなたが戻ってくると元に戻ります。App を離れるときに、話しかけるかどうか、どこで、いつかを決め、その時刻に通知でお知らせします。パートナーが個別チャットで話しかけるか、最近いたグループでグループ管理者が話し始めます。先にあなたから話しかけた場合は取り消されます。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "하루에 최대 한 번, 방해 금지 시간에는 연락하지 않고, 방금 대화했다면 바로 다시 찾지 않아요. 몇 번 답하지 않으면 덜 찾고, 다시 돌아오면 원래대로 돌아가요. 앱을 나갈 때 연락할지와 언제 할지 정하고, 그때 알림으로 알려 줘요. 열면 그 메시지가 개인 채팅에 나타나요. 먼저 돌아와서 대화하면 이번 연락은 취소돼요."
+            "value" : "개인 채팅과 그룹을 합쳐 하루에 최대 한 번, 방해 금지 시간에는 연락하지 않고, 방금 대화했다면 바로 다시 찾지 않아요. 몇 번 답하지 않으면 덜 찾고, 다시 돌아오면 원래대로 돌아가요. 앱을 나갈 때 연락할지, 어디서, 언제 할지 정하고 그때 알림으로 알려 줘요. 동반자가 개인 채팅에서 연락하거나, 최근에 있었던 그룹에서 그룹 관리자가 먼저 말을 꺼내요. 먼저 돌아와서 대화하면 이번 연락은 취소돼요."
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "每天最多一次，安靜時段不打擾，你剛聊過不會馬上又找你；連續不回它就會少找你，你一回來就恢復。離開 App 時決定要不要找、什麼時候找，到時用通知提醒，點開後這句話會出現在它的單聊裡。你先回來聊天，這次就取消。"
+            "value" : "每天最多一次（單聊和群組加起來），安靜時段不打擾，你剛聊過不會馬上又找你；連續不回就會少找你，你一回來就恢復。離開 App 時決定要不要找、在哪找、什麼時候找，到時用通知提醒：夥伴在單聊裡找你，或者群主在你最近去過的群組裡開口。你先回來聊天，這次就取消。"
           }
         }
       }
@@ -138474,6 +138474,108 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "忘了它"
+          }
+        }
+      }
+    },
+    "群主也像朋友一样" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Group Admins Act Like Friends Too"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los administradores también son amigos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "グループ管理者も友達のように"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "그룹 관리자도 친구처럼"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "群主也像朋友一樣"
+          }
+        }
+      }
+    },
+    "群里也能想起私聊的事" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recall Private Chats in Groups"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recordar chats privados en grupos"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "グループでも個別チャットのことを思い出す"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "그룹에서도 개인 채팅 내용 떠올리기"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "群組裡也能想起單聊的事"
+          }
+        }
+      }
+    },
+    "群主在群里会记住大家一起聊过的事，说话像朋友，也可能在你最近去过的群里先开口；群开着学习模式时只保留语气，不提往事，不打乱出题和批改。你选的伙伴 Bot 进群也还是它自己。私聊里的事默认不在群里提。" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In its group, the admin remembers what you all talked about, talks like a friend, and may speak up first in a group you were in lately. When a group is in a learning mode it keeps only the friendly tone: no old stories, nothing that disrupts quizzes or grading. The companion Bot you picked is still itself in groups. What you said in private stays out of groups by default."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En su grupo, el administrador recuerda lo que hablaron todos, habla como un amigo y puede empezar a hablar en un grupo donde estuviste hace poco. Cuando el grupo está en un modo de aprendizaje solo conserva el tono amistoso: sin recuerdos y sin alterar las preguntas ni las correcciones. El Bot compañero que elegiste sigue siendo él mismo en los grupos. Lo que dijiste en privado no se menciona en los grupos por defecto."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "グループ管理者はグループでみんなと話したことを覚え、友達のように話し、最近いたグループで自分から話し始めることもあります。グループが学習モードのときは口調だけを保ち、昔の話は出さず、出題や採点の流れを乱しません。選んだパートナー Bot はグループでもそのままです。個別チャットの内容はデフォルトではグループで話しません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "그룹 관리자는 그룹에서 함께 나눈 이야기를 기억하고, 친구처럼 말하며, 최근에 있었던 그룹에서 먼저 말을 꺼내기도 해요. 그룹이 학습 모드일 때는 말투만 유지하고, 옛날 얘기는 꺼내지 않으며 문제 내기와 채점을 방해하지 않아요. 고른 동반자 Bot은 그룹에서도 그대로예요. 개인 채팅 내용은 기본적으로 그룹에서 꺼내지 않아요."
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "群主在群組裡會記住大家一起聊過的事，說話像朋友，也可能在你最近去過的群組裡先開口；群組開著學習模式時只保留語氣，不提往事，不打亂出題和批改。你選的夥伴 Bot 進群組也還是它自己。單聊裡的事預設不在群組裡提。"
           }
         }
       }
