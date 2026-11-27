@@ -23,7 +23,7 @@ concurrency:
 jobs:
   # The learning plugin's Node tests, on Linux: free on a public repo and done in a few
   # minutes, so engine-only changes get an answer without waiting for macOS.
-  # Only test/learning-*.test.mjs and the firefly-typeset plugin's test run here. The other engine tests target the app's
+  # Only test/learning-*.test.mjs runs here. The other engine tests target the app's
   # macOS/iOS layout (paths, shell, the git addon built by scripts/build-git-addon.sh);
   # on Windows 32 of them fail for that reason, so running them here would say nothing
   # about our change. See DECISIONS.md.
@@ -44,7 +44,7 @@ jobs:
         working-directory: engine
         run: |
           node --version
-          node --test --test-reporter=spec test/learning-*.test.mjs test/typeset-plugin.test.mjs
+          node --test --test-reporter=spec test/learning-*.test.mjs
 
   build-and-test:
     # 原定 macos-26，但它连续三次排队 15 分钟都没有机器接单（GitHub 提示 macOS arm64 容量不足），

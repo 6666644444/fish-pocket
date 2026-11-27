@@ -1,6 +1,0 @@
-{
-  "meta": {
-    "title": "Firefly typesetting",
-    "description": "Lays replies out to read well on a phone: formulas on lines of their own, the final answer boxed, worked solutions in short headed steps, and key points, methods and common mistakes in coloured callouts. A Bot with a drawing tool draws the graph of a function it explains. Callouts are coloured in recent Firefly builds and show as quotes elsewhere. The plugin's settings can turn callouts off or add rules of your own."
-  }
-}
