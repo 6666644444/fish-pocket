@@ -302,6 +302,16 @@
 - 修法：`jobOutcome()` 按 JobOutcome 返回（done → completed，cancelled/paused → killed，其他 → failed，均带 detail）；任务最后一行写明「已暂停，不要自己继续，告诉用户」。新增护栏：一轮对话如果只是被后台任务的完成通知唤醒（source.kind `tool-jobs`），这一轮里 `start` / `resume` 一律拒绝——一个研究结束，永远不会自己引出下一个；用户发话的轮次、App 研究页的「继续研究」不受影响。工具说明也改成「resume 只在用户要求时」。
 - 测试：所有结束方式都断言 status ∈ completed/killed/failed、没有 kind 字段；通过任务停止 → killed + 暂停说明；通知唤醒的轮次 start/resume 被拒且没建任何任务，用户发话后可以继续；App 研究页照常续跑。
 
+## 同步上游
+
+### D48 2026-11-27 合并上游 f43b35d（25 个提交）
+
+- 用 merge，不用 rebase（分支已推送，rebase 要强推）。先在 `feat/sync-upstream-1127` 上合并、测试、跑 iOS CI，绿了再快进 `feat/learning-tool`，单独打包（不和我们的改动混在同一个包里验收）。
+- 没有文字冲突。两边都改过的 5 个文件（`DshIOSApp.swift`、`ConversationView.swift`、`DrawerView.swift`、`SettingsView.swift`、`Localizable.xcstrings`）逐个看过：改动位置不重叠，上游删掉的类型（`FishPocketPerks`、`RemoteFile*`）我们没用。
+- 语义检查：上游没动引擎和 ds-bot 版本锁定（`PluginPins`）；上游 App 的 `BotInfo.chatSessions` 把 `openParts` 也算作 Bot 自己的对话，和我们 `dsbot.mjs` 的认定一致。
+- 文案：上游新加 26 条，覆盖率 3874/3874。其中提到 Fish Pocket 的 2 条是账号和服务器的名字（「Fish Pocket 账号」「Fish Pocket 服务器」），按 D36 不改。
+- 测试：learning 165/165；全量 395，失败 32 = 基线，无新增。
+
 ## 改过的上游文件
 
 | 文件 | 改了什么 | 为什么 |
