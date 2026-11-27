@@ -332,6 +332,14 @@
 - App 收到后：等会话列表里出现这个会话（最多 10 秒），把文字和文件放进它的输入框并打开它，不自动发送；会话已删或已归档 → 提示「找不到这个会话了，内容放进了新对话」，放进新对话。
 - 文案 +2，覆盖率 3879/3879。测试 `ShareTargetsTests`。
 
+### D52 排版：第三方插件 firefly-typeset + App 画彩色提示框（2026-11-27 用户要求「像 ChatGPT 那样」）
+
+- ChatGPT 的界面不开源。查过的开源聊天界面：LibreChat（MIT）、Open WebUI（BSD-3 + 品牌条款）、LobeChat（LobeHub 社区许可，改代码再分发要商业授权），都是网页的，代码搬不进 SwiftUI。**不用任何一家的代码**，只用公开的写法：GitHub 提示框（`> [!NOTE|TIP|IMPORTANT|WARNING|CAUTION]`）和 Obsidian 的扩展（标题写在标记后、`-`/`+` 折叠）。
+- 分两半：插件管「怎么写」，App 管「怎么画」。App 不运行插件的网页部分，所以样式只能在 App 里画。
+- **插件** `extras/firefly-typeset/`（MIT，Host only，没有依赖）：`ctx.systemPrompt.section()`（dsh-doc practices 推荐的加提示词方式，ds-bot 也这么加 Bot 身份）加一段固定说明（1464 字符），order 9500（交付文件说明 9000 之后、结构化输出 9900 之前），`interpolate: false`。每次请求文字一样 → 缓存前缀保住。子代理（origin subagent）不加。设置：`callouts: false`（改成加粗标签引用）、`rules`（用户自己的要求，最多 1000 字）、`enabled: false`。测试 `engine/test/typeset-plugin.test.mjs`（7 个），CI engine-tests 一起跑。
+- **App** `Views/MarkdownCallout.swift`：引用块第一行是 `[!名字]` → 提示框。五种颜色（蓝/绿/紫/橙/红，系统色，深色自动变）；Obsidian 名字和中文名字（重点/技巧/易错/定义…）也认，中文名字和不认识的名字同时当标题；`-` 默认收起、`+` 可折叠；正文是完整 Markdown（公式、列表、嵌套引用），缩进保留；`[!x](url)` 是链接不是标记；写到一半的 `> [!TI` 照旧是引用。普通引用的显示和解析结果不变。无障碍：标题是 header，可折叠的读「展开/收起」。文案 +5（备注/提示/重点/注意/警告），覆盖率 3884/3884。测试 `MarkdownCalloutTests`。
+- 安装：插件页「从本地文件夹安装」（App 复制到 `~/.plugins/`）。电脑上打好 `deepseek\firefly-typeset.zip`，传到手机「文件」里解压再选。
+
 ## 改过的上游文件
 
 | 文件 | 改了什么 | 为什么 |
@@ -366,6 +374,8 @@
 | `app/DshIOS/ShareTargetsWriter.swift` | 一起写最近 10 个会话 | D51 |
 | `app/ShareExtension/ShareView.swift` | Bot 和群聊下面加「最近的会话」 | D51 |
 | `app/DshIOS/Views/MainView.swift` | `receive` 加 `.session`：放进那个会话的输入框并打开 | D51 |
+| `app/DshIOS/Views/MarkdownView.swift` | `MarkdownBlock` 加 `.callout`；引用块解析先去掉每行的 `>` 和一个空格再判断是不是提示框（普通引用结果不变）；渲染加一行 `CalloutView` | D52 |
+| `.github/workflows/ios-ci.yml` | engine-tests 也跑 `test/typeset-plugin.test.mjs` | D52 |
 | `app/DshIOS/Models/PluginPins.swift` | 1b 批量换名误改了匹配引擎英文报错的正则，已改回 "in Fish Pocket" 并加测试 `PluginPinsTests` | D36（1b） |
 | `HomeScreenShortcut.swift`、`WhatsNew.swift`、`PluginPins.swift`、`PhoneRecordingExport.swift`、`PhoneRecordingViews.swift`、`BotIMPage.swift`、`BotViews.swift`、`ConversationShare.swift`、`DrawerView.swift`、`NativeCapabilitiesView.swift`、`PluginStoreView.swift`、`ShortcutsGuidePage.swift`、`WatchSetupPage.swift`、`SettingsView.swift`（第五处）、`DshIOSApp.swift`（第二处）、`LiveActivity/*Widget*.swift`、`NewConversationControl.swift`、`DshLiveActivity.swift`、`Shared/NewConversationIntent.swift`、`Shared/OpenWebIntent.swift`、`Watch/Views/HomeView.swift`、`app/Watch/Localizable.xcstrings`（末尾 1 条） | 字符串里的 App 名 Fish Pocket → Firefly，只换名字；同步上游冲突时保留上游改动，再把名字换回来 | D36（1b） |
 

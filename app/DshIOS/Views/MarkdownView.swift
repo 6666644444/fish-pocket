@@ -62,6 +62,9 @@ struct MarkdownView: View {
                 RoundedRectangle(cornerRadius: 1.5).fill(Palette.stroke).frame(width: 3)
                 inline(text).foregroundStyle(Palette.secondary)
             }
+        case .callout(let callout):
+            // D52 (MarkdownCallout.swift): the body is Markdown drawn with this reply's settings.
+            CalloutView(callout: callout) { AnyView(MarkdownView(text: $0, cached: cached, linksFiles: linksFiles, selectable: selectable)) }
         case .code(let language, let code):
             if language == "schemaJson", let node = GenUIView.parse(code) {
                 GenUIView(node: node)
@@ -468,6 +471,8 @@ enum MarkdownBlock {
     case paragraph(String)
     case list([Item], ordered: Bool)
     case quote(String)
+    /// A quote that opens with `[!KIND]` (MarkdownCallout.swift, D52).
+    case callout(MarkdownCallout)
     case code(String?, String)
     case table([[String]])
     case rule
@@ -513,12 +518,22 @@ enum MarkdownBlock {
                 blocks.append(.rule)
             } else if trimmed.hasPrefix(">") {
                 flush()
-                var quote = [String(trimmed.dropFirst()).trimmingCharacters(in: .whitespaces)]
+                // Each line with its `>` and one space off: a callout keeps the indentation its
+                // lists need (D52); a plain quote is trimmed as before.
+                func unquoted(_ line: String) -> String {
+                    let rest = line.trimmingCharacters(in: .whitespaces).dropFirst()
+                    return String(rest.first == " " ? rest.dropFirst() : rest)
+                }
+                var quote = [unquoted(line)]
                 while let next = lines.first, next.trimmingCharacters(in: .whitespaces).hasPrefix(">") {
                     lines = lines.dropFirst()
-                    quote.append(String(next.trimmingCharacters(in: .whitespaces).dropFirst()).trimmingCharacters(in: .whitespaces))
+                    quote.append(unquoted(next))
                 }
-                blocks.append(.quote(quote.joined(separator: "\n")))
+                if let callout = MarkdownCallout.parse(quote) {
+                    blocks.append(.callout(callout))
+                } else {
+                    blocks.append(.quote(quote.map { $0.trimmingCharacters(in: .whitespaces) }.joined(separator: "\n")))
+                }
             } else if trimmed.hasPrefix("|"), let next = lines.first, next.contains("---") && next.contains("|") {
                 flush()
                 lines = lines.dropFirst()

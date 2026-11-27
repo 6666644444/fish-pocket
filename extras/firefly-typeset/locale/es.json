@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Composición de Firefly",
+    "description": "Presenta las respuestas para que se lean bien en el móvil: fórmulas en líneas propias, la respuesta final enmarcada, soluciones en pasos breves con título, y puntos clave, métodos y errores comunes en avisos de color. Un Bot con herramienta de dibujo traza la gráfica de la función que explica. Los avisos salen en color en las versiones recientes de Firefly y como citas en otros sitios. En los ajustes del plugin se pueden desactivar los avisos o añadir reglas propias."
+  }
+}

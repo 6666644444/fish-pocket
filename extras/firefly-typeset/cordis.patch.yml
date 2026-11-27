@@ -1,0 +1,8 @@
+# Firefly 排版: one section of the system prompt (index.js). Settings, all optional:
+#   callouts: false   bold-label quotes instead of > [!TIP] callouts, for clients that draw none
+#   rules: '…'        your own layout rules, added at the end (at most 1000 characters)
+#   enabled: false    off without uninstalling
+- insert:
+    - id: firefly-typeset
+      name: firefly-typeset
+      config: {}
