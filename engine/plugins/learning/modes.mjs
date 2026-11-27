@@ -203,17 +203,40 @@ export function teacherSections({ roomName, members }) {
   }];
 }
 
+/**
+ * What a group member who is not the teacher may do, per mode: in a plain Q&A they can add to
+ * the answer; in a guided lesson they only hint, since the answer is the learner's to find; in
+ * a quiz they leave the questions and the grading to the teacher and add to the explanation.
+ */
+const MEMBER_ROLE = {
+  qa: {
+    full: (t) => `${t} answers the learner's question. You may add to the answer: an example, another way to see it, `
+      + 'a correction if something is wrong. Keep it short and do not repeat what was said.',
+    line: 'add an example or a correction, briefly',
+  },
+  socratic: {
+    full: (t) => `${t} guides the learner to the answer one question at a time. You may give a small hint or encourage them, `
+      + `but do not give the answer or the next step outright, and do not ask the learner questions of your own: only ${t} does.`,
+    line: "hint or encourage, don't give the answer, ask no questions",
+  },
+  quiz: {
+    full: (t) => `${t} sets the questions and grades the answers. Do not set questions, and never reveal an answer before the `
+      + `learner has answered. After ${t} has graded one, you may add to the explanation.`,
+    line: 'no questions, no answers before grading; add to the explanation after',
+  },
+};
+
 /** The note for a group member who is not the teacher: full when announcing, else one line. */
 export function memberSections({ mode, announce, roomName, teacher }) {
   const spec = MODES[mode];
+  const role = MEMBER_ROLE[mode] ?? MEMBER_ROLE.qa;
   if (!announce) {
-    return [{ name: 'learning-member', text: `Learning mode "${spec.title}" in "${roomName}": ${teacher} leads; add, don't answer for the learner, set no questions, or pass.` }];
+    return [{ name: 'learning-member', text: `Learning mode "${spec.title}" in "${roomName}": ${teacher} leads; ${role.line}; or pass.` }];
   }
   return [{
     name: 'learning-member',
     text: `The group chat "${roomName}" is in learning mode "${spec.title}". Its admin, ${teacher}, leads it as the teacher. `
-      + `You may add to what ${teacher} says, encourage the learner, or point out something missing. Do not give the answer `
-      + `outright, and do not set questions of your own: only ${teacher} does. When you have nothing to add, pass.`,
+      + `${role.full(teacher)} When you have nothing to add, pass.`,
   }];
 }
 

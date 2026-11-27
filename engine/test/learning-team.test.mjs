@@ -241,6 +241,27 @@ test('ending a Bot\'s or a group\'s mode: each Session that had it is told once;
   assert.equal((await p.post('owners.list')).body.result.length, 1);
 });
 
+test('a group member\'s note follows the mode: add to answers, hint only, or leave the quiz to the teacher', async () => {
+  const p = plugin(home());
+  const round = [relay('room', '[Group chat "高三" · your turn]\nUser: 求导')];
+  const member = async (mode) => {
+    await p.post('owners.set', { kind: 'room', id: 'room-g3', mode });
+    return text(await p.notes('s-g3-test', round));
+  };
+  const qa = await member('qa');
+  assert.match(qa, /add to the answer/);
+  assert.doesNotMatch(qa, /do not give the answer/, 'a plain Q&A does not hold the answer back');
+  const socratic = await member('socratic');
+  assert.match(socratic, /small hint/);
+  assert.match(socratic, /do not give the answer or the next step outright/);
+  assert.match(socratic, /do not ask the learner questions of your own/);
+  const quiz = await member('quiz');
+  assert.match(quiz, /Do not set questions/);
+  assert.match(quiz, /never reveal an answer before the learner has answered/);
+  for (const note of [qa, socratic, quiz]) assert.match(note, /pass/);
+  assert.match(text(await p.notes('s-g3-test', round)), /no questions, no answers before grading/, 'the one-line reminder follows the mode too');
+});
+
 test('owner routes refuse bad input; every result is lossless JSON', async () => {
   const p = plugin(home());
   assert.equal((await p.post('owners.set', { kind: 'session', id: 'x', mode: 'qa' })).status, 400);
