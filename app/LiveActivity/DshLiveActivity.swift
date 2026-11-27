@@ -12,6 +12,8 @@ struct DshWidgets: WidgetBundle {
         NewConversationWidget()
         MiniAppsWidget()
         WebWidget()
+        // Firefly: today's mistake-book review (D53).
+        ReviewWidget()
         if #available(iOS 18.0, *) {
             NewConversationControl()
         }

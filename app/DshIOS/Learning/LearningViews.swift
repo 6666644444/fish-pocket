@@ -22,6 +22,9 @@ struct LearningHomePage: View {
     @State private var owners: [LearningOwnerStatus] = []
     @State private var ownerRecord: [LearningOwnerStatus] = []
     @State private var settings: LearningSettings?
+    /// Today's review of the mistake book (D53).
+    @State private var review: QuizReview?
+    @State private var reviewing = false
 
     private var client: LearningClient { LearningClient(engine: app.client) }
 
@@ -39,6 +42,7 @@ struct LearningHomePage: View {
         page(
             List {
                 // Learning happens with a Bot or a group (D49): no new learning conversation from here.
+                reviewSection
                 withBotSection
                 sessionsSection
                 historySection
@@ -48,6 +52,31 @@ struct LearningHomePage: View {
             }
             .groupedList()
         )
+    }
+
+    /// 今日复习 and 学习统计 (D53).
+    private var reviewSection: some View {
+        Section {
+            Button { reviewing = true } label: {
+                LabeledContent {
+                    if let review {
+                        Text(review.due > 0 ? String(localized: "\(review.due) 题") : String(localized: "没有"))
+                            .foregroundStyle(review.due > 0 ? Color.accentColor : .secondary)
+                    }
+                } label: {
+                    Label("今日复习", systemImage: "calendar.badge.clock").foregroundStyle(.primary)
+                }
+            }
+            NavigationLink { LearningStatsPage() } label: {
+                Label("学习统计", systemImage: "chart.bar.xaxis")
+            }
+        } footer: {
+            Text("答错的题第二天复习，之后隔 3 天、7 天各复习一次，到时间都答对就移出错题本。主屏幕上可以添加「错题复习」小组件。")
+        }
+        .task { review = await LearningReviewSync.refresh(client) }
+        .sheet(isPresented: $reviewing, onDismiss: { Task { review = await LearningReviewSync.refresh(client) } }) {
+            NavigationStack { QuizReviewPage() }
+        }
     }
 
     /// 和 Bot 一起学: put a Bot or a group in a mode and open its chat. The mode follows the Bot

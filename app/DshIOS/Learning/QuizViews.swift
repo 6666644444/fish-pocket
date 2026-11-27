@@ -22,6 +22,8 @@ struct QuizQuestion: Codable, Identifiable, Hashable, Sendable {
     let inMistakes: Bool
     /// Correct answers in a row since it went into the mistake book.
     let mistakeStreak: Int?
+    /// When a question in the mistake book is next up for review (ms since 1970); nil out of it.
+    var reviewAt: Double?
     let createdAt: Double
     /// The conversation it was asked in; a Bot's or a group's names it in the list (batch 2).
     var sessionId: String?
@@ -47,6 +49,10 @@ struct QuizResult: Codable, Hashable, Sendable {
     let mistakeBook: String
     let streak: Int?
     let mastery: Int
+    /// Its next review, while it stays in the mistake book (D53).
+    var dueAt: Double?
+    /// Right, but before its review day: it did not count.
+    var early: Bool?
 }
 
 extension LearningClient {
@@ -61,11 +67,11 @@ extension LearningClient {
         _ = try await call("quiz.questions.delete", ["id": .number(Double(id))], as: LearningDeleted.self)
     }
     func answer(_ id: Int, with answer: String) async throws -> QuizResult {
-        try await call("quiz.answer", ["id": .number(Double(id)), "answer": .string(answer)])
+        try await call("quiz.answer", ["id": .number(Double(id)), "answer": .string(answer), "tzOffset": Self.tzOffset])
     }
     /// The learner overrules the grade of their last answer.
     func overrule(_ id: Int, answer: String, as verdict: String) async throws -> QuizResult {
-        try await call("quiz.answer", ["id": .number(Double(id)), "answer": .string(answer), "judged": .string(verdict), "gradedBy": "user"])
+        try await call("quiz.answer", ["id": .number(Double(id)), "answer": .string(answer), "judged": .string(verdict), "gradedBy": "user", "tzOffset": Self.tzOffset])
     }
 }
 
@@ -81,11 +87,34 @@ enum QuizText {
 
     static func book(_ result: QuizResult) -> String {
         switch result.mistakeBook {
-        case "added": String(localized: "已加入错题本。")
-        case "removed": String(localized: "连续答对 \(result.mastery) 次，已移出错题本。")
-        case "in": String(localized: "还在错题本里（已连续答对 \(result.streak ?? 0)/\(result.mastery) 次）。")
-        default: ""
+        case "added":
+            return String(localized: "已加入错题本，明天复习。")
+        case "removed":
+            return String(localized: "连续答对 \(result.mastery) 次，已移出错题本。")
+        case "in":
+            guard let due = result.dueAt else {
+                return String(localized: "还在错题本里（已连续答对 \(result.streak ?? 0)/\(result.mastery) 次）。")
+            }
+            if result.early == true {
+                return String(localized: "还没到复习时间，这次不计入，\(day(due))再复习。")
+            }
+            return String(localized: "还在错题本里（已连续答对 \(result.streak ?? 0)/\(result.mastery) 次），\(day(due))再复习。")
+        default:
+            return ""
         }
+    }
+
+    /// 「今天」「明天」 or the date, for a review day (ms since 1970).
+    static func day(_ ms: Double) -> String {
+        let date = Date(timeIntervalSince1970: ms / 1000)
+        if date <= .now || Calendar.current.isDateInToday(date) { return String(localized: "今天") }
+        if Calendar.current.isDateInTomorrow(date) { return String(localized: "明天") }
+        return date.formatted(.dateTime.month().day())
+    }
+
+    /// When a question in the mistake book is next up: 「今天复习」 once due, else its day.
+    static func review(_ ms: Double) -> String {
+        Date(timeIntervalSince1970: ms / 1000) <= .now ? String(localized: "今天复习") : String(localized: "\(day(ms))复习")
     }
 }
 
@@ -120,7 +149,7 @@ struct QuizBankPage: View {
                 }
                 .pickerStyle(.segmented)
             } footer: {
-                Text("在「出题测验」模式里做的题会自动存进题库；答错的题进入错题本，在这里重做，连续答对 2 次后移出。")
+                Text("在「出题测验」模式里做的题会自动存进题库。答错的题进入错题本，第二天复习，之后隔 3 天、7 天各复习一次，到时间都答对就移出；没到复习时间答对不计入。")
             }
             Section {
                 if !loaded {
@@ -144,6 +173,7 @@ struct QuizBankPage: View {
                                     if let from = askedIn(question) { Text(verbatim: from) }
                                     Text(QuizText.verdict(question.lastVerdict))
                                     if let streak = question.mistakeStreak { Text("连对 \(streak)") }
+                                    if let reviewAt = question.reviewAt { Text(verbatim: QuizText.review(reviewAt)) }
                                 }
                                 .font(.caption).foregroundStyle(.secondary)
                             }
@@ -193,10 +223,16 @@ struct QuizBankPage: View {
 }
 
 /// One question: answer it, see the grade and the explanation, overrule a short-answer grade.
+/// In 今日复习 (`onNext`) it is one of a row: 「下一题」 instead of 「再做一次」.
 struct QuizPracticePage: View {
     @Environment(AppModel.self) private var app
     @Environment(\.dismiss) private var dismiss
     let questionId: Int
+    /// "2/5" in a review.
+    var position: String?
+    /// Each grade, an overruled one included.
+    var onResult: ((QuizResult) -> Void)?
+    var onNext: (() -> Void)?
     @State private var question: QuizQuestion?
     @State private var choice: Int?
     @State private var text = ""
@@ -251,13 +287,15 @@ struct QuizPracticePage: View {
                 ProgressView().frame(maxWidth: .infinity)
             }
         }
-        .navigationTitle(question?.kind == "choice" ? String(localized: "单选题") : String(localized: "简答题"))
+        .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) { Button("完成") { dismiss() } }
             ToolbarItem(placement: .confirmationAction) {
                 if result == nil {
                     Button("提交") { Task { await submit() } }.disabled(working || !canSubmit)
+                } else if let onNext {
+                    Button("下一题") { onNext() }
                 } else {
                     Button("再做一次") { result = nil; choice = nil; text = "" }
                 }
@@ -266,6 +304,11 @@ struct QuizPracticePage: View {
         .task {
             do { question = try await client.question(questionId) } catch { app.showToast(error.localizedDescription, tone: .warning); dismiss() }
         }
+    }
+
+    private var title: String {
+        let kind = question?.kind == "choice" ? String(localized: "单选题") : String(localized: "简答题")
+        return position.map { "\(kind) \($0)" } ?? kind
     }
 
     private var canSubmit: Bool {
@@ -280,6 +323,7 @@ struct QuizPracticePage: View {
         do {
             result = try await client.answer(question.id, with: answer)
             submitted = answer
+            if let result { onResult?(result) }
             if result?.verdict == "correct" { Haptics.select() } else { Haptics.firm() }
         } catch {
             app.showToast(error.localizedDescription, tone: .warning)
@@ -288,7 +332,10 @@ struct QuizPracticePage: View {
 
     private func overrule(_ verdict: String) async {
         guard let question else { return }
-        do { result = try await client.overrule(question.id, answer: submitted, as: verdict) } catch {
+        do {
+            result = try await client.overrule(question.id, answer: submitted, as: verdict)
+            if let result { onResult?(result) }
+        } catch {
             app.showToast(error.localizedDescription, tone: .warning)
         }
     }

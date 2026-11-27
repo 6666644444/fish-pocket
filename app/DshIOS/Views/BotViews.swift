@@ -312,6 +312,9 @@ struct BotHomeView: View {
         Group {
             if team.status == .ready {
                 list
+            } else if team.status == .unknown, BotPreviewList.shows(team) {
+                // Firefly (D54): last time's list while it connects.
+                BotPreviewList()
             } else {
                 BotSetupView()
             }

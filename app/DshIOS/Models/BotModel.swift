@@ -123,6 +123,9 @@ final class BotModel {
     @ObservationIgnored private unowned let app: AppModel
     /// The `state` view (bots, rooms, questions…), replaced on each new revision.
     private(set) var team: JSON = .null
+    /// Firefly (D54): the Bots and groups as the app last saw them, read back at launch so the Bot
+    /// page lists them at once while the engine and ds-bot load (`BotPreviewList`). Only for show.
+    let preview: JSON = BotTeamPreview.read()
     /// What changes without a revision: `activity` (per Bot) and `work`.
     private(set) var activity: [String: JSON] = [:]
     private(set) var work: JSON = .null
@@ -469,6 +472,7 @@ final class BotModel {
             if value["unchanged"].bool != true, team != value {
                 let gone = value["bots"].isNull ? [] : Set(bots.map(\.id)).subtracting(value["bots"].array.compactMap { $0["id"].string })
                 team = value
+                BotTeamPreview.save(value)
                 // A deleted Bot's browser goes with it, however it was deleted.
                 for id in gone where !id.isEmpty { BrowserModel.forget(BrowserOwnership.key(bot: id)) }
                 // Which sessions are Bot chats and which belong to groups decides where voice messages go.

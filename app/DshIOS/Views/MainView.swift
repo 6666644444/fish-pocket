@@ -12,7 +12,7 @@ struct MainView: View {
     /// The phone's tabs.
     enum HomeTab: Hashable { case sessions, bot, explore }
 
-    enum Sheet: String, Identifiable { case settings, plugins, store, schedules, signIn, cordis, share, watch, capabilities, connectors, phoneControl, remote, fishPocket, deepSeekAccount, miniApps, imageGen, shortcuts; var id: String { rawValue } }
+    enum Sheet: String, Identifiable { case settings, plugins, store, schedules, signIn, cordis, share, watch, capabilities, connectors, phoneControl, remote, fishPocket, deepSeekAccount, miniApps, imageGen, shortcuts, mistakeReview; var id: String { rawValue } }
 
     @Environment(AppModel.self) private var app
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -349,11 +349,18 @@ struct MainView: View {
                 settle(sizeClass)
                 app.currentSession = shownSession
                 ReadAloud.shared.scope = onScreen
+                // The 错题复习 widget: what the model graded in a chat since (D53).
+                Task { await LearningReviewSync.refresh(LearningClient(engine: app.client)) }
             }
             if phase == .background { widthOnLeaving = windowWidth }
         }
         // Reading aloud belongs to the conversation on screen: moving to another one stops it.
         .onChange(of: onScreen, initial: true) { _, session in ReadAloud.shared.scope = session }
+        // A cold launch: the 错题复习 widget's copy, once the plugins have had a moment (D53).
+        .task {
+            try? await Task.sleep(for: .seconds(3))
+            await LearningReviewSync.refresh(LearningClient(engine: app.client))
+        }
         .onChange(of: shownBotChat, initial: true) { _, chat in app.botTeam.visibleChat = chat }
         .onChange(of: selection) { _, id in
             app.currentSession = shownSession
@@ -548,6 +555,8 @@ struct MainView: View {
         // 设置 → 生图, opened straight from a failed image in a conversation.
         case .imageGen: SheetStack { ImageGenSettingsPage() }.settingsStyle()
         case .shortcuts: SheetStack { ShortcutsGuidePage() }
+        // The 错题复习 widget (D53).
+        case .mistakeReview: SheetStack { QuizReviewPage() }
         }
     }
 
@@ -1218,6 +1227,8 @@ struct MainView: View {
             sheet = await balancePage()
         case .call:
             CallCenter.shared.expand()
+        case .review:
+            sheet = .mistakeReview
         }
     }
 

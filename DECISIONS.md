@@ -143,7 +143,7 @@
 - 关键词覆盖只是粗判：意思对但用词不同会被判低。所以工具允许模型传 `judged`（它能读懂意思），App 里学习者可以改判；这两种都记在作答记录的 graded_by 里，能分清是谁判的。
 - 单选题只认选项字母，模型的 `judged` 对单选无效，避免模型「宽松判分」。
 
-## D21 错题本移出条件：连续答对 2 次（M4）
+## D21 错题本移出条件：连续答对 2 次（M4；**已被 D53 取代**：现在是按复习日连续答对 3 次）
 
 - `MASTERY = 2`：答对一次可能是记住了答案位置或碰巧，连续两次才算掌握；再多会让错题本一直清不掉，打击积极性。
 - 「部分正确」算没答对：进错题本、清零连对。
@@ -338,6 +338,24 @@
 - 同日撤销（revert 6bff1cb），代码回到 d41666c：用户看了预览觉得不好看；插件「最后给出加框答案」会和学习模式（引导式不给答案、测验答前不透露）冲突；多种排版会让说明变长、输出变长、回答更慢。
 - 以后要再做，从 6bff1cb 取代码，先解决和学习模式的冲突。
 
+## 第三批：错题复习、学习统计、小组件、Bot 页冷启动（2026-11-27 用户选定）
+
+### D53 错题按时间复习（间隔重复）+ 学习统计 + 「错题复习」小组件
+
+- 规则（`quiz.mjs` 的 `REVIEW_DAYS = [1, 3, 7]`、`nextMistake`）：答错（含部分正确）→ 进错题本、连对清零、第二天复习；在复习日当天或之后答对 → 连对 +1，下次分别隔 3 天、7 天；第 3 次按时答对移出（`MASTERY = 3`，取代 D21 的 2）。没到复习日就答对不计入（`early`）：刚看过答案答对不说明记住了，这是间隔重复的关键。用户「其实我答对了」改判算按时。
+- 为什么是 1/3/7 天：艾宾浩斯曲线常见的前几档；高三题量大，再长（15、30 天）会让错题本长期清不掉。改档位只改 `REVIEW_DAYS`。
+- 「哪天」按手机的时区算：App 的 `quiz.answer`、`quiz.review`、`stats.get` 带 `tzOffset`（UTC 以东分钟数），引擎存在 meta `tz_offset`，模型批改时（工具不带时区）用它。复习日是当地 0 点。
+- schema 9：`quiz_mistakes` 加 `due_at`；已在错题本里的题立即到期。导出带 `dueAt`，旧导出导入时用 `updatedAt`（立即到期）。`EXPORT_VERSION` 不变（只多一个可选字段）。
+- 模型工具 `learning_quiz`：说明写了复习规则；`list` 加 `due: true`（今天要复习的）；批改结果说明下次复习在几天后、提前答对不计入。
+- App：学习页最上面「今日复习 N 题」（一题接一题，最后显示答对几题）和「学习统计」（连续学习天数、最近 14 天每天答题柱状图、累计、按主题正确率）；题库列表显示每道错题哪天复习。“学习过的一天”：那天答过题、写过笔记、存过学习记忆或开过研究。
+- 小组件（`LiveActivity/ReviewWidget.swift`，小/中/锁屏圆形/锁屏长条）：App 把错题本里每道题的复习时间和前 3 道题干写进 App Group（`Shared/ReviewCatalog.swift`），小组件自己按时间数，到 0 点自己加上；点开 `fishpocket://review` 进今日复习。App 在学习页、复习结束、回到前台、冷启动 3 秒后各写一次；模型在聊天里批改后要等 App 回到前台才更新。
+- 文案 +51（含 D54 1 条），覆盖率 3930/3930。测试：引擎 `learning-quiz.test.mjs` +5，App `ReviewTests`。
+
+### D54 Bot 页冷启动先显示上次的列表
+
+- 冷启动时 ds-bot 要等引擎和插件加载（几秒），以前这段时间是「正在准备…」。现在每次拿到新的 team 就把 bots/rooms/mainBotIds 存到 Caches `bot-team-preview.json`；状态是 `.unknown` 且有缓存时显示 `BotPreviewList`（变淡、「正在连接 Bot…」、行点不开），ds-bot 一回答就换成真列表。
+- 只用来看：不放进 `team`，所以会话归属、语音消息、学习模式等读 `team` 的地方都不受影响；插件关掉/没装/版本不对时状态不是 `.unknown`，照旧显示 `BotSetupView`。
+
 ## 改过的上游文件
 
 | 文件 | 改了什么 | 为什么 |
@@ -372,6 +390,11 @@
 | `app/DshIOS/ShareTargetsWriter.swift` | 一起写最近 10 个会话 | D51 |
 | `app/ShareExtension/ShareView.swift` | Bot 和群聊下面加「最近的会话」 | D51 |
 | `app/DshIOS/Views/MainView.swift` | `receive` 加 `.session`：放进那个会话的输入框并打开 | D51 |
+| `app/DshIOS/Views/MainView.swift`（第二处） | `Sheet` 加 `.mistakeReview`；`follow` 加 `.review`；回到前台和冷启动后刷新小组件的复习数据 | D53 |
+| `app/Shared/DshLink.swift` | 加 `.review`（`fishpocket://review`） | D53 |
+| `app/LiveActivity/DshLiveActivity.swift` | `DshWidgets` 加 `ReviewWidget()` 一行 | D53 |
+| `app/DshIOS/Models/BotModel.swift` | 加 `preview`；`refreshState` 里 `team = value` 后存一份 | D54 |
+| `app/DshIOS/Views/BotViews.swift` | `BotHomeView` 状态未知且有缓存时显示 `BotPreviewList` | D54 |
 | `app/DshIOS/Models/PluginPins.swift` | 1b 批量换名误改了匹配引擎英文报错的正则，已改回 "in Fish Pocket" 并加测试 `PluginPinsTests` | D36（1b） |
 | `HomeScreenShortcut.swift`、`WhatsNew.swift`、`PluginPins.swift`、`PhoneRecordingExport.swift`、`PhoneRecordingViews.swift`、`BotIMPage.swift`、`BotViews.swift`、`ConversationShare.swift`、`DrawerView.swift`、`NativeCapabilitiesView.swift`、`PluginStoreView.swift`、`ShortcutsGuidePage.swift`、`WatchSetupPage.swift`、`SettingsView.swift`（第五处）、`DshIOSApp.swift`（第二处）、`LiveActivity/*Widget*.swift`、`NewConversationControl.swift`、`DshLiveActivity.swift`、`Shared/NewConversationIntent.swift`、`Shared/OpenWebIntent.swift`、`Watch/Views/HomeView.swift`、`app/Watch/Localizable.xcstrings`（末尾 1 条） | 字符串里的 App 名 Fish Pocket → Firefly，只换名字；同步上游冲突时保留上游改动，再把名字换回来 | D36（1b） |
 
